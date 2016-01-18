@@ -1,0 +1,19 @@
+.code-field {
+    margin-top: 10px;
+    
+    & * {
+        margin: 0px !important; 
+        border: none !important;
+        white-space: initial;
+    }
+
+    .gist {
+        margin: 0px;
+    }
+
+    .gist-meta {
+        display: none;
+    }
+
+
+}
