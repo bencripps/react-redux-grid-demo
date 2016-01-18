@@ -1,0 +1,43 @@
+.main-button {
+
+    border: 1px solid black;
+    font-family: $font-family;
+    display: inline-block;
+    margin: 20px 10px;
+    opacity: .6;
+    padding: 5px 10px;
+    transform: scale(1);
+    @include box-shadow();
+    @include border-radius();
+    @include transition(opacity, transform);
+
+    a { 
+        text-decoration: none;
+
+        &:visited, &:link {
+            color: $color-white;
+        }
+
+        &:active {
+            color: $color-medium;
+        }
+    }
+
+
+    &:hover {
+        opacity: .9;
+        transform: scale(1.05);
+    }
+
+    &:first-child {
+        background-color: $color-darkest;
+    }
+
+    &:nth-child(2) {
+        background-color: $color-second-lightest;
+    }
+
+    &:nth-child(3) {
+        background-color: $color-second-darkest;
+    }
+}

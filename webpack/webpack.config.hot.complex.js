@@ -4,7 +4,7 @@ module.exports = {
     entry: [
         'webpack/hot/dev-server',
         'webpack-dev-server/client?http://localhost:8080',
-        __dirname + '/../app/public/dev/scripts/entry.js'
+        __dirname + '/../app/public/dev/scripts/entry-complex.js'
     ],
     devServer: {
         headers: {
@@ -13,7 +13,7 @@ module.exports = {
     },
     output: {
         path: __dirname + 'app/public/dev/demo/lib',
-        filename: 'bundle.js',
+        filename: 'bundle-complex.js',
         sourceMapFilename: 'debugging/[file].map',
         publicPath: 'http://localhost:8080/demo/lib/',
         crossOriginLoading: 'use-credentials'

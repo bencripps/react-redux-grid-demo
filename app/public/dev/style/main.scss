@@ -1,14 +1,30 @@
 $fontsize: 14px;
 $header-font-size: 30px;
-$font-family: Oswald;
+$font-family: Roboto;
 
 // color scheme
-$color-darkest: #fa6900;
-$color-second-darkest: #f38630;
-$color-medium: #e0e4cc;
-$color-second-lightest: #a7dbdb;
-$color-lightest: #69d2e7;
+$color-darkest: #34495e;
+$color-second-darkest: #9b59b6;
+$color-medium: #3498db;
+$color-second-lightest: #2ecc71;
+$color-lightest: #1abc9c;
 
+$color-white: white;
+
+@mixin box-shadow() {
+    box-shadow: 2px 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+}
+
+@mixin border-radius($radius: 3px) {
+    border-radius: $radius;
+}
+
+@mixin transition($properties...) {
+    transition-duration: 200ms;
+    transition-property: $properties;
+    transition-timing-function: cubic-bezier(.17,.67,.83,.67);
+} 
 
 @import 'component/general';
 @import 'component/header';
+@import 'component/mainbutton';

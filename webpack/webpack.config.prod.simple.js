@@ -2,11 +2,11 @@ var loaders = require('./loaders');
 
 module.exports = {
     entry: [
-        './scripts/entry.js'
+        __dirname + '/../app/public/dev/scripts/entry-simple.js'
     ],
     output: {
-        path: __dirname + '/../demo/lib',
-        filename: 'bundle.js',
+        path: __dirname + '/../app/public/dev/demo/lib/',
+        filename: 'bundle-simple.js',
         publicPath: 'dev/demo/lib/'
     },
     target: 'web',

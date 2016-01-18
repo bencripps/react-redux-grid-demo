@@ -71,7 +71,9 @@
         "dev": "nodemon --exec npm run babel-node -- ./server.js dev",
         "babel-node": "babel-node",
         "start": "./node_modules/.bin/babel-node -- ./server.js",
-        "hot": "webpack-dev-server --hot --inline --pretty --config webpack/webpack.config.hot.js",
-        "prod": "webpack --pretty --config webpack/webpack.config.prod.js"
+        "hot-complex": "webpack-dev-server --hot --inline --pretty --config webpack/webpack.config.hot.complex.js",
+        "hot-simple": "webpack-dev-server --hot --inline --pretty --config webpack/webpack.config.hot.simple.js",
+        "prod-complex": "webpack --pretty --config webpack/webpack.config.prod.complex.js",
+        "prod-simple": "webpack --pretty --config webpack/webpack.config.prod.simple.js"
     }
 }
