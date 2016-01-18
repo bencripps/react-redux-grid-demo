@@ -12,15 +12,7 @@
     @include transition(opacity, transform);
 
     a { 
-        text-decoration: none;
-
-        &:visited, &:link {
-            color: $color-white;
-        }
-
-        &:active {
-            color: $color-medium;
-        }
+        @include link();
     }
 
 

@@ -1,5 +1,7 @@
 $fontsize: 14px;
 $header-font-size: 30px;
+$main-text-font-size: 22px;
+$main-font-size: 18px; 
 $font-family: Roboto;
 
 // color scheme
@@ -23,9 +25,22 @@ $color-white: white;
     transition-duration: 200ms;
     transition-property: $properties;
     transition-timing-function: cubic-bezier(.17,.67,.83,.67);
+}
+
+@mixin link($color: $color-white) {
+    text-decoration: none;
+
+    &:visited, &:link {
+        color: $color;
+    }
+
+    &:active {
+        color: $color;
+    }
 } 
 
 @import 'component/general';
 @import 'component/header';
 @import 'component/mainbutton';
 @import 'component/codefield';
+@import 'component/maintext';
