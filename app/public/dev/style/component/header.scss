@@ -1,0 +1,25 @@
+.page-header {
+
+    background-color: $color-medium;
+    box-shadow: 2px 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+    font-family: $font-family;
+    font-size: $header-font-size;
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+
+    span {
+        color: white;
+    }
+
+    span:first-child {
+        color: $color-darkest;
+    }
+
+    span:nth-child(3) {
+        color: $color-second-darkest;
+    }
+
+    span:nth-child(5) {
+        color: $color-second-lightest;
+    }
+}

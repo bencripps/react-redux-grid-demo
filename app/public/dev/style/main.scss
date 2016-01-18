@@ -1,0 +1,14 @@
+$fontsize: 14px;
+$header-font-size: 30px;
+$font-family: Oswald;
+
+// color scheme
+$color-darkest: #fa6900;
+$color-second-darkest: #f38630;
+$color-medium: #e0e4cc;
+$color-second-lightest: #a7dbdb;
+$color-lightest: #69d2e7;
+
+
+@import 'component/general';
+@import 'component/header';
