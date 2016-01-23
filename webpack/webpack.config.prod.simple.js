@@ -13,6 +13,11 @@ module.exports = {
     node: {
         fs: 'empty'
     },
+    resolve: {
+        alias: {
+            react: __dirname + '/../node_modules/react'
+        }
+    },
     module: {
         loaders: loaders
     }

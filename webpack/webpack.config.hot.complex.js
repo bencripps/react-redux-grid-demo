@@ -31,5 +31,10 @@ module.exports = {
         },
         loaders: loaders
     },
+    resolve: {
+        alias: {
+            react: __dirname + '/../node_modules/react'
+        }
+    },
     devtool: 'inline-source-map'
 };

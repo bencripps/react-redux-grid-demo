@@ -2,16 +2,17 @@
   "name": "react-redux-grid-demo",
   "version": "0.0.1",
   "description": "Production Demo Page for React-Redux-Grid",
-  "jshintConfig": {
-    "predef": [
-      "$",
-      "require",
-      "define",
-      "path"
-    ],
-    "node": "true",
-    "jasmine": "true"
-  },
+  "author": "Benjamin Cripps (https://github.com/bencripps)",
+  "contributors": [
+    {
+        "name": "Bejamin Cripps",
+        "url" : "http://benjamincripps.com"
+    }
+  ],
+  "license": "MIT",
+  "bugs": "https://github.com/bencripps/react-redux-grid/issues",
+  "homepage": "http://react-redux-grid.herokuapp.com/",
+
   "devDependencies": {
     "gulp": "^3.8.11",
     "gulp-clean": "^0.3.1",
@@ -20,7 +21,7 @@
     "gulp-uglify": "^1.2.0",
     "imagemin-pngquant": "^4.1.0",
     "babel-polyfill": "^6.2.0",
-    "react-redux-grid": "1.0.5",
+    "react-redux-grid": "1.1.0",
     "immutable": "^3.7.5",
     "react": "^0.14.3",
     "react-dom": "^0.14.3",
