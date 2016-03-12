@@ -3,22 +3,11 @@ var path = require('path');
 module.exports = [
     {
         test: /\.js$|\.jsx$/,
-        loaders: ['react-hot', 'babel-loader?stage=0&optional=runtime'],
-        exclude: /node_modules|\.json$/,
-        options: {
-            optional: ['runtime']
-        }
-    },
-    {
-        test: /\.js$|\.jsx$/,
-        include: [
-            path.resolve(__dirname, '../node_modules/react-redux-grid/')
+        loaders: [
+            'react-hot',
+            'babel-loader?presets[]=react,presets[]=es2015,presets[]=stage-0'
         ],
-        exclude: /node_modules\/(?!react-redux-grid)/,
-        loaders: ['react-hot', 'babel-loader?stage=0&optional=runtime'],
-        options: {
-            optional: ['runtime']
-        }
+        exclude: /[\\\/]node_modules[\\\/](?!react-redux-grid)/
     },
     {
         test: /\.styl$/,

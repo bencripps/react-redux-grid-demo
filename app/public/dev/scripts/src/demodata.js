@@ -126,22 +126,25 @@ export const columns = [
         name: 'Name',
         width: '10%',
         className: 'additional-class',
-        renderer: () => { return 'Name'; },
+        dataIndex: 'Name',
         HANDLE_CLICK: () => { console.log('Header Click'); }
     },
     {
         name: 'Phone Number',
         width: '20%',
+        dataIndex: 'Phone Number',
         className: 'additional-class'
     },
     {
         name: 'Email',
         width: '25%',
+        dataIndex: 'Email',
         className: 'additional-class',
         defaultSortDirection: 'descend'
     },
     {
         name: 'Address',
+        dataIndex: 'Address',
         width: '35%',
         className: 'additional-class'
     }
