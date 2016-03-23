@@ -18699,9 +18699,9 @@
 
 	var _reactReduxGrid = __webpack_require__(161);
 
-	var _reactRedux = __webpack_require__(163);
+	var _reactRedux = __webpack_require__(268);
 
-	var _demodata = __webpack_require__(247);
+	var _demodata = __webpack_require__(276);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -19724,78 +19724,23 @@
 
 	'use strict';
 
-	var _Grid = __webpack_require__(162);
+	var _redux = __webpack_require__(162);
 
-	var _Grid2 = _interopRequireDefault(_Grid);
+	var _Grid = __webpack_require__(172);
 
-	var _store = __webpack_require__(231);
+	var _store = __webpack_require__(251);
 
 	var _store2 = _interopRequireDefault(_store);
 
-	var _columnmanager = __webpack_require__(237);
-
-	var _columnmanager2 = _interopRequireDefault(_columnmanager);
-
-	var _datasource = __webpack_require__(236);
-
-	var _datasource2 = _interopRequireDefault(_datasource);
-
-	var _grid = __webpack_require__(234);
-
-	var _grid2 = _interopRequireDefault(_grid);
-
-	var _bulkaction = __webpack_require__(242);
-
-	var _bulkaction2 = _interopRequireDefault(_bulkaction);
-
-	var _editor = __webpack_require__(238);
-
-	var _editor2 = _interopRequireDefault(_editor);
-
-	var _errorhandler = __webpack_require__(245);
-
-	var _errorhandler2 = _interopRequireDefault(_errorhandler);
-
-	var _filter = __webpack_require__(243);
-
-	var _filter2 = _interopRequireDefault(_filter);
-
-	var _loader = __webpack_require__(241);
-
-	var _loader2 = _interopRequireDefault(_loader);
-
-	var _menu = __webpack_require__(239);
-
-	var _menu2 = _interopRequireDefault(_menu);
-
-	var _pager = __webpack_require__(240);
-
-	var _pager2 = _interopRequireDefault(_pager);
-
-	var _selection = __webpack_require__(244);
-
-	var _selection2 = _interopRequireDefault(_selection);
+	var _reducers = __webpack_require__(253);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var Reducers = {
-	    ColumnManager: _columnmanager2.default,
-	    DataSource: _datasource2.default,
-	    Grid: _grid2.default,
-	    BulkActions: _bulkaction2.default,
-	    Editor: _editor2.default,
-	    ErrorHandler: _errorhandler2.default,
-	    Filter: _filter2.default,
-	    Loader: _loader2.default,
-	    Menu: _menu2.default,
-	    Pager: _pager2.default,
-	    Selection: _selection2.default
-	};
-
 	var modules = {
-	    Grid: _Grid2.default,
+	    Grid: _Grid.ConnectedGrid,
 	    Store: _store2.default,
-	    Reducers: Reducers
+	    Reducers: _reducers.Reducers,
+	    GridRootReducer: (0, _redux.combineReducers)(_reducers.Reducers)
 	};
 
 	module.exports = modules;
@@ -19806,823 +19751,32 @@
 /* 162 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _react = __webpack_require__(149);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _reactRedux = __webpack_require__(163);
-
-	var _Header = __webpack_require__(183);
-
-	var _Header2 = _interopRequireDefault(_Header);
-
-	var _Row = __webpack_require__(194);
-
-	var _Row2 = _interopRequireDefault(_Row);
-
-	var _Toolbar = __webpack_require__(197);
-
-	var _Toolbar2 = _interopRequireDefault(_Toolbar);
-
-	var _Message = __webpack_require__(199);
-
-	var _Message2 = _interopRequireDefault(_Message);
-
-	var _Toolbar3 = __webpack_require__(201);
-
-	var _Toolbar4 = _interopRequireDefault(_Toolbar3);
-
-	var _Toolbar5 = __webpack_require__(204);
-
-	var _Toolbar6 = _interopRequireDefault(_Toolbar5);
-
-	var _LoadingBar = __webpack_require__(212);
-
-	var _LoadingBar2 = _interopRequireDefault(_LoadingBar);
-
-	var _ColumnManager = __webpack_require__(213);
-
-	var _ColumnManager2 = _interopRequireDefault(_ColumnManager);
-
-	var _Model = __webpack_require__(218);
-
-	var _Model2 = _interopRequireDefault(_Model);
-
-	var _Manager = __webpack_require__(220);
-
-	var _Manager2 = _interopRequireDefault(_Manager);
-
-	var _prefix = __webpack_require__(186);
-
-	var _GridConstants = __webpack_require__(185);
-
-	var _GridActions = __webpack_require__(191);
-
-	__webpack_require__(222);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var Grid = function (_Component) {
-	    _inherits(Grid, _Component);
-
-	    function Grid() {
-	        _classCallCheck(this, Grid);
-
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(Grid).apply(this, arguments));
-	    }
-
-	    _createClass(Grid, [{
-	        key: 'componentWillMount',
-	        value: function componentWillMount() {
-	            var _props = this.props;
-	            var dataSource = _props.dataSource;
-	            var data = _props.data;
-	            var store = _props.store;
-	            var columns = _props.columns;
-
-
-	            if (!columns) {
-	                console.warn('A columns array is required');
-	            } else {
-	                store.dispatch((0, _GridActions.setColumns)(columns));
-	            }
-
-	            if (dataSource !== _react2.default.PropTypes.string) {
-	                store.dispatch((0, _GridActions.getAsyncData)(dataSource));
-	            } else if (data) {
-	                store.dispatch((0, _GridActions.setData)(data));
-	            } else {
-	                console.warn('A data source, or a static data set is required');
-	            }
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            var _props2 = this.props;
-	            var columnState = _props2.columnState;
-	            var data = _props2.data;
-	            var dataSource = _props2.dataSource;
-	            var pageSize = _props2.pageSize;
-	            var plugins = _props2.plugins;
-	            var events = _props2.events;
-	            var store = _props2.store;
-
-
-	            var columns = columnState && columnState.columns ? columnState.columns : [];
-
-	            var selectionModel = new _Model2.default(plugins, store, events);
-
-	            var editor = new _Manager2.default(plugins, store, events);
-
-	            var columnManager = new _ColumnManager2.default(plugins, store, events, selectionModel, editor, columns, dataSource);
-
-	            var editorComponent = editor.getComponent(plugins, store, events, selectionModel, editor, columns);
-
-	            var containerProps = {
-	                className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.CONTAINER)
-	            };
-
-	            var messageProps = {
-	                store: store
-	            };
-
-	            var bulkActionProps = {
-	                store: store,
-	                plugins: plugins,
-	                selectionModel: selectionModel
-	            };
-
-	            var filterProps = {
-	                store: store,
-	                plugins: plugins,
-	                columnManager: columnManager,
-	                pageSize: pageSize
-	            };
-
-	            var headerProps = {
-	                selectionModel: selectionModel,
-	                columnManager: columnManager,
-	                columns: columns,
-	                plugins: plugins,
-	                store: store
-	            };
-
-	            var rowProps = {
-	                columnManager: columnManager,
-	                columns: columns,
-	                events: events,
-	                pageSize: pageSize,
-	                plugins: plugins,
-	                store: store,
-	                selectionModel: selectionModel
-	            };
-
-	            var tableProps = {
-	                className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.TABLE),
-	                cellSpacing: 0,
-	                store: store
-	            };
-
-	            var pagerProps = {
-	                pageSize: pageSize,
-	                plugins: plugins,
-	                store: store
-	            };
-
-	            var loadingBarProps = {
-	                plugins: plugins
-	            };
-
-	            return _react2.default.createElement(
-	                'div',
-	                null,
-	                _react2.default.createElement(
-	                    'div',
-	                    containerProps,
-	                    _react2.default.createElement(_Message2.default, messageProps),
-	                    _react2.default.createElement(_Toolbar4.default, bulkActionProps),
-	                    _react2.default.createElement(_Toolbar6.default, filterProps),
-	                    _react2.default.createElement(
-	                        'table',
-	                        tableProps,
-	                        _react2.default.createElement(_Header2.default, headerProps),
-	                        _react2.default.createElement(_Row2.default, rowProps),
-	                        _react2.default.createElement(_Toolbar2.default, pagerProps)
-	                    ),
-	                    _react2.default.createElement(_LoadingBar2.default, loadingBarProps)
-	                ),
-	                editorComponent
-	            );
-	        }
-	    }]);
-
-	    return Grid;
-	}(_react.Component);
-
-	Grid.propTypes = {
-	    columnState: _react2.default.PropTypes.object,
-	    columns: _react2.default.PropTypes.arrayOf(_react2.default.PropTypes.object).isRequired,
-	    data: _react2.default.PropTypes.arrayOf(_react2.default.PropTypes.object),
-	    dataSource: _react2.default.PropTypes.string,
-	    events: _react2.default.PropTypes.object,
-	    pageSize: _react2.default.PropTypes.number,
-	    plugins: _react2.default.PropTypes.object,
-	    store: _react2.default.PropTypes.object
-	};
-	Grid.defaultProps = {
-	    pageSize: 25
-	};
-
-
-	function mapStateToProps(state) {
-	    return {
-	        columnState: state.grid.get('gridState')
-	    };
-	}
-
-	exports.default = (0, _reactRedux.connect)(mapStateToProps)(Grid);
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Grid.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-
-/***/ },
-/* 163 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	exports.__esModule = true;
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-	var _react = __webpack_require__(149);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _componentsCreateAll = __webpack_require__(164);
-
-	var _componentsCreateAll2 = _interopRequireDefault(_componentsCreateAll);
-
-	var _createAll = _componentsCreateAll2['default'](_react2['default']);
-
-	var Provider = _createAll.Provider;
-	var connect = _createAll.connect;
-	exports.Provider = Provider;
-	exports.connect = connect;
-
-/***/ },
-/* 164 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	exports.__esModule = true;
-	exports['default'] = createAll;
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-	var _createProvider = __webpack_require__(165);
-
-	var _createProvider2 = _interopRequireDefault(_createProvider);
-
-	var _createConnect = __webpack_require__(167);
-
-	var _createConnect2 = _interopRequireDefault(_createConnect);
-
-	function createAll(React) {
-	  var Provider = _createProvider2['default'](React);
-	  var connect = _createConnect2['default'](React);
-
-	  return { Provider: Provider, connect: connect };
-	}
-
-	module.exports = exports['default'];
-
-/***/ },
-/* 165 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	exports.__esModule = true;
-	exports['default'] = createProvider;
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var _utilsCreateStoreShape = __webpack_require__(166);
-
-	var _utilsCreateStoreShape2 = _interopRequireDefault(_utilsCreateStoreShape);
-
-	function isUsingOwnerContext(React) {
-	  var version = React.version;
-
-	  if (typeof version !== 'string') {
-	    return true;
-	  }
-
-	  var sections = version.split('.');
-	  var major = parseInt(sections[0], 10);
-	  var minor = parseInt(sections[1], 10);
-
-	  return major === 0 && minor === 13;
-	}
-
-	function createProvider(React) {
-	  var Component = React.Component;
-	  var PropTypes = React.PropTypes;
-	  var Children = React.Children;
-
-	  var storeShape = _utilsCreateStoreShape2['default'](PropTypes);
-	  var requireFunctionChild = isUsingOwnerContext(React);
-
-	  var didWarnAboutChild = false;
-	  function warnAboutFunctionChild() {
-	    if (didWarnAboutChild || requireFunctionChild) {
-	      return;
-	    }
-
-	    didWarnAboutChild = true;
-	    console.error( // eslint-disable-line no-console
-	    'With React 0.14 and later versions, you no longer need to ' + 'wrap <Provider> child into a function.');
-	  }
-	  function warnAboutElementChild() {
-	    if (didWarnAboutChild || !requireFunctionChild) {
-	      return;
-	    }
-
-	    didWarnAboutChild = true;
-	    console.error( // eslint-disable-line no-console
-	    'With React 0.13, you need to ' + 'wrap <Provider> child into a function. ' + 'This restriction will be removed with React 0.14.');
-	  }
-
-	  var didWarnAboutReceivingStore = false;
-	  function warnAboutReceivingStore() {
-	    if (didWarnAboutReceivingStore) {
-	      return;
-	    }
-
-	    didWarnAboutReceivingStore = true;
-	    console.error( // eslint-disable-line no-console
-	    '<Provider> does not support changing `store` on the fly. ' + 'It is most likely that you see this error because you updated to ' + 'Redux 2.x and React Redux 2.x which no longer hot reload reducers ' + 'automatically. See https://github.com/rackt/react-redux/releases/' + 'tag/v2.0.0 for the migration instructions.');
-	  }
-
-	  var Provider = (function (_Component) {
-	    _inherits(Provider, _Component);
-
-	    Provider.prototype.getChildContext = function getChildContext() {
-	      return { store: this.store };
-	    };
-
-	    function Provider(props, context) {
-	      _classCallCheck(this, Provider);
-
-	      _Component.call(this, props, context);
-	      this.store = props.store;
-	    }
-
-	    Provider.prototype.componentWillReceiveProps = function componentWillReceiveProps(nextProps) {
-	      var store = this.store;
-	      var nextStore = nextProps.store;
-
-	      if (store !== nextStore) {
-	        warnAboutReceivingStore();
-	      }
-	    };
-
-	    Provider.prototype.render = function render() {
-	      var children = this.props.children;
-
-	      if (typeof children === 'function') {
-	        warnAboutFunctionChild();
-	        children = children();
-	      } else {
-	        warnAboutElementChild();
-	      }
-
-	      return Children.only(children);
-	    };
-
-	    return Provider;
-	  })(Component);
-
-	  Provider.childContextTypes = {
-	    store: storeShape.isRequired
-	  };
-	  Provider.propTypes = {
-	    store: storeShape.isRequired,
-	    children: (requireFunctionChild ? PropTypes.func : PropTypes.element).isRequired
-	  };
-
-	  return Provider;
-	}
-
-	module.exports = exports['default'];
-
-/***/ },
-/* 166 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	exports.__esModule = true;
-	exports["default"] = createStoreShape;
-
-	function createStoreShape(PropTypes) {
-	  return PropTypes.shape({
-	    subscribe: PropTypes.func.isRequired,
-	    dispatch: PropTypes.func.isRequired,
-	    getState: PropTypes.func.isRequired
-	  });
-	}
-
-	module.exports = exports["default"];
-
-/***/ },
-/* 167 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
-
-	exports.__esModule = true;
-
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-	exports['default'] = createConnect;
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var _utilsCreateStoreShape = __webpack_require__(166);
-
-	var _utilsCreateStoreShape2 = _interopRequireDefault(_utilsCreateStoreShape);
-
-	var _utilsShallowEqual = __webpack_require__(168);
-
-	var _utilsShallowEqual2 = _interopRequireDefault(_utilsShallowEqual);
-
-	var _utilsIsPlainObject = __webpack_require__(169);
-
-	var _utilsIsPlainObject2 = _interopRequireDefault(_utilsIsPlainObject);
-
-	var _utilsWrapActionCreators = __webpack_require__(170);
-
-	var _utilsWrapActionCreators2 = _interopRequireDefault(_utilsWrapActionCreators);
-
-	var _hoistNonReactStatics = __webpack_require__(181);
-
-	var _hoistNonReactStatics2 = _interopRequireDefault(_hoistNonReactStatics);
-
-	var _invariant = __webpack_require__(182);
-
-	var _invariant2 = _interopRequireDefault(_invariant);
-
-	var defaultMapStateToProps = function defaultMapStateToProps() {
-	  return {};
-	};
-	var defaultMapDispatchToProps = function defaultMapDispatchToProps(dispatch) {
-	  return { dispatch: dispatch };
-	};
-	var defaultMergeProps = function defaultMergeProps(stateProps, dispatchProps, parentProps) {
-	  return _extends({}, parentProps, stateProps, dispatchProps);
-	};
-
-	function getDisplayName(Component) {
-	  return Component.displayName || Component.name || 'Component';
-	}
-
-	// Helps track hot reloading.
-	var nextVersion = 0;
-
-	function createConnect(React) {
-	  var Component = React.Component;
-	  var PropTypes = React.PropTypes;
-
-	  var storeShape = _utilsCreateStoreShape2['default'](PropTypes);
-
-	  return function connect(mapStateToProps, mapDispatchToProps, mergeProps) {
-	    var options = arguments.length <= 3 || arguments[3] === undefined ? {} : arguments[3];
-
-	    var shouldSubscribe = Boolean(mapStateToProps);
-	    var finalMapStateToProps = mapStateToProps || defaultMapStateToProps;
-	    var finalMapDispatchToProps = _utilsIsPlainObject2['default'](mapDispatchToProps) ? _utilsWrapActionCreators2['default'](mapDispatchToProps) : mapDispatchToProps || defaultMapDispatchToProps;
-	    var finalMergeProps = mergeProps || defaultMergeProps;
-	    var shouldUpdateStateProps = finalMapStateToProps.length > 1;
-	    var shouldUpdateDispatchProps = finalMapDispatchToProps.length > 1;
-	    var _options$pure = options.pure;
-	    var pure = _options$pure === undefined ? true : _options$pure;
-
-	    // Helps track hot reloading.
-	    var version = nextVersion++;
-
-	    function computeStateProps(store, props) {
-	      var state = store.getState();
-	      var stateProps = shouldUpdateStateProps ? finalMapStateToProps(state, props) : finalMapStateToProps(state);
-
-	      _invariant2['default'](_utilsIsPlainObject2['default'](stateProps), '`mapStateToProps` must return an object. Instead received %s.', stateProps);
-	      return stateProps;
-	    }
-
-	    function computeDispatchProps(store, props) {
-	      var dispatch = store.dispatch;
-
-	      var dispatchProps = shouldUpdateDispatchProps ? finalMapDispatchToProps(dispatch, props) : finalMapDispatchToProps(dispatch);
-
-	      _invariant2['default'](_utilsIsPlainObject2['default'](dispatchProps), '`mapDispatchToProps` must return an object. Instead received %s.', dispatchProps);
-	      return dispatchProps;
-	    }
-
-	    function _computeNextState(stateProps, dispatchProps, parentProps) {
-	      var mergedProps = finalMergeProps(stateProps, dispatchProps, parentProps);
-	      _invariant2['default'](_utilsIsPlainObject2['default'](mergedProps), '`mergeProps` must return an object. Instead received %s.', mergedProps);
-	      return mergedProps;
-	    }
-
-	    return function wrapWithConnect(WrappedComponent) {
-	      var Connect = (function (_Component) {
-	        _inherits(Connect, _Component);
-
-	        Connect.prototype.shouldComponentUpdate = function shouldComponentUpdate(nextProps, nextState) {
-	          if (!pure) {
-	            this.updateStateProps(nextProps);
-	            this.updateDispatchProps(nextProps);
-	            this.updateState(nextProps);
-	            return true;
-	          }
-
-	          var storeChanged = nextState.storeState !== this.state.storeState;
-	          var propsChanged = !_utilsShallowEqual2['default'](nextProps, this.props);
-	          var mapStateProducedChange = false;
-	          var dispatchPropsChanged = false;
-
-	          if (storeChanged || propsChanged && shouldUpdateStateProps) {
-	            mapStateProducedChange = this.updateStateProps(nextProps);
-	          }
-
-	          if (propsChanged && shouldUpdateDispatchProps) {
-	            dispatchPropsChanged = this.updateDispatchProps(nextProps);
-	          }
-
-	          if (propsChanged || mapStateProducedChange || dispatchPropsChanged) {
-	            this.updateState(nextProps);
-	            return true;
-	          }
-
-	          return false;
-	        };
-
-	        function Connect(props, context) {
-	          _classCallCheck(this, Connect);
-
-	          _Component.call(this, props, context);
-	          this.version = version;
-	          this.store = props.store || context.store;
-
-	          _invariant2['default'](this.store, 'Could not find "store" in either the context or ' + ('props of "' + this.constructor.displayName + '". ') + 'Either wrap the root component in a <Provider>, ' + ('or explicitly pass "store" as a prop to "' + this.constructor.displayName + '".'));
-
-	          this.stateProps = computeStateProps(this.store, props);
-	          this.dispatchProps = computeDispatchProps(this.store, props);
-	          this.state = { storeState: null };
-	          this.updateState();
-	        }
-
-	        Connect.prototype.computeNextState = function computeNextState() {
-	          var props = arguments.length <= 0 || arguments[0] === undefined ? this.props : arguments[0];
-
-	          return _computeNextState(this.stateProps, this.dispatchProps, props);
-	        };
-
-	        Connect.prototype.updateStateProps = function updateStateProps() {
-	          var props = arguments.length <= 0 || arguments[0] === undefined ? this.props : arguments[0];
-
-	          var nextStateProps = computeStateProps(this.store, props);
-	          if (_utilsShallowEqual2['default'](nextStateProps, this.stateProps)) {
-	            return false;
-	          }
-
-	          this.stateProps = nextStateProps;
-	          return true;
-	        };
-
-	        Connect.prototype.updateDispatchProps = function updateDispatchProps() {
-	          var props = arguments.length <= 0 || arguments[0] === undefined ? this.props : arguments[0];
-
-	          var nextDispatchProps = computeDispatchProps(this.store, props);
-	          if (_utilsShallowEqual2['default'](nextDispatchProps, this.dispatchProps)) {
-	            return false;
-	          }
-
-	          this.dispatchProps = nextDispatchProps;
-	          return true;
-	        };
-
-	        Connect.prototype.updateState = function updateState() {
-	          var props = arguments.length <= 0 || arguments[0] === undefined ? this.props : arguments[0];
-
-	          this.nextState = this.computeNextState(props);
-	        };
-
-	        Connect.prototype.isSubscribed = function isSubscribed() {
-	          return typeof this.unsubscribe === 'function';
-	        };
-
-	        Connect.prototype.trySubscribe = function trySubscribe() {
-	          if (shouldSubscribe && !this.unsubscribe) {
-	            this.unsubscribe = this.store.subscribe(this.handleChange.bind(this));
-	            this.handleChange();
-	          }
-	        };
-
-	        Connect.prototype.tryUnsubscribe = function tryUnsubscribe() {
-	          if (this.unsubscribe) {
-	            this.unsubscribe();
-	            this.unsubscribe = null;
-	          }
-	        };
-
-	        Connect.prototype.componentDidMount = function componentDidMount() {
-	          this.trySubscribe();
-	        };
-
-	        Connect.prototype.componentWillUnmount = function componentWillUnmount() {
-	          this.tryUnsubscribe();
-	        };
-
-	        Connect.prototype.handleChange = function handleChange() {
-	          if (!this.unsubscribe) {
-	            return;
-	          }
-
-	          this.setState({
-	            storeState: this.store.getState()
-	          });
-	        };
-
-	        Connect.prototype.getWrappedInstance = function getWrappedInstance() {
-	          return this.refs.wrappedInstance;
-	        };
-
-	        Connect.prototype.render = function render() {
-	          return React.createElement(WrappedComponent, _extends({ ref: 'wrappedInstance'
-	          }, this.nextState));
-	        };
-
-	        return Connect;
-	      })(Component);
-
-	      Connect.displayName = 'Connect(' + getDisplayName(WrappedComponent) + ')';
-	      Connect.WrappedComponent = WrappedComponent;
-	      Connect.contextTypes = {
-	        store: storeShape
-	      };
-	      Connect.propTypes = {
-	        store: storeShape
-	      };
-
-	      if (process.env.NODE_ENV !== 'production') {
-	        Connect.prototype.componentWillUpdate = function componentWillUpdate() {
-	          if (this.version === version) {
-	            return;
-	          }
-
-	          // We are hot reloading!
-	          this.version = version;
-
-	          // Update the state and bindings.
-	          this.trySubscribe();
-	          this.updateStateProps();
-	          this.updateDispatchProps();
-	          this.updateState();
-	        };
-	      }
-
-	      return _hoistNonReactStatics2['default'](Connect, WrappedComponent);
-	    };
-	  };
-	}
-
-	module.exports = exports['default'];
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
-
-/***/ },
-/* 168 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	exports.__esModule = true;
-	exports["default"] = shallowEqual;
-
-	function shallowEqual(objA, objB) {
-	  if (objA === objB) {
-	    return true;
-	  }
-
-	  var keysA = Object.keys(objA);
-	  var keysB = Object.keys(objB);
-
-	  if (keysA.length !== keysB.length) {
-	    return false;
-	  }
-
-	  // Test for A's keys different from B.
-	  var hasOwn = Object.prototype.hasOwnProperty;
-	  for (var i = 0; i < keysA.length; i++) {
-	    if (!hasOwn.call(objB, keysA[i]) || objA[keysA[i]] !== objB[keysA[i]]) {
-	      return false;
-	    }
-	  }
-
-	  return true;
-	}
-
-	module.exports = exports["default"];
-
-/***/ },
-/* 169 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	exports.__esModule = true;
-	exports['default'] = isPlainObject;
-	var fnToString = function fnToString(fn) {
-	  return Function.prototype.toString.call(fn);
-	};
-
-	/**
-	 * @param {any} obj The object to inspect.
-	 * @returns {boolean} True if the argument appears to be a plain object.
-	 */
-
-	function isPlainObject(obj) {
-	  if (!obj || typeof obj !== 'object') {
-	    return false;
-	  }
-
-	  var proto = typeof obj.constructor === 'function' ? Object.getPrototypeOf(obj) : Object.prototype;
-
-	  if (proto === null) {
-	    return true;
-	  }
-
-	  var constructor = proto.constructor;
-
-	  return typeof constructor === 'function' && constructor instanceof constructor && fnToString(constructor) === fnToString(Object);
-	}
-
-	module.exports = exports['default'];
-
-/***/ },
-/* 170 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	exports.__esModule = true;
-	exports['default'] = wrapActionCreators;
-
-	var _redux = __webpack_require__(171);
-
-	function wrapActionCreators(actionCreators) {
-	  return function (dispatch) {
-	    return _redux.bindActionCreators(actionCreators, dispatch);
-	  };
-	}
-
-	module.exports = exports['default'];
-
-/***/ },
-/* 171 */
-/***/ function(module, exports, __webpack_require__) {
-
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
 
 	exports.__esModule = true;
 	exports.compose = exports.applyMiddleware = exports.bindActionCreators = exports.combineReducers = exports.createStore = undefined;
 
-	var _createStore = __webpack_require__(172);
+	var _createStore = __webpack_require__(163);
 
 	var _createStore2 = _interopRequireDefault(_createStore);
 
-	var _combineReducers = __webpack_require__(176);
+	var _combineReducers = __webpack_require__(167);
 
 	var _combineReducers2 = _interopRequireDefault(_combineReducers);
 
-	var _bindActionCreators = __webpack_require__(178);
+	var _bindActionCreators = __webpack_require__(169);
 
 	var _bindActionCreators2 = _interopRequireDefault(_bindActionCreators);
 
-	var _applyMiddleware = __webpack_require__(179);
+	var _applyMiddleware = __webpack_require__(170);
 
 	var _applyMiddleware2 = _interopRequireDefault(_applyMiddleware);
 
-	var _compose = __webpack_require__(180);
+	var _compose = __webpack_require__(171);
 
 	var _compose2 = _interopRequireDefault(_compose);
 
-	var _warning = __webpack_require__(177);
+	var _warning = __webpack_require__(168);
 
 	var _warning2 = _interopRequireDefault(_warning);
 
@@ -20646,7 +19800,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 172 */
+/* 163 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -20655,7 +19809,7 @@
 	exports.ActionTypes = undefined;
 	exports["default"] = createStore;
 
-	var _isPlainObject = __webpack_require__(173);
+	var _isPlainObject = __webpack_require__(164);
 
 	var _isPlainObject2 = _interopRequireDefault(_isPlainObject);
 
@@ -20867,11 +20021,11 @@
 	}
 
 /***/ },
-/* 173 */
+/* 164 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isHostObject = __webpack_require__(174),
-	    isObjectLike = __webpack_require__(175);
+	var isHostObject = __webpack_require__(165),
+	    isObjectLike = __webpack_require__(166);
 
 	/** `Object#toString` result references. */
 	var objectTag = '[object Object]';
@@ -20939,7 +20093,7 @@
 
 
 /***/ },
-/* 174 */
+/* 165 */
 /***/ function(module, exports) {
 
 	/**
@@ -20965,7 +20119,7 @@
 
 
 /***/ },
-/* 175 */
+/* 166 */
 /***/ function(module, exports) {
 
 	/**
@@ -20999,7 +20153,7 @@
 
 
 /***/ },
-/* 176 */
+/* 167 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -21007,13 +20161,13 @@
 	exports.__esModule = true;
 	exports["default"] = combineReducers;
 
-	var _createStore = __webpack_require__(172);
+	var _createStore = __webpack_require__(163);
 
-	var _isPlainObject = __webpack_require__(173);
+	var _isPlainObject = __webpack_require__(164);
 
 	var _isPlainObject2 = _interopRequireDefault(_isPlainObject);
 
-	var _warning = __webpack_require__(177);
+	var _warning = __webpack_require__(168);
 
 	var _warning2 = _interopRequireDefault(_warning);
 
@@ -21132,7 +20286,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 177 */
+/* 168 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -21161,7 +20315,7 @@
 	}
 
 /***/ },
-/* 178 */
+/* 169 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -21217,7 +20371,7 @@
 	}
 
 /***/ },
-/* 179 */
+/* 170 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -21227,7 +20381,7 @@
 	exports.__esModule = true;
 	exports["default"] = applyMiddleware;
 
-	var _compose = __webpack_require__(180);
+	var _compose = __webpack_require__(171);
 
 	var _compose2 = _interopRequireDefault(_compose);
 
@@ -21279,7 +20433,7 @@
 	}
 
 /***/ },
-/* 180 */
+/* 171 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -21313,7 +20467,940 @@
 	}
 
 /***/ },
+/* 172 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.ConnectedGrid = exports.Grid = exports.selectionModel = exports.editor = exports.columnManager = undefined;
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(149);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRedux = __webpack_require__(173);
+
+	var _Header = __webpack_require__(184);
+
+	var _FixedHeader = __webpack_require__(200);
+
+	var _Row = __webpack_require__(202);
+
+	var _Toolbar = __webpack_require__(208);
+
+	var _Message = __webpack_require__(212);
+
+	var _Toolbar2 = __webpack_require__(214);
+
+	var _Toolbar3 = _interopRequireDefault(_Toolbar2);
+
+	var _Toolbar4 = __webpack_require__(217);
+
+	var _Toolbar5 = _interopRequireDefault(_Toolbar4);
+
+	var _LoadingBar = __webpack_require__(227);
+
+	var _LoadingBar2 = _interopRequireDefault(_LoadingBar);
+
+	var _ColumnManager = __webpack_require__(228);
+
+	var _ColumnManager2 = _interopRequireDefault(_ColumnManager);
+
+	var _Model = __webpack_require__(237);
+
+	var _Model2 = _interopRequireDefault(_Model);
+
+	var _Manager = __webpack_require__(239);
+
+	var _Manager2 = _interopRequireDefault(_Manager);
+
+	var _prefix = __webpack_require__(194);
+
+	var _GridConstants = __webpack_require__(190);
+
+	var _GridActions = __webpack_require__(188);
+
+	var _stateGetter = __webpack_require__(199);
+
+	__webpack_require__(242);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var Grid = function (_Component) {
+	    _inherits(Grid, _Component);
+
+	    function Grid() {
+	        _classCallCheck(this, Grid);
+
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(Grid).apply(this, arguments));
+	    }
+
+	    _createClass(Grid, [{
+	        key: 'componentWillMount',
+	        value: function componentWillMount() {
+	            var _props = this.props;
+	            var columns = _props.columns;
+	            var dataSource = _props.dataSource;
+	            var events = _props.events;
+	            var plugins = _props.plugins;
+	            var store = _props.store;
+
+
+	            if (!store || !store.dispatch) {
+	                throw new Error('Component must be intialized with a valid store');
+	            }
+
+	            this.setColumns();
+
+	            this.setData();
+
+	            columnManager.init(plugins, store, events, selectionModel, editor, columns, dataSource);
+
+	            selectionModel.init(plugins, store, events);
+
+	            editor.init(plugins, store, events);
+	        }
+	    }, {
+	        key: 'setData',
+	        value: function setData() {
+	            var _props2 = this.props;
+	            var dataSource = _props2.dataSource;
+	            var data = _props2.data;
+	            var store = _props2.store;
+
+
+	            if (typeof dataSource === 'string' || typeof dataSource === 'function') {
+	                store.dispatch((0, _GridActions.getAsyncData)(dataSource));
+	            } else if (data) {
+	                store.dispatch((0, _GridActions.setData)(data));
+	            } else {
+	                throw new Error('A data source, or a static data set is required');
+	            }
+	        }
+	    }, {
+	        key: 'setColumns',
+	        value: function setColumns() {
+	            var _props3 = this.props;
+	            var columns = _props3.columns;
+	            var store = _props3.store;
+
+
+	            if (!columns) {
+	                throw new Error('A columns array is required');
+	            } else {
+	                store.dispatch((0, _GridActions.setColumns)(columns));
+	            }
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var _props4 = this.props;
+	            var columnState = _props4.columnState;
+	            var data = _props4.data;
+	            var dataSource = _props4.dataSource;
+	            var height = _props4.height;
+	            var pageSize = _props4.pageSize;
+	            var plugins = _props4.plugins;
+	            var events = _props4.events;
+	            var reducerKeys = _props4.reducerKeys;
+	            var store = _props4.store;
+
+
+	            var columns = columnState && columnState.columns ? columnState.columns : [];
+
+	            var editorComponent = editor.getComponent(plugins, store, events, selectionModel, editor, columns);
+
+	            var containerProps = {
+	                className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.CONTAINER),
+	                reducerKeys: reducerKeys
+	            };
+
+	            var messageProps = {
+	                reducerKeys: reducerKeys,
+	                store: store
+	            };
+
+	            var bulkActionProps = {
+	                plugins: plugins,
+	                reducerKeys: reducerKeys,
+	                selectionModel: selectionModel,
+	                store: store
+	            };
+
+	            var filterProps = {
+	                columnManager: columnManager,
+	                pageSize: pageSize,
+	                plugins: plugins,
+	                reducerKeys: reducerKeys,
+	                store: store
+	            };
+
+	            var headerProps = {
+	                columnManager: columnManager,
+	                columns: columns,
+	                plugins: plugins,
+	                reducerKeys: reducerKeys,
+	                selectionModel: selectionModel,
+	                store: store,
+	                visible: false
+	            };
+
+	            var fixedHeaderProps = Object.assign({
+	                visible: true
+	            }, headerProps);
+
+	            var tableContainerProps = {
+	                className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.TABLE_CONTAINER),
+	                style: {
+	                    height: height
+	                }
+	            };
+
+	            var rowProps = {
+	                columnManager: columnManager,
+	                columns: columns,
+	                events: events,
+	                pageSize: pageSize,
+	                plugins: plugins,
+	                reducerKeys: reducerKeys,
+	                selectionModel: selectionModel,
+	                store: store
+	            };
+
+	            var tableProps = {
+	                className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.TABLE),
+	                cellSpacing: 0,
+	                reducerKeys: reducerKeys,
+	                store: store
+	            };
+
+	            var pagerProps = {
+	                dataSource: dataSource,
+	                pageSize: pageSize,
+	                plugins: plugins,
+	                reducerKeys: reducerKeys,
+	                store: store
+	            };
+
+	            var loadingBarProps = {
+	                plugins: plugins,
+	                reducerKeys: reducerKeys
+	            };
+
+	            return _react2.default.createElement(
+	                'div',
+	                null,
+	                _react2.default.createElement(
+	                    'div',
+	                    containerProps,
+	                    _react2.default.createElement(_Message.Message, messageProps),
+	                    _react2.default.createElement(_Toolbar3.default, bulkActionProps),
+	                    _react2.default.createElement(_Toolbar5.default, filterProps),
+	                    _react2.default.createElement(_FixedHeader.ConnectedFixedHeader, fixedHeaderProps),
+	                    _react2.default.createElement(
+	                        'div',
+	                        tableContainerProps,
+	                        _react2.default.createElement(
+	                            'table',
+	                            tableProps,
+	                            _react2.default.createElement(_Header.ConnectedHeader, headerProps),
+	                            _react2.default.createElement(_Row.ConnectedRow, rowProps)
+	                        )
+	                    ),
+	                    _react2.default.createElement(_Toolbar.ConnectedPagerToolbar, pagerProps),
+	                    _react2.default.createElement(_LoadingBar2.default, loadingBarProps)
+	                ),
+	                editorComponent
+	            );
+	        }
+	    }]);
+
+	    return Grid;
+	}(_react.Component);
+
+	Grid.propTypes = {
+	    columnState: _react.PropTypes.object,
+	    columns: _react.PropTypes.arrayOf(_react.PropTypes.object).isRequired,
+	    data: _react.PropTypes.arrayOf(_react.PropTypes.object),
+	    dataSource: _react.PropTypes.any,
+	    events: _react.PropTypes.object,
+	    height: _react.PropTypes.oneOfType([_react.PropTypes.string, _react.PropTypes.number]),
+	    pageSize: _react.PropTypes.number,
+	    plugins: _react.PropTypes.object,
+	    reducerKeys: _react.PropTypes.object,
+	    store: _react.PropTypes.object
+	};
+	Grid.defaultProps = {
+	    events: {},
+	    height: '500px',
+	    pageSize: 25,
+	    reducerKeys: {}
+	};
+	var columnManager = exports.columnManager = new _ColumnManager2.default();
+
+	var editor = exports.editor = new _Manager2.default();
+
+	var selectionModel = exports.selectionModel = new _Model2.default();
+
+	function mapStateToProps(state, props) {
+	    return {
+	        columnState: (0, _stateGetter.stateGetter)(state, props, 'grid', 'gridState'),
+	        editorState: (0, _stateGetter.stateGetter)(state, props, 'editor', 'editorState')
+	    };
+	}
+
+	var ConnectedGrid = (0, _reactRedux.connect)(mapStateToProps)(Grid);
+
+	exports.Grid = Grid;
+	exports.ConnectedGrid = ConnectedGrid;
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Grid.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 173 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	exports.__esModule = true;
+	exports.connect = exports.Provider = undefined;
+
+	var _Provider = __webpack_require__(174);
+
+	var _Provider2 = _interopRequireDefault(_Provider);
+
+	var _connect = __webpack_require__(176);
+
+	var _connect2 = _interopRequireDefault(_connect);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+	exports.Provider = _Provider2["default"];
+	exports.connect = _connect2["default"];
+
+/***/ },
+/* 174 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
+
+	exports.__esModule = true;
+	exports["default"] = undefined;
+
+	var _react = __webpack_require__(149);
+
+	var _storeShape = __webpack_require__(175);
+
+	var _storeShape2 = _interopRequireDefault(_storeShape);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var didWarnAboutReceivingStore = false;
+	function warnAboutReceivingStore() {
+	  if (didWarnAboutReceivingStore) {
+	    return;
+	  }
+	  didWarnAboutReceivingStore = true;
+
+	  /* eslint-disable no-console */
+	  if (typeof console !== 'undefined' && typeof console.error === 'function') {
+	    console.error('<Provider> does not support changing `store` on the fly. ' + 'It is most likely that you see this error because you updated to ' + 'Redux 2.x and React Redux 2.x which no longer hot reload reducers ' + 'automatically. See https://github.com/rackt/react-redux/releases/' + 'tag/v2.0.0 for the migration instructions.');
+	  }
+	  /* eslint-disable no-console */
+	}
+
+	var Provider = function (_Component) {
+	  _inherits(Provider, _Component);
+
+	  Provider.prototype.getChildContext = function getChildContext() {
+	    return { store: this.store };
+	  };
+
+	  function Provider(props, context) {
+	    _classCallCheck(this, Provider);
+
+	    var _this = _possibleConstructorReturn(this, _Component.call(this, props, context));
+
+	    _this.store = props.store;
+	    return _this;
+	  }
+
+	  Provider.prototype.render = function render() {
+	    var children = this.props.children;
+
+	    return _react.Children.only(children);
+	  };
+
+	  return Provider;
+	}(_react.Component);
+
+	exports["default"] = Provider;
+
+	if (process.env.NODE_ENV !== 'production') {
+	  Provider.prototype.componentWillReceiveProps = function (nextProps) {
+	    var store = this.store;
+	    var nextStore = nextProps.store;
+
+	    if (store !== nextStore) {
+	      warnAboutReceivingStore();
+	    }
+	  };
+	}
+
+	Provider.propTypes = {
+	  store: _storeShape2["default"].isRequired,
+	  children: _react.PropTypes.element.isRequired
+	};
+	Provider.childContextTypes = {
+	  store: _storeShape2["default"].isRequired
+	};
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
+
+/***/ },
+/* 175 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	exports.__esModule = true;
+
+	var _react = __webpack_require__(149);
+
+	exports["default"] = _react.PropTypes.shape({
+	  subscribe: _react.PropTypes.func.isRequired,
+	  dispatch: _react.PropTypes.func.isRequired,
+	  getState: _react.PropTypes.func.isRequired
+	});
+
+/***/ },
+/* 176 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	exports.__esModule = true;
+	exports["default"] = connect;
+
+	var _react = __webpack_require__(149);
+
+	var _storeShape = __webpack_require__(175);
+
+	var _storeShape2 = _interopRequireDefault(_storeShape);
+
+	var _shallowEqual = __webpack_require__(177);
+
+	var _shallowEqual2 = _interopRequireDefault(_shallowEqual);
+
+	var _wrapActionCreators = __webpack_require__(178);
+
+	var _wrapActionCreators2 = _interopRequireDefault(_wrapActionCreators);
+
+	var _isPlainObject = __webpack_require__(179);
+
+	var _isPlainObject2 = _interopRequireDefault(_isPlainObject);
+
+	var _hoistNonReactStatics = __webpack_require__(182);
+
+	var _hoistNonReactStatics2 = _interopRequireDefault(_hoistNonReactStatics);
+
+	var _invariant = __webpack_require__(183);
+
+	var _invariant2 = _interopRequireDefault(_invariant);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var defaultMapStateToProps = function defaultMapStateToProps(state) {
+	  return {};
+	}; // eslint-disable-line no-unused-vars
+	var defaultMapDispatchToProps = function defaultMapDispatchToProps(dispatch) {
+	  return { dispatch: dispatch };
+	};
+	var defaultMergeProps = function defaultMergeProps(stateProps, dispatchProps, parentProps) {
+	  return _extends({}, parentProps, stateProps, dispatchProps);
+	};
+
+	function getDisplayName(WrappedComponent) {
+	  return WrappedComponent.displayName || WrappedComponent.name || 'Component';
+	}
+
+	function checkStateShape(stateProps, dispatch) {
+	  (0, _invariant2["default"])((0, _isPlainObject2["default"])(stateProps), '`%sToProps` must return an object. Instead received %s.', dispatch ? 'mapDispatch' : 'mapState', stateProps);
+	  return stateProps;
+	}
+
+	// Helps track hot reloading.
+	var nextVersion = 0;
+
+	function connect(mapStateToProps, mapDispatchToProps, mergeProps) {
+	  var options = arguments.length <= 3 || arguments[3] === undefined ? {} : arguments[3];
+
+	  var shouldSubscribe = Boolean(mapStateToProps);
+	  var mapState = mapStateToProps || defaultMapStateToProps;
+	  var mapDispatch = (0, _isPlainObject2["default"])(mapDispatchToProps) ? (0, _wrapActionCreators2["default"])(mapDispatchToProps) : mapDispatchToProps || defaultMapDispatchToProps;
+
+	  var finalMergeProps = mergeProps || defaultMergeProps;
+	  var checkMergedEquals = finalMergeProps !== defaultMergeProps;
+	  var _options$pure = options.pure;
+	  var pure = _options$pure === undefined ? true : _options$pure;
+	  var _options$withRef = options.withRef;
+	  var withRef = _options$withRef === undefined ? false : _options$withRef;
+
+	  // Helps track hot reloading.
+
+	  var version = nextVersion++;
+
+	  function computeMergedProps(stateProps, dispatchProps, parentProps) {
+	    var mergedProps = finalMergeProps(stateProps, dispatchProps, parentProps);
+	    (0, _invariant2["default"])((0, _isPlainObject2["default"])(mergedProps), '`mergeProps` must return an object. Instead received %s.', mergedProps);
+	    return mergedProps;
+	  }
+
+	  return function wrapWithConnect(WrappedComponent) {
+	    var Connect = function (_Component) {
+	      _inherits(Connect, _Component);
+
+	      Connect.prototype.shouldComponentUpdate = function shouldComponentUpdate() {
+	        return !pure || this.haveOwnPropsChanged || this.hasStoreStateChanged;
+	      };
+
+	      function Connect(props, context) {
+	        _classCallCheck(this, Connect);
+
+	        var _this = _possibleConstructorReturn(this, _Component.call(this, props, context));
+
+	        _this.version = version;
+	        _this.store = props.store || context.store;
+
+	        (0, _invariant2["default"])(_this.store, 'Could not find "store" in either the context or ' + ('props of "' + _this.constructor.displayName + '". ') + 'Either wrap the root component in a <Provider>, ' + ('or explicitly pass "store" as a prop to "' + _this.constructor.displayName + '".'));
+
+	        var storeState = _this.store.getState();
+	        _this.state = { storeState: storeState };
+	        _this.clearCache();
+	        return _this;
+	      }
+
+	      Connect.prototype.computeStateProps = function computeStateProps(store, props) {
+	        if (!this.finalMapStateToProps) {
+	          return this.configureFinalMapState(store, props);
+	        }
+
+	        var state = store.getState();
+	        var stateProps = this.doStatePropsDependOnOwnProps ? this.finalMapStateToProps(state, props) : this.finalMapStateToProps(state);
+
+	        return checkStateShape(stateProps);
+	      };
+
+	      Connect.prototype.configureFinalMapState = function configureFinalMapState(store, props) {
+	        var mappedState = mapState(store.getState(), props);
+	        var isFactory = typeof mappedState === 'function';
+
+	        this.finalMapStateToProps = isFactory ? mappedState : mapState;
+	        this.doStatePropsDependOnOwnProps = this.finalMapStateToProps.length !== 1;
+
+	        return isFactory ? this.computeStateProps(store, props) : checkStateShape(mappedState);
+	      };
+
+	      Connect.prototype.computeDispatchProps = function computeDispatchProps(store, props) {
+	        if (!this.finalMapDispatchToProps) {
+	          return this.configureFinalMapDispatch(store, props);
+	        }
+
+	        var dispatch = store.dispatch;
+
+	        var dispatchProps = this.doDispatchPropsDependOnOwnProps ? this.finalMapDispatchToProps(dispatch, props) : this.finalMapDispatchToProps(dispatch);
+
+	        return checkStateShape(dispatchProps, true);
+	      };
+
+	      Connect.prototype.configureFinalMapDispatch = function configureFinalMapDispatch(store, props) {
+	        var mappedDispatch = mapDispatch(store.dispatch, props);
+	        var isFactory = typeof mappedDispatch === 'function';
+
+	        this.finalMapDispatchToProps = isFactory ? mappedDispatch : mapDispatch;
+	        this.doDispatchPropsDependOnOwnProps = this.finalMapDispatchToProps.length !== 1;
+
+	        return isFactory ? this.computeDispatchProps(store, props) : checkStateShape(mappedDispatch, true);
+	      };
+
+	      Connect.prototype.updateStatePropsIfNeeded = function updateStatePropsIfNeeded() {
+	        var nextStateProps = this.computeStateProps(this.store, this.props);
+	        if (this.stateProps && (0, _shallowEqual2["default"])(nextStateProps, this.stateProps)) {
+	          return false;
+	        }
+
+	        this.stateProps = nextStateProps;
+	        return true;
+	      };
+
+	      Connect.prototype.updateDispatchPropsIfNeeded = function updateDispatchPropsIfNeeded() {
+	        var nextDispatchProps = this.computeDispatchProps(this.store, this.props);
+	        if (this.dispatchProps && (0, _shallowEqual2["default"])(nextDispatchProps, this.dispatchProps)) {
+	          return false;
+	        }
+
+	        this.dispatchProps = nextDispatchProps;
+	        return true;
+	      };
+
+	      Connect.prototype.updateMergedPropsIfNeeded = function updateMergedPropsIfNeeded() {
+	        var nextMergedProps = computeMergedProps(this.stateProps, this.dispatchProps, this.props);
+	        if (this.mergedProps && checkMergedEquals && (0, _shallowEqual2["default"])(nextMergedProps, this.mergedProps)) {
+	          return false;
+	        }
+
+	        this.mergedProps = nextMergedProps;
+	        return true;
+	      };
+
+	      Connect.prototype.isSubscribed = function isSubscribed() {
+	        return typeof this.unsubscribe === 'function';
+	      };
+
+	      Connect.prototype.trySubscribe = function trySubscribe() {
+	        if (shouldSubscribe && !this.unsubscribe) {
+	          this.unsubscribe = this.store.subscribe(this.handleChange.bind(this));
+	          this.handleChange();
+	        }
+	      };
+
+	      Connect.prototype.tryUnsubscribe = function tryUnsubscribe() {
+	        if (this.unsubscribe) {
+	          this.unsubscribe();
+	          this.unsubscribe = null;
+	        }
+	      };
+
+	      Connect.prototype.componentDidMount = function componentDidMount() {
+	        this.trySubscribe();
+	      };
+
+	      Connect.prototype.componentWillReceiveProps = function componentWillReceiveProps(nextProps) {
+	        if (!pure || !(0, _shallowEqual2["default"])(nextProps, this.props)) {
+	          this.haveOwnPropsChanged = true;
+	        }
+	      };
+
+	      Connect.prototype.componentWillUnmount = function componentWillUnmount() {
+	        this.tryUnsubscribe();
+	        this.clearCache();
+	      };
+
+	      Connect.prototype.clearCache = function clearCache() {
+	        this.dispatchProps = null;
+	        this.stateProps = null;
+	        this.mergedProps = null;
+	        this.haveOwnPropsChanged = true;
+	        this.hasStoreStateChanged = true;
+	        this.renderedElement = null;
+	        this.finalMapDispatchToProps = null;
+	        this.finalMapStateToProps = null;
+	      };
+
+	      Connect.prototype.handleChange = function handleChange() {
+	        if (!this.unsubscribe) {
+	          return;
+	        }
+
+	        var prevStoreState = this.state.storeState;
+	        var storeState = this.store.getState();
+
+	        if (!pure || prevStoreState !== storeState) {
+	          this.hasStoreStateChanged = true;
+	          this.setState({ storeState: storeState });
+	        }
+	      };
+
+	      Connect.prototype.getWrappedInstance = function getWrappedInstance() {
+	        (0, _invariant2["default"])(withRef, 'To access the wrapped instance, you need to specify ' + '{ withRef: true } as the fourth argument of the connect() call.');
+
+	        return this.refs.wrappedInstance;
+	      };
+
+	      Connect.prototype.render = function render() {
+	        var haveOwnPropsChanged = this.haveOwnPropsChanged;
+	        var hasStoreStateChanged = this.hasStoreStateChanged;
+	        var renderedElement = this.renderedElement;
+
+	        this.haveOwnPropsChanged = false;
+	        this.hasStoreStateChanged = false;
+
+	        var shouldUpdateStateProps = true;
+	        var shouldUpdateDispatchProps = true;
+	        if (pure && renderedElement) {
+	          shouldUpdateStateProps = hasStoreStateChanged || haveOwnPropsChanged && this.doStatePropsDependOnOwnProps;
+	          shouldUpdateDispatchProps = haveOwnPropsChanged && this.doDispatchPropsDependOnOwnProps;
+	        }
+
+	        var haveStatePropsChanged = false;
+	        var haveDispatchPropsChanged = false;
+	        if (shouldUpdateStateProps) {
+	          haveStatePropsChanged = this.updateStatePropsIfNeeded();
+	        }
+	        if (shouldUpdateDispatchProps) {
+	          haveDispatchPropsChanged = this.updateDispatchPropsIfNeeded();
+	        }
+
+	        var haveMergedPropsChanged = true;
+	        if (haveStatePropsChanged || haveDispatchPropsChanged || haveOwnPropsChanged) {
+	          haveMergedPropsChanged = this.updateMergedPropsIfNeeded();
+	        } else {
+	          haveMergedPropsChanged = false;
+	        }
+
+	        if (!haveMergedPropsChanged && renderedElement) {
+	          return renderedElement;
+	        }
+
+	        if (withRef) {
+	          this.renderedElement = (0, _react.createElement)(WrappedComponent, _extends({}, this.mergedProps, {
+	            ref: 'wrappedInstance'
+	          }));
+	        } else {
+	          this.renderedElement = (0, _react.createElement)(WrappedComponent, this.mergedProps);
+	        }
+
+	        return this.renderedElement;
+	      };
+
+	      return Connect;
+	    }(_react.Component);
+
+	    Connect.displayName = 'Connect(' + getDisplayName(WrappedComponent) + ')';
+	    Connect.WrappedComponent = WrappedComponent;
+	    Connect.contextTypes = {
+	      store: _storeShape2["default"]
+	    };
+	    Connect.propTypes = {
+	      store: _storeShape2["default"]
+	    };
+
+	    if (process.env.NODE_ENV !== 'production') {
+	      Connect.prototype.componentWillUpdate = function componentWillUpdate() {
+	        if (this.version === version) {
+	          return;
+	        }
+
+	        // We are hot reloading!
+	        this.version = version;
+	        this.trySubscribe();
+	        this.clearCache();
+	      };
+	    }
+
+	    return (0, _hoistNonReactStatics2["default"])(Connect, WrappedComponent);
+	  };
+	}
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
+
+/***/ },
+/* 177 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	exports.__esModule = true;
+	exports["default"] = shallowEqual;
+	function shallowEqual(objA, objB) {
+	  if (objA === objB) {
+	    return true;
+	  }
+
+	  var keysA = Object.keys(objA);
+	  var keysB = Object.keys(objB);
+
+	  if (keysA.length !== keysB.length) {
+	    return false;
+	  }
+
+	  // Test for A's keys different from B.
+	  var hasOwn = Object.prototype.hasOwnProperty;
+	  for (var i = 0; i < keysA.length; i++) {
+	    if (!hasOwn.call(objB, keysA[i]) || objA[keysA[i]] !== objB[keysA[i]]) {
+	      return false;
+	    }
+	  }
+
+	  return true;
+	}
+
+/***/ },
+/* 178 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	exports.__esModule = true;
+	exports["default"] = wrapActionCreators;
+
+	var _redux = __webpack_require__(162);
+
+	function wrapActionCreators(actionCreators) {
+	  return function (dispatch) {
+	    return (0, _redux.bindActionCreators)(actionCreators, dispatch);
+	  };
+	}
+
+/***/ },
+/* 179 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var isHostObject = __webpack_require__(180),
+	    isObjectLike = __webpack_require__(181);
+
+	/** `Object#toString` result references. */
+	var objectTag = '[object Object]';
+
+	/** Used for built-in method references. */
+	var objectProto = Object.prototype;
+
+	/** Used to resolve the decompiled source of functions. */
+	var funcToString = Function.prototype.toString;
+
+	/** Used to infer the `Object` constructor. */
+	var objectCtorString = funcToString.call(Object);
+
+	/**
+	 * Used to resolve the [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
+	 * of values.
+	 */
+	var objectToString = objectProto.toString;
+
+	/** Built-in value references. */
+	var getPrototypeOf = Object.getPrototypeOf;
+
+	/**
+	 * Checks if `value` is a plain object, that is, an object created by the
+	 * `Object` constructor or one with a `[[Prototype]]` of `null`.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is a plain object, else `false`.
+	 * @example
+	 *
+	 * function Foo() {
+	 *   this.a = 1;
+	 * }
+	 *
+	 * _.isPlainObject(new Foo);
+	 * // => false
+	 *
+	 * _.isPlainObject([1, 2, 3]);
+	 * // => false
+	 *
+	 * _.isPlainObject({ 'x': 0, 'y': 0 });
+	 * // => true
+	 *
+	 * _.isPlainObject(Object.create(null));
+	 * // => true
+	 */
+	function isPlainObject(value) {
+	  if (!isObjectLike(value) ||
+	      objectToString.call(value) != objectTag || isHostObject(value)) {
+	    return false;
+	  }
+	  var proto = getPrototypeOf(value);
+	  if (proto === null) {
+	    return true;
+	  }
+	  var Ctor = proto.constructor;
+	  return (typeof Ctor == 'function' &&
+	    Ctor instanceof Ctor && funcToString.call(Ctor) == objectCtorString);
+	}
+
+	module.exports = isPlainObject;
+
+
+/***/ },
+/* 180 */
+/***/ function(module, exports) {
+
+	/**
+	 * Checks if `value` is a host object in IE < 9.
+	 *
+	 * @private
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is a host object, else `false`.
+	 */
+	function isHostObject(value) {
+	  // Many host objects are `Object` objects that can coerce to strings
+	  // despite having improperly defined `toString` methods.
+	  var result = false;
+	  if (value != null && typeof value.toString != 'function') {
+	    try {
+	      result = !!(value + '');
+	    } catch (e) {}
+	  }
+	  return result;
+	}
+
+	module.exports = isHostObject;
+
+
+/***/ },
 /* 181 */
+/***/ function(module, exports) {
+
+	/**
+	 * Checks if `value` is object-like. A value is object-like if it's not `null`
+	 * and has a `typeof` result of "object".
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+	 * @example
+	 *
+	 * _.isObjectLike({});
+	 * // => true
+	 *
+	 * _.isObjectLike([1, 2, 3]);
+	 * // => true
+	 *
+	 * _.isObjectLike(_.noop);
+	 * // => false
+	 *
+	 * _.isObjectLike(null);
+	 * // => false
+	 */
+	function isObjectLike(value) {
+	  return !!value && typeof value == 'object';
+	}
+
+	module.exports = isObjectLike;
+
+
+/***/ },
+/* 182 */
 /***/ function(module, exports) {
 
 	/**
@@ -21359,7 +21446,7 @@
 
 
 /***/ },
-/* 182 */
+/* 183 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -21417,7 +21504,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 183 */
+/* 184 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -21427,6 +21514,8 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
+	exports.ConnectedHeader = exports.Header = exports.handleColumnClick = exports.handleDrag = exports.addEmptyInsert = undefined;
+	var _arguments = arguments;
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -21434,23 +21523,27 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _reactRedux = __webpack_require__(163);
+	var _reactDom = __webpack_require__(2);
 
-	var _DragAndDropManager = __webpack_require__(184);
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+
+	var _reactRedux = __webpack_require__(173);
+
+	var _Column = __webpack_require__(185);
+
+	var _EmptyHeader = __webpack_require__(197);
+
+	var _DragAndDropManager = __webpack_require__(198);
 
 	var _DragAndDropManager2 = _interopRequireDefault(_DragAndDropManager);
 
-	var _keygenerator = __webpack_require__(187);
+	var _prefix = __webpack_require__(194);
 
-	var _prefix = __webpack_require__(186);
+	var _stateGetter = __webpack_require__(199);
 
-	var _throttle = __webpack_require__(188);
+	var _GridConstants = __webpack_require__(190);
 
-	var _GridConstants = __webpack_require__(185);
-
-	var _ColumnManager = __webpack_require__(189);
-
-	var _GridActions = __webpack_require__(191);
+	var _GridActions = __webpack_require__(188);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -21460,6 +21553,8 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+	var dragAndDropManager = new _DragAndDropManager2.default();
+
 	var Header = function (_Component) {
 	    _inherits(Header, _Component);
 
@@ -21468,290 +21563,59 @@
 
 	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Header).call(this));
 
-	        _this.handleDrag = (0, _throttle.throttle)(_this.handleDrag, _this, 250);
+	        _this.handleDrag = handleDrag;
 	        return _this;
 	    }
 
 	    _createClass(Header, [{
-	        key: 'isColumnResizable',
-	        value: function isColumnResizable(col, columnManager) {
-
-	            if (col.resizable !== undefined) {
-	                return col.resizable;
-	            } else if (columnManager.config.resizable !== undefined) {
-	                return columnManager.config.resizable;
-	            } else {
-	                return columnManager.config.defaultResizable;
-	            }
-	        }
-	    }, {
-	        key: 'isSortable',
-	        value: function isSortable(col, columnManager) {
-
-	            if (col.sortable !== undefined) {
-	                return col.sortable;
-	            } else if (columnManager.config.sortable.enabled !== undefined) {
-	                return columnManager.config.sortable.enabled;
-	            } else {
-	                return columnManager.config.defaultSortable;
-	            }
-	        }
-	    }, {
-	        key: 'handleDrop',
-	        value: function handleDrop(droppedIndex, columns, reactEvent) {
-	            var store = this.props.store;
-
-
-	            try {
-	                var colData = reactEvent && reactEvent.dataTransfer.getData ? JSON.parse(reactEvent.dataTransfer.getData('Text')) : null;
-
-	                if (colData) {
-	                    store.dispatch((0, _ColumnManager.reorderColumn)(colData.index, droppedIndex, columns));
-	                }
-	            } catch (e) {
-	                console.warn('Invalid drop');
-	            }
-	        }
-	    }, {
-	        key: 'handleDrag',
-	        value: function handleDrag(columns, id, columnManager, store, nextColumnKey, reactEvent) {
-
-	            var mousePosition = reactEvent.pageX;
-	            var header = reactEvent.target.parentElement.parentElement;
-	            var columnNode = reactEvent.target.parentElement;
-	            var columnOffsetLeft = columnNode.getBoundingClientRect().left;
-	            var headerWidth = parseFloat(window.getComputedStyle(header).width, 10);
-	            var computedWidth = (mousePosition - columnOffsetLeft) / headerWidth;
-	            var totalWidth = parseFloat(this.refs[id].style.width, 10) + parseFloat(this.refs[nextColumnKey].style.width, 10);
-	            var width = computedWidth * 100;
-
-	            var nextColWidth = Math.abs(width - totalWidth);
-
-	            if (nextColWidth < 0 || width < 0) {
-	                return false;
-	            }
-
-	            if (nextColWidth < columnManager.config.minColumnWidth) {
-	                nextColWidth = columnManager.config.minColumnWidth;
-	                width = totalWidth - columnManager.config.minColumnWidth;
-	            } else if (width < columnManager.config.minColumnWidth) {
-	                width = columnManager.config.minColumnWidth;
-	                nextColWidth = totalWidth - columnManager.config.minColumnWidth;
-	            }
-
-	            store.dispatch((0, _GridActions.resizeColumns)(width, id, {
-	                id: nextColumnKey,
-	                width: nextColWidth
-	            }, columns));
-	        }
-	    }, {
-	        key: 'handleColumnClick',
-	        value: function handleColumnClick(col) {
-
-	            if (col.HANDLE_CLICK) {
-	                col.HANDLE_CLICK.apply(this, arguments);
-	            }
-	        }
-	    }, {
-	        key: 'handleSort',
-	        value: function handleSort(columns, col, direction, columnManager) {
-	            var _props = this.props;
-	            var store = _props.store;
-	            var dataSource = _props.dataSource;
-	            var pager = _props.pager;
-
-
-	            store.dispatch((0, _GridActions.setSortDirection)(columns, col.id, direction));
-
-	            if (columnManager.config.sortable.method.toUpperCase() === _GridConstants.SORT_METHODS.LOCAL) {
-	                columnManager.doSort(_GridConstants.SORT_METHODS.LOCAL, col, direction, dataSource);
-	            } else if (columnManager.config.sortable.method.toUpperCase() === _GridConstants.SORT_METHODS.REMOTE) {
-	                columnManager.doSort(_GridConstants.SORT_METHODS.REMOTE, col, direction, dataSource, pager);
-	            } else {
-	                console.warn('Sort method not defined!');
-	            }
-	        }
-	    }, {
-	        key: 'getSortHandle',
-	        value: function getSortHandle(col, columns, columnManager) {
-
-	            var direction = col.sortDirection || col.defaultSortDirection || _GridConstants.SORT_DIRECTIONS.ASCEND;
-	            var visibile = col.sortDirection !== undefined || columnManager.config.sortable.enabled ? _GridConstants.CLASS_NAMES.SORT_HANDLE_VISIBLE : '';
-
-	            var handleProps = {
-	                className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.SORT_HANDLE, direction.toLowerCase(), visibile),
-	                onClick: this.handleSort.bind(this, columns, col, direction, columnManager)
-	            };
-
-	            return _react2.default.createElement('span', handleProps);
-	        }
-	    }, {
-	        key: 'getDragHandle',
-	        value: function getDragHandle(col, dragAndDropManager) {
-	            var handleProps = dragAndDropManager.initDragable();
-
-	            return _react2.default.createElement('span', handleProps);
-	        }
-	    }, {
-	        key: 'getWidth',
-	        value: function getWidth(col, key, columns, defaultColumnWidth) {
-
-	            var visibleColumns = columns.filter(function (_col) {
-	                return !_col.hidden;
-	            });
-	            var lastColumn = visibleColumns[visibleColumns.length - 1];
-	            var isLastColumn = lastColumn && lastColumn.name === col.name;
-	            var totalWidth = columns.reduce(function (a, _col) {
-	                if (_col.hidden) {
-	                    return a + 0;
-	                }
-	                return a + parseFloat(_col.width || 0);
-	            }, 0);
-
-	            var width = col.width || defaultColumnWidth;
-
-	            if (isLastColumn && totalWidth !== 0 && totalWidth < 100) {
-	                width = 100 - (totalWidth - parseFloat(width)) + '%';
-	            }
-
-	            return width;
-	        }
-	    }, {
-	        key: 'getHeaderText',
-	        value: function getHeaderText(col, index, columnManager, dragAndDropManager) {
-
-	            var innerHTML = col.renderer ? col.renderer(col) : col.name;
-	            var draggable = col.moveable !== undefined ? col.moveable : columnManager.config.moveable;
-
-	            var spanProps = dragAndDropManager.initDragable({
-	                draggable: draggable,
-	                className: draggable ? (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.DRAGGABLE_COLUMN, _GridConstants.CLASS_NAMES.COLUMN) : (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.COLUMN),
-	                onDrag: function onDrag(reactEvent) {
-	                    reactEvent.preventDefault();
-	                    reactEvent.stopPropagation();
-	                },
-	                onDragStart: function onDragStart(reactEvent) {
-
-	                    var data = {
-	                        key: (0, _keygenerator.keyFromObject)(col),
-	                        index: index
-	                    };
-
-	                    reactEvent.dataTransfer.setData('Text', JSON.stringify(data));
-	                }
-	            });
-
-	            return _react2.default.createElement(
-	                'span',
-	                spanProps,
-	                innerHTML
-	            );
-	        }
-	    }, {
-	        key: 'getHeader',
-	        value: function getHeader(col, dragAndDropManager, columns, index) {
-
-	            if (col.hidden) {
-	                return false;
-	            }
-
-	            var _props2 = this.props;
-	            var columnManager = _props2.columnManager;
-	            var store = _props2.store;
-
-
-	            var isResizable = this.isColumnResizable(col, columnManager);
-
-	            var isSortable = this.isSortable(col, columnManager);
-
-	            var visibleColumns = columns.filter(function (_col) {
-	                return !_col.hidden;
-	            });
-
-	            var key = (0, _keygenerator.keyGenerator)(col.name, col.value);
-
-	            var nextColumnKey = visibleColumns && visibleColumns[index + 1] ? (0, _keygenerator.keyGenerator)(visibleColumns[index + 1].name, visibleColumns[index + 1].value) : null;
-
-	            var sortHandle = isSortable ? this.getSortHandle(col, columns, columnManager) : null;
-
-	            var dragHandle = isResizable ? this.getDragHandle(col, dragAndDropManager) : null;
-
-	            var headerProps = {
-	                className: col.className + ' ' + (isResizable ? (0, _prefix.prefix)('resizable') : ''),
-	                onClick: this.handleColumnClick.bind(this, col),
-	                onDrag: this.handleDrag.bind(this, columns, key, columnManager, store, nextColumnKey),
-	                onDrop: this.handleDrop.bind(this, index, columns),
-	                key: key,
-	                ref: key,
-	                style: {
-	                    width: this.getWidth(col, key, columns, columnManager.config.defaultColumnWidth, index)
-	                }
-	            };
-
-	            var innerHTML = this.getHeaderText(col, index, columnManager, dragAndDropManager);
-
-	            return _react2.default.createElement(
-	                'th',
-	                headerProps,
-	                innerHTML,
-	                sortHandle,
-	                dragHandle
-	            );
-	        }
-	    }, {
-	        key: 'getEmptyHeader',
-	        value: function getEmptyHeader() {
-
-	            var headerProps = {
-	                style: {
-	                    width: '100%'
-	                }
-	            };
-
-	            return _react2.default.createElement('th', headerProps);
-	        }
-	    }, {
-	        key: 'addEmptyInsert',
-	        value: function addEmptyInsert(headers, visibleColumns) {
-	            var GRID_ACTIONS = this.props.plugins.GRID_ACTIONS;
-
-
-	            if (visibleColumns.length === 0) {
-
-	                if (GRID_ACTIONS && GRID_ACTIONS.menu && GRID_ACTIONS.menu.length > 0) {
-
-	                    headers.splice(1, 0, this.getEmptyHeader());
-	                } else {
-	                    headers.push(this.getEmptyHeader());
-	                }
-	            }
-	        }
-	    }, {
 	        key: 'render',
 	        value: function render() {
 	            var _this2 = this;
 
-	            var _props3 = this.props;
-	            var columns = _props3.columns;
-	            var selectionModel = _props3.selectionModel;
-	            var columnManager = _props3.columnManager;
+	            var _props = this.props;
+	            var columns = _props.columns;
+	            var columnManager = _props.columnManager;
+	            var dataSource = _props.dataSource;
+	            var selectionModel = _props.selectionModel;
+	            var store = _props.store;
+	            var pager = _props.pager;
+	            var plugins = _props.plugins;
+	            var visible = _props.visible;
 
-	            var dragAndDropManager = new _DragAndDropManager2.default();
 	            var visibleColumns = columns.filter(function (col) {
 	                return !col.hidden;
 	            });
 	            var headers = visibleColumns.map(function (col, i) {
-	                return _this2.getHeader(col, dragAndDropManager, visibleColumns, i);
+
+	                var colProps = {
+	                    scope: _this2,
+	                    col: col,
+	                    columns: columns,
+	                    visibleColumns: visibleColumns,
+	                    columnManager: columnManager,
+	                    dataSource: dataSource,
+	                    dragAndDropManager: dragAndDropManager,
+	                    pager: pager,
+	                    store: store,
+	                    index: i
+	                };
+
+	                return _react2.default.createElement(_Column.Column, colProps);
 	            });
+
+	            var classes = visible ? (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.HEADER) : (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.HEADER, _GridConstants.CLASS_NAMES.HEADER_HIDDEN);
+
 	            var headerProps = {
-	                className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.HEADER)
+	                className: classes
 	            };
 
-	            selectionModel.updateCells(headers, columns, 'header');
+	            if (selectionModel) {
+	                selectionModel.updateCells(headers, columns, 'header');
+	            }
 
 	            columnManager.addActionColumn(headers, 'header');
 
-	            this.addEmptyInsert(headers, visibleColumns);
+	            addEmptyInsert(headers, visibleColumns, plugins);
 
 	            return _react2.default.createElement(
 	                'thead',
@@ -21770,100 +21634,60 @@
 
 	Header.propTypes = {
 	    columnManager: _react.PropTypes.object.isRequired,
-	    columnStates: _react.PropTypes.object,
+	    columnState: _react.PropTypes.object,
 	    columns: _react.PropTypes.arrayOf(_react.PropTypes.Object).isRequired,
 	    dataSource: _react.PropTypes.object,
 	    pager: _react.PropTypes.object,
 	    plugins: _react.PropTypes.object,
 	    selectionModel: _react.PropTypes.object,
-	    store: _react.PropTypes.object
+	    store: _react.PropTypes.object,
+	    visible: _react.PropTypes.bool
+	};
+	var addEmptyInsert = exports.addEmptyInsert = function addEmptyInsert(headers, visibleColumns, plugins) {
+
+	    if (!plugins) {
+	        return false;
+	    }
+
+	    var GRID_ACTIONS = plugins.GRID_ACTIONS;
+
+
+	    if (visibleColumns.length === 0) {
+
+	        if (GRID_ACTIONS && GRID_ACTIONS.menu && GRID_ACTIONS.menu.length > 0) {
+
+	            headers.splice(1, 0, _react2.default.createElement(_EmptyHeader.EmptyHeader, null));
+	        } else {
+	            headers.push(_react2.default.createElement(_EmptyHeader.EmptyHeader, null));
+	        }
+	    }
 	};
 
+	var handleDrag = exports.handleDrag = function handleDrag() {
+	    return false;
+	};
 
-	function mapStateToProps(state) {
+	var handleColumnClick = exports.handleColumnClick = function handleColumnClick(col) {
+	    if (col.HANDLE_CLICK) {
+	        col.HANDLE_CLICK.apply(undefined, _arguments);
+	    }
+	};
+
+	function mapStateToProps(state, props) {
 	    return {
-	        columnStates: state.columnManager.get('columnStates'),
-	        dataSource: state.dataSource.get('gridData'),
-	        pager: state.pager.get('pagerState')
+	        columnState: (0, _stateGetter.stateGetter)(state, props, 'grid', 'gridState'),
+	        dataSource: (0, _stateGetter.stateGetter)(state, props, 'dataSource', 'gridData'),
+	        pager: (0, _stateGetter.stateGetter)(state, props, 'pager', 'pagerState')
 	    };
 	}
 
+	var ConnectedHeader = (0, _reactRedux.connect)(mapStateToProps)(Header);
+
+	exports.Header = Header;
+	exports.ConnectedHeader = ConnectedHeader;
 	exports.default = (0, _reactRedux.connect)(mapStateToProps)(Header);
 
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Header.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-
-/***/ },
-/* 184 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _GridConstants = __webpack_require__(185);
-
-	var _prefix = __webpack_require__(186);
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	var DragAndDropManager = function () {
-	    function DragAndDropManager() {
-	        _classCallCheck(this, DragAndDropManager);
-	    }
-
-	    _createClass(DragAndDropManager, [{
-	        key: 'initDragable',
-	        value: function initDragable(initialProps) {
-
-	            var defaults = {
-	                onDragStart: this.handleDragStart,
-	                onDrag: this.handleDrag,
-	                onDragOver: this.handleDragOver,
-	                onDragLeave: this.handleDragLeave,
-	                onDragEnd: this.handleDragEnd,
-	                onDrop: this.handleDrop,
-	                draggable: true,
-	                className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.DRAG_HANDLE)
-	            };
-
-	            var props = initialProps ? Object.assign(defaults, initialProps) : defaults;
-
-	            return props;
-	        }
-	    }, {
-	        key: 'handleDragStart',
-	        value: function handleDragStart() {}
-	    }, {
-	        key: 'handleDrag',
-	        value: function handleDrag() {}
-	    }, {
-	        key: 'handleDragOver',
-	        value: function handleDragOver(reactEvent) {
-	            reactEvent.preventDefault();
-	        }
-	    }, {
-	        key: 'handleDragLeave',
-	        value: function handleDragLeave() {}
-	    }, {
-	        key: 'handleDragEnd',
-	        value: function handleDragEnd() {}
-	    }, {
-	        key: 'handleDrop',
-	        value: function handleDrop() {}
-	    }]);
-
-	    return DragAndDropManager;
-	}();
-
-	exports.default = DragAndDropManager;
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "DragAndDropManager.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
 /* 185 */
@@ -21876,105 +21700,158 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	var CSS_PREFIX = exports.CSS_PREFIX = 'react-grid';
+	exports.isColumnResizable = exports.getWidth = exports.isSortable = exports.handleColumnClick = exports.handleDrop = exports.Column = undefined;
+	var _arguments = arguments;
 
-	var ROW_HEIGHT = exports.ROW_HEIGHT = 26;
+	var _react = __webpack_require__(149);
 
-	var DEFAULT_PAGE_SIZE = exports.DEFAULT_PAGE_SIZE = 20;
+	var _react2 = _interopRequireDefault(_react);
 
-	var SORT_DIRECTIONS = exports.SORT_DIRECTIONS = {
-	    ASCEND: 'ASCEND',
-	    DESCEND: 'DESCEND'
-	};
+	var _DragHandle = __webpack_require__(186);
 
-	var SORT_METHODS = exports.SORT_METHODS = {
-	    LOCAL: 'LOCAL',
-	    REMOTE: 'REMOTE'
-	};
+	var _SortHandle = __webpack_require__(187);
 
-	var FILTER_METHODS = exports.FILTER_METHODS = {
-	    LOCAL: 'LOCAL',
-	    REMOTE: 'REMOTE'
-	};
+	var _Text = __webpack_require__(195);
 
-	var KEYBOARD_MAP = exports.KEYBOARD_MAP = {
-	    ENTER: 13
-	};
+	var _keyGenerator = __webpack_require__(192);
 
-	var CLASS_NAMES = exports.CLASS_NAMES = {
-	    ACTIVE_CLASS: 'active',
-	    DRAG_HANDLE: 'drag-handle',
-	    SORT_HANDLE: 'sort-handle',
-	    SECONDARY_CLASS: 'secondary',
-	    CONTAINER: 'container',
-	    TABLE: 'table',
-	    HEADER: 'header',
-	    ROW: 'row',
-	    CELL: 'cell',
-	    PAGERTOOLBAR: 'pager-toolbar',
-	    EMPTY_ROW: 'empty-row',
-	    LOADING_BAR: 'loading-bar',
-	    DRAGGABLE_COLUMN: 'draggable-column',
-	    COLUMN: 'column',
-	    SORT_HANDLE_VISIBLE: 'sort-handle-visible',
-	    BUTTONS: {
-	        PAGER: 'page-buttons'
-	    },
-	    SELECTION_MODEL: {
-	        CHECKBOX: 'checkbox',
-	        CHECKBOX_CONTAINER: 'checkbox-container'
-	    },
-	    ERROR_HANDLER: {
-	        CONTAINER: 'error-container',
-	        MESSAGE: 'error-message'
-	    },
-	    EDITOR: {
-	        INLINE: {
-	            CONTAINER: 'inline-editor',
-	            SHOWN: 'shown',
-	            HIDDEN: 'hidden',
-	            SAVE_BUTTON: 'save-button',
-	            CANCEL_BUTTON: 'cancel-button',
-	            BUTTON_CONTAINER: 'button-container'
-	        }
-	    },
-	    GRID_ACTIONS: {
-	        CONTAINER: 'action-container',
-	        SELECTED_CLASS: 'action-menu-selected',
-	        MENU: {
-	            CONTAINER: 'action-menu-container',
-	            ITEM: 'action-menu-item'
-	        }
-	    },
-	    FILTER_CONTAINER: {
-	        CONTAINER: 'filter-container',
-	        INPUT: 'filter-input',
-	        SEARCH_BUTTON: 'filter-search-button',
-	        MENU_BUTTON: 'filter-menu-button',
-	        CLEAR_BUTTON: 'filter-clear-button',
-	        BUTTON_CONTAINER: 'filter-button-container',
-	        MENU: {
-	            CONTAINER: 'advanced-filter-menu-container',
-	            TITLE: 'advanced-filter-menu-title',
-	            BUTTON: 'advanced-filter-menu-button',
-	            BUTTON_CONTAINER: 'advanced-filter-menu-button-container',
-	            FIELD: {
-	                CONTAINER: 'advanced-filter-menu-field-container',
-	                LABEL: 'advanced-filter-menu-field-label',
-	                INPUT: 'advanced-filter-menu-field-input'
-	            }
-	        }
-	    },
-	    BULK_ACTIONS: {
-	        CONTAINER: 'bulkaction-container',
-	        DESCRIPTION: 'bulkaction-description',
-	        SHOWN: 'shown',
-	        HIDDEN: 'hidden'
+	var _prefix = __webpack_require__(194);
+
+	var _ColumnManager = __webpack_require__(196);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var Column = exports.Column = function Column(_ref) {
+	    var scope = _ref.scope;
+	    var col = _ref.col;
+	    var columns = _ref.columns;
+	    var columnManager = _ref.columnManager;
+	    var dataSource = _ref.dataSource;
+	    var dragAndDropManager = _ref.dragAndDropManager;
+	    var pager = _ref.pager;
+	    var store = _ref.store;
+	    var index = _ref.index;
+
+
+	    if (col.hidden) {
+	        return false;
 	    }
 
+	    var isResizable = isColumnResizable(col, columnManager);
+
+	    var sortable = isSortable(col, columnManager);
+
+	    var visibleColumns = columns.filter(function (_col) {
+	        return !_col.hidden;
+	    });
+
+	    var key = (0, _keyGenerator.keyGenerator)(col.name, 'grid-column');
+
+	    var nextColumnKey = visibleColumns && visibleColumns[index + 1] ? (0, _keyGenerator.keyGenerator)(visibleColumns[index + 1].name, 'grid-column') : null;
+
+	    var sortHandle = sortable ? _react2.default.createElement(_SortHandle.SortHandle, { col: col, columns: columns, columnManager: columnManager, dataSource: dataSource, pager: pager, store: store }) : null;
+
+	    var dragHandle = isResizable ? _react2.default.createElement(_DragHandle.DragHandle, { col: col, dragAndDropManager: dragAndDropManager }) : null;
+
+	    var headerProps = {
+	        className: col.className + ' ' + (isResizable ? (0, _prefix.prefix)('resizable') : ''),
+	        onClick: handleColumnClick.bind(scope, col),
+	        onDrag: scope.handleDrag.bind(scope, scope, columns, key, columnManager, store, nextColumnKey),
+	        onDrop: handleDrop.bind(scope, index, columns, store),
+	        key: key,
+	        style: {
+	            width: getWidth(col, key, columns, columnManager.config.defaultColumnWidth, index)
+	        }
+	    };
+
+	    var innerHTML = _react2.default.createElement(_Text.Text, { col: col, index: index, columnManager: columnManager, dragAndDropManager: dragAndDropManager });
+
+	    return _react2.default.createElement(
+	        'th',
+	        headerProps,
+	        innerHTML,
+	        sortHandle,
+	        dragHandle
+	    );
 	};
 
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "GridConstants.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+	Column.propTypes = {
+	    col: _react.PropTypes.object,
+	    columnManager: _react.PropTypes.object,
+	    columns: _react.PropTypes.arrayOf(_react.PropTypes.object),
+	    dataSource: _react.PropTypes.object,
+	    dragAndDropManager: _react.PropTypes.object,
+	    index: _react.PropTypes.number,
+	    pager: _react.PropTypes.object,
+	    scope: _react.PropTypes.object,
+	    store: _react.PropTypes.object
+	};
+
+	var handleDrop = exports.handleDrop = function handleDrop(droppedIndex, columns, store, reactEvent) {
+
+	    try {
+	        var colData = reactEvent && reactEvent.dataTransfer.getData ? JSON.parse(reactEvent.dataTransfer.getData('Text')) : null;
+
+	        if (colData) {
+	            store.dispatch((0, _ColumnManager.reorderColumn)(colData.index, droppedIndex, columns));
+	        }
+	    } catch (e) {
+	        console.warn('Invalid drop');
+	    }
+	};
+
+	var handleColumnClick = exports.handleColumnClick = function handleColumnClick(col) {
+	    if (col.HANDLE_CLICK) {
+	        col.HANDLE_CLICK.apply(undefined, _arguments);
+	    }
+	};
+
+	var isSortable = exports.isSortable = function isSortable(col, columnManager) {
+
+	    if (col.sortable !== undefined) {
+	        return col.sortable;
+	    } else if (columnManager.config.sortable.enabled !== undefined) {
+	        return columnManager.config.sortable.enabled;
+	    } else {
+	        return columnManager.config.defaultSortable;
+	    }
+	};
+
+	var getWidth = exports.getWidth = function getWidth(col, key, columns, defaultColumnWidth) {
+
+	    var visibleColumns = columns.filter(function (_col) {
+	        return !_col.hidden;
+	    });
+	    var lastColumn = visibleColumns[visibleColumns.length - 1];
+	    var isLastColumn = lastColumn && lastColumn.name === col.name;
+	    var totalWidth = columns.reduce(function (a, _col) {
+	        if (_col.hidden) {
+	            return a + 0;
+	        }
+	        return a + parseFloat(_col.width || 0);
+	    }, 0);
+
+	    var width = col.width || defaultColumnWidth;
+
+	    if (isLastColumn && totalWidth !== 0 && totalWidth < 100) {
+	        width = 100 - (totalWidth - parseFloat(width)) + '%';
+	    }
+
+	    return width;
+	};
+
+	var isColumnResizable = exports.isColumnResizable = function isColumnResizable(col, columnManager) {
+
+	    if (col.resizable !== undefined) {
+	        return col.resizable;
+	    } else if (columnManager.config.resizable !== undefined) {
+	        return columnManager.config.resizable;
+	    } else {
+	        return columnManager.config.defaultResizable;
+	    }
+	};
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Column.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
 /* 186 */
@@ -21987,22 +21864,30 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	exports.prefix = prefix;
+	exports.DragHandle = undefined;
 
-	var _GridConstants = __webpack_require__(185);
+	var _react = __webpack_require__(149);
 
-	function prefix() {
-	    return Array.from(arguments).map(function (cls) {
+	var _react2 = _interopRequireDefault(_react);
 
-	        if (!cls) {
-	            return null;
-	        }
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	        return _GridConstants.CSS_PREFIX + '-' + cls;
-	    }).join(' ');
-	}
+	var DragHandle = exports.DragHandle = function DragHandle(_ref) {
+	    var col = _ref.col;
+	    var dragAndDropManager = _ref.dragAndDropManager;
 
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "prefix.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+	    var handleProps = dragAndDropManager.initDragable();
+
+	    return _react2.default.createElement('span', handleProps);
+	};
+
+	DragHandle.propTypes = {
+	    col: _react.PropTypes.object,
+	    dragAndDropManager: _react.PropTypes.object
+	};
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "DragHandle.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
 /* 187 */
@@ -22015,145 +21900,66 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	exports.keyGenerator = keyGenerator;
-	exports.keyFromObject = keyFromObject;
-	function keyGenerator() {
-	    return btoa(Array.from(arguments).join(''));
-	}
+	exports.handleSort = exports.SortHandle = undefined;
 
-	function keyFromObject(obj, additionalStrings) {
+	var _react = __webpack_require__(149);
 
-	    if (additionalStrings && Array.isArray(additionalStrings)) {
-	        return btoa(additionalStrings.join('') + Object.keys(obj).map(function (k) {
-	            return obj[k];
-	        }).join(''));
+	var _react2 = _interopRequireDefault(_react);
+
+	var _GridActions = __webpack_require__(188);
+
+	var _prefix = __webpack_require__(194);
+
+	var _GridConstants = __webpack_require__(190);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var SortHandle = exports.SortHandle = function SortHandle(_ref) {
+	    var col = _ref.col;
+	    var columns = _ref.columns;
+	    var columnManager = _ref.columnManager;
+	    var dataSource = _ref.dataSource;
+	    var pager = _ref.pager;
+	    var store = _ref.store;
+
+
+	    var direction = col.sortDirection || col.defaultSortDirection || _GridConstants.SORT_DIRECTIONS.ASCEND;
+	    var visibile = col.sortDirection !== undefined || columnManager.config.sortable.enabled ? _GridConstants.CLASS_NAMES.SORT_HANDLE_VISIBLE : '';
+
+	    var handleProps = {
+	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.SORT_HANDLE, direction.toLowerCase(), visibile),
+	        onClick: handleSort.bind(undefined, columns, col, columnManager, dataSource, direction, pager, store)
+	    };
+
+	    return _react2.default.createElement('span', handleProps);
+	};
+
+	SortHandle.propTypes = {
+	    col: _react.PropTypes.object,
+	    columnManager: _react.PropTypes.object,
+	    columns: _react.PropTypes.array,
+	    dataSource: _react.PropTypes.object,
+	    pager: _react.PropTypes.object,
+	    store: _react.PropTypes.object
+	};
+
+	var handleSort = exports.handleSort = function handleSort(columns, col, columnManager, dataSource, direction, pager, store) {
+
+	    store.dispatch((0, _GridActions.setSortDirection)(columns, col.id, direction));
+
+	    if (columnManager.config.sortable.method.toUpperCase() === _GridConstants.SORT_METHODS.LOCAL) {
+	        columnManager.doSort(_GridConstants.SORT_METHODS.LOCAL, col, direction, dataSource);
+	    } else if (columnManager.config.sortable.method.toUpperCase() === _GridConstants.SORT_METHODS.REMOTE) {
+	        columnManager.doSort(_GridConstants.SORT_METHODS.REMOTE, col, direction, dataSource, pager);
 	    } else {
-	        return btoa(Object.keys(obj).map(function (k) {
-	            return obj[k];
-	        }).join(''));
+	        console.warn('Sort method not defined!');
 	    }
-	}
+	};
 
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "keygenerator.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "SortHandle.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
 /* 188 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.throttle = throttle;
-	function throttle(callback, scope, limit) {
-	    var wait = false;
-
-	    limit = limit || 100;
-
-	    return function dothrottle() {
-	        if (!wait) {
-	            callback.apply(scope, arguments);
-	            wait = true;
-	            setTimeout(function () {
-	                wait = false;
-	            }, limit);
-	        }
-	    };
-	}
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "throttle.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-
-/***/ },
-/* 189 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.reorderColumn = reorderColumn;
-
-	var _ActionTypes = __webpack_require__(190);
-
-	function reorderColumn(draggedIndex, droppedIndex, columns) {
-
-	    var reorder = function reorder(cols, to, from) {
-	        cols.splice(to, 0, cols.splice(from, 1)[0]);
-	        return cols;
-	    };
-
-	    var reorderedColumns = reorder(columns, droppedIndex, draggedIndex);
-
-	    return {
-	        type: _ActionTypes.SET_COLUMNS,
-	        columns: reorderedColumns
-	    };
-	}
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "ColumnManager.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-
-/***/ },
-/* 190 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	var PAGE_LOCAL = exports.PAGE_LOCAL = 'PAGE_LOCAL';
-	var PAGE_REMOTE = exports.PAGE_REMOTE = 'PAGE_REMOTE';
-
-	var SORT_LOCAL = exports.SORT_LOCAL = 'SORT_LOCAL';
-	var SORT_REMOTE = exports.SORT_REMOTE = 'SORT_REMOTE';
-
-	var GET_DATA = exports.GET_DATA = 'GET_DATA';
-	var SET_DATA = exports.SET_DATA = 'SET_DATA';
-	var SORT_DATA = exports.SORT_DATA = 'SORT_DATA';
-
-	var SET_SELECTION = exports.SET_SELECTION = 'SET_SELECTION';
-	var SELECT_ALL = exports.SELECT_ALL = 'SELECT_ALL';
-	var DESELECT_ALL = exports.DESELECT_ALL = 'DESELECT_ALL';
-
-	var SET_COLUMNS = exports.SET_COLUMNS = 'SET_COLUMNS';
-	var SET_SORT_DIRECTION = exports.SET_SORT_DIRECTION = 'SET_SORT_DIRECTION';
-
-	var SET_LOADING_STATE = exports.SET_LOADING_STATE = 'SET_LOADING_STATE';
-
-	var DISMISS_ERROR = exports.DISMISS_ERROR = 'DISMISS_ERROR';
-
-	var SHOW_MENU = exports.SHOW_MENU = 'SHOW_MENU';
-	var HIDE_MENU = exports.HIDE_MENU = 'HIDE_MENU';
-
-	var RESIZE_COLUMNS = exports.RESIZE_COLUMNS = 'RESIZE_COLUMNS';
-	var REORDER_COLUMN = exports.REORDER_COLUMN = 'REORDER_COLUMN';
-
-	var NO_EVENT = exports.NO_EVENT = 'NO_EVENT';
-
-	var EDIT_ROW = exports.EDIT_ROW = 'EDIT_ROW';
-	var DISMISS_EDITOR = exports.DISMISS_EDITOR = 'DISMISS_EDITOR';
-
-	var REMOVE_TOOLBAR = exports.REMOVE_TOOLBAR = 'REMOVE_TOOLBAR';
-
-	var SET_FILTER_VALUE = exports.SET_FILTER_VALUE = 'SET_FILTER_VALUE';
-	var FILTER_DATA = exports.FILTER_DATA = 'FILTER_DATA';
-	var CLEAR_FILTER_LOCAL = exports.CLEAR_FILTER_LOCAL = 'CLEAR_FILTER_LOCAL';
-	var CLEAR_FILTER_REMOTE = exports.CLEAR_FILTER_REMOTE = 'CLEAR_FILTER_REMOTE';
-	var SHOW_FILTER_MENU = exports.SHOW_FILTER_MENU = 'SHOW_FILTER_MENU';
-	var SET_FILTER_MENU_VALUES = exports.SET_FILTER_MENU_VALUES = 'SET_FILTER_MENU_VALUES';
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "ActionTypes.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-
-/***/ },
-/* 191 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -22172,13 +21978,13 @@
 	exports.resizeColumns = resizeColumns;
 	exports.setData = setData;
 
-	var _ActionTypes = __webpack_require__(190);
+	var _ActionTypes = __webpack_require__(189);
 
-	var _GridConstants = __webpack_require__(185);
+	var _GridConstants = __webpack_require__(190);
 
-	var _LoaderActions = __webpack_require__(192);
+	var _LoaderActions = __webpack_require__(191);
 
-	var _keygenerator = __webpack_require__(187);
+	var _keyGenerator = __webpack_require__(192);
 
 	var _Request = __webpack_require__(193);
 
@@ -22192,30 +21998,60 @@
 
 	        dispatch((0, _LoaderActions.setLoaderState)(true));
 
-	        return _Request2.default.api({
-	            route: datasource,
-	            method: 'GET'
-	        }).then(function (response) {
+	        if (typeof datasource === 'function') {
 
-	            if (response && response.data) {
+	            datasource().then(function (response) {
 
-	                dispatch({
-	                    type: _ActionTypes.SET_DATA,
-	                    data: response.data,
-	                    total: response.total,
-	                    currentRecords: response.data,
-	                    success: true
-	                });
-	            } else {
-	                dispatch({
-	                    type: _ActionTypes.ERROR_OCCURRED,
-	                    error: 'Unable to Retrieve Grid Data',
-	                    errorOccurred: true
-	                });
-	            }
+	                if (response && response.data) {
 
-	            dispatch((0, _LoaderActions.setLoaderState)(false));
-	        });
+	                    dispatch({
+	                        type: _ActionTypes.SET_DATA,
+	                        data: response.data,
+	                        total: response.total,
+	                        currentRecords: response.items,
+	                        success: true
+	                    });
+	                } else {
+
+	                    if (response && !response.data) {
+	                        console.warn('A response was recieved but no data entry was found');
+	                        console.warn('Please see https://github.com/bencripps/react-redux-grid for documentation');
+	                    }
+
+	                    dispatch({
+	                        type: _ActionTypes.ERROR_OCCURRED,
+	                        error: 'Unable to Retrieve Grid Data',
+	                        errorOccurred: true
+	                    });
+	                }
+	            });
+	        } else if (typeof datasource === 'string') {
+
+	            return _Request2.default.api({
+	                route: datasource,
+	                method: 'GET'
+	            }).then(function (response) {
+
+	                if (response && response.data) {
+
+	                    dispatch({
+	                        type: _ActionTypes.SET_DATA,
+	                        data: response.data,
+	                        total: response.total,
+	                        currentRecords: response.data,
+	                        success: true
+	                    });
+	                } else {
+	                    dispatch({
+	                        type: _ActionTypes.ERROR_OCCURRED,
+	                        error: 'Unable to Retrieve Grid Data',
+	                        errorOccurred: true
+	                    });
+	                }
+
+	                dispatch((0, _LoaderActions.setLoaderState)(false));
+	            });
+	        }
 	    };
 	}
 
@@ -22225,7 +22061,7 @@
 
 	    if (!columns[0].id) {
 	        columns = cols.map(function (col) {
-	            col.id = (0, _keygenerator.keyFromObject)(col.name, col.value);
+	            col.id = (0, _keyGenerator.keyGenerator)(col.name, 'grid-column');
 	            return col;
 	        });
 	    }
@@ -22332,7 +22168,176 @@
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "GridActions.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 192 */
+/* 189 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var PAGE_LOCAL = exports.PAGE_LOCAL = 'PAGE_LOCAL';
+	var PAGE_REMOTE = exports.PAGE_REMOTE = 'PAGE_REMOTE';
+
+	var SORT_LOCAL = exports.SORT_LOCAL = 'SORT_LOCAL';
+	var SORT_REMOTE = exports.SORT_REMOTE = 'SORT_REMOTE';
+
+	var GET_DATA = exports.GET_DATA = 'GET_DATA';
+	var SET_DATA = exports.SET_DATA = 'SET_DATA';
+	var SORT_DATA = exports.SORT_DATA = 'SORT_DATA';
+
+	var SET_SELECTION = exports.SET_SELECTION = 'SET_SELECTION';
+	var SELECT_ALL = exports.SELECT_ALL = 'SELECT_ALL';
+	var DESELECT_ALL = exports.DESELECT_ALL = 'DESELECT_ALL';
+
+	var SET_COLUMNS = exports.SET_COLUMNS = 'SET_COLUMNS';
+	var SET_SORT_DIRECTION = exports.SET_SORT_DIRECTION = 'SET_SORT_DIRECTION';
+
+	var SET_LOADING_STATE = exports.SET_LOADING_STATE = 'SET_LOADING_STATE';
+
+	var DISMISS_ERROR = exports.DISMISS_ERROR = 'DISMISS_ERROR';
+
+	var SHOW_MENU = exports.SHOW_MENU = 'SHOW_MENU';
+	var HIDE_MENU = exports.HIDE_MENU = 'HIDE_MENU';
+
+	var RESIZE_COLUMNS = exports.RESIZE_COLUMNS = 'RESIZE_COLUMNS';
+	var REORDER_COLUMN = exports.REORDER_COLUMN = 'REORDER_COLUMN';
+
+	var NO_EVENT = exports.NO_EVENT = 'NO_EVENT';
+
+	var EDIT_ROW = exports.EDIT_ROW = 'EDIT_ROW';
+	var DISMISS_EDITOR = exports.DISMISS_EDITOR = 'DISMISS_EDITOR';
+
+	var REMOVE_TOOLBAR = exports.REMOVE_TOOLBAR = 'REMOVE_TOOLBAR';
+
+	var SET_FILTER_VALUE = exports.SET_FILTER_VALUE = 'SET_FILTER_VALUE';
+	var FILTER_DATA = exports.FILTER_DATA = 'FILTER_DATA';
+	var CLEAR_FILTER_LOCAL = exports.CLEAR_FILTER_LOCAL = 'CLEAR_FILTER_LOCAL';
+	var CLEAR_FILTER_REMOTE = exports.CLEAR_FILTER_REMOTE = 'CLEAR_FILTER_REMOTE';
+	var SHOW_FILTER_MENU = exports.SHOW_FILTER_MENU = 'SHOW_FILTER_MENU';
+	var SET_FILTER_MENU_VALUES = exports.SET_FILTER_MENU_VALUES = 'SET_FILTER_MENU_VALUES';
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "ActionTypes.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 190 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	var CSS_PREFIX = exports.CSS_PREFIX = 'react-grid';
+
+	var ROW_HEIGHT = exports.ROW_HEIGHT = 26;
+
+	var DEFAULT_PAGE_SIZE = exports.DEFAULT_PAGE_SIZE = 20;
+
+	var SORT_DIRECTIONS = exports.SORT_DIRECTIONS = {
+	    ASCEND: 'ASCEND',
+	    DESCEND: 'DESCEND'
+	};
+
+	var SORT_METHODS = exports.SORT_METHODS = {
+	    LOCAL: 'LOCAL',
+	    REMOTE: 'REMOTE'
+	};
+
+	var FILTER_METHODS = exports.FILTER_METHODS = {
+	    LOCAL: 'LOCAL',
+	    REMOTE: 'REMOTE'
+	};
+
+	var KEYBOARD_MAP = exports.KEYBOARD_MAP = {
+	    ENTER: 13
+	};
+
+	var CLASS_NAMES = exports.CLASS_NAMES = {
+	    ACTIVE_CLASS: 'active',
+	    DRAG_HANDLE: 'drag-handle',
+	    SORT_HANDLE: 'sort-handle',
+	    SECONDARY_CLASS: 'secondary',
+	    CONTAINER: 'container',
+	    TABLE: 'table',
+	    TABLE_CONTAINER: 'table-container',
+	    HEADER: 'header',
+	    HEADER_HIDDEN: 'header-hidden',
+	    HEADER_FIXED: 'header-fixed',
+	    ROW: 'row',
+	    CELL: 'cell',
+	    PAGERTOOLBAR: 'pager-toolbar',
+	    EMPTY_ROW: 'empty-row',
+	    EDITED_CELL: 'edit',
+	    LOADING_BAR: 'loading-bar',
+	    DRAGGABLE_COLUMN: 'draggable-column',
+	    COLUMN: 'column',
+	    SORT_HANDLE_VISIBLE: 'sort-handle-visible',
+	    BUTTONS: {
+	        PAGER: 'page-buttons'
+	    },
+	    SELECTION_MODEL: {
+	        CHECKBOX: 'checkbox',
+	        CHECKBOX_CONTAINER: 'checkbox-container'
+	    },
+	    ERROR_HANDLER: {
+	        CONTAINER: 'error-container',
+	        MESSAGE: 'error-message'
+	    },
+	    EDITOR: {
+	        INLINE: {
+	            CONTAINER: 'inline-editor',
+	            SHOWN: 'shown',
+	            HIDDEN: 'hidden',
+	            SAVE_BUTTON: 'save-button',
+	            CANCEL_BUTTON: 'cancel-button',
+	            BUTTON_CONTAINER: 'button-container'
+	        }
+	    },
+	    GRID_ACTIONS: {
+	        CONTAINER: 'action-container',
+	        SELECTED_CLASS: 'action-menu-selected',
+	        MENU: {
+	            CONTAINER: 'action-menu-container',
+	            ITEM: 'action-menu-item'
+	        }
+	    },
+	    FILTER_CONTAINER: {
+	        CONTAINER: 'filter-container',
+	        INPUT: 'filter-input',
+	        SEARCH_BUTTON: 'filter-search-button',
+	        MENU_BUTTON: 'filter-menu-button',
+	        CLEAR_BUTTON: 'filter-clear-button',
+	        BUTTON_CONTAINER: 'filter-button-container',
+	        MENU: {
+	            CONTAINER: 'advanced-filter-menu-container',
+	            TITLE: 'advanced-filter-menu-title',
+	            BUTTON: 'advanced-filter-menu-button',
+	            BUTTON_CONTAINER: 'advanced-filter-menu-button-container',
+	            FIELD: {
+	                CONTAINER: 'advanced-filter-menu-field-container',
+	                LABEL: 'advanced-filter-menu-field-label',
+	                INPUT: 'advanced-filter-menu-field-input'
+	            }
+	        }
+	    },
+	    BULK_ACTIONS: {
+	        CONTAINER: 'bulkaction-container',
+	        DESCRIPTION: 'bulkaction-description',
+	        SHOWN: 'shown',
+	        HIDDEN: 'hidden'
+	    }
+
+	};
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "GridConstants.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 191 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -22344,13 +22349,49 @@
 	});
 	exports.setLoaderState = setLoaderState;
 
-	var _ActionTypes = __webpack_require__(190);
+	var _ActionTypes = __webpack_require__(189);
 
 	function setLoaderState(state) {
 	    return { type: _ActionTypes.SET_LOADING_STATE, state: state };
 	}
 
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "LoaderActions.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 192 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.keyGenerator = keyGenerator;
+	exports.keyFromObject = keyFromObject;
+	function keyGenerator() {
+	    for (var _len = arguments.length, keywords = Array(_len), _key = 0; _key < _len; _key++) {
+	        keywords[_key] = arguments[_key];
+	    }
+
+	    return btoa(Array.from(keywords).join(''));
+	}
+
+	function keyFromObject(obj, additionalStrings) {
+
+	    if (additionalStrings && Array.isArray(additionalStrings)) {
+	        return btoa(additionalStrings.join('') + Object.keys(obj).map(function (k) {
+	            return obj[k];
+	        }).join(''));
+	    } else {
+	        return btoa(Object.keys(obj).map(function (k) {
+	            return obj[k];
+	        }).join(''));
+	    }
+	}
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "keyGenerator.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
 /* 193 */
@@ -22490,275 +22531,28 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
+	exports.prefix = prefix;
 
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	var _GridConstants = __webpack_require__(190);
 
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _react = __webpack_require__(149);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _reactRedux = __webpack_require__(163);
-
-	var _keygenerator = __webpack_require__(187);
-
-	var _Cell = __webpack_require__(195);
-
-	var _Cell2 = _interopRequireDefault(_Cell);
-
-	var _prefix = __webpack_require__(186);
-
-	var _getCurrentRecords = __webpack_require__(196);
-
-	var _GridConstants = __webpack_require__(185);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var Row = function (_Component) {
-	    _inherits(Row, _Component);
-
-	    function Row() {
-	        _classCallCheck(this, Row);
-
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(Row).apply(this, arguments));
+	function prefix() {
+	    for (var _len = arguments.length, classes = Array(_len), _key = 0; _key < _len; _key++) {
+	        classes[_key] = arguments[_key];
 	    }
 
-	    _createClass(Row, [{
-	        key: 'getPlaceHolder',
-	        value: function getPlaceHolder() {
-	            var emptyDataMessage = this.props.emptyDataMessage;
+	    return Array.from(classes).map(function (cls) {
 
-
-	            var rowProps = {
-	                className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.ROW)
-	            };
-
-	            var tdProps = {
-	                className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.ROW, _GridConstants.CLASS_NAMES.EMPTY_ROW)
-	            };
-
-	            return _react2.default.createElement(
-	                'tr',
-	                rowProps,
-	                _react2.default.createElement(
-	                    'td',
-	                    _extends({ colSpan: '100%' }, tdProps),
-	                    emptyDataMessage
-	                )
-	            );
+	        if (!cls || cls.length === 0) {
+	            return null;
 	        }
-	    }, {
-	        key: 'addEmptyInsert',
-	        value: function addEmptyInsert(cells, visibleColumns) {
-	            var GRID_ACTIONS = this.props.plugins.GRID_ACTIONS;
 
-
-	            if (visibleColumns.length === 0) {
-
-	                if (GRID_ACTIONS && GRID_ACTIONS.menu && GRID_ACTIONS.menu.length > 0) {
-	                    cells.splice(1, 0, this.getEmptyCell());
-	                } else {
-	                    cells.push(this.getEmptyCell());
-	                }
-	            }
-	        }
-	    }, {
-	        key: 'getEmptyCell',
-	        value: function getEmptyCell() {
-
-	            var cellProps = {
-	                style: {
-	                    width: '100%'
-	                }
-	            };
-
-	            return _react2.default.createElement(_Cell2.default, cellProps);
-	        }
-	    }, {
-	        key: 'getRowComponents',
-	        value: function getRowComponents(row, events, selectedRows, columns) {
-	            var _props = this.props;
-	            var selectionModel = _props.selectionModel;
-	            var columnManager = _props.columnManager;
-	            var editorState = _props.editorState;
-
-	            var id = (0, _keygenerator.keyFromObject)(row);
-	            var visibleColumns = columns.filter(function (col) {
-	                return !col.hidden;
-	            });
-
-	            var cells = Object.keys(row).map(function (k, i) {
-
-	                var cellProps = {
-	                    index: i,
-	                    rowId: id,
-	                    cellData: row[k],
-	                    columns: columns,
-	                    key: (0, _keygenerator.keyGenerator)(k),
-	                    events: events
-	                };
-
-	                return _react2.default.createElement(_Cell2.default, cellProps);
-	            });
-
-	            var isSelected = selectedRows ? selectedRows[id] : false;
-
-	            var editClass = editorState && editorState.row && editorState.row.key === id ? selectionModel.defaults.editCls : '';
-
-	            var selectedClass = isSelected ? selectionModel.defaults.activeCls : '';
-
-	            var rowProps = {
-	                key: id,
-	                className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.ROW, selectedClass, editClass),
-	                onClick: this.handleRowSingleClickEvent.bind(this, events, row, id),
-	                onDoubleClick: this.handleRowDoubleClickEvent.bind(this, events, row, id)
-	            };
-
-	            columnManager.addActionColumn(cells, 'row', id);
-
-	            selectionModel.updateCells(cells, id, 'row');
-
-	            this.addEmptyInsert(cells, visibleColumns);
-
-	            return _react2.default.createElement(
-	                'tr',
-	                rowProps,
-	                cells
-	            );
-	        }
-	    }, {
-	        key: 'handleRowDoubleClickEvent',
-	        value: function handleRowDoubleClickEvent(events, rowData, rowId, reactEvent, id, browserEvent) {
-	            var selectionModel = this.props.selectionModel;
-
-
-	            if (selectionModel && selectionModel.defaults.selectionEvent === selectionModel.eventTypes.doubleclick) {
-
-	                selectionModel.handleSelectionEvent({
-	                    eventType: reactEvent.type,
-	                    eventData: reactEvent,
-	                    id: rowId
-	                });
-	            }
-
-	            if (events.HANDLE_ROW_DOUBLE_CLICK) {
-	                events.HANDLE_ROW_DOUBLE_CLICK.call(this, rowData, rowId, reactEvent, id, browserEvent);
-	            }
-	        }
-	    }, {
-	        key: 'handleRowSingleClickEvent',
-	        value: function handleRowSingleClickEvent(events, rowData, rowId, reactEvent, id, browserEvent) {
-	            var selectionModel = this.props.selectionModel;
-
-
-	            if (selectionModel && selectionModel.defaults.selectionEvent === selectionModel.eventTypes.singleclick) {
-
-	                selectionModel.handleSelectionEvent({
-	                    eventType: reactEvent.type,
-	                    eventData: reactEvent,
-	                    id: rowId
-	                });
-	            }
-
-	            if (events.HANDLE_ROW_CLICK) {
-	                events.HANDLE_ROW_CLICK.call(this, rowData, rowId, reactEvent, id, browserEvent);
-	            }
-	        }
-	    }, {
-	        key: 'getRowSelection',
-	        value: function getRowSelection(dataSource, pageIndex, pageSize, pager, plugins) {
-
-	            if (!dataSource) {
-	                return false;
-	            }
-
-	            if (!plugins.PAGER || !plugins.PAGER.enabled || plugins.PAGER.pagingType === 'remote') {
-	                return dataSource.data;
-	            }
-
-	            return (0, _getCurrentRecords.getCurrentRecords)(dataSource, pageIndex, pageSize);
-	        }
-	    }, {
-	        key: 'getRows',
-	        value: function getRows(rows, events, selectedRows, columns) {
-	            var _this2 = this;
-
-	            return Array.isArray(rows) ? rows.map(function (row) {
-	                return _this2.getRowComponents(row, events, selectedRows, columns);
-	            }) : null;
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            var _props2 = this.props;
-	            var columns = _props2.columns;
-	            var events = _props2.events;
-	            var plugins = _props2.plugins;
-	            var pageSize = _props2.pageSize;
-	            var pager = _props2.pager;
-	            var dataSource = _props2.dataSource;
-	            var store = _props2.store;
-	            var selectedRows = _props2.selectedRows;
-
-
-	            var pageIndex = pager && pager.pageIndex ? pager.pageIndex : 0;
-
-	            var rows = this.getRowSelection(dataSource, pageIndex, pageSize, pager, plugins, store);
-
-	            var rowComponents = this.getRows(rows, events, selectedRows, columns);
-
-	            var rowInsert = rowComponents ? rowComponents : this.getPlaceHolder();
-
-	            return _react2.default.createElement(
-	                'tbody',
-	                null,
-	                rowInsert
-	            );
-	        }
-	    }]);
-
-	    return Row;
-	}(_react.Component);
-
-	Row.propTypes = {
-	    columnManager: _react.PropTypes.object.isRequired,
-	    columns: _react.PropTypes.arrayOf(_react.PropTypes.Object).isRequired,
-	    data: _react.PropTypes.arrayOf(_react.PropTypes.Object),
-	    dataSource: _react.PropTypes.object,
-	    editorState: _react.PropTypes.object,
-	    emptyDataMessage: _react.PropTypes.string,
-	    events: _react.PropTypes.object,
-	    pageSize: _react.PropTypes.number,
-	    pager: _react.PropTypes.object,
-	    plugins: _react.PropTypes.object,
-	    selectedRows: _react.PropTypes.object,
-	    selectionModel: _react.PropTypes.object,
-	    store: _react.PropTypes.object.isRequired
-	};
-	Row.defaultProps = {
-	    emptyDataMessage: 'No Data Available'
-	};
-
-
-	function mapStateToProps(state) {
-	    return {
-	        pager: state.pager.get('pagerState'),
-	        dataSource: state.dataSource.get('gridData'),
-	        selectedRows: state.selection.get('selectedRows'),
-	        editorState: state.editor.get('editorState')
-	    };
+	        return _GridConstants.CSS_PREFIX + '-' + cls;
+	    }).filter(function (cls) {
+	        return cls;
+	    }).join(' ');
 	}
 
-	exports.default = (0, _reactRedux.connect)(mapStateToProps)(Row);
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Row.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "prefix.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
 /* 195 */
@@ -22771,6 +22565,246 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
+	exports.Text = undefined;
+
+	var _react = __webpack_require__(149);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _prefix = __webpack_require__(194);
+
+	var _keyGenerator = __webpack_require__(192);
+
+	var _GridConstants = __webpack_require__(190);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var Text = exports.Text = function Text(_ref) {
+	    var col = _ref.col;
+	    var index = _ref.index;
+	    var columnManager = _ref.columnManager;
+	    var dragAndDropManager = _ref.dragAndDropManager;
+
+
+	    var innerHTML = col.name;
+	    var draggable = col.moveable !== undefined ? col.moveable : columnManager.config.moveable;
+
+	    var spanProps = dragAndDropManager.initDragable({
+	        draggable: draggable,
+	        className: draggable ? (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.DRAGGABLE_COLUMN, _GridConstants.CLASS_NAMES.COLUMN) : (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.COLUMN),
+	        onDrag: function onDrag(reactEvent) {
+	            reactEvent.preventDefault();
+	            reactEvent.stopPropagation();
+	        },
+	        onDragStart: function onDragStart(reactEvent) {
+
+	            var data = {
+	                key: (0, _keyGenerator.keyFromObject)(col),
+	                index: index
+	            };
+
+	            reactEvent.dataTransfer.setData('Text', JSON.stringify(data));
+	        }
+	    });
+
+	    return _react2.default.createElement(
+	        'span',
+	        spanProps,
+	        innerHTML
+	    );
+	};
+
+	Text.propTypes = {
+	    col: _react.PropTypes.object,
+	    columnManager: _react.PropTypes.object,
+	    dragAndDropManager: _react.PropTypes.object,
+	    index: _react.PropTypes.number
+	};
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Text.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 196 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.reorderColumn = reorderColumn;
+
+	var _ActionTypes = __webpack_require__(189);
+
+	function reorderColumn(draggedIndex, droppedIndex, columns) {
+
+	    var reorder = function reorder(cols, to, from) {
+	        cols.splice(to, 0, cols.splice(from, 1)[0]);
+	        return cols;
+	    };
+
+	    var reorderedColumns = reorder(columns, droppedIndex, draggedIndex);
+
+	    return {
+	        type: _ActionTypes.SET_COLUMNS,
+	        columns: reorderedColumns
+	    };
+	}
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "ColumnManager.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 197 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.EmptyHeader = undefined;
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var _react = __webpack_require__(149);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var EmptyHeader = exports.EmptyHeader = function EmptyHeader(props) {
+
+	    var headerProps = _extends({
+	        style: {
+	            width: '100%'
+	        }
+	    }, props);
+
+	    return _react2.default.createElement('th', headerProps);
+	};
+
+	EmptyHeader.propTypes = {
+	    props: _react.PropTypes.object
+	};
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "EmptyHeader.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 198 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _GridConstants = __webpack_require__(190);
+
+	var _prefix = __webpack_require__(194);
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var DragAndDropManager = function () {
+	    function DragAndDropManager() {
+	        _classCallCheck(this, DragAndDropManager);
+	    }
+
+	    _createClass(DragAndDropManager, [{
+	        key: 'initDragable',
+	        value: function initDragable(initialProps) {
+
+	            var defaults = {
+	                onDragStart: this.handleDragStart,
+	                onDrag: this.handleDrag,
+	                onDragOver: this.handleDragOver,
+	                onDragLeave: this.handleDragLeave,
+	                onDragEnd: this.handleDragEnd,
+	                onDrop: this.handleDrop,
+	                draggable: true,
+	                className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.DRAG_HANDLE)
+	            };
+
+	            var props = initialProps ? Object.assign(defaults, initialProps) : defaults;
+
+	            return props;
+	        }
+	    }, {
+	        key: 'handleDragStart',
+	        value: function handleDragStart() {}
+	    }, {
+	        key: 'handleDrag',
+	        value: function handleDrag() {}
+	    }, {
+	        key: 'handleDragOver',
+	        value: function handleDragOver(reactEvent) {
+	            reactEvent.preventDefault();
+	        }
+	    }, {
+	        key: 'handleDragLeave',
+	        value: function handleDragLeave() {}
+	    }, {
+	        key: 'handleDragEnd',
+	        value: function handleDragEnd() {}
+	    }, {
+	        key: 'handleDrop',
+	        value: function handleDrop() {}
+	    }]);
+
+	    return DragAndDropManager;
+	}();
+
+	exports.default = DragAndDropManager;
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "DragAndDropManager.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 199 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.stateGetter = stateGetter;
+	function stateGetter(state, props, key, entry) {
+
+	    if (props && props.reducerKeys && Object.keys(props.reducerKeys).length > 0 && props.reducerKeys[key]) {
+
+	        var dynamicKey = props.reducerKeys[key];
+
+	        return state && state[dynamicKey] && state[dynamicKey].get && state[dynamicKey].get(entry) ? state[dynamicKey].get(entry) : null;
+	    }
+
+	    return state && state[key] && state[key].get && state[key].get(entry) ? state[key].get(entry) : null;
+	}
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "stateGetter.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 200 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.ConnectedFixedHeader = exports.FixedHeader = exports.handleColumnClick = exports.handleDrag = exports.addEmptyInsert = undefined;
+	var _arguments = arguments;
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -22778,11 +22812,29 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _reactRedux = __webpack_require__(163);
+	var _reactDom = __webpack_require__(2);
 
-	var _prefix = __webpack_require__(186);
+	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _GridConstants = __webpack_require__(185);
+	var _reactRedux = __webpack_require__(173);
+
+	var _Column = __webpack_require__(185);
+
+	var _EmptyHeader = __webpack_require__(197);
+
+	var _DragAndDropManager = __webpack_require__(198);
+
+	var _DragAndDropManager2 = _interopRequireDefault(_DragAndDropManager);
+
+	var _prefix = __webpack_require__(194);
+
+	var _throttle = __webpack_require__(201);
+
+	var _stateGetter = __webpack_require__(199);
+
+	var _GridConstants = __webpack_require__(190);
+
+	var _GridActions = __webpack_require__(188);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -22792,78 +22844,556 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var Cell = function (_Component) {
-	    _inherits(Cell, _Component);
+	var dragAndDropManager = new _DragAndDropManager2.default();
 
-	    function Cell() {
-	        _classCallCheck(this, Cell);
+	var FixedHeader = function (_Component) {
+	    _inherits(FixedHeader, _Component);
 
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(Cell).apply(this, arguments));
+	    function FixedHeader() {
+	        _classCallCheck(this, FixedHeader);
+
+	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(FixedHeader).call(this));
+
+	        _this.handleDrag = (0, _throttle.throttle)(handleDrag, _this, 10);
+	        return _this;
 	    }
 
-	    _createClass(Cell, [{
-	        key: 'handleClick',
-	        value: function handleClick(events, cellData, reactEvent) {
-
-	            if (reactEvent.target && reactEvent.target.contentEditable === 'true') {
-	                reactEvent.stopPropagation();
-	            }
-
-	            if (events.HANDLE_CELL_CLICK) {
-	                events.HANDLE_CELL_CLICK.apply(this, arguments);
-	            }
-	        }
-	    }, {
-	        key: 'handleDoubleClick',
-	        value: function handleDoubleClick(events, cellData, reactEvent) {
-
-	            if (reactEvent.target && reactEvent.target.contentEditable === 'true') {
-	                reactEvent.stopPropagation();
-	            }
-
-	            if (events.HANDLE_CELL_CLICK) {
-	                events.HANDLE_CELL_DOUBLE_CLICK.apply(this, arguments);
-	            }
-	        }
-	    }, {
+	    _createClass(FixedHeader, [{
 	        key: 'render',
 	        value: function render() {
+	            var _this2 = this;
+
 	            var _props = this.props;
-	            var cellData = _props.cellData;
-	            var events = _props.events;
-	            var rowId = _props.rowId;
-	            var editorState = _props.editorState;
 	            var columns = _props.columns;
-	            var index = _props.index;
+	            var columnManager = _props.columnManager;
+	            var dataSource = _props.dataSource;
+	            var selectionModel = _props.selectionModel;
+	            var store = _props.store;
+	            var pager = _props.pager;
+	            var plugins = _props.plugins;
 
+	            var visibleColumns = columns.filter(function (col) {
+	                return !col.hidden;
+	            });
+	            var headers = visibleColumns.map(function (col, i) {
 
-	            var isEditable = editorState && editorState.row && editorState.row.key === rowId;
+	                var colProps = {
+	                    scope: _this2,
+	                    col: col,
+	                    columns: columns,
+	                    visibleColumns: visibleColumns,
+	                    columnManager: columnManager,
+	                    dataSource: dataSource,
+	                    dragAndDropManager: dragAndDropManager,
+	                    pager: pager,
+	                    store: store,
+	                    index: i
+	                };
 
-	            var hidden = columns && columns[index] && columns[index].hidden !== undefined ? columns[index].hidden : null;
+	                return _react2.default.createElement(_Column.Column, colProps);
+	            });
 
-	            var cellProps = {
-	                className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.CELL),
-	                contentEditable: isEditable,
-	                onClick: this.handleClick.bind(this, events, cellData),
-	                onDoubleClick: this.handleDoubleClick.bind(this, events, cellData),
-	                style: {
-	                    display: hidden ? 'none' : ''
-	                }
+	            var tableProps = {
+	                className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.TABLE, _GridConstants.CLASS_NAMES.HEADER_FIXED),
+	                cellSpacing: 0
 	            };
 
+	            var headerProps = {
+	                className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.HEADER)
+	            };
+
+	            if (selectionModel) {
+	                selectionModel.updateCells(headers, columns, 'header');
+	            }
+
+	            columnManager.addActionColumn(headers, 'header');
+
+	            addEmptyInsert(headers, visibleColumns, plugins);
+
 	            return _react2.default.createElement(
-	                'td',
-	                cellProps,
-	                cellData
+	                'table',
+	                tableProps,
+	                _react2.default.createElement(
+	                    'thead',
+	                    null,
+	                    _react2.default.createElement(
+	                        'tr',
+	                        headerProps,
+	                        headers
+	                    )
+	                )
 	            );
 	        }
 	    }]);
 
-	    return Cell;
+	    return FixedHeader;
 	}(_react.Component);
 
+	FixedHeader.propTypes = {
+	    columnManager: _react.PropTypes.object.isRequired,
+	    columnState: _react.PropTypes.object,
+	    columns: _react.PropTypes.arrayOf(_react.PropTypes.Object).isRequired,
+	    dataSource: _react.PropTypes.object,
+	    pager: _react.PropTypes.object,
+	    plugins: _react.PropTypes.object,
+	    selectionModel: _react.PropTypes.object,
+	    store: _react.PropTypes.object
+	};
+	var addEmptyInsert = exports.addEmptyInsert = function addEmptyInsert(headers, visibleColumns, plugins) {
+
+	    if (!plugins) {
+	        return false;
+	    }
+
+	    var GRID_ACTIONS = plugins.GRID_ACTIONS;
+
+
+	    if (visibleColumns.length === 0) {
+
+	        if (GRID_ACTIONS && GRID_ACTIONS.menu && GRID_ACTIONS.menu.length > 0) {
+
+	            headers.splice(1, 0, _react2.default.createElement(_EmptyHeader.EmptyHeader, null));
+	        } else {
+	            headers.push(_react2.default.createElement(_EmptyHeader.EmptyHeader, null));
+	        }
+	    }
+	};
+
+	var handleDrag = exports.handleDrag = function handleDrag(scope, columns, id, columnManager, store, nextColumnKey, reactEvent) {
+	    var mousePosition = reactEvent.pageX;
+	    var header = reactEvent.target.parentElement.parentElement;
+	    var columnNode = _reactDom2.default.findDOMNode(reactEvent.target.parentElement);
+	    var headerNextElementSibling = _reactDom2.default.findDOMNode(columnNode.nextElementSibling);
+	    var columnOffsetLeft = columnNode.getBoundingClientRect().left;
+	    var headerWidth = parseFloat(window.getComputedStyle(header).width, 10);
+	    var computedWidth = (mousePosition - columnOffsetLeft) / headerWidth;
+	    var totalWidth = parseFloat(columnNode.style.width, 10) + parseFloat(headerNextElementSibling.style.width, 10);
+	    var width = computedWidth * 100;
+
+	    var nextColWidth = Math.abs(width - totalWidth);
+
+	    if (nextColWidth < 0 || width < 0) {
+	        return false;
+	    }
+
+	    if (nextColWidth < columnManager.config.minColumnWidth) {
+	        nextColWidth = columnManager.config.minColumnWidth;
+	        width = totalWidth - columnManager.config.minColumnWidth;
+	    } else if (width < columnManager.config.minColumnWidth) {
+	        width = columnManager.config.minColumnWidth;
+	        nextColWidth = totalWidth - columnManager.config.minColumnWidth;
+	    }
+
+	    store.dispatch((0, _GridActions.resizeColumns)(width, id, {
+	        id: nextColumnKey,
+	        width: nextColWidth
+	    }, columns));
+	};
+
+	var handleColumnClick = exports.handleColumnClick = function handleColumnClick(col) {
+	    if (col.HANDLE_CLICK) {
+	        col.HANDLE_CLICK.apply(undefined, _arguments);
+	    }
+	};
+
+	function mapStateToProps(state, props) {
+	    return {
+	        columnState: (0, _stateGetter.stateGetter)(state, props, 'grid', 'gridState'),
+	        dataSource: (0, _stateGetter.stateGetter)(state, props, 'dataSource', 'gridData'),
+	        pager: (0, _stateGetter.stateGetter)(state, props, 'pager', 'pagerState')
+	    };
+	}
+
+	var ConnectedFixedHeader = (0, _reactRedux.connect)(mapStateToProps)(FixedHeader);
+
+	exports.FixedHeader = FixedHeader;
+	exports.ConnectedFixedHeader = ConnectedFixedHeader;
+	exports.default = (0, _reactRedux.connect)(mapStateToProps)(FixedHeader);
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "FixedHeader.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 201 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.throttle = throttle;
+	function throttle(callback, scope, limit) {
+	    var wait = false;
+
+	    limit = limit || 100;
+
+	    return function dothrottle() {
+	        if (!wait) {
+	            callback.apply(scope, arguments);
+	            wait = true;
+	            setTimeout(function () {
+	                wait = false;
+	            }, limit);
+	        }
+	    };
+	}
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "throttle.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 202 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.ConnectedRow = exports.getRows = exports.getRowSelection = exports.handleRowSingleClickEvent = exports.handleRowDoubleClickEvent = exports.getRowComponents = exports.addEmptyCells = exports.getCellData = exports.addEmptyInsert = exports.Row = undefined;
+
+	var _react = __webpack_require__(149);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRedux = __webpack_require__(173);
+
+	var _Cell = __webpack_require__(203);
+
+	var _EmptyCell = __webpack_require__(205);
+
+	var _PlaceHolder = __webpack_require__(206);
+
+	var _keyGenerator = __webpack_require__(192);
+
+	var _prefix = __webpack_require__(194);
+
+	var _stateGetter = __webpack_require__(199);
+
+	var _getCurrentRecords = __webpack_require__(207);
+
+	var _GridConstants = __webpack_require__(190);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var Row = exports.Row = function Row(_ref) {
+	    var columnManager = _ref.columnManager;
+	    var columns = _ref.columns;
+	    var dataSource = _ref.dataSource;
+	    var editorState = _ref.editorState;
+	    var emptyDataMessage = _ref.emptyDataMessage;
+	    var events = _ref.events;
+	    var pageSize = _ref.pageSize;
+	    var pager = _ref.pager;
+	    var plugins = _ref.plugins;
+	    var reducerKeys = _ref.reducerKeys;
+	    var selectedRows = _ref.selectedRows;
+	    var selectionModel = _ref.selectionModel;
+	    var store = _ref.store;
+
+
+	    var pageIndex = pager && pager.pageIndex ? pager.pageIndex : 0;
+
+	    var rows = getRowSelection(dataSource, pageIndex, pageSize, pager, plugins, store);
+
+	    var rowComponents = getRows(columns, columnManager, editorState, reducerKeys, rows, events, plugins, selectionModel, selectedRows);
+
+	    var rowInsert = rowComponents ? rowComponents : _react2.default.createElement(_PlaceHolder.PlaceHolder, emptyDataMessage);
+
+	    return _react2.default.createElement(
+	        'tbody',
+	        null,
+	        rowInsert
+	    );
+	};
+
+	Row.propTypes = {
+	    columnManager: _react.PropTypes.object.isRequired,
+	    columns: _react.PropTypes.arrayOf(_react.PropTypes.Object).isRequired,
+	    data: _react.PropTypes.arrayOf(_react.PropTypes.Object),
+	    dataSource: _react.PropTypes.object,
+	    editorState: _react.PropTypes.object,
+	    emptyDataMessage: _react.PropTypes.string,
+	    events: _react.PropTypes.object,
+	    pageSize: _react.PropTypes.number,
+	    pager: _react.PropTypes.object,
+	    plugins: _react.PropTypes.object,
+	    reducerKeys: _react.PropTypes.object,
+	    selectedRows: _react.PropTypes.object,
+	    selectionModel: _react.PropTypes.object,
+	    store: _react.PropTypes.object.isRequired
+	};
+
+	Row.defaultProps = {
+	    emptyDataMessage: 'No Data Available'
+	};
+
+	var addEmptyInsert = exports.addEmptyInsert = function addEmptyInsert(cells, visibleColumns, plugins) {
+
+	    if (visibleColumns.length === 0) {
+
+	        if (plugins && plugins.GRID_ACTIONS && plugins.GRID_ACTIONS.menu && plugins.GRID_ACTIONS.menu.length > 0) {
+	            cells.splice(1, 0, _react2.default.createElement(_EmptyCell.EmptyCell, null));
+	        } else {
+	            cells.push(_react2.default.createElement(_EmptyCell.EmptyCell, null));
+	        }
+	    }
+
+	    return cells;
+	};
+
+	var getCellData = exports.getCellData = function getCellData(columns, row, key, index) {
+
+	    var valueAtDataIndex = row && columns[index] && columns[index].dataIndex ? row[columns[index].dataIndex] : null;
+
+	    // if a render has been provided, default to this
+	    if (row && columns[index] && columns[index].renderer && typeof columns[index].renderer === 'function') {
+	        return columns[index].renderer(columns[index], valueAtDataIndex, row, key, index);
+	    }
+
+	    // if dataIndex has been provided
+	    // return the obj[dataIndex]
+	    else if (valueAtDataIndex !== undefined) {
+	            return valueAtDataIndex;
+	        }
+
+	    // else no data index found
+	    console.warn('No dataIndex found for this column ', columns);
+	};
+
+	var addEmptyCells = exports.addEmptyCells = function addEmptyCells(rowData, columns) {
+
+	    columns.forEach(function (col) {
+
+	        if (rowData && !rowData.hasOwnProperty(col.dataIndex)) {
+	            rowData[col.dataIndex] = '';
+	        }
+	    });
+
+	    return rowData;
+	};
+
+	var getRowComponents = exports.getRowComponents = function getRowComponents(columns, columnManager, editorState, reducerKeys, row, events, plugins, selectionModel, selectedRows) {
+
+	    var id = (0, _keyGenerator.keyFromObject)(row);
+	    var visibleColumns = columns.filter(function (col) {
+	        return !col.hidden;
+	    });
+
+	    if (Object.keys(row).length !== columns.length) {
+	        addEmptyCells(row, columns);
+	    }
+
+	    var cells = Object.keys(row).map(function (k, i) {
+
+	        var cellProps = {
+	            index: i,
+	            rowId: id,
+	            cellData: getCellData(columns, row, k, i),
+	            columns: columns,
+	            key: (0, _keyGenerator.keyGenerator)(k),
+	            events: events,
+	            reducerKeys: reducerKeys
+	        };
+
+	        return _react2.default.createElement(_Cell.ConnectedCell, cellProps);
+	    });
+
+	    var isSelected = selectedRows ? selectedRows[id] : false;
+
+	    var editClass = editorState && editorState.row && editorState.row.key === id ? selectionModel.defaults.editCls : '';
+
+	    var selectedClass = isSelected ? selectionModel.defaults.activeCls : '';
+
+	    var rowProps = {
+	        key: id,
+	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.ROW, selectedClass, editClass),
+	        onClick: handleRowSingleClickEvent.bind(undefined, events, row, id, selectionModel),
+	        onDoubleClick: handleRowDoubleClickEvent.bind(undefined, events, row, id, selectionModel)
+	    };
+
+	    columnManager.addActionColumn(cells, 'row', id, reducerKeys);
+
+	    selectionModel.updateCells(cells, id, 'row', reducerKeys);
+
+	    addEmptyInsert(cells, visibleColumns, plugins);
+
+	    return _react2.default.createElement(
+	        'tr',
+	        rowProps,
+	        cells
+	    );
+	};
+
+	var handleRowDoubleClickEvent = exports.handleRowDoubleClickEvent = function handleRowDoubleClickEvent(events, rowData, rowId, selectionModel, reactEvent, id, browserEvent) {
+	    if (selectionModel && selectionModel.defaults.selectionEvent === selectionModel.eventTypes.doubleclick) {
+
+	        selectionModel.handleSelectionEvent({
+	            eventType: reactEvent.type,
+	            eventData: reactEvent,
+	            id: rowId
+	        });
+	    }
+
+	    if (events.HANDLE_ROW_DOUBLE_CLICK) {
+	        events.HANDLE_ROW_DOUBLE_CLICK.call(undefined, rowData, rowId, reactEvent, id, browserEvent);
+	    }
+	};
+
+	var handleRowSingleClickEvent = exports.handleRowSingleClickEvent = function handleRowSingleClickEvent(events, rowData, rowId, selectionModel, reactEvent, id, browserEvent) {
+
+	    if (selectionModel && selectionModel.defaults.selectionEvent === selectionModel.eventTypes.singleclick) {
+
+	        selectionModel.handleSelectionEvent({
+	            eventType: reactEvent.type,
+	            eventData: reactEvent,
+	            id: rowId
+	        });
+	    }
+
+	    if (events.HANDLE_ROW_CLICK) {
+	        events.HANDLE_ROW_CLICK.call(undefined, rowData, rowId, reactEvent, id, browserEvent);
+	    }
+	};
+
+	var getRowSelection = exports.getRowSelection = function getRowSelection(dataSource, pageIndex, pageSize, pager, plugins) {
+	    if (!dataSource) {
+	        return false;
+	    }
+
+	    if (!plugins.PAGER || !plugins.PAGER.enabled || plugins.PAGER.pagingType === 'remote') {
+	        return dataSource.data;
+	    }
+
+	    return (0, _getCurrentRecords.getCurrentRecords)(dataSource, pageIndex, pageSize);
+	};
+
+	var getRows = exports.getRows = function getRows(columns, columnManager, editorState, reducerKeys, rows, events, plugins, selectionModel, selectedRows) {
+	    return Array.isArray(rows) ? rows.map(function (row) {
+	        return getRowComponents(columns, columnManager, editorState, reducerKeys, row, events, plugins, selectionModel, selectedRows);
+	    }) : null;
+	};
+
+	function mapStateToProps(state, props) {
+	    return {
+	        columnState: (0, _stateGetter.stateGetter)(state, props, 'grid', 'gridState'),
+	        dataSource: (0, _stateGetter.stateGetter)(state, props, 'dataSource', 'gridData'),
+	        pager: (0, _stateGetter.stateGetter)(state, props, 'pager', 'pagerState'),
+	        selectedRows: (0, _stateGetter.stateGetter)(state, props, 'selection', 'selectedRows'),
+	        editorState: (0, _stateGetter.stateGetter)(state, props, 'editor', 'editorState')
+	    };
+	}
+
+	var ConnectedRow = (0, _reactRedux.connect)(mapStateToProps)(Row);
+
+	exports.Row = Row;
+	exports.ConnectedRow = ConnectedRow;
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Row.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 203 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.ConnectedCell = exports.handleDoubleClick = exports.handleClick = exports.getEditor = exports.Cell = undefined;
+	var _arguments = arguments;
+
+	var _react = __webpack_require__(149);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRedux = __webpack_require__(173);
+
+	var _prefix = __webpack_require__(194);
+
+	var _stateGetter = __webpack_require__(199);
+
+	var _elementContains = __webpack_require__(204);
+
+	var _GridConstants = __webpack_require__(190);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var Cell = exports.Cell = function Cell(_ref) {
+	    var cellData = _ref.cellData;
+	    var columns = _ref.columns;
+	    var editorState = _ref.editorState;
+	    var events = _ref.events;
+	    var index = _ref.index;
+	    var rowId = _ref.rowId;
+
+
+	    var isEditable = editorState && editorState.row && editorState.row.key === rowId;
+
+	    var hidden = columns && columns[index] && columns[index].hidden !== undefined ? columns[index].hidden : null;
+
+	    var cellProps = {
+	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.CELL),
+	        contentEditable: isEditable,
+	        onClick: handleClick.bind(undefined, events, cellData),
+	        onDoubleClick: handleDoubleClick.bind(undefined, events, cellData),
+	        style: {
+	            display: hidden ? 'none' : ''
+	        }
+	    };
+
+	    var cellHTML = isEditable && columns[index].editor ? _react2.default.createElement(
+	        'span',
+	        null,
+	        ' ',
+	        columns[index].editor,
+	        ' '
+	    ) : _react2.default.createElement(
+	        'span',
+	        null,
+	        ' ',
+	        cellData,
+	        ' '
+	    );
+
+	    return _react2.default.createElement(
+	        'td',
+	        cellProps,
+	        cellHTML
+	    );
+	};
+
+	var getEditor = exports.getEditor = function getEditor() {};
+
+	var handleClick = exports.handleClick = function handleClick(events, cellData, reactEvent) {
+
+	    if (reactEvent.target && (0, _elementContains.elementContains)(reactEvent.target, (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.EDITED_CELL))) {
+	        reactEvent.stopPropagation();
+	    }
+
+	    if (events.HANDLE_CELL_CLICK) {
+	        return events.HANDLE_CELL_CLICK.apply(undefined, _arguments);
+	    }
+	};
+
+	var handleDoubleClick = exports.handleDoubleClick = function handleDoubleClick(events, cellData, reactEvent) {
+
+	    if (reactEvent.target && (0, _elementContains.elementContains)(reactEvent.target, (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.EDITED_CELL))) {
+	        reactEvent.stopPropagation();
+	    }
+
+	    if (events.HANDLE_CELL_CLICK) {
+	        return events.HANDLE_CELL_DOUBLE_CLICK.apply(undefined, _arguments);
+	    }
+	};
+
 	Cell.propTypes = {
-	    cellData: _react.PropTypes.string,
+	    cellData: _react.PropTypes.any,
 	    columns: _react.PropTypes.array,
 	    data: _react.PropTypes.func,
 	    editorState: _react.PropTypes.object,
@@ -22872,19 +23402,143 @@
 	    rowId: _react.PropTypes.string
 	};
 
-
-	function mapStateToProps(state) {
+	function mapStateToProps(state, props) {
 	    return {
-	        editorState: state.editor.get('editorState')
+	        editorState: (0, _stateGetter.stateGetter)(state, props, 'editor', 'editorState')
 	    };
 	}
 
-	exports.default = (0, _reactRedux.connect)(mapStateToProps)(Cell);
+	var ConnectedCell = (0, _reactRedux.connect)(mapStateToProps)(Cell);
+
+	exports.Cell = Cell;
+	exports.ConnectedCell = ConnectedCell;
 
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Cell.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 196 */
+/* 204 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.elementContains = elementContains;
+	function elementContains(el, cls) {
+
+	    if (!el || !cls) {
+	        throw Error('Function requires a dom node and a classname');
+	    }
+
+	    while (el && el !== document.body) {
+	        if (el && el.classList && el.classList.contains(cls)) {
+	            return true;
+	        }
+	        el = el.parentNode;
+	    }
+	}
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "elementContains.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 205 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.EmptyCell = undefined;
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var _react = __webpack_require__(149);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _Cell = __webpack_require__(203);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var EmptyCell = exports.EmptyCell = function EmptyCell(props) {
+
+	    var cellProps = _extends({
+	        style: {
+	            width: '100%'
+	        }
+	    }, props);
+
+	    return _react2.default.createElement(_Cell.ConnectedCell, cellProps);
+	};
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "EmptyCell.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 206 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.PlaceHolder = undefined;
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var _react = __webpack_require__(149);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _prefix = __webpack_require__(194);
+
+	var _GridConstants = __webpack_require__(190);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var PlaceHolder = exports.PlaceHolder = function PlaceHolder(message) {
+
+	    var rowProps = {
+	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.ROW)
+	    };
+
+	    var tdProps = {
+	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.ROW, _GridConstants.CLASS_NAMES.EMPTY_ROW)
+	    };
+
+	    return _react2.default.createElement(
+	        'tr',
+	        rowProps,
+	        _react2.default.createElement(
+	            'td',
+	            _extends({ colSpan: '100%' }, tdProps),
+	            message.emptyDataMessage
+	        )
+	    );
+	};
+
+	PlaceHolder.propTypes = {
+	    message: _react.PropTypes.object
+	};
+
+	_react.PropTypes.defaultProps = {
+	    message: {
+	        emptyDataMessage: ''
+	    }
+	};
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "PlaceHolder.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 207 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -22907,7 +23561,7 @@
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "getCurrentRecords.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 197 */
+/* 208 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -22917,225 +23571,273 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	exports.ConnectedPagerToolbar = exports.getPagingSource = exports.getPager = exports.getTotal = exports.getCurrentRecordTotal = exports.PagerToolbar = undefined;
 
 	var _react = __webpack_require__(149);
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _reactRedux = __webpack_require__(163);
+	var _reactRedux = __webpack_require__(173);
 
-	var _prefix = __webpack_require__(186);
+	var _Button = __webpack_require__(209);
 
-	var _GridConstants = __webpack_require__(185);
+	var _Description = __webpack_require__(211);
 
-	var _getCurrentRecords = __webpack_require__(196);
+	var _prefix = __webpack_require__(194);
 
-	var _PagerActions = __webpack_require__(198);
+	var _stateGetter = __webpack_require__(199);
+
+	var _GridConstants = __webpack_require__(190);
+
+	var _getCurrentRecords = __webpack_require__(207);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var PagerToolbar = function (_Component) {
-	    _inherits(PagerToolbar, _Component);
-
-	    function PagerToolbar() {
-	        _classCallCheck(this, PagerToolbar);
-
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(PagerToolbar).apply(this, arguments));
-	    }
-
-	    _createClass(PagerToolbar, [{
-	        key: 'getCurrentRecordTotal',
-	        value: function getCurrentRecordTotal(dataSource, pageSize, pageIndex, plugins) {
-
-	            if (plugins.PAGER.pagingType === 'remote' && dataSource && dataSource.currentRecords) {
-	                return dataSource.currentRecords.length;
-	            } else if (plugins.PAGER.pagingType === 'local') {
-	                var records = (0, _getCurrentRecords.getCurrentRecords)(dataSource, pageIndex, pageSize);
-
-	                return records ? records.length : 0;
-	            }
-	        }
-	    }, {
-	        key: 'handleButtonClick',
-	        value: function handleButtonClick(type, pageIndex) {
-	            var PAGER = this.props.plugins.PAGER;
-	            var _props = this.props;
-	            var store = _props.store;
-	            var BUTTON_TYPES = _props.BUTTON_TYPES;
-	            var pageSize = _props.pageSize;
+	var PagerToolbar = exports.PagerToolbar = function PagerToolbar(_ref) {
+	    var BUTTON_TYPES = _ref.BUTTON_TYPES;
+	    var dataSource = _ref.dataSource;
+	    var pageSize = _ref.pageSize;
+	    var pager = _ref.pager;
+	    var pagerState = _ref.pagerState;
+	    var plugins = _ref.plugins;
+	    var recordType = _ref.recordType;
+	    var store = _ref.store;
+	    var toolbarRenderer = _ref.toolbarRenderer;
 
 
-	            if (PAGER.pagingType === 'local') {
-	                store.dispatch((0, _PagerActions.setPage)(pageIndex, type, BUTTON_TYPES));
-	            } else if (PAGER.pagingType === 'remote' && PAGER.pagingSource) {
-	                store.dispatch((0, _PagerActions.setPageAsync)(pageIndex, pageSize, type, BUTTON_TYPES, PAGER.pagingSource));
-	            } else {
-	                console.warn('Please configure paging plugin pagingType to local if no pagingSource is provided');
-	            }
-	        }
-	    }, {
-	        key: 'isButtonDisabled',
-	        value: function isButtonDisabled(type, pageIndex, pageSize, currentRecords, total, BUTTON_TYPES) {
-	            if (type === BUTTON_TYPES.BACK) {
-	                return pageIndex === 0;
-	            } else if (type === BUTTON_TYPES.NEXT) {
-	                return currentRecords < pageSize || pageIndex * pageSize + currentRecords === total;
-	            }
-	        }
-	    }, {
-	        key: 'getButton',
-	        value: function getButton(type, pageIndex, pageSize, currentRecords, total) {
-	            var _props2 = this.props;
-	            var nextButtonText = _props2.nextButtonText;
-	            var backButtonText = _props2.backButtonText;
-	            var BUTTON_TYPES = _props2.BUTTON_TYPES;
+	    var pagerDataSource = getPagingSource(plugins, dataSource);
 
+	    var pagerComponent = plugins && plugins.PAGER && plugins.PAGER.enabled ? getPager(pagerDataSource, pageSize, recordType, BUTTON_TYPES, pager, plugins, pagerState, pagerDataSource, toolbarRenderer, store) : _react2.default.createElement('div', null);
 
-	            var buttonProps = {
-	                onClick: this.handleButtonClick.bind(this, type, pageIndex),
-	                children: type === BUTTON_TYPES.NEXT ? nextButtonText : backButtonText,
-	                disabled: this.isButtonDisabled(type, pageIndex, pageSize, currentRecords, total, BUTTON_TYPES),
-	                className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.BUTTONS.PAGER)
-	            };
-
-	            return _react2.default.createElement('button', buttonProps);
-	        }
-	    }, {
-	        key: 'getTotal',
-	        value: function getTotal(dataSource, pagerDefaults) {
-
-	            if (!dataSource || !dataSource.data) {
-	                return 0;
-	            }
-
-	            if (pagerDefaults && pagerDefaults.pagingType === 'remote') {
-	                return dataSource.total;
-	            } else if (pagerDefaults && pagerDefaults.pagingType === 'local') {
-	                return dataSource.data.length;
-	            }
-	        }
-	    }, {
-	        key: 'getPager',
-	        value: function getPager(dataSource) {
-	            var _props3 = this.props;
-	            var pageSize = _props3.pageSize;
-	            var recordType = _props3.recordType;
-	            var BUTTON_TYPES = _props3.BUTTON_TYPES;
-	            var pager = _props3.pager;
-	            var plugins = _props3.plugins;
-	            var toolbarRenderer = _props3.toolbarRenderer;
-
-
-	            var pageIndex = pager && pager.pageIndex || 0;
-
-	            var toolbarProps = {
-	                className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.PAGERTOOLBAR)
-	            };
-
-	            var currentRecords = this.getCurrentRecordTotal(dataSource, pageSize, pageIndex, plugins);
-
-	            var total = this.getTotal(dataSource, plugins.PAGER);
-
-	            return _react2.default.createElement(
-	                'tfoot',
-	                null,
-	                _react2.default.createElement(
-	                    'tr',
-	                    toolbarProps,
-	                    _react2.default.createElement(
-	                        'td',
-	                        { colSpan: '100%' },
-	                        _react2.default.createElement(
-	                            'div',
-	                            null,
-	                            _react2.default.createElement(
-	                                'span',
-	                                null,
-	                                toolbarRenderer(pageIndex, pageSize, total, currentRecords, recordType)
-	                            ),
-	                            _react2.default.createElement(
-	                                'span',
-	                                null,
-	                                this.getButton(BUTTON_TYPES.NEXT, pageIndex, pageSize, currentRecords, total),
-	                                this.getButton(BUTTON_TYPES.BACK, pageIndex, pageSize, currentRecords, total)
-	                            )
-	                        )
-	                    )
-	                )
-	            );
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            var _props4 = this.props;
-	            var plugins = _props4.plugins;
-	            var dataSource = _props4.dataSource;
-
-
-	            var pagerComponent = plugins && plugins.PAGER && plugins.PAGER.enabled ? this.getPager(dataSource) : _react2.default.createElement('tfoot', null);
-
-	            return pagerComponent;
-	        }
-	    }]);
-
-	    return PagerToolbar;
-	}(_react.Component);
+	    return pagerComponent;
+	};
 
 	PagerToolbar.propTypes = {
 	    BUTTON_TYPES: _react.PropTypes.object,
-	    backButtonText: _react.PropTypes.string,
-	    dataSource: _react.PropTypes.object,
+	    dataSource: _react.PropTypes.any,
 	    gridState: _react.PropTypes.object,
 	    nextButtonText: _react.PropTypes.string,
 	    pageSize: _react.PropTypes.number.isRequired,
 	    pager: _react.PropTypes.object,
+	    pagerState: _react.PropTypes.object,
 	    plugins: _react.PropTypes.object,
 	    recordType: _react.PropTypes.string,
 	    store: _react.PropTypes.object.isRequired,
 	    toolbarRenderer: _react.PropTypes.func
 	};
+
 	PagerToolbar.defaultProps = {
 	    recordType: 'Records',
-	    nextButtonText: 'Next',
-	    backButtonText: 'Back',
 	    BUTTON_TYPES: {
 	        NEXT: 'NEXT',
 	        BACK: 'BACK'
 	    },
 	    toolbarRenderer: function toolbarRenderer(pageIndex, pageSize, total, currentRecords, recordType) {
-
 	        if (!currentRecords) {
 	            return 'No ' + recordType + ' Available';
 	        }
 
-	        return pageIndex * pageSize + ' through ' + (pageIndex * pageSize + currentRecords) + ' of ' + total + ' ' + recordType + ' Displayed';
+	        return pageIndex * pageSize + '\n            through ' + (pageIndex * pageSize + currentRecords) + '\n            of ' + total + ' ' + recordType + ' Displayed';
 	    }
 	};
 
+	var getCurrentRecordTotal = exports.getCurrentRecordTotal = function getCurrentRecordTotal(pagerState, pageSize, pageIndex, plugins) {
 
-	function mapStateToProps(state) {
+	    if (plugins.PAGER.pagingType === 'remote' && pagerState && pagerState.currentRecords) {
+	        return pagerState.currentRecords.length;
+	    } else if (plugins.PAGER.pagingType === 'local') {
+	        var records = (0, _getCurrentRecords.getCurrentRecords)(pagerState, pageIndex, pageSize);
+
+	        return records ? records.length : 0;
+	    }
+	};
+
+	var getTotal = exports.getTotal = function getTotal(dataSource, pagerDefaults) {
+
+	    if (!dataSource || !dataSource.data) {
+	        return 0;
+	    }
+
+	    if (pagerDefaults && pagerDefaults.pagingType === 'remote') {
+	        return dataSource.total;
+	    } else if (pagerDefaults && pagerDefaults.pagingType === 'local') {
+	        return dataSource.data.length;
+	    }
+	};
+
+	var getPager = exports.getPager = function getPager(dataSource, pageSize, recordType, BUTTON_TYPES, pager, plugins, pagerState, pagerDataSource, toolbarRenderer, store) {
+
+	    var pageIndex = pager && pager.pageIndex || 0;
+
+	    var toolbarProps = {
+	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.PAGERTOOLBAR)
+	    };
+
+	    var currentRecords = getCurrentRecordTotal(pagerState, pageSize, pageIndex, plugins, dataSource);
+
+	    var total = getTotal(pagerState, plugins.PAGER);
+
+	    var descriptionProps = {
+	        pageIndex: pageIndex,
+	        pageSize: pageSize,
+	        total: total,
+	        currentRecords: currentRecords,
+	        recordType: recordType
+	    };
+
+	    return _react2.default.createElement(
+	        'div',
+	        toolbarProps,
+	        _react2.default.createElement(_Description.Description, descriptionProps),
+	        _react2.default.createElement(
+	            'span',
+	            null,
+	            _react2.default.createElement(_Button.Button, {
+	                BUTTON_TYPES: BUTTON_TYPES,
+	                type: BUTTON_TYPES.NEXT,
+	                pageIndex: pageIndex,
+	                pageSize: pageSize,
+	                plugins: plugins,
+	                currentRecords: currentRecords,
+	                total: total,
+	                dataSource: dataSource,
+	                store: store }),
+	            _react2.default.createElement(_Button.Button, {
+	                BUTTON_TYPES: BUTTON_TYPES,
+	                type: BUTTON_TYPES.BACK,
+	                pageIndex: pageIndex,
+	                pageSize: pageSize,
+	                plugins: plugins,
+	                currentRecords: currentRecords,
+	                total: total,
+	                dataSource: dataSource,
+	                store: store })
+	        )
+	    );
+	};
+
+	var getPagingSource = exports.getPagingSource = function getPagingSource(plugins, dataSource) {
+	    if (plugins && plugins.PAGER && plugins.PAGER.pagingSource) {
+	        return plugins.PAGER.pagingSource;
+	    }
+
+	    return dataSource;
+	};
+
+	function mapStateToProps(state, props) {
 
 	    return {
-	        pager: state.pager.get('pagerState'),
-	        dataSource: state.dataSource.get('gridData'),
-	        gridState: state.grid.get('gridState')
+	        pager: (0, _stateGetter.stateGetter)(state, props, 'pager', 'pagerState'),
+	        pagerState: (0, _stateGetter.stateGetter)(state, props, 'dataSource', 'gridData'),
+	        gridState: (0, _stateGetter.stateGetter)(state, props, 'grid', 'gridState')
 	    };
 	}
 
-	exports.default = (0, _reactRedux.connect)(mapStateToProps)(PagerToolbar);
+	var ConnectedPagerToolbar = (0, _reactRedux.connect)(mapStateToProps)(PagerToolbar);
+
+	exports.PagerToolbar = PagerToolbar;
+	exports.ConnectedPagerToolbar = ConnectedPagerToolbar;
 
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Toolbar.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 198 */
+/* 209 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.isButtonDisabled = exports.handleButtonClick = exports.Button = undefined;
+
+	var _react = __webpack_require__(149);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _prefix = __webpack_require__(194);
+
+	var _GridConstants = __webpack_require__(190);
+
+	var _PagerActions = __webpack_require__(210);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var Button = exports.Button = function Button(_ref) {
+	    var BUTTON_TYPES = _ref.BUTTON_TYPES;
+	    var type = _ref.type;
+	    var pageIndex = _ref.pageIndex;
+	    var pageSize = _ref.pageSize;
+	    var plugins = _ref.plugins;
+	    var currentRecords = _ref.currentRecords;
+	    var total = _ref.total;
+	    var dataSource = _ref.dataSource;
+	    var backButtonText = _ref.backButtonText;
+	    var nextButtonText = _ref.nextButtonText;
+	    var store = _ref.store;
+
+
+	    var buttonProps = {
+	        onClick: handleButtonClick.bind(undefined, type, pageIndex, pageSize, dataSource, BUTTON_TYPES, plugins, store),
+	        children: type === BUTTON_TYPES.NEXT ? nextButtonText : backButtonText,
+	        disabled: isButtonDisabled(type, pageIndex, pageSize, currentRecords, total, BUTTON_TYPES),
+	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.BUTTONS.PAGER, type.toLowerCase())
+	    };
+
+	    return _react2.default.createElement('button', buttonProps);
+	};
+
+	var handleButtonClick = exports.handleButtonClick = function handleButtonClick(type, pageIndex, pageSize, dataSource, BUTTON_TYPES, plugins, store) {
+
+	    var PAGER = plugins.PAGER;
+
+	    if (PAGER.pagingType === 'local') {
+	        store.dispatch((0, _PagerActions.setPage)(pageIndex, type, BUTTON_TYPES));
+	    } else if (PAGER.pagingType === 'remote' && dataSource) {
+	        store.dispatch((0, _PagerActions.setPageAsync)(pageIndex, pageSize, type, BUTTON_TYPES, dataSource));
+	    } else {
+	        console.warn('Please configure paging plugin pagingType to local if no pagingSource is provided');
+	    }
+	};
+
+	var isButtonDisabled = exports.isButtonDisabled = function isButtonDisabled(type, pageIndex, pageSize, currentRecords, total, BUTTON_TYPES) {
+
+	    if (type === BUTTON_TYPES.BACK) {
+	        return pageIndex === 0;
+	    } else if (type === BUTTON_TYPES.NEXT) {
+	        return currentRecords < pageSize || pageIndex * pageSize + currentRecords === total;
+	    }
+	};
+
+	Button.propTypes = {
+	    BUTTON_TYPES: _react.PropTypes.object,
+	    backButtonText: _react.PropTypes.string,
+	    currentRecords: _react.PropTypes.number,
+	    dataSource: _react.PropTypes.any,
+	    nextButtonText: _react.PropTypes.string,
+	    pageIndex: _react.PropTypes.number,
+	    pageSize: _react.PropTypes.number,
+	    plugins: _react.PropTypes.object,
+	    store: _react.PropTypes.object,
+	    total: _react.PropTypes.number,
+	    type: _react.PropTypes.string
+	};
+
+	Button.defaultProps = {
+	    BUTTON_TYPES: {
+	        NEXT: 'NEXT',
+	        BACK: 'BACK'
+	    },
+	    nextButtonText: 'Next',
+	    backButtonText: 'Back'
+	};
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Button.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 210 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -23148,9 +23850,9 @@
 	exports.setPage = setPage;
 	exports.setPageAsync = setPageAsync;
 
-	var _ActionTypes = __webpack_require__(190);
+	var _ActionTypes = __webpack_require__(189);
 
-	var _LoaderActions = __webpack_require__(192);
+	var _LoaderActions = __webpack_require__(191);
 
 	var _Request = __webpack_require__(193);
 
@@ -23212,7 +23914,7 @@
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "PagerActions.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 199 */
+/* 211 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -23222,112 +23924,139 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	exports.Description = undefined;
 
 	var _react = __webpack_require__(149);
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _reactRedux = __webpack_require__(163);
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var _prefix = __webpack_require__(186);
+	var Description = exports.Description = function Description(_ref) {
+	    var toolbarRenderer = _ref.toolbarRenderer;
+	    var pageIndex = _ref.pageIndex;
+	    var pageSize = _ref.pageSize;
+	    var total = _ref.total;
+	    var currentRecords = _ref.currentRecords;
+	    var recordType = _ref.recordType;
 
-	var _GridConstants = __webpack_require__(185);
 
-	var _ErrorHandlerActions = __webpack_require__(200);
+	    return _react2.default.createElement(
+	        'span',
+	        null,
+	        toolbarRenderer(pageIndex, pageSize, total, currentRecords, recordType)
+	    );
+	};
+
+	Description.propTypes = {
+	    toolbarRenderer: _react.PropTypes.func
+	};
+
+	Description.defaultProps = {
+	    toolbarRenderer: function toolbarRenderer(pageIndex, pageSize, total, currentRecords, recordType) {
+	        if (!currentRecords) {
+	            return 'No ' + recordType + ' Available';
+	        }
+
+	        return pageIndex * pageSize + '\n            through ' + (pageIndex * pageSize + currentRecords) + '\n            of ' + total + ' ' + recordType + ' Displayed';
+	    }
+	};
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Description.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 212 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.getMessage = exports.handleButtonClick = exports.Message = undefined;
+
+	var _react = __webpack_require__(149);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRedux = __webpack_require__(173);
+
+	var _prefix = __webpack_require__(194);
+
+	var _stateGetter = __webpack_require__(199);
+
+	var _GridConstants = __webpack_require__(190);
+
+	var _ErrorHandlerActions = __webpack_require__(213);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var Message = function (_Component) {
-	    _inherits(Message, _Component);
-
-	    function Message() {
-	        _classCallCheck(this, Message);
-
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(Message).apply(this, arguments));
-	    }
-
-	    _createClass(Message, [{
-	        key: 'getMessage',
-	        value: function getMessage(message, isShown) {
-
-	            var messageContainerProps = {
-	                className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.ERROR_HANDLER.CONTAINER, isShown ? 'shown' : '')
-	            };
-
-	            var messageProps = {
-	                className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.ERROR_HANDLER.MESSAGE)
-	            };
-
-	            var buttonProps = {
-	                onClick: this.handleButtonClick.bind(this)
-	            };
-
-	            return _react2.default.createElement(
-	                'div',
-	                messageContainerProps,
-	                _react2.default.createElement(
-	                    'span',
-	                    messageProps,
-	                    ' ',
-	                    message,
-	                    ' '
-	                ),
-	                _react2.default.createElement(
-	                    'button',
-	                    buttonProps,
-	                    'Close'
-	                )
-	            );
-	        }
-	    }, {
-	        key: 'handleButtonClick',
-	        value: function handleButtonClick() {
-	            var store = this.props.store;
+	var Message = exports.Message = function Message(_ref) {
+	    var errorHandler = _ref.errorHandler;
+	    var plugins = _ref.plugins;
+	    var store = _ref.store;
 
 
-	            store.dispatch((0, _ErrorHandlerActions.dismissError)());
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            var _props = this.props;
-	            var errorHandler = _props.errorHandler;
-	            var plugins = _props.plugins;
+	    var defaultMessage = plugins && plugins.ERROR_HANDLER && plugins.ERROR_HANDLER.defaultErrorMessage ? plugins.ERROR_HANDLER.defaultErrorMessage : 'An Error Occurred';
 
+	    var showError = errorHandler && errorHandler.errorOccurred;
 
-	            var defaultMessage = plugins && plugins.ERROR_HANDLER && plugins.ERROR_HANDLER.defaultErrorMessage ? plugins.ERROR_HANDLER.defaultErrorMessage : 'An Error Occurred';
+	    var message = errorHandler && errorHandler.error ? errorHandler.error : defaultMessage;
 
-	            var showError = errorHandler && errorHandler.errorOccurred;
+	    var errorMessage = getMessage(message, showError, store);
 
-	            var message = errorHandler && errorHandler.error ? errorHandler.error : defaultMessage;
+	    return errorMessage;
+	};
 
-	            var errorMessage = this.getMessage(message, showError);
+	var handleButtonClick = exports.handleButtonClick = function handleButtonClick(store) {
+	    store.dispatch((0, _ErrorHandlerActions.dismissError)());
+	};
 
-	            return errorMessage;
-	        }
-	    }]);
+	var getMessage = exports.getMessage = function getMessage(message, isShown, store) {
 
-	    return Message;
-	}(_react.Component);
+	    var messageContainerProps = {
+	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.ERROR_HANDLER.CONTAINER, isShown ? 'shown' : null)
+	    };
+
+	    var messageProps = {
+	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.ERROR_HANDLER.MESSAGE)
+	    };
+
+	    var buttonProps = {
+	        onClick: handleButtonClick.bind(undefined, store)
+	    };
+
+	    return _react2.default.createElement(
+	        'div',
+	        messageContainerProps,
+	        _react2.default.createElement(
+	            'span',
+	            messageProps,
+	            ' ',
+	            message,
+	            ' '
+	        ),
+	        _react2.default.createElement(
+	            'button',
+	            buttonProps,
+	            'Close'
+	        )
+	    );
+	};
 
 	Message.propTypes = {
 	    errorHandler: _react.PropTypes.object,
 	    plugins: _react.PropTypes.object,
-	    store: _react.PropTypes.object.isRequired
+	    store: _react.PropTypes.object
 	};
 
+	Message.defaultProps = {};
 
-	function mapStateToProps(state) {
+	function mapStateToProps(state, props) {
 	    return {
-	        errorHandler: state.errorhandler.get('errorState')
+	        errorHandler: (0, _stateGetter.stateGetter)(state, props, 'errorhandler', 'errorState')
 	    };
 	}
 
@@ -23336,7 +24065,7 @@
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Message.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 200 */
+/* 213 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -23348,7 +24077,7 @@
 	});
 	exports.dismissError = dismissError;
 
-	var _ActionTypes = __webpack_require__(190);
+	var _ActionTypes = __webpack_require__(189);
 
 	function dismissError() {
 	    return { type: _ActionTypes.DISMISS_ERROR };
@@ -23357,7 +24086,7 @@
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "ErrorHandlerActions.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 201 */
+/* 214 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -23367,6 +24096,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
+	exports.getAction = exports.getToolbar = exports.getTotalSelection = undefined;
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -23374,17 +24104,19 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _reactRedux = __webpack_require__(163);
+	var _reactRedux = __webpack_require__(173);
 
-	var _prefix = __webpack_require__(186);
+	var _prefix = __webpack_require__(194);
 
-	var _keygenerator = __webpack_require__(187);
+	var _stateGetter = __webpack_require__(199);
 
-	var _GridConstants = __webpack_require__(185);
+	var _keyGenerator = __webpack_require__(192);
 
-	var _ToolbarActions = __webpack_require__(202);
+	var _GridConstants = __webpack_require__(190);
 
-	var _ModelActions = __webpack_require__(203);
+	var _ToolbarActions = __webpack_require__(215);
+
+	var _ModelActions = __webpack_require__(216);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -23412,9 +24144,10 @@
 	            var _props = this.props;
 	            var store = _props.store;
 	            var bulkActionState = _props.bulkActionState;
+	            var selectedRows = _props.selectedRows;
 
 	            var isRemoved = bulkActionState && bulkActionState.isRemoved;
-	            var totalCount = this.getTotalSelection();
+	            var totalCount = getTotalSelection(selectedRows);
 
 	            if (totalCount === 0 && !isRemoved) {
 	                clearTimeout(this.removeTimeout);
@@ -23424,22 +24157,6 @@
 	            } else if (totalCount > 0 && isRemoved) {
 	                store.dispatch((0, _ToolbarActions.removeToolbar)(false));
 	            }
-	        }
-	    }, {
-	        key: 'getAction',
-	        value: function getAction(action) {
-
-	            var buttonProps = {
-	                text: action.text,
-	                onClick: action.EVENT_HANDLER,
-	                key: (0, _keygenerator.keyFromObject)(action)
-	            };
-
-	            return _react2.default.createElement(
-	                'button',
-	                buttonProps,
-	                buttonProps.text
-	            );
 	        }
 	    }, {
 	        key: 'handleChange',
@@ -23456,59 +24173,15 @@
 	            }
 	        }
 	    }, {
-	        key: 'getTotalSelection',
-	        value: function getTotalSelection() {
-	            var selectedRows = this.props.selectedRows;
-
-
-	            var count = selectedRows && Object.keys(selectedRows).length ? Object.keys(selectedRows).filter(function (k) {
-	                return selectedRows[k];
-	            }).length : 0;
-
-	            return count;
-	        }
-	    }, {
-	        key: 'getToolbar',
-	        value: function getToolbar() {
-	            var actions = this.props.plugins.BULK_ACTIONS.actions;
-	            var bulkActionState = this.props.bulkActionState;
-
-
-	            var totalCount = this.getTotalSelection();
-
-	            var shownCls = totalCount > 0 ? _GridConstants.CLASS_NAMES.BULK_ACTIONS.SHOWN : _GridConstants.CLASS_NAMES.BULK_ACTIONS.HIDDEN;
-
-	            var removedCls = bulkActionState && bulkActionState.isRemoved ? 'removed' : null;
-
-	            var containerProps = {
-	                className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.BULK_ACTIONS.CONTAINER, shownCls, removedCls)
-	            };
-
-	            var spanProps = {
-	                className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.BULK_ACTIONS.DESCRIPTION),
-	                text: totalCount + ' Selected'
-	            };
-
-	            var buttons = actions.map(this.getAction);
-
-	            return _react2.default.createElement(
-	                'div',
-	                containerProps,
-	                _react2.default.createElement(
-	                    'span',
-	                    spanProps,
-	                    spanProps.text
-	                ),
-	                buttons
-	            );
-	        }
-	    }, {
 	        key: 'render',
 	        value: function render() {
-	            var plugins = this.props.plugins;
+	            var _props3 = this.props;
+	            var bulkActionState = _props3.bulkActionState;
+	            var selectedRows = _props3.selectedRows;
+	            var plugins = _props3.plugins;
 
 
-	            var toolbar = plugins && plugins.BULK_ACTIONS && plugins.BULK_ACTIONS.enabled && plugins.BULK_ACTIONS.actions && plugins.BULK_ACTIONS.actions.length > 0 ? this.getToolbar() : null;
+	            var toolbar = plugins && plugins.BULK_ACTIONS && plugins.BULK_ACTIONS.enabled && plugins.BULK_ACTIONS.actions && plugins.BULK_ACTIONS.actions.length > 0 ? getToolbar(plugins.BULK_ACTIONS.actions, bulkActionState, selectedRows) : null;
 
 	            return toolbar;
 	        }
@@ -23525,14 +24198,65 @@
 	    selectionModel: _react.PropTypes.object.isRequired,
 	    store: _react.PropTypes.object.isRequired
 	};
+	var getTotalSelection = exports.getTotalSelection = function getTotalSelection(selectedRows) {
+	    var count = selectedRows && Object.keys(selectedRows).length ? Object.keys(selectedRows).filter(function (k) {
+	        return selectedRows[k];
+	    }).length : 0;
 
+	    return count;
+	};
 
-	function mapStateToProps(state) {
+	var getToolbar = exports.getToolbar = function getToolbar(actions, bulkActionState, selectedRows) {
+	    var totalCount = getTotalSelection(selectedRows);
+
+	    var shownCls = totalCount > 0 ? _GridConstants.CLASS_NAMES.BULK_ACTIONS.SHOWN : _GridConstants.CLASS_NAMES.BULK_ACTIONS.HIDDEN;
+
+	    var removedCls = bulkActionState && bulkActionState.isRemoved ? 'removed' : null;
+
+	    var containerProps = {
+	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.BULK_ACTIONS.CONTAINER, shownCls, removedCls)
+	    };
+
+	    var spanProps = {
+	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.BULK_ACTIONS.DESCRIPTION),
+	        text: totalCount + ' Selected'
+	    };
+
+	    var buttons = actions.map(getAction);
+
+	    return _react2.default.createElement(
+	        'div',
+	        containerProps,
+	        _react2.default.createElement(
+	            'span',
+	            spanProps,
+	            spanProps.text
+	        ),
+	        buttons
+	    );
+	};
+
+	var getAction = exports.getAction = function getAction(action) {
+
+	    var buttonProps = {
+	        text: action.text,
+	        onClick: action.EVENT_HANDLER,
+	        key: (0, _keyGenerator.keyFromObject)(action)
+	    };
+
+	    return _react2.default.createElement(
+	        'button',
+	        buttonProps,
+	        buttonProps.text
+	    );
+	};
+
+	function mapStateToProps(state, props) {
 
 	    return {
-	        dataSource: state.dataSource.get('gridData'),
-	        selectedRows: state.selection.get('selectedRows'),
-	        bulkActionState: state.bulkaction.get('bulkActionState')
+	        dataSource: (0, _stateGetter.stateGetter)(state, props, 'dataSource', 'gridData'),
+	        selectedRows: (0, _stateGetter.stateGetter)(state, props, 'selection', 'selectedRows'),
+	        bulkActionState: (0, _stateGetter.stateGetter)(state, props, 'bulkaction', 'bulkActionState')
 	    };
 	}
 
@@ -23541,7 +24265,7 @@
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Toolbar.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 202 */
+/* 215 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -23553,7 +24277,7 @@
 	});
 	exports.removeToolbar = removeToolbar;
 
-	var _ActionTypes = __webpack_require__(190);
+	var _ActionTypes = __webpack_require__(189);
 
 	function removeToolbar(value) {
 	    return { type: _ActionTypes.REMOVE_TOOLBAR, value: value };
@@ -23562,61 +24286,7 @@
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "ToolbarActions.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 203 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-					value: true
-	});
-	exports.selectAll = selectAll;
-	exports.deselectAll = deselectAll;
-	exports.setSelection = setSelection;
-
-	var _ActionTypes = __webpack_require__(190);
-
-	var _keygenerator = __webpack_require__(187);
-
-	function selectAll(data) {
-					var keys = data.currentRecords.map(_keygenerator.keyFromObject);
-					var selection = keys.reduce(function (obj, k) {
-									obj[k] = true;
-									return obj;
-					}, {});
-					return { type: _ActionTypes.SELECT_ALL, selection: selection };
-	};
-
-	function deselectAll() {
-					return { type: _ActionTypes.DESELECT_ALL };
-	};
-
-	function setSelection(id, selectionModelDefaults, modes) {
-
-					var allowDeselect = selectionModelDefaults.allowDeselect;
-					var clearSelections = selectionModelDefaults.mode === modes.checkboxSingle || selectionModelDefaults.mode === modes.single;
-
-					if (!selectionModelDefaults.enabled) {
-									console.warn('Selection model has been disabled');
-									return { type: _ActionTypes.NO_EVENT };
-					}
-
-					if (selectionModelDefaults.mode === modes.single) {
-									return { type: _ActionTypes.SET_SELECTION, id: id, clearSelections: clearSelections, allowDeselect: allowDeselect };
-					} else if (selectionModelDefaults.mode === modes.multi) {
-									return { type: _ActionTypes.SET_SELECTION, id: id, allowDeselect: allowDeselect };
-					} else if (selectionModelDefaults.mode === modes.checkboxSingle || selectionModelDefaults.mode === modes.checkboxMulti) {
-
-									return { type: _ActionTypes.SET_SELECTION, id: id, clearSelections: clearSelections, allowDeselect: allowDeselect };
-					}
-	};
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "ModelActions.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-
-/***/ },
-/* 204 */
+/* 216 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -23626,198 +24296,110 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
+	exports.selectAll = selectAll;
+	exports.deselectAll = deselectAll;
+	exports.setSelection = setSelection;
 
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	var _ActionTypes = __webpack_require__(189);
+
+	var _keyGenerator = __webpack_require__(192);
+
+	function selectAll(data) {
+	    var keys = data.currentRecords.map(_keyGenerator.keyFromObject);
+	    var selection = keys.reduce(function (obj, k) {
+	        obj[k] = true;
+	        return obj;
+	    }, {});
+
+	    return { type: _ActionTypes.SELECT_ALL, selection: selection };
+	}
+
+	function deselectAll() {
+	    return { type: _ActionTypes.DESELECT_ALL };
+	}
+
+	function setSelection(id, selectionModelDefaults, modes) {
+
+	    var allowDeselect = selectionModelDefaults.allowDeselect;
+	    var clearSelections = selectionModelDefaults.mode === modes.checkboxSingle || selectionModelDefaults.mode === modes.single;
+
+	    if (!selectionModelDefaults.enabled) {
+	        console.warn('Selection model has been disabled');
+	        return { type: _ActionTypes.NO_EVENT };
+	    }
+
+	    if (selectionModelDefaults.mode === modes.single) {
+	        return { type: _ActionTypes.SET_SELECTION, id: id, clearSelections: clearSelections, allowDeselect: allowDeselect };
+	    } else if (selectionModelDefaults.mode === modes.multi) {
+	        return { type: _ActionTypes.SET_SELECTION, id: id, allowDeselect: allowDeselect };
+	    } else if (selectionModelDefaults.mode === modes.checkboxSingle || selectionModelDefaults.mode === modes.checkboxMulti) {
+	        return { type: _ActionTypes.SET_SELECTION, id: id, clearSelections: clearSelections, allowDeselect: allowDeselect };
+	    }
+	}
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "ModelActions.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 217 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.handleKeyUp = exports.setFilterValue = exports.getToolbar = exports.FilterToolbar = undefined;
 
 	var _react = __webpack_require__(149);
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _reactRedux = __webpack_require__(163);
+	var _reactRedux = __webpack_require__(173);
 
-	var _prefix = __webpack_require__(186);
-
-	var _Menu = __webpack_require__(205);
+	var _Menu = __webpack_require__(218);
 
 	var _Menu2 = _interopRequireDefault(_Menu);
 
-	var _filterUtils = __webpack_require__(210);
+	var _Input = __webpack_require__(223);
+
+	var _SearchButton = __webpack_require__(224);
+
+	var _ClearButton = __webpack_require__(225);
+
+	var _FilterButton = __webpack_require__(226);
+
+	var _prefix = __webpack_require__(194);
+
+	var _filterUtils = __webpack_require__(220);
 
 	var _filterUtils2 = _interopRequireDefault(_filterUtils);
 
-	var _GridConstants = __webpack_require__(185);
+	var _stateGetter = __webpack_require__(199);
 
-	var _FilterActions = __webpack_require__(211);
+	var _GridConstants = __webpack_require__(190);
+
+	var _FilterActions = __webpack_require__(221);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var FilterToolbar = function (_Component) {
-	    _inherits(FilterToolbar, _Component);
-
-	    function FilterToolbar() {
-	        _classCallCheck(this, FilterToolbar);
-
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(FilterToolbar).apply(this, arguments));
-	    }
-
-	    _createClass(FilterToolbar, [{
-	        key: 'getToolbar',
-	        value: function getToolbar(filter) {
-	            var _props = this.props;
-	            var plugins = _props.plugins;
-	            var placeHolderText = _props.placeHolderText;
-	            var columnManager = _props.columnManager;
-	            var dataSource = _props.dataSource;
-	            var store = _props.store;
+	var FilterToolbar = exports.FilterToolbar = function FilterToolbar(_ref) {
+	    var columnManager = _ref.columnManager;
+	    var dataSource = _ref.dataSource;
+	    var defaultSortMethod = _ref.defaultSortMethod;
+	    var filter = _ref.filter;
+	    var placeHolderText = _ref.placeHolderText;
+	    var pager = _ref.pager;
+	    var pageSize = _ref.pageSize;
+	    var plugins = _ref.plugins;
+	    var store = _ref.store;
 
 
-	            var dataUri = columnManager.config.dataSource || '';
+	    var toolbar = plugins && plugins.FILTER_CONTAINER && plugins.FILTER_CONTAINER.enabled ? getToolbar(columnManager, dataSource, defaultSortMethod, filter, placeHolderText, pager, pageSize, plugins, store) : _react2.default.createElement('div', null);
 
-	            var filterMenuShown = plugins && plugins.FILTER_CONTAINER && plugins.FILTER_CONTAINER.enableFilterMenu && filter && filter.filterMenuShown;
-
-	            var method = plugins && plugins.FILTER_CONTAINER && plugins.FILTER_CONTAINER.method ? plugins.FILTER_CONTAINER.method.toUpperCase() : this.props.defaultSortMethod;
-
-	            var inputValue = filter && filter.filterValue ? filter.filterValue : '';
-
-	            if (filter && filter.filterMenuValues && Object.keys(filter.filterMenuValues).length > 0) {
-	                inputValue = JSON.stringify(filter.filterMenuValues);
-	            }
-
-	            var containerProps = {
-	                className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.FILTER_CONTAINER.CONTAINER)
-	            };
-
-	            var inputProps = {
-	                className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.FILTER_CONTAINER.INPUT),
-	                placeholder: placeHolderText,
-	                onChange: this.setFilterValue.bind(this),
-	                onKeyUp: this.handleKeyUp.bind(this, inputValue, method, dataSource),
-	                value: inputValue
-	            };
-
-	            var buttonContainerProps = {
-	                className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.FILTER_CONTAINER.BUTTON_CONTAINER)
-	            };
-
-	            var searchButtonProps = {
-	                className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.FILTER_CONTAINER.SEARCH_BUTTON)
-	            };
-
-	            var clearButtonProps = {
-	                className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.FILTER_CONTAINER.CLEAR_BUTTON),
-	                onClick: this.clearFilter.bind(this, dataUri, method)
-	            };
-
-	            var filterMenuButtonProps = {
-	                className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.FILTER_CONTAINER.MENU_BUTTON, filterMenuShown ? _GridConstants.CLASS_NAMES.ACTIVE_CLASS : ''),
-	                onClick: this.handleFilterMenuButtonClick.bind(this)
-	            };
-
-	            var filterMenuProps = {
-	                store: store,
-	                plugins: plugins
-	            };
-
-	            var applicableButton = inputValue && inputValue.length > 0 ? _react2.default.createElement('i', clearButtonProps) : _react2.default.createElement('i', searchButtonProps);
-
-	            var filterMenuButton = plugins.FILTER_CONTAINER.enableFilterMenu ? _react2.default.createElement('i', filterMenuButtonProps) : null;
-
-	            var filterMenu = filterMenuShown ? _react2.default.createElement(_Menu2.default, filterMenuProps) : null;
-
-	            return _react2.default.createElement(
-	                'div',
-	                containerProps,
-	                _react2.default.createElement('input', inputProps),
-	                _react2.default.createElement(
-	                    'div',
-	                    buttonContainerProps,
-	                    applicableButton,
-	                    filterMenuButton
-	                ),
-	                filterMenu
-	            );
-	        }
-	    }, {
-	        key: 'handleFilterMenuButtonClick',
-	        value: function handleFilterMenuButtonClick() {
-	            var _props2 = this.props;
-	            var store = _props2.store;
-	            var filter = _props2.filter;
-
-	            var shown = filter ? filter.filterMenuShown : false;
-	            store.dispatch((0, _FilterActions.showFilterMenu)(shown));
-	        }
-	    }, {
-	        key: 'setFilterValue',
-	        value: function setFilterValue(reactEvent) {
-	            var store = this.props.store;
-
-	            var value = reactEvent.target.value;
-
-	            store.dispatch((0, _FilterActions.setFilter)(value));
-	        }
-	    }, {
-	        key: 'clearFilter',
-	        value: function clearFilter(dataSource, method) {
-	            var store = this.props.store;
-
-
-	            if (method === _GridConstants.FILTER_METHODS.LOCAL) {
-	                store.dispatch((0, _FilterActions.clearFilterLocal)());
-	            } else if (method === _GridConstants.FILTER_METHODS.REMOTE) {
-	                store.dispatch((0, _FilterActions.clearFilterRemote)(dataSource));
-	            }
-
-	            store.dispatch((0, _FilterActions.setFilter)(''));
-	        }
-	    }, {
-	        key: 'handleKeyUp',
-	        value: function handleKeyUp(value, method, dataSource, reactEvent) {
-	            var filterSource = this.props.plugins.FILTER_CONTAINER.filterSource;
-	            var _props3 = this.props;
-	            var pager = _props3.pager;
-	            var store = _props3.store;
-	            var pageSize = _props3.pageSize;
-
-
-	            var pageIndex = pager ? pager.pageIndex : 0;
-
-	            if (reactEvent.which !== _GridConstants.KEYBOARD_MAP.ENTER) {
-	                return false;
-	            }
-
-	            if (method === _GridConstants.FILTER_METHODS.LOCAL) {
-	                store.dispatch((0, _FilterActions.doLocalFilter)(_filterUtils2.default.byKeyword(value, dataSource)));
-	            } else if (method === _GridConstants.FILTER_METHODS.REMOTE) {
-	                store.dispatch((0, _FilterActions.doRemoteFilter)({
-	                    keyword: value
-	                }, pageIndex, pageSize, filterSource));
-	            } else {
-	                console.warn('The filter method has not been created!');
-	            }
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            var _props4 = this.props;
-	            var plugins = _props4.plugins;
-	            var filter = _props4.filter;
-
-
-	            var toolbar = plugins && plugins.FILTER_CONTAINER && plugins.FILTER_CONTAINER.enabled ? this.getToolbar(filter) : null;
-
-	            return toolbar;
-	        }
-	    }]);
-
-	    return FilterToolbar;
-	}(_react.Component);
+	    return toolbar;
+	};
 
 	FilterToolbar.propTypes = {
 	    columnManager: _react.PropTypes.object,
@@ -23831,19 +24413,82 @@
 	    selectionModel: _react.PropTypes.object,
 	    store: _react.PropTypes.object.isRequired
 	};
+
 	FilterToolbar.defaultProps = {
 	    defaultSortMethod: _GridConstants.FILTER_METHODS.LOCAL,
 	    placeHolderText: 'Search'
 	};
 
+	var getToolbar = exports.getToolbar = function getToolbar(columnManager, dataSource, defaultSortMethod, filter, placeHolderText, pager, pageSize, plugins, store) {
 
-	function mapStateToProps(state) {
+	    var dataUri = columnManager.config.dataSource || '';
+
+	    var filterMenuShown = plugins && plugins.FILTER_CONTAINER && plugins.FILTER_CONTAINER.enableFilterMenu && filter && filter.filterMenuShown;
+
+	    var method = plugins && plugins.FILTER_CONTAINER && plugins.FILTER_CONTAINER.method ? plugins.FILTER_CONTAINER.method.toUpperCase() : defaultSortMethod;
+
+	    var inputValue = filter && filter.filterValue ? filter.filterValue : '';
+
+	    if (filter && filter.filterMenuValues && Object.keys(filter.filterMenuValues).length > 0) {
+	        inputValue = JSON.stringify(filter.filterMenuValues);
+	    }
+
+	    var applicableButton = inputValue && inputValue.length > 0 ? _react2.default.createElement(_ClearButton.ClearButton, { dataUri: dataUri, method: method, store: store }) : _react2.default.createElement(_SearchButton.SearchButton, null);
+
+	    var filterMenuButton = plugins.FILTER_CONTAINER.enableFilterMenu ? _react2.default.createElement(_FilterButton.FilterButton, { filter: filter, filterMenuShown: filterMenuShown, store: store }) : null;
+
+	    var filterMenu = filterMenuShown ? _react2.default.createElement(_Menu2.default, { store: store, plugins: plugins }) : null;
+
+	    return _react2.default.createElement(
+	        'div',
+	        { className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.FILTER_CONTAINER.CONTAINER) },
+	        _react2.default.createElement(_Input.Input, { dataSource: dataSource, method: method, placeHolderText: placeHolderText,
+	            inputValue: inputValue, plugins: plugins, pager: pager, pageSize: pageSize, store: store }),
+	        _react2.default.createElement(
+	            'div',
+	            { className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.FILTER_CONTAINER.BUTTON_CONTAINER) },
+	            applicableButton,
+	            filterMenuButton
+	        ),
+	        filterMenu
+	    );
+	};
+
+	var setFilterValue = exports.setFilterValue = function setFilterValue(store, reactEvent) {
+
+	    var value = reactEvent.target.value;
+
+	    store.dispatch((0, _FilterActions.setFilter)(value));
+	};
+
+	var handleKeyUp = exports.handleKeyUp = function handleKeyUp(value, method, dataSource, plugins, pager, pageSize, store, reactEvent) {
+
+	    var filterSource = plugins.FILTER_CONTAINER;
+
+	    var pageIndex = pager ? pager.pageIndex : 0;
+
+	    if (reactEvent.which !== _GridConstants.KEYBOARD_MAP.ENTER) {
+	        return false;
+	    }
+
+	    if (method === _GridConstants.FILTER_METHODS.LOCAL) {
+	        store.dispatch((0, _FilterActions.doLocalFilter)(_filterUtils2.default.byKeyword(value, dataSource)));
+	    } else if (method === _GridConstants.FILTER_METHODS.REMOTE) {
+	        store.dispatch((0, _FilterActions.doRemoteFilter)({
+	            keyword: value
+	        }, pageIndex, pageSize, filterSource));
+	    } else {
+	        console.warn('The filter method has not been created!');
+	    }
+	};
+
+	function mapStateToProps(state, props) {
 
 	    return {
-	        dataSource: state.dataSource.get('gridData'),
-	        selectedRows: state.selection.get('selectedRows'),
-	        filter: state.filter.get('filterState'),
-	        pager: state.pager.get('pagerState')
+	        dataSource: (0, _stateGetter.stateGetter)(state, props, 'dataSource', 'gridData'),
+	        selectedRows: (0, _stateGetter.stateGetter)(state, props, 'selection', 'selectedRows'),
+	        filter: (0, _stateGetter.stateGetter)(state, props, 'filter', 'filterState'),
+	        pager: (0, _stateGetter.stateGetter)(state, props, 'pager', 'pagerState')
 	    };
 	}
 
@@ -23852,7 +24497,7 @@
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Toolbar.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 205 */
+/* 218 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -23862,226 +24507,98 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
+	exports.FilterMenu = undefined;
 
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 	var _react = __webpack_require__(149);
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _reactRedux = __webpack_require__(163);
+	var _reactRedux = __webpack_require__(173);
 
-	var _prefix = __webpack_require__(186);
+	var _Button = __webpack_require__(219);
 
-	var _Menu2 = __webpack_require__(206);
+	var _Input = __webpack_require__(222);
 
-	var _Menu3 = _interopRequireDefault(_Menu2);
+	var _prefix = __webpack_require__(194);
 
-	var _filterUtils = __webpack_require__(210);
+	var _stateGetter = __webpack_require__(199);
 
-	var _filterUtils2 = _interopRequireDefault(_filterUtils);
-
-	var _keygenerator = __webpack_require__(187);
-
-	var _GridConstants = __webpack_require__(185);
-
-	var _FilterActions = __webpack_require__(211);
+	var _GridConstants = __webpack_require__(190);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var FilterMenu = function (_Menu) {
-	    _inherits(FilterMenu, _Menu);
-
-	    function FilterMenu() {
-	        _classCallCheck(this, FilterMenu);
-
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(FilterMenu).apply(this, arguments));
-	    }
-
-	    _createClass(FilterMenu, [{
-	        key: 'getInput',
-	        value: function getInput(field) {
-	            var filter = this.props.filter;
+	var FilterMenu = exports.FilterMenu = function FilterMenu(_ref) {
+	    var buttonText = _ref.buttonText;
+	    var buttonTypes = _ref.buttonTypes;
+	    var dataSource = _ref.dataSource;
+	    var menuTitle = _ref.menuTitle;
+	    var filter = _ref.filter;
+	    var plugins = _ref.plugins;
+	    var pager = _ref.pager;
+	    var store = _ref.store;
 
 
-	            var value = filter && filter.filterMenuValues && filter.filterMenuValues[field.name] ? filter.filterMenuValues[field.name] : null;
+	    var menuContainerProps = {
+	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.FILTER_CONTAINER.MENU.CONTAINER)
+	    };
 
-	            var containerProps = {
-	                className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.FILTER_CONTAINER.MENU.FIELD.CONTAINER),
-	                key: (0, _keygenerator.keyFromObject)(field, ['container'])
-	            };
+	    var menuTitleProps = {
+	        text: menuTitle,
+	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.FILTER_CONTAINER.MENU.TITLE)
+	    };
 
-	            var inputProps = {
-	                type: field.type,
-	                key: (0, _keygenerator.keyFromObject)(field),
-	                placeholder: field.placeholder,
-	                name: field.name,
-	                className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.FILTER_CONTAINER.MENU.FIELD.INPUT),
-	                onChange: this.handleDynamicInputChange.bind(this),
-	                value: value
-	            };
+	    var buttonContainerProps = {
+	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.FILTER_CONTAINER.MENU.BUTTON_CONTAINER)
+	    };
 
-	            var labelProps = {
-	                key: (0, _keygenerator.keyFromObject)(inputProps),
-	                text: field.label,
-	                className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.FILTER_CONTAINER.MENU.FIELD.LABEL)
-	            };
+	    var inputs = plugins.FILTER_CONTAINER.fields && plugins.FILTER_CONTAINER.fields.length > 0 ? plugins.FILTER_CONTAINER.fields.map(function (field) {
+	        return _react2.default.createElement(_Input.Input, { field: field, filter: filter, store: store });
+	    }) : null;
 
-	            return _react2.default.createElement(
-	                'span',
-	                containerProps,
-	                _react2.default.createElement(
-	                    'label',
-	                    labelProps,
-	                    labelProps.text
-	                ),
-	                _react2.default.createElement('input', inputProps)
-	            );
-	        }
-	    }, {
-	        key: 'handleDynamicInputChange',
-	        value: function handleDynamicInputChange(reactEvent) {
-	            var _props = this.props;
-	            var store = _props.store;
-	            var filter = _props.filter;
+	    var buttonProps = {
+	        buttonText: buttonText,
+	        buttonTypes: buttonTypes,
+	        dataSource: dataSource,
+	        filter: filter,
+	        plugins: plugins,
+	        pager: pager,
+	        store: store
+	    };
 
-	            var name = reactEvent.target.name;
-	            var value = reactEvent.target.value;
-	            var existingFilter = filter && filter.filterMenuValues ? filter.filterMenuValues : {};
-	            var newFilterValues = Object.assign(existingFilter, _defineProperty({}, name, value));
-
-	            if (!name) {
-	                console.warn('All registered inputs require a name property for dynamic filtering!');
-	                return false;
-	            }
-
-	            store.dispatch((0, _FilterActions.setFilterMenuValues)(newFilterValues));
-	        }
-	    }, {
-	        key: 'handleButtonClick',
-	        value: function handleButtonClick(type) {
-	            var _props2 = this.props;
-	            var buttonTypes = _props2.buttonTypes;
-	            var filter = _props2.filter;
-	            var store = _props2.store;
-	            var dataSource = _props2.dataSource;
-	            var plugins = _props2.plugins;
-	            var pager = _props2.pager;
-
-	            var method = plugins.FILTER_CONTAINER.method ? plugins.FILTER_CONTAINER.method.toUpperCase() : _GridConstants.FILTER_METHODS.LOCAL;
-	            var filterSource = plugins.FILTER_CONTAINER.filterSource;
-
-	            var pageSize = pager ? pager.pageSize : _GridConstants.DEFAULT_PAGE_SIZE;
-	            var pageIndex = 0;
-
-	            if (pager) {
-	                pageIndex = pager.pageIndex;
-	            }
-
-	            if (type === buttonTypes.CANCEL) {
-	                store.dispatch((0, _FilterActions.showFilterMenu)(true, true));
-	                store.dispatch((0, _FilterActions.clearFilterLocal)(dataSource));
-	            } else if (type === buttonTypes.SUBMIT) {
-
-	                if (method === _GridConstants.FILTER_METHODS.LOCAL) {
-	                    store.dispatch((0, _FilterActions.doLocalFilter)(_filterUtils2.default.byMenu(filter.filterMenuValues, dataSource)));
-	                } else if (method === _GridConstants.FILTER_METHODS.REMOTE) {
-	                    store.dispatch((0, _FilterActions.doRemoteFilter)(filter.filterMenuValues, pageIndex, pageSize, filterSource));
-	                }
-	            }
-	        }
-	    }, {
-	        key: 'getButton',
-	        value: function getButton(type) {
-	            var _props3 = this.props;
-	            var buttonText = _props3.buttonText;
-	            var buttonTypes = _props3.buttonTypes;
-
-
-	            var buttonProps = {
-	                text: buttonText[type],
-	                className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.FILTER_CONTAINER.MENU.BUTTON, type === buttonTypes.CANCEL ? _GridConstants.CLASS_NAMES.SECONDARY_CLASS : ''),
-	                onClick: this.handleButtonClick.bind(this, type)
-	            };
-
-	            return _react2.default.createElement(
-	                'button',
-	                buttonProps,
-	                buttonProps.text
-	            );
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            var _props4 = this.props;
-	            var plugins = _props4.plugins;
-	            var menuTitle = _props4.menuTitle;
-	            var buttonTypes = _props4.buttonTypes;
-
-
-	            var menuContainerProps = {
-	                className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.FILTER_CONTAINER.MENU.CONTAINER)
-	            };
-
-	            var menuTitleProps = {
-	                text: menuTitle,
-	                className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.FILTER_CONTAINER.MENU.TITLE)
-	            };
-
-	            var buttonContainerProps = {
-	                className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.FILTER_CONTAINER.MENU.BUTTON_CONTAINER)
-	            };
-
-	            var inputs = plugins.FILTER_CONTAINER.fields && plugins.FILTER_CONTAINER.fields.length > 0 ? plugins.FILTER_CONTAINER.fields.map(this.getInput.bind(this)) : null;
-
-	            var submitButton = this.getButton(buttonTypes.SUBMIT);
-
-	            var cancelButton = this.getButton(buttonTypes.CANCEL);
-
-	            return _react2.default.createElement(
-	                'div',
-	                menuContainerProps,
-	                _react2.default.createElement(
-	                    'span',
-	                    menuTitleProps,
-	                    menuTitleProps.text
-	                ),
-	                _react2.default.createElement(
-	                    'div',
-	                    null,
-	                    inputs
-	                ),
-	                _react2.default.createElement(
-	                    'div',
-	                    buttonContainerProps,
-	                    submitButton,
-	                    cancelButton
-	                )
-	            );
-	        }
-	    }]);
-
-	    return FilterMenu;
-	}(_Menu3.default);
+	    return _react2.default.createElement(
+	        'div',
+	        menuContainerProps,
+	        _react2.default.createElement(
+	            'span',
+	            menuTitleProps,
+	            menuTitleProps.text
+	        ),
+	        _react2.default.createElement(
+	            'div',
+	            null,
+	            inputs
+	        ),
+	        _react2.default.createElement(
+	            'div',
+	            buttonContainerProps,
+	            _react2.default.createElement(_Button.Button, _extends({}, buttonProps, { type: buttonTypes.CANCEL })),
+	            _react2.default.createElement(_Button.Button, _extends({}, buttonProps, { type: buttonTypes.SUBMIT }))
+	        )
+	    );
+	};
 
 	FilterMenu.propTypes = {
 	    buttonText: _react.PropTypes.object,
 	    buttonTypes: _react.PropTypes.object,
+	    filter: _react.PropTypes.string,
 	    menuTitle: _react.PropTypes.string.isRequired,
 	    plugins: _react.PropTypes.object.isRequired,
 	    store: _react.PropTypes.object.isRequired
 	};
+
 	FilterMenu.defaultProps = {
-	    store: _react2.default.PropTypes.object.isRequired,
-	    menuTitle: 'Advanced Filter Menu',
 	    buttonTypes: {
 	        SUBMIT: 'SUBMIT',
 	        CANCEL: 'CANCEL'
@@ -24090,20 +24607,20 @@
 	        SUBMIT: 'Submit',
 	        CANCEL: 'Cancel'
 	    },
-	    plugins: _react2.default.PropTypes.object.isRequired,
-	    selectionModel: _react2.default.PropTypes.object.isRequired,
+	    defaultSortMethod: _GridConstants.FILTER_METHODS.LOCAL,
+	    menuTitle: 'Advanced Filter Menu',
 	    placeHolderText: 'Search',
-	    defaultSortMethod: _GridConstants.FILTER_METHODS.LOCAL
+	    plugins: _react2.default.PropTypes.object.isRequired,
+	    selectionModel: _react2.default.PropTypes.object.isRequired
 	};
 
-
-	function mapStateToProps(state) {
+	function mapStateToProps(state, props) {
 
 	    return {
-	        dataSource: state.dataSource.get('gridData'),
-	        selectedRows: state.selection.get('selectedRows'),
-	        filter: state.filter.get('filterState'),
-	        pager: state.pager.get('pagerState')
+	        dataSource: (0, _stateGetter.stateGetter)(state, props, 'dataSource', 'gridData'),
+	        selectedRows: (0, _stateGetter.stateGetter)(state, props, 'selection', 'selectedRows'),
+	        filter: (0, _stateGetter.stateGetter)(state, props, 'filter', 'filterState'),
+	        pager: (0, _stateGetter.stateGetter)(state, props, 'pager', 'pagerState')
 	    };
 	}
 
@@ -24112,7 +24629,7 @@
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Menu.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 206 */
+/* 219 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -24122,265 +24639,90 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _react = __webpack_require__(149);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _MenuItem = __webpack_require__(207);
-
-	var _MenuItem2 = _interopRequireDefault(_MenuItem);
-
-	var _reactRedux = __webpack_require__(163);
-
-	var _keygenerator = __webpack_require__(187);
-
-	var _prefix = __webpack_require__(186);
-
-	var _GridConstants = __webpack_require__(185);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var Menu = function (_Component) {
-	    _inherits(Menu, _Component);
-
-	    function Menu() {
-	        _classCallCheck(this, Menu);
-
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(Menu).apply(this, arguments));
-	    }
-
-	    _createClass(Menu, [{
-	        key: 'getMenuItem',
-	        value: function getMenuItem(item) {
-	            var store = this.props.store;
-
-
-	            var menuProps = {
-	                data: item,
-	                type: item.type,
-	                key: (0, _keygenerator.keyFromObject)(item),
-	                store: store
-	            };
-
-	            return _react2.default.createElement(_MenuItem2.default, menuProps);
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            var menu = this.props.menu;
-
-
-	            var menuProps = {
-	                className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.GRID_ACTIONS.MENU.CONTAINER)
-	            };
-
-	            var menuItems = menu && menu.length > 0 ? menu.map(this.getMenuItem.bind(this)) : null;
-
-	            return _react2.default.createElement(
-	                'ul',
-	                menuProps,
-	                menuItems
-	            );
-	        }
-	    }]);
-
-	    return Menu;
-	}(_react.Component);
-
-	Menu.propTypes = {
-	    menu: _react2.default.PropTypes.array,
-	    store: _react2.default.PropTypes.object
-	};
-
-
-	function mapStateToProps() {
-	    return {};
-	}
-
-	exports.default = (0, _reactRedux.connect)(mapStateToProps)(Menu);
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Menu.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-
-/***/ },
-/* 207 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	exports.handleButtonClick = exports.Button = undefined;
 
 	var _react = __webpack_require__(149);
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _reactRedux = __webpack_require__(163);
+	var _prefix = __webpack_require__(194);
 
-	var _prefix = __webpack_require__(186);
+	var _filterUtils = __webpack_require__(220);
 
-	var _emptyFn = __webpack_require__(208);
+	var _filterUtils2 = _interopRequireDefault(_filterUtils);
 
-	var _GridConstants = __webpack_require__(185);
+	var _GridConstants = __webpack_require__(190);
 
-	var _MenuActions = __webpack_require__(209);
+	var _FilterActions = __webpack_require__(221);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var MenuItem = function (_Component) {
-	    _inherits(MenuItem, _Component);
-
-	    function MenuItem() {
-	        _classCallCheck(this, MenuItem);
-
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(MenuItem).apply(this, arguments));
-	    }
-
-	    _createClass(MenuItem, [{
-	        key: 'handleMenuItemClick',
-	        value: function handleMenuItemClick(data, reactEvent) {
-
-	            reactEvent.stopPropagation();
-
-	            var dismiss = data.dismissOnClick !== undefined ? data.dismissOnClick : true;
-
-	            var store = this.props.store;
+	var Button = exports.Button = function Button(_ref) {
+	    var buttonText = _ref.buttonText;
+	    var buttonTypes = _ref.buttonTypes;
+	    var dataSource = _ref.dataSource;
+	    var filter = _ref.filter;
+	    var plugins = _ref.plugins;
+	    var pager = _ref.pager;
+	    var type = _ref.type;
+	    var store = _ref.store;
 
 
-	            if (dismiss) {
-	                store.dispatch((0, _MenuActions.hideMenu)());
-	            }
-
-	            if (data.EVENT_HANDLER) {
-	                data.EVENT_HANDLER.apply(this, arguments);
-	            }
-	        }
-	    }, {
-	        key: 'getCheckbox',
-	        value: function getCheckbox(data) {
-
-	            var readOnly = data.hideable !== undefined ? !data.hideable : false;
-
-	            var checkboxProps = {
-	                type: this.props.menuItemsTypes.checkbox,
-	                checked: data.checked,
-	                disabled: readOnly,
-	                onChange: data.onCheckboxChange || _emptyFn.emptyFn
-	            };
-
-	            return _react2.default.createElement('input', checkboxProps);
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            var _props = this.props;
-	            var data = _props.data;
-	            var menuItemsTypes = _props.menuItemsTypes;
-
-
-	            var menuItemProps = {
-	                className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.GRID_ACTIONS.MENU.ITEM),
-	                onClick: this.handleMenuItemClick.bind(this, data)
-	            };
-
-	            var checkboxComponent = data.menuItemType === menuItemsTypes.checkbox ? this.getCheckbox(data) : null;
-
-	            return _react2.default.createElement(
-	                'li',
-	                menuItemProps,
-	                checkboxComponent,
-	                data.text
-	            );
-	        }
-	    }]);
-
-	    return MenuItem;
-	}(_react.Component);
-
-	MenuItem.propTypes = {
-	    data: _react2.default.PropTypes.object,
-	    menuItemsTypes: _react2.default.PropTypes.object,
-	    store: _react2.default.PropTypes.object
-	};
-	MenuItem.defaultProps = {
-	    menuItemsTypes: {
-	        checkbox: 'checkbox'
-	    }
-	};
-
-
-	function mapStateToProps(state) {
-	    return {
-	        columnStates: state.columnManager.get('columnStates')
+	    var buttonProps = {
+	        text: buttonText[type],
+	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.FILTER_CONTAINER.MENU.BUTTON, type === buttonTypes.CANCEL ? _GridConstants.CLASS_NAMES.SECONDARY_CLASS : ''),
+	        onClick: handleButtonClick.bind(undefined, buttonTypes, dataSource, filter, plugins, pager, type, store)
 	    };
-	}
 
-	exports.default = (0, _reactRedux.connect)(mapStateToProps)(MenuItem);
+	    return _react2.default.createElement(
+	        'button',
+	        buttonProps,
+	        buttonProps.text
+	    );
+	};
 
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "MenuItem.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+	Button.propTypes = {
+	    buttonText: _react.PropTypes.string,
+	    buttonTypes: _react.PropTypes.object,
+	    dataSource: _react.PropTypes.object,
+	    filter: _react.PropTypes.object,
+	    plugins: _react.PropTypes.object,
+	    pager: _react.PropTypes.object,
+	    type: _react.PropTypes.object,
+	    store: _react.PropTypes.object.isRequired
+	};
+
+	Button.defaultProps = {};
+
+	var handleButtonClick = exports.handleButtonClick = function handleButtonClick(buttonTypes, dataSource, filter, plugins, pager, type, store) {
+
+	    var method = plugins.FILTER_CONTAINER.method ? plugins.FILTER_CONTAINER.method.toUpperCase() : _GridConstants.FILTER_METHODS.LOCAL;
+	    var filterSource = plugins.FILTER_CONTAINER.filterSource;
+
+	    var pageSize = pager ? pager.pageSize : _GridConstants.DEFAULT_PAGE_SIZE;
+	    var pageIndex = 0;
+
+	    if (pager) {
+	        pageIndex = pager.pageIndex;
+	    }
+
+	    if (type === buttonTypes.CANCEL) {
+	        store.dispatch((0, _FilterActions.showFilterMenu)(true, true));
+	        store.dispatch((0, _FilterActions.clearFilterLocal)(dataSource));
+	    } else if (type === buttonTypes.SUBMIT) {
+
+	        if (method === _GridConstants.FILTER_METHODS.LOCAL) {
+	            store.dispatch((0, _FilterActions.doLocalFilter)(_filterUtils2.default.byMenu(filter.filterMenuValues, dataSource)));
+	        } else if (method === _GridConstants.FILTER_METHODS.REMOTE) {
+	            store.dispatch((0, _FilterActions.doRemoteFilter)(filter.filterMenuValues, pageIndex, pageSize, filterSource));
+	        }
+	    }
+	};
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Button.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 208 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	var emptyFn = exports.emptyFn = function emptyFn() {};
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "emptyFn.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-
-/***/ },
-/* 209 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.showMenu = showMenu;
-	exports.hideMenu = hideMenu;
-
-	var _ActionTypes = __webpack_require__(190);
-
-	function showMenu(id) {
-	    return { type: _ActionTypes.SHOW_MENU, id: id };
-	}
-
-	function hideMenu(id) {
-	    return { type: _ActionTypes.HIDE_MENU, id: id };
-	}
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "MenuActions.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-
-/***/ },
-/* 210 */
+/* 220 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -24454,7 +24796,7 @@
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "filterUtils.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 211 */
+/* 221 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -24472,15 +24814,15 @@
 	exports.clearFilterLocal = clearFilterLocal;
 	exports.showFilterMenu = showFilterMenu;
 
-	var _ActionTypes = __webpack_require__(190);
+	var _ActionTypes = __webpack_require__(189);
 
 	var _Request = __webpack_require__(193);
 
 	var _Request2 = _interopRequireDefault(_Request);
 
-	var _LoaderActions = __webpack_require__(192);
+	var _LoaderActions = __webpack_require__(191);
 
-	var _GridActions = __webpack_require__(191);
+	var _GridActions = __webpack_require__(188);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -24570,7 +24912,7 @@
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "FilterActions.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 212 */
+/* 222 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -24580,56 +24922,366 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	exports.handleDynamicInputChange = exports.Input = undefined;
 
 	var _react = __webpack_require__(149);
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _reactRedux = __webpack_require__(163);
+	var _prefix = __webpack_require__(194);
 
-	var _prefix = __webpack_require__(186);
+	var _GridConstants = __webpack_require__(190);
 
-	var _GridConstants = __webpack_require__(185);
+	var _keyGenerator = __webpack_require__(192);
+
+	var _FilterActions = __webpack_require__(221);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	var Input = exports.Input = function Input(_ref) {
+	    var filter = _ref.filter;
+	    var field = _ref.field;
+	    var store = _ref.store;
 
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var LoadingBar = function (_Component) {
-	    _inherits(LoadingBar, _Component);
+	    var value = filter && filter.filterMenuValues && filter.filterMenuValues[field.name] ? filter.filterMenuValues[field.name] : null;
 
-	    function LoadingBar() {
-	        _classCallCheck(this, LoadingBar);
+	    var containerProps = {
+	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.FILTER_CONTAINER.MENU.FIELD.CONTAINER),
+	        key: (0, _keyGenerator.keyFromObject)(field, ['container'])
+	    };
 
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(LoadingBar).apply(this, arguments));
+	    var inputProps = {
+	        type: field.type,
+	        key: (0, _keyGenerator.keyFromObject)(field),
+	        placeholder: field.placeholder,
+	        name: field.name,
+	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.FILTER_CONTAINER.MENU.FIELD.INPUT),
+	        onChange: handleDynamicInputChange.bind(undefined, filter, store),
+	        value: value
+	    };
+
+	    var labelProps = {
+	        key: (0, _keyGenerator.keyFromObject)(inputProps),
+	        text: field.label,
+	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.FILTER_CONTAINER.MENU.FIELD.LABEL)
+	    };
+
+	    return _react2.default.createElement(
+	        'span',
+	        containerProps,
+	        _react2.default.createElement(
+	            'label',
+	            labelProps,
+	            labelProps.text
+	        ),
+	        _react2.default.createElement('input', inputProps)
+	    );
+	};
+
+	Input.propTypes = {
+	    field: _react.PropTypes.object,
+	    filter: _react.PropTypes.object,
+	    store: _react.PropTypes.object
+	};
+
+	Input.defaultProps = {};
+
+	var handleDynamicInputChange = exports.handleDynamicInputChange = function handleDynamicInputChange(filter, store, reactEvent) {
+
+	    var name = reactEvent.target.name;
+	    var value = reactEvent.target.value;
+	    var existingFilter = filter && filter.filterMenuValues ? filter.filterMenuValues : {};
+	    var newFilterValues = Object.assign(existingFilter, _defineProperty({}, name, value));
+
+	    if (!name) {
+	        console.warn('All registered inputs require a name property for dynamic filtering!');
+	        return false;
 	    }
 
-	    _createClass(LoadingBar, [{
-	        key: 'render',
-	        value: function render() {
-	            var _props = this.props;
-	            var isLoading = _props.isLoading;
-	            var plugins = _props.plugins;
+	    store.dispatch((0, _FilterActions.setFilterMenuValues)(newFilterValues));
+	};
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Input.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 223 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.setFilterValue = exports.handleKeyUp = exports.Input = undefined;
+
+	var _react = __webpack_require__(149);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _prefix = __webpack_require__(194);
+
+	var _GridConstants = __webpack_require__(190);
+
+	var _filterUtils = __webpack_require__(220);
+
+	var _filterUtils2 = _interopRequireDefault(_filterUtils);
+
+	var _FilterActions = __webpack_require__(221);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var Input = exports.Input = function Input(_ref) {
+	    var dataSource = _ref.dataSource;
+	    var method = _ref.method;
+	    var placeHolderText = _ref.placeHolderText;
+	    var inputValue = _ref.inputValue;
+	    var plugins = _ref.plugins;
+	    var pager = _ref.pager;
+	    var pageSize = _ref.pageSize;
+	    var store = _ref.store;
 
 
-	            var showLoader = plugins && plugins.LOADER && plugins.LOADER.enabled && isLoading;
+	    var inputProps = {
+	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.FILTER_CONTAINER.INPUT),
+	        placeholder: placeHolderText,
+	        onChange: setFilterValue.bind(undefined, store),
+	        onKeyUp: handleKeyUp.bind(undefined, inputValue, method, dataSource, plugins, pager, pageSize, store),
+	        value: inputValue
+	    };
 
-	            var loadingBarProps = {
-	                className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.LOADING_BAR, showLoader ? 'active' : '')
-	            };
+	    return _react2.default.createElement('input', inputProps);
+	};
 
-	            return _react2.default.createElement('div', loadingBarProps);
-	        }
-	    }]);
+	var handleKeyUp = exports.handleKeyUp = function handleKeyUp(value, method, dataSource, plugins, pager, pageSize, store, reactEvent) {
 
-	    return LoadingBar;
-	}(_react.Component);
+	    var filterSource = plugins.FILTER_CONTAINER;
+
+	    var pageIndex = pager ? pager.pageIndex : 0;
+
+	    if (reactEvent.which !== _GridConstants.KEYBOARD_MAP.ENTER) {
+	        return false;
+	    }
+
+	    if (method === _GridConstants.FILTER_METHODS.LOCAL) {
+	        store.dispatch((0, _FilterActions.doLocalFilter)(_filterUtils2.default.byKeyword(value, dataSource)));
+	    } else if (method === _GridConstants.FILTER_METHODS.REMOTE) {
+	        store.dispatch((0, _FilterActions.doRemoteFilter)({
+	            keyword: value
+	        }, pageIndex, pageSize, filterSource));
+	    } else {
+	        console.warn('The filter method has not been created!');
+	    }
+	};
+
+	var setFilterValue = exports.setFilterValue = function setFilterValue(store, reactEvent) {
+
+	    var value = reactEvent.target.value;
+
+	    store.dispatch((0, _FilterActions.setFilter)(value));
+	};
+
+	Input.propTypes = {
+	    className: _react.PropTypes.string,
+	    placeholder: _react.PropTypes.string,
+	    value: _react.PropTypes.any
+	};
+
+	Input.defaultProps = {};
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Input.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 224 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.SearchButton = undefined;
+
+	var _react = __webpack_require__(149);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _prefix = __webpack_require__(194);
+
+	var _GridConstants = __webpack_require__(190);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var SearchButton = exports.SearchButton = function SearchButton() {
+
+	    var buttonProps = {
+	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.FILTER_CONTAINER.SEARCH_BUTTON)
+	    };
+
+	    return _react2.default.createElement('i', buttonProps);
+	};
+
+	SearchButton.propTypes = {};
+
+	SearchButton.defaultProps = {};
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "SearchButton.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 225 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.clearFilter = exports.ClearButton = undefined;
+
+	var _react = __webpack_require__(149);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _prefix = __webpack_require__(194);
+
+	var _GridConstants = __webpack_require__(190);
+
+	var _FilterActions = __webpack_require__(221);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var ClearButton = exports.ClearButton = function ClearButton(_ref) {
+	    var dataUri = _ref.dataUri;
+	    var method = _ref.method;
+	    var store = _ref.store;
+
+
+	    var buttonProps = {
+	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.FILTER_CONTAINER.CLEAR_BUTTON),
+	        onClick: clearFilter.bind(undefined, dataUri, method, store)
+	    };
+
+	    return _react2.default.createElement('i', buttonProps);
+	};
+
+	var clearFilter = exports.clearFilter = function clearFilter(dataSource, method, store) {
+
+	    if (method === _GridConstants.FILTER_METHODS.LOCAL) {
+	        store.dispatch((0, _FilterActions.clearFilterLocal)());
+	    } else if (method === _GridConstants.FILTER_METHODS.REMOTE) {
+	        store.dispatch((0, _FilterActions.clearFilterRemote)(dataSource));
+	    }
+
+	    store.dispatch((0, _FilterActions.setFilter)(''));
+	};
+
+	ClearButton.propTypes = {};
+
+	ClearButton.defaultProps = {};
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "ClearButton.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 226 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.handleFilterMenuButtonClick = exports.FilterButton = undefined;
+
+	var _react = __webpack_require__(149);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _prefix = __webpack_require__(194);
+
+	var _GridConstants = __webpack_require__(190);
+
+	var _FilterActions = __webpack_require__(221);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var FilterButton = exports.FilterButton = function FilterButton(_ref) {
+	    var filter = _ref.filter;
+	    var filterMenuShown = _ref.filterMenuShown;
+	    var store = _ref.store;
+
+
+	    var buttonProps = {
+	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.FILTER_CONTAINER.MENU_BUTTON, filterMenuShown ? _GridConstants.CLASS_NAMES.ACTIVE_CLASS : ''),
+	        onClick: handleFilterMenuButtonClick.bind(undefined, filter, store)
+	    };
+
+	    return _react2.default.createElement('i', buttonProps);
+	};
+
+	var handleFilterMenuButtonClick = exports.handleFilterMenuButtonClick = function handleFilterMenuButtonClick(filter, store) {
+	    var shown = filter ? filter.filterMenuShown : false;
+	    store.dispatch((0, _FilterActions.showFilterMenu)(shown));
+	};
+
+	FilterButton.propTypes = {
+	    filter: _react.PropTypes.object,
+	    filterMenuShown: _react.PropTypes.bool,
+	    store: _react.PropTypes.object
+	};
+
+	FilterButton.defaultProps = {};
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "FilterButton.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 227 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.LoadingBar = undefined;
+
+	var _react = __webpack_require__(149);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRedux = __webpack_require__(173);
+
+	var _prefix = __webpack_require__(194);
+
+	var _stateGetter = __webpack_require__(199);
+
+	var _GridConstants = __webpack_require__(190);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var LoadingBar = exports.LoadingBar = function LoadingBar(_ref) {
+	    var isLoading = _ref.isLoading;
+	    var plugins = _ref.plugins;
+
+	    var showLoader = plugins && plugins.LOADER && plugins.LOADER.enabled && isLoading;
+
+	    var loadingBarProps = {
+	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.LOADING_BAR, showLoader ? 'active' : '')
+	    };
+
+	    return _react2.default.createElement('div', loadingBarProps);
+	};
 
 	LoadingBar.propTypes = {
 	    isLoading: _react.PropTypes.bool,
@@ -24637,10 +25289,11 @@
 	    store: _react.PropTypes.object
 	};
 
+	LoadingBar.defaultProps = {};
 
-	function mapStateToProps(state) {
+	function mapStateToProps(state, props) {
 	    return {
-	        isLoading: state.loader.get('loaderState')
+	        isLoading: (0, _stateGetter.stateGetter)(state, props, 'loader', 'loaderState')
 	    };
 	}
 
@@ -24649,7 +25302,7 @@
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "LoadingBar.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 213 */
+/* 228 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -24666,25 +25319,25 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _ActionColumn = __webpack_require__(214);
+	var _ActionColumn = __webpack_require__(229);
 
 	var _ActionColumn2 = _interopRequireDefault(_ActionColumn);
 
-	var _GridConstants = __webpack_require__(185);
+	var _GridConstants = __webpack_require__(190);
 
-	var _keygenerator = __webpack_require__(187);
+	var _keyGenerator = __webpack_require__(192);
 
-	var _prefix = __webpack_require__(186);
+	var _prefix = __webpack_require__(194);
 
-	var _elementContains = __webpack_require__(216);
+	var _elementContains = __webpack_require__(204);
 
-	var _MenuActions = __webpack_require__(209);
+	var _MenuActions = __webpack_require__(234);
 
-	var _FilterActions = __webpack_require__(211);
+	var _FilterActions = __webpack_require__(221);
 
-	var _GridActions = __webpack_require__(191);
+	var _GridActions = __webpack_require__(188);
 
-	var _sorter = __webpack_require__(217);
+	var _sorter = __webpack_require__(236);
 
 	var _sorter2 = _interopRequireDefault(_sorter);
 
@@ -24693,49 +25346,52 @@
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	var ColumnManager = function () {
-	    function ColumnManager(plugins, store, events, selModel, editor, columns, dataSource) {
+	    function ColumnManager() {
 	        _classCallCheck(this, ColumnManager);
-
-	        var defaults = {
-	            defaultColumnWidth: 100 / columns.length + '%',
-	            dataSource: dataSource,
-	            minColumnWidth: 10,
-	            moveable: false,
-	            resizable: false,
-	            sortable: {
-	                enabled: true,
-	                method: _GridConstants.SORT_METHODS.LOCAL,
-	                sortingSource: plugins && plugins.COLUMN_MANAGER && plugins.COLUMN_MANAGER.sortable && plugins.COLUMN_MANAGER.sortable.sortingSource ? plugins.COLUMN_MANAGER.sortable.sortingSource : ''
-	            },
-
-	            /**
-	                @private properties used by components
-	                    if properties are not available
-	                    i wouldn't remove these, but the
-	                    values can be flipped
-	            **/
-	            defaultResizable: false,
-	            defaultSortable: true
-	        };
-
-	        var config = plugins.COLUMN_MANAGER ? Object.assign(defaults, plugins.COLUMN_MANAGER) : defaults;
-
-	        this.plugins = plugins;
-	        this.store = store;
-	        this.sorter = _sorter2.default;
-	        this.events = events;
-	        this.selModel = selModel;
-	        this.editor = editor;
-	        this.columns = columns;
-	        this.config = config;
-
-	        document.addEventListener('click', this.setDismissEvent.bind(this));
 	    }
 
 	    _createClass(ColumnManager, [{
+	        key: 'init',
+	        value: function init(plugins, store, events, selModel, editor, columns, dataSource) {
+
+	            var defaults = {
+	                defaultColumnWidth: 100 / columns.length + '%',
+	                dataSource: dataSource,
+	                minColumnWidth: 10,
+	                moveable: false,
+	                resizable: false,
+	                sortable: {
+	                    enabled: true,
+	                    method: _GridConstants.SORT_METHODS.LOCAL,
+	                    sortingSource: plugins && plugins.COLUMN_MANAGER && plugins.COLUMN_MANAGER.sortable && plugins.COLUMN_MANAGER.sortable.sortingSource ? plugins.COLUMN_MANAGER.sortable.sortingSource : ''
+	                },
+
+	                /**
+	                    @private properties used by components
+	                        if properties are not available
+	                        i wouldn't remove these, but the
+	                        values can be flipped
+	                **/
+	                defaultResizable: false,
+	                defaultSortable: true
+	            };
+
+	            var config = plugins && plugins.COLUMN_MANAGER ? Object.assign(defaults, plugins.COLUMN_MANAGER) : defaults;
+
+	            this.plugins = plugins;
+	            this.store = store;
+	            this.sorter = _sorter2.default;
+	            this.events = events;
+	            this.selModel = selModel;
+	            this.editor = editor;
+	            this.columns = columns;
+	            this.config = config;
+
+	            document.addEventListener('click', this.setDismissEvent.bind(this));
+	        }
+	    }, {
 	        key: 'setDismissEvent',
 	        value: function setDismissEvent(e) {
-
 	            if (!(0, _elementContains.elementContains)(e.target, _GridConstants.CSS_PREFIX + '-action-container')) {
 	                this.store.dispatch((0, _MenuActions.hideMenu)());
 	            }
@@ -24767,10 +25423,10 @@
 	        }
 	    }, {
 	        key: 'addActionColumn',
-	        value: function addActionColumn(cells, type, id) {
-	            var cellsCopy = cells;
+	        value: function addActionColumn(cells, type, id, reducerKeys) {
 	            var GRID_ACTIONS = this.plugins.GRID_ACTIONS;
 
+	            var cellsCopy = cells;
 	            var actionProps = {
 	                actions: GRID_ACTIONS,
 	                store: this.store,
@@ -24778,8 +25434,9 @@
 	                columns: this.columns,
 	                rowId: id,
 	                editor: this.editor,
+	                reducerKeys: reducerKeys,
 	                selModel: this.selModel,
-	                key: (0, _keygenerator.keyFromObject)(cells, ['row', 'actionhandler'])
+	                key: (0, _keyGenerator.keyFromObject)(cells, ['row', 'actionhandler'])
 	            };
 
 	            if (GRID_ACTIONS) {
@@ -24798,7 +25455,7 @@
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "ColumnManager.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 214 */
+/* 229 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -24808,178 +25465,53 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	exports.handleActionClick = exports.getColumn = exports.getHeader = exports.ActionColumn = undefined;
 
 	var _react = __webpack_require__(149);
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _Menu = __webpack_require__(206);
+	var _Menu = __webpack_require__(230);
 
-	var _Menu2 = _interopRequireDefault(_Menu);
+	var _MenuActions = __webpack_require__(234);
 
-	var _MenuActions = __webpack_require__(209);
+	var _reactRedux = __webpack_require__(173);
 
-	var _reactRedux = __webpack_require__(163);
+	var _prefix = __webpack_require__(194);
 
-	var _prefix = __webpack_require__(186);
+	var _stateGetter = __webpack_require__(199);
 
-	var _EditorActions = __webpack_require__(215);
+	var _GridConstants = __webpack_require__(190);
 
-	var _GridConstants = __webpack_require__(185);
-
-	var _GridActions = __webpack_require__(191);
+	var _GridActions = __webpack_require__(188);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var ActionColumn = function (_Component) {
-	    _inherits(ActionColumn, _Component);
-
-	    function ActionColumn() {
-	        _classCallCheck(this, ActionColumn);
-
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(ActionColumn).apply(this, arguments));
-	    }
-
-	    _createClass(ActionColumn, [{
-	        key: 'getHeader',
-	        value: function getHeader(containerProps, iconProps, menuShown, columns) {
-	            var store = this.props.store;
+	var ActionColumn = exports.ActionColumn = function ActionColumn(_ref) {
+	    var actions = _ref.actions;
+	    var columns = _ref.columns;
+	    var editor = _ref.editor;
+	    var iconCls = _ref.iconCls;
+	    var menuState = _ref.menuState;
+	    var rowId = _ref.rowId;
+	    var store = _ref.store;
+	    var type = _ref.type;
+	    var reducerKeys = _ref.reducerKeys;
 
 
-	            var actions = columns.map(function (col) {
+	    var menuShown = menuState && menuState[rowId] ? menuState[rowId] : false;
 
-	                var isChecked = col.hidden !== undefined ? !col.hidden : true;
+	    var containerProps = {
+	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.GRID_ACTIONS.CONTAINER, menuShown ? _GridConstants.CLASS_NAMES.GRID_ACTIONS.SELECTED_CLASS : ''),
+	        onClick: handleActionClick.bind(undefined, type, actions, rowId, store)
+	    };
 
-	                return {
-	                    text: col.name,
-	                    menuItemType: 'checkbox',
-	                    checked: isChecked,
-	                    onCheckboxChange: function onCheckboxChange() {},
-	                    hideable: col.hideable,
-	                    dismissOnClick: false,
-	                    EVENT_HANDLER: function EVENT_HANDLER() {
-	                        if (col.hideable === undefined || col.hideable) {
-	                            store.dispatch((0, _GridActions.setColumnVisibility)(columns, col, col.hidden));
-	                        }
-	                    }
-	                };
-	            });
+	    var iconProps = {
+	        className: (0, _prefix.prefix)(actions.iconCls) || (0, _prefix.prefix)(iconCls)
+	    };
 
-	            var menuItems = {
-	                menu: actions
-	            };
-
-	            var menu = menuShown ? this.getMenu(menuItems, 'header') : null;
-
-	            return _react2.default.createElement(
-	                'th',
-	                containerProps,
-	                _react2.default.createElement('span', iconProps),
-	                menu
-	            );
-	        }
-	    }, {
-	        key: 'getColumn',
-	        value: function getColumn(containerProps, iconProps, menuShown, actions) {
-
-	            var menu = menuShown ? this.getMenu(actions) : null;
-
-	            return _react2.default.createElement(
-	                'td',
-	                containerProps,
-	                _react2.default.createElement('span', iconProps),
-	                menu
-	            );
-	        }
-	    }, {
-	        key: 'getEditAction',
-	        value: function getEditAction(editor) {
-	            return {
-	                text: 'Edit',
-	                EVENT_HANDLER: this.handleEditClick.bind(this, editor)
-	            };
-	        }
-	    }, {
-	        key: 'handleEditClick',
-	        value: function handleEditClick(editor, data, reactEvent) {
-	            var _props = this.props;
-	            var store = _props.store;
-	            var rowId = _props.rowId;
-
-	            var rowPosition = reactEvent.target.getBoundingClientRect();
-	            var top = rowPosition.top + window.scrollY;
-
-	            if (editor.config.type === editor.editModes.inline) {
-	                store.dispatch((0, _EditorActions.editRow)(rowId, top));
-	            }
-	        }
-	    }, {
-	        key: 'getMenu',
-	        value: function getMenu(actions, type) {
-	            var _props2 = this.props;
-	            var store = _props2.store;
-	            var editor = _props2.editor;
-
-
-	            if (editor.config.enabled && type !== 'header') {
-	                actions.menu.unshift(this.getEditAction(editor));
-	            }
-
-	            var menuProps = _extends({
-	                store: store
-	            }, actions);
-
-	            return _react2.default.createElement(_Menu2.default, menuProps);
-	        }
-	    }, {
-	        key: 'handleActionClick',
-	        value: function handleActionClick(type, actions, id, reactEvent) {
-	            reactEvent.stopPropagation();
-
-	            var store = this.props.store;
-
-
-	            store.dispatch((0, _MenuActions.showMenu)(id));
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            var _props3 = this.props;
-	            var iconCls = _props3.iconCls;
-	            var type = _props3.type;
-	            var actions = _props3.actions;
-	            var menuState = _props3.menuState;
-	            var rowId = _props3.rowId;
-	            var columns = _props3.columns;
-
-
-	            var menuShown = menuState && menuState[rowId] ? menuState[rowId] : false;
-
-	            var containerProps = {
-	                className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.GRID_ACTIONS.CONTAINER, menuShown ? _GridConstants.CLASS_NAMES.GRID_ACTIONS.SELECTED_CLASS : ''),
-	                onClick: this.handleActionClick.bind(this, type, actions, rowId)
-	            };
-
-	            var iconProps = {
-	                className: (0, _prefix.prefix)(actions.iconCls) || (0, _prefix.prefix)(iconCls)
-	            };
-
-	            return type === 'header' ? this.getHeader(containerProps, iconProps, menuShown, columns) : this.getColumn(containerProps, iconProps, menuShown, actions);
-	        }
-	    }]);
-
-	    return ActionColumn;
-	}(_react.Component);
+	    return type === 'header' ? getHeader(containerProps, iconProps, menuShown, columns, store, editor, reducerKeys, rowId) : getColumn(containerProps, iconProps, menuShown, actions, store, editor, reducerKeys, rowId);
+	};
 
 	ActionColumn.propTypes = {
 	    actions: _react.PropTypes.object,
@@ -24991,16 +25523,68 @@
 	    store: _react.PropTypes.object,
 	    type: _react.PropTypes.string
 	};
+
 	ActionColumn.defaultProps = {
 	    iconCls: 'action-icon'
 	};
 
+	var getHeader = exports.getHeader = function getHeader(containerProps, iconProps, menuShown, columns, store, editor, reducerKeys, rowId) {
 
-	function mapStateToProps(state) {
+	    var actions = columns.map(function (col) {
+
+	        var isChecked = col.hidden !== undefined ? !col.hidden : true;
+
+	        return {
+	            text: col.name,
+	            menuItemType: 'checkbox',
+	            checked: isChecked,
+	            onCheckboxChange: function onCheckboxChange() {},
+	            hideable: col.hideable,
+	            dismissOnClick: false,
+	            EVENT_HANDLER: function EVENT_HANDLER() {
+	                if (col.hideable === undefined || col.hideable) {
+	                    store.dispatch((0, _GridActions.setColumnVisibility)(columns, col, col.hidden));
+	                }
+	            }
+	        };
+	    });
+
+	    var menuItems = {
+	        menu: actions
+	    };
+
+	    var menu = menuShown ? _react2.default.createElement(_Menu.Menu, { actions: menuItems, type: 'header', store: store, editor: editor, reducerKeys: reducerKeys, rowId: rowId }) : null;
+
+	    return _react2.default.createElement(
+	        'th',
+	        containerProps,
+	        _react2.default.createElement('span', iconProps),
+	        menu
+	    );
+	};
+
+	var getColumn = exports.getColumn = function getColumn(containerProps, iconProps, menuShown, actions, store, editor, reducerKeys, rowId) {
+
+	    var menu = menuShown ? _react2.default.createElement(_Menu.Menu, { actions: actions, type: null, store: store, editor: editor, reducerKeys: reducerKeys, rowId: rowId }) : null;
+
+	    return _react2.default.createElement(
+	        'td',
+	        containerProps,
+	        _react2.default.createElement('span', iconProps),
+	        menu
+	    );
+	};
+
+	var handleActionClick = exports.handleActionClick = function handleActionClick(type, actions, id, store, reactEvent) {
+	    reactEvent.stopPropagation();
+	    store.dispatch((0, _MenuActions.showMenu)(id));
+	};
+
+	function mapStateToProps(state, props) {
 
 	    return {
-	        menuState: state.menu.get('menuState'),
-	        gridState: state.grid.get('gridState')
+	        menuState: (0, _stateGetter.stateGetter)(state, props, 'menu', 'menuState'),
+	        gridState: (0, _stateGetter.stateGetter)(state, props, 'grid', 'gridState')
 	    };
 	}
 
@@ -25009,7 +25593,357 @@
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "ActionColumn.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 215 */
+/* 230 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.handleEditClick = exports.getEditAction = exports.Menu = undefined;
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var _react = __webpack_require__(149);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _Menu = __webpack_require__(231);
+
+	var _EditorActions = __webpack_require__(235);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var Menu = exports.Menu = function Menu(_ref) {
+	    var actions = _ref.actions;
+	    var type = _ref.type;
+	    var store = _ref.store;
+	    var editor = _ref.editor;
+	    var reducerKeys = _ref.reducerKeys;
+	    var rowId = _ref.rowId;
+
+
+	    if (editor.config.enabled && type !== 'header') {
+	        actions.menu.unshift(getEditAction(editor, store, rowId));
+	    }
+
+	    var menuProps = _extends({}, actions, {
+	        reducerKeys: reducerKeys,
+	        store: store
+	    });
+
+	    return _react2.default.createElement(_Menu.ConnectedMenu, menuProps);
+	};
+
+	var getEditAction = exports.getEditAction = function getEditAction(editor, store, rowId) {
+	    return {
+	        text: 'Edit',
+	        EVENT_HANDLER: handleEditClick.bind(undefined, editor, store, rowId)
+	    };
+	};
+
+	var handleEditClick = exports.handleEditClick = function handleEditClick(editor, store, rowId, data, reactEvent) {
+	    var rowPosition = reactEvent.target.getBoundingClientRect();
+	    var top = rowPosition.top + window.scrollY;
+
+	    if (editor.config.type === editor.editModes.inline) {
+	        store.dispatch((0, _EditorActions.editRow)(rowId, top));
+	    }
+	};
+
+	Menu.propTypes = {
+	    actions: _react.PropTypes.array,
+	    editor: _react.PropTypes.object,
+	    reducerKeys: _react.PropTypes.object,
+	    rowId: _react.PropTypes.string,
+	    store: _react.PropTypes.object,
+	    type: _react.PropTypes.string
+	};
+
+	Menu.defaultProps = {};
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Menu.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 231 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.ConnectedMenu = exports.Menu = undefined;
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(149);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRedux = __webpack_require__(173);
+
+	var _MenuItem = __webpack_require__(232);
+
+	var _keyGenerator = __webpack_require__(192);
+
+	var _prefix = __webpack_require__(194);
+
+	var _GridConstants = __webpack_require__(190);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var Menu = function (_Component) {
+	    _inherits(Menu, _Component);
+
+	    function Menu() {
+	        _classCallCheck(this, Menu);
+
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(Menu).apply(this, arguments));
+	    }
+
+	    _createClass(Menu, [{
+	        key: 'getMenuItem',
+	        value: function getMenuItem(item) {
+	            var store = this.props.store;
+
+
+	            var menuItemProps = {
+	                data: item,
+	                type: item.type,
+	                key: (0, _keyGenerator.keyFromObject)(item),
+	                store: store
+	            };
+
+	            return _react2.default.createElement(_MenuItem.ConnectedMenuItem, menuItemProps);
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var menu = this.props.menu;
+
+
+	            var menuProps = {
+	                className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.GRID_ACTIONS.MENU.CONTAINER)
+	            };
+
+	            var menuItems = menu && menu.length > 0 ? menu.map(this.getMenuItem.bind(this)) : null;
+
+	            return _react2.default.createElement(
+	                'ul',
+	                menuProps,
+	                menuItems
+	            );
+	        }
+	    }]);
+
+	    return Menu;
+	}(_react.Component);
+
+	Menu.propTypes = {
+	    menu: _react2.default.PropTypes.array,
+	    store: _react2.default.PropTypes.object
+	};
+
+
+	function mapStateToProps() {
+	    return {};
+	}
+
+	var ConnectedMenu = (0, _reactRedux.connect)(mapStateToProps)(Menu);
+
+	exports.Menu = Menu;
+	exports.ConnectedMenu = ConnectedMenu;
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Menu.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 232 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.ConnectedMenuItem = exports.MenuItem = undefined;
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(149);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRedux = __webpack_require__(173);
+
+	var _prefix = __webpack_require__(194);
+
+	var _emptyFn = __webpack_require__(233);
+
+	var _GridConstants = __webpack_require__(190);
+
+	var _MenuActions = __webpack_require__(234);
+
+	var _stateGetter = __webpack_require__(199);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var MenuItem = function (_Component) {
+	    _inherits(MenuItem, _Component);
+
+	    function MenuItem() {
+	        _classCallCheck(this, MenuItem);
+
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(MenuItem).apply(this, arguments));
+	    }
+
+	    _createClass(MenuItem, [{
+	        key: 'handleMenuItemClick',
+	        value: function handleMenuItemClick(data, reactEvent) {
+	            if (reactEvent && reactEvent.stopPropagation) {
+	                reactEvent.stopPropagation();
+	            }
+
+	            var dismiss = data.dismissOnClick !== undefined ? data.dismissOnClick : true;
+
+	            var store = this.props.store;
+
+
+	            if (dismiss) {
+	                store.dispatch((0, _MenuActions.hideMenu)());
+	            }
+
+	            if (data.EVENT_HANDLER) {
+	                return data.EVENT_HANDLER.apply(this, arguments);
+	            }
+	        }
+	    }, {
+	        key: 'getCheckbox',
+	        value: function getCheckbox(data) {
+
+	            var readOnly = data.hideable !== undefined ? !data.hideable : false;
+
+	            var checkboxProps = {
+	                type: this.props.menuItemsTypes.checkbox,
+	                checked: data.checked,
+	                disabled: readOnly,
+	                onChange: data.onCheckboxChange || _emptyFn.emptyFn
+	            };
+
+	            return _react2.default.createElement('input', checkboxProps);
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var _props = this.props;
+	            var data = _props.data;
+	            var menuItemsTypes = _props.menuItemsTypes;
+
+
+	            var menuItemProps = {
+	                className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.GRID_ACTIONS.MENU.ITEM),
+	                onClick: this.handleMenuItemClick.bind(this, data)
+	            };
+
+	            var checkboxComponent = data.menuItemType === menuItemsTypes.checkbox ? this.getCheckbox(data) : null;
+
+	            return _react2.default.createElement(
+	                'li',
+	                menuItemProps,
+	                checkboxComponent,
+	                data.text
+	            );
+	        }
+	    }]);
+
+	    return MenuItem;
+	}(_react.Component);
+
+	MenuItem.propTypes = {
+	    data: _react2.default.PropTypes.object,
+	    menuItemsTypes: _react2.default.PropTypes.object,
+	    store: _react2.default.PropTypes.object
+	};
+	MenuItem.defaultProps = {
+	    menuItemsTypes: {
+	        checkbox: 'checkbox'
+	    }
+	};
+
+
+	function mapStateToProps(state, props) {
+	    return {};
+	}
+
+	var ConnectedMenuItem = (0, _reactRedux.connect)(mapStateToProps)(MenuItem);
+
+	exports.MenuItem = MenuItem;
+	exports.ConnectedMenuItem = ConnectedMenuItem;
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "MenuItem.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 233 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var emptyFn = exports.emptyFn = function emptyFn() {};
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "emptyFn.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 234 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.showMenu = showMenu;
+	exports.hideMenu = hideMenu;
+
+	var _ActionTypes = __webpack_require__(189);
+
+	function showMenu(id) {
+	    return { type: _ActionTypes.SHOW_MENU, id: id };
+	}
+
+	function hideMenu(id) {
+	    return { type: _ActionTypes.HIDE_MENU, id: id };
+	}
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "MenuActions.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 235 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -25022,7 +25956,7 @@
 	exports.editRow = editRow;
 	exports.dismissEditor = dismissEditor;
 
-	var _ActionTypes = __webpack_require__(190);
+	var _ActionTypes = __webpack_require__(189);
 
 	function editRow(rowId, top) {
 	    return { type: _ActionTypes.EDIT_ROW, rowId: rowId, top: top };
@@ -25035,35 +25969,7 @@
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "EditorActions.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 216 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.elementContains = elementContains;
-	function elementContains(el, cls) {
-
-	    if (!el || !cls) {
-	        throw Error('Function requires a dom node and a classname');
-	    }
-
-	    while (el && el !== document.body) {
-	        if (el && el.classList && el.classList.contains(cls)) {
-	            return true;
-	        }
-	        el = el.parentNode;
-	    }
-	}
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "elementContains.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-
-/***/ },
-/* 217 */
+/* 236 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -25076,7 +25982,7 @@
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _GridConstants = __webpack_require__(185);
+	var _GridConstants = __webpack_require__(190);
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -25107,7 +26013,7 @@
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "sorter.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 218 */
+/* 237 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -25124,54 +26030,56 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _keygenerator = __webpack_require__(187);
+	var _keyGenerator = __webpack_require__(192);
 
-	var _ModelActions = __webpack_require__(203);
+	var _ModelActions = __webpack_require__(216);
 
-	var _CheckBox = __webpack_require__(219);
-
-	var _CheckBox2 = _interopRequireDefault(_CheckBox);
+	var _CheckBox = __webpack_require__(238);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	var Model = function () {
-	    function Model(plugins, store, events) {
+	    function Model() {
 	        _classCallCheck(this, Model);
-
-	        var eventTypes = {
-	            singleclick: 'singleclick',
-	            doubleclick: 'doubleclick'
-	        };
-
-	        var modes = {
-	            single: 'single',
-	            multi: 'multi',
-	            checkboxSingle: 'checkbox-single',
-	            checkboxMulti: 'checkbox-multi'
-	        };
-
-	        var defaults = {
-	            mode: modes.single,
-	            enabled: true,
-	            allowDeselect: true,
-	            activeCls: 'active',
-	            editCls: 'edit',
-	            selectionEvent: eventTypes.singleclick,
-	            store: store
-	        };
-
-	        var config = plugins && plugins.SELECTION_MODEL ? Object.assign(defaults, plugins.SELECTION_MODEL) : defaults;
-
-	        this.defaults = config;
-	        this.eventTypes = eventTypes;
-	        this.modes = modes;
-	        this.store = config.store;
-	        this.events = events;
 	    }
 
 	    _createClass(Model, [{
+	        key: 'init',
+	        value: function init(plugins, store, events) {
+
+	            var eventTypes = {
+	                singleclick: 'singleclick',
+	                doubleclick: 'doubleclick'
+	            };
+
+	            var modes = {
+	                single: 'single',
+	                multi: 'multi',
+	                checkboxSingle: 'checkbox-single',
+	                checkboxMulti: 'checkbox-multi'
+	            };
+
+	            var defaults = {
+	                mode: modes.single,
+	                enabled: true,
+	                allowDeselect: true,
+	                activeCls: 'active',
+	                editCls: 'edit',
+	                selectionEvent: eventTypes.singleclick,
+	                store: store
+	            };
+
+	            var config = plugins && plugins.SELECTION_MODEL ? Object.assign(defaults, plugins.SELECTION_MODEL) : defaults;
+
+	            this.defaults = config;
+	            this.eventTypes = eventTypes;
+	            this.modes = modes;
+	            this.store = config.store;
+	            this.events = events;
+	        }
+	    }, {
 	        key: 'handleSelectionEvent',
 	        value: function handleSelectionEvent(selectionEvent) {
 
@@ -25195,19 +26103,20 @@
 	        }
 	    }, {
 	        key: 'updateCells',
-	        value: function updateCells(cells, rowId, type) {
+	        value: function updateCells(cells, rowId, type, reducerKeys) {
 
 	            var cellsUpdate = cells;
 
 	            var checkBoxProps = {
-	                key: (0, _keygenerator.keyFromObject)(rowId, ['checkbox-']),
+	                key: (0, _keyGenerator.keyFromObject)(rowId, ['checkbox-']),
 	                rowId: rowId,
 	                type: type,
+	                reducerKeys: reducerKeys,
 	                store: this.store
 	            };
 
 	            if (this.defaults.mode === this.modes.checkboxSingle || this.defaults.mode === this.modes.checkboxMulti) {
-	                cellsUpdate.unshift(_react2.default.createElement(_CheckBox2.default, checkBoxProps));
+	                cellsUpdate.unshift(_react2.default.createElement(_CheckBox.ConnectedCheckBox, checkBoxProps));
 	            }
 
 	            return cellsUpdate;
@@ -25222,7 +26131,7 @@
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Model.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 219 */
+/* 238 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -25232,124 +26141,104 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
+	exports.ConnectedCheckBox = exports.getColumn = exports.getHeader = exports.handleChange = exports.CheckBox = undefined;
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 	var _react = __webpack_require__(149);
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _reactRedux = __webpack_require__(163);
+	var _reactRedux = __webpack_require__(173);
 
-	var _prefix = __webpack_require__(186);
+	var _prefix = __webpack_require__(194);
 
-	var _GridConstants = __webpack_require__(185);
+	var _stateGetter = __webpack_require__(199);
 
-	var _ModelActions = __webpack_require__(203);
+	var _GridConstants = __webpack_require__(190);
+
+	var _ModelActions = __webpack_require__(216);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	var CheckBox = exports.CheckBox = function CheckBox(_ref) {
+	    var dataSource = _ref.dataSource;
+	    var rowId = _ref.rowId;
+	    var selectedRows = _ref.selectedRows;
+	    var store = _ref.store;
+	    var type = _ref.type;
 
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	    var checkBoxContainerProps = {
+	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.SELECTION_MODEL.CHECKBOX_CONTAINER)
+	    };
 
-	var CheckBox = function (_Component) {
-	    _inherits(CheckBox, _Component);
+	    var checkBoxProps = {
+	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.SELECTION_MODEL.CHECKBOX),
+	        checked: selectedRows ? selectedRows[rowId] : false,
+	        type: 'checkbox',
+	        onChange: handleChange.bind(undefined, dataSource, store, type)
+	    };
 
-	    function CheckBox() {
-	        _classCallCheck(this, CheckBox);
+	    return type === 'header' ? getHeader(checkBoxContainerProps, checkBoxProps) : getColumn(checkBoxContainerProps, checkBoxProps);
+	};
 
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(CheckBox).apply(this, arguments));
+	var handleChange = exports.handleChange = function handleChange(dataSource, store, type, reactEvent) {
+	    var target = reactEvent.target;
+
+	    if (type === 'header') {
+	        if (target.checked) {
+	            store.dispatch((0, _ModelActions.selectAll)(dataSource));
+	        } else {
+	            store.dispatch((0, _ModelActions.deselectAll)());
+	        }
 	    }
+	};
 
-	    _createClass(CheckBox, [{
-	        key: 'handleChange',
-	        value: function handleChange(type, reactEvent) {
-	            var _props = this.props;
-	            var store = _props.store;
-	            var dataSource = _props.dataSource;
+	var getHeader = exports.getHeader = function getHeader(checkBoxContainerProps, checkBoxProps) {
+	    return _react2.default.createElement(
+	        'th',
+	        checkBoxContainerProps,
+	        _react2.default.createElement('input', _extends({ type: 'checkbox' }, checkBoxProps))
+	    );
+	};
 
-	            var target = reactEvent.target;
-	            if (type === 'header') {
-	                if (target.checked) {
-	                    store.dispatch((0, _ModelActions.selectAll)(dataSource));
-	                } else {
-	                    store.dispatch((0, _ModelActions.deselectAll)());
-	                }
-	            }
-	        }
-	    }, {
-	        key: 'getHeader',
-	        value: function getHeader(checkBoxContainerProps, checkBoxProps) {
-	            return _react2.default.createElement(
-	                'th',
-	                checkBoxContainerProps,
-	                _react2.default.createElement('input', _extends({ type: 'checkbox' }, checkBoxProps))
-	            );
-	        }
-	    }, {
-	        key: 'getColumn',
-	        value: function getColumn(checkBoxContainerProps, checkBoxProps) {
-	            return _react2.default.createElement(
-	                'td',
-	                checkBoxContainerProps,
-	                _react2.default.createElement('input', _extends({ type: 'checkbox' }, checkBoxProps))
-	            );
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            var _props2 = this.props;
-	            var rowId = _props2.rowId;
-	            var selectedRows = _props2.selectedRows;
-	            var type = _props2.type;
-
-
-	            var checkBoxContainerProps = {
-	                className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.SELECTION_MODEL.CHECKBOX_CONTAINER)
-	            };
-
-	            var checkBoxProps = {
-	                className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.SELECTION_MODEL.CHECKBOX),
-	                checked: selectedRows ? selectedRows[rowId] : false,
-	                type: 'checkbox',
-	                onChange: this.handleChange.bind(this, type)
-	            };
-
-	            return type === 'header' ? this.getHeader(checkBoxContainerProps, checkBoxProps) : this.getColumn(checkBoxContainerProps, checkBoxProps);
-	        }
-	    }]);
-
-	    return CheckBox;
-	}(_react.Component);
+	var getColumn = exports.getColumn = function getColumn(checkBoxContainerProps, checkBoxProps) {
+	    return _react2.default.createElement(
+	        'td',
+	        checkBoxContainerProps,
+	        _react2.default.createElement('input', _extends({ type: 'checkbox' }, checkBoxProps))
+	    );
+	};
 
 	CheckBox.propTypes = {
 	    dataSource: _react.PropTypes.object,
+	    rowId: _react.PropTypes.any,
 	    selectedRows: _react.PropTypes.object,
 	    store: _react.PropTypes.object,
 	    type: _react.PropTypes.string
 	};
 
+	CheckBox.defaultProps = {};
 
-	function mapStateToProps(state) {
+	function mapStateToProps(state, props) {
 
 	    return {
-	        pager: state.pager.get('pagerState'),
-	        dataSource: state.dataSource.get('gridData'),
-	        selectedRows: state.selection.get('selectedRows')
+	        pager: (0, _stateGetter.stateGetter)(state, props, 'pager', 'pagerState'),
+	        dataSource: (0, _stateGetter.stateGetter)(state, props, 'dataSource', 'gridData'),
+	        selectedRows: (0, _stateGetter.stateGetter)(state, props, 'selection', 'selectedRows')
 	    };
 	}
 
-	exports.default = (0, _reactRedux.connect)(mapStateToProps)(CheckBox);
+	var ConnectedCheckBox = (0, _reactRedux.connect)(mapStateToProps)(CheckBox);
+
+	exports.CheckBox = CheckBox;
+	exports.ConnectedCheckBox = ConnectedCheckBox;
 
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "CheckBox.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 220 */
+/* 239 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -25366,52 +26255,56 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _Inline = __webpack_require__(221);
+	var _Inline = __webpack_require__(240);
 
 	var _Inline2 = _interopRequireDefault(_Inline);
 
-	var _GridConstants = __webpack_require__(185);
+	var _GridConstants = __webpack_require__(190);
 
-	var _elementContains = __webpack_require__(216);
+	var _elementContains = __webpack_require__(204);
 
-	var _prefix = __webpack_require__(186);
+	var _prefix = __webpack_require__(194);
 
-	var _EditorActions = __webpack_require__(215);
+	var _EditorActions = __webpack_require__(235);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	var Manager = function () {
-	    function Manager(plugins, store) {
+	    function Manager() {
 	        _classCallCheck(this, Manager);
-
-	        var defaults = {
-	            type: 'inline',
-	            enabled: false
-	        };
-
-	        var editModes = {
-	            inline: 'inline'
-	        };
-
-	        var config = plugins.EDITOR ? Object.assign(defaults, plugins.EDITOR) : defaults;
-
-	        this.config = config;
-	        this.editModes = editModes;
-	        this.store = store;
-
-	        if (this.config.type === this.editModes.inline) {
-	            document.addEventListener('click', this.setDismissEvent.bind(this));
-	        }
 	    }
 
 	    _createClass(Manager, [{
+	        key: 'init',
+	        value: function init(plugins, store) {
+
+	            var defaults = {
+	                type: 'inline',
+	                enabled: false
+	            };
+
+	            var editModes = {
+	                inline: 'inline'
+	            };
+
+	            var config = plugins && plugins.EDITOR ? Object.assign(defaults, plugins.EDITOR) : defaults;
+
+	            this.config = config;
+	            this.editModes = editModes;
+	            this.store = store;
+
+	            if (this.config.type === this.editModes.inline) {
+	                document.addEventListener('click', this.setDismissEvent.bind(this));
+	            }
+	        }
+	    }, {
 	        key: 'setDismissEvent',
 	        value: function setDismissEvent(reactEvent) {
 	            var element = reactEvent.target;
 
-	            if (element && element.contentEditable === 'true') {
+	            if (element && (0, _elementContains.elementContains)(element, (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.EDITED_CELL))) {
 	                return false;
 	            } else if (element && (0, _elementContains.elementContains)(element, (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.EDITOR.INLINE.CONTAINER))) {
 	                return false;
@@ -25449,7 +26342,7 @@
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Manager.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 221 */
+/* 240 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -25459,145 +26352,79 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	exports.Inline = undefined;
 
 	var _react = __webpack_require__(149);
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _reactRedux = __webpack_require__(163);
+	var _reactRedux = __webpack_require__(173);
 
-	var _prefix = __webpack_require__(186);
+	var _Button = __webpack_require__(241);
 
-	var _GridConstants = __webpack_require__(185);
+	var _prefix = __webpack_require__(194);
 
-	var _EditorActions = __webpack_require__(215);
+	var _stateGetter = __webpack_require__(199);
+
+	var _GridConstants = __webpack_require__(190);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	var Inline = exports.Inline = function Inline(_ref) {
+	    var BUTTON_TYPES = _ref.BUTTON_TYPES;
+	    var editorState = _ref.editorState;
+	    var events = _ref.events;
+	    var store = _ref.store;
 
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	    var top = -100;
 
-	var Inline = function (_Component) {
-	    _inherits(Inline, _Component);
-
-	    function Inline() {
-	        _classCallCheck(this, Inline);
-
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(Inline).apply(this, arguments));
+	    if (editorState && editorState.row) {
+	        top = editorState.row.top;
 	    }
 
-	    _createClass(Inline, [{
-	        key: 'getButton',
-	        value: function getButton(type) {
-	            var _props = this.props;
-	            var BUTTON_TYPES = _props.BUTTON_TYPES;
-	            var saveButtonText = _props.saveButtonText;
-	            var cancelButtonText = _props.cancelButtonText;
-
-
-	            var text = type === BUTTON_TYPES.SAVE ? saveButtonText : cancelButtonText;
-
-	            var buttonProps = {
-	                onClick: this.onButtonClick.bind(this, type),
-	                className: type === BUTTON_TYPES.SAVE ? (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.EDITOR.INLINE.SAVE_BUTTON) : (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.EDITOR.INLINE.CANCEL_BUTTON)
-	            };
-
-	            return _react2.default.createElement(
-	                'button',
-	                buttonProps,
-	                ' ',
-	                text,
-	                ' '
-	            );
+	    var inlineEditorProps = {
+	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.EDITOR.INLINE.CONTAINER, editorState && editorState.row ? _GridConstants.CLASS_NAMES.EDITOR.INLINE.SHOWN : _GridConstants.CLASS_NAMES.EDITOR.INLINE.HIDDEN),
+	        style: {
+	            top: top + _GridConstants.ROW_HEIGHT / 2 + 'px'
 	        }
-	    }, {
-	        key: 'onButtonClick',
-	        value: function onButtonClick(type) {
-	            var _props2 = this.props;
-	            var store = _props2.store;
-	            var BUTTON_TYPES = _props2.BUTTON_TYPES;
-	            var events = _props2.events;
+	    };
 
+	    var buttonContainerProps = {
+	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.EDITOR.INLINE.BUTTON_CONTAINER)
+	    };
 
-	            if (type === BUTTON_TYPES.CANCEL) {
-	                store.dispatch((0, _EditorActions.dismissEditor)());
-	            } else if (type === BUTTON_TYPES.SAVE) {
-
-	                if (events.HANDLE_AFTER_INLINE_EDITOR_SAVE) {
-	                    events.HANDLE_AFTER_INLINE_EDITOR_SAVE.apply(this, arguments);
-	                }
-
-	                store.dispatch((0, _EditorActions.dismissEditor)());
-	            }
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            var _props3 = this.props;
-	            var BUTTON_TYPES = _props3.BUTTON_TYPES;
-	            var editorState = _props3.editorState;
-
-	            var top = -100;
-
-	            if (editorState && editorState.row) {
-	                top = editorState.row.top;
-	            }
-
-	            var inlineEditorProps = {
-	                className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.EDITOR.INLINE.CONTAINER, editorState && editorState.row ? _GridConstants.CLASS_NAMES.EDITOR.INLINE.SHOWN : _GridConstants.CLASS_NAMES.EDITOR.INLINE.HIDDEN),
-	                style: {
-	                    top: top + _GridConstants.ROW_HEIGHT / 2 + 'px'
-	                }
-	            };
-
-	            var buttonContainerProps = {
-	                className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.EDITOR.INLINE.BUTTON_CONTAINER)
-	            };
-
-	            return _react2.default.createElement(
-	                'div',
-	                inlineEditorProps,
-	                _react2.default.createElement(
-	                    'span',
-	                    buttonContainerProps,
-	                    this.getButton(BUTTON_TYPES.SAVE),
-	                    this.getButton(BUTTON_TYPES.CANCEL)
-	                )
-	            );
-	        }
-	    }]);
-
-	    return Inline;
-	}(_react.Component);
+	    return _react2.default.createElement(
+	        'div',
+	        inlineEditorProps,
+	        _react2.default.createElement(
+	            'span',
+	            buttonContainerProps,
+	            _react2.default.createElement(_Button.Button, { type: BUTTON_TYPES.SAVE, events: events, store: store }),
+	            _react2.default.createElement(_Button.Button, { type: BUTTON_TYPES.CANCEL, events: events, store: store })
+	        )
+	    );
+	};
 
 	Inline.propTypes = {
 	    BUTTON_TYPES: _react.PropTypes.object,
-	    cancelButtonText: _react.PropTypes.string,
 	    columns: _react.PropTypes.array,
 	    editorState: _react.PropTypes.object,
 	    events: _react.PropTypes.object,
-	    saveButtonText: _react.PropTypes.string,
 	    store: _react.PropTypes.object
 	};
+
 	Inline.defaultProps = {
-	    cancelButtonText: 'Cancel',
-	    saveButtonText: 'Save',
 	    BUTTON_TYPES: {
 	        CANCEL: 'CANCEL',
 	        SAVE: 'SAVE'
 	    }
 	};
 
-
-	function mapStateToProps(state) {
+	function mapStateToProps(state, props) {
 	    return {
-	        errorHandler: state.errorhandler.get('errorState'),
-	        editorState: state.editor.get('editorState')
+	        errorHandler: (0, _stateGetter.stateGetter)(state, props, 'errorhandler', 'errorState'),
+	        editorState: (0, _stateGetter.stateGetter)(state, props, 'editor', 'editorState')
 	    };
 	}
 
@@ -25606,16 +26433,99 @@
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Inline.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 222 */
+/* 241 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.onButtonClick = exports.Button = undefined;
+	var _arguments = arguments;
+
+	var _react = __webpack_require__(149);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _prefix = __webpack_require__(194);
+
+	var _GridConstants = __webpack_require__(190);
+
+	var _EditorActions = __webpack_require__(235);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var Button = exports.Button = function Button(_ref) {
+	    var BUTTON_TYPES = _ref.BUTTON_TYPES;
+	    var saveText = _ref.saveText;
+	    var cancelText = _ref.cancelText;
+	    var type = _ref.type;
+	    var events = _ref.events;
+	    var store = _ref.store;
+
+
+	    var text = type === BUTTON_TYPES.SAVE ? saveText : cancelText;
+
+	    var buttonProps = {
+	        onClick: onButtonClick.bind(undefined, BUTTON_TYPES, events, type, store),
+	        className: type === BUTTON_TYPES.SAVE ? (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.EDITOR.INLINE.SAVE_BUTTON) : (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.EDITOR.INLINE.CANCEL_BUTTON)
+	    };
+
+	    return _react2.default.createElement(
+	        'button',
+	        buttonProps,
+	        text
+	    );
+	};
+
+	Button.propTypes = {
+	    BUTTON_TYPES: _react.PropTypes.object,
+	    cancelText: _react.PropTypes.string,
+	    events: _react.PropTypes.object,
+	    saveText: _react.PropTypes.string,
+	    store: _react.PropTypes.object,
+	    type: _react.PropTypes.string
+	};
+
+	Button.defaultProps = {
+	    BUTTON_TYPES: {
+	        CANCEL: 'CANCEL',
+	        SAVE: 'SAVE'
+	    },
+	    cancelText: 'Cancel',
+	    saveText: 'Save'
+	};
+
+	var onButtonClick = exports.onButtonClick = function onButtonClick(BUTTON_TYPES, events, type, store) {
+
+	    if (type === BUTTON_TYPES.CANCEL) {
+	        store.dispatch((0, _EditorActions.dismissEditor)());
+	    } else if (type === BUTTON_TYPES.SAVE) {
+
+	        if (events.HANDLE_AFTER_INLINE_EDITOR_SAVE) {
+	            events.HANDLE_AFTER_INLINE_EDITOR_SAVE.apply(undefined, _arguments);
+	        }
+
+	        store.dispatch((0, _EditorActions.dismissEditor)());
+	    }
+	};
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Button.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 242 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(223);
+	var content = __webpack_require__(243);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(230)(content, {});
+	var update = __webpack_require__(250)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -25632,21 +26542,21 @@
 	}
 
 /***/ },
-/* 223 */
+/* 243 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(224)();
+	exports = module.exports = __webpack_require__(244)();
 	// imports
 
 
 	// module
-	exports.push([module.id, "@font-face {\n  font-family: Open Sans;\n  font-style: normal;\n  src: url(" + __webpack_require__(225) + ");\n}\n@font-face {\n  font-family: 'FontAwesome';\n  src: url(" + __webpack_require__(226) + ");\n  src: url(" + __webpack_require__(227) + "?#iefix&v=3.0.1) format('embedded-opentype'), url(" + __webpack_require__(228) + ") format('woff'), url(" + __webpack_require__(229) + ") format('truetype');\n  font-weight: normal;\n  font-style: normal;\n}\n.react-grid-page-buttons {\n  background-color: #2e7d32;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  border-radius: 3px;\n  border: none;\n  color: #fff;\n  cursor: pointer;\n  font-family: 'Open Sans', sans-serif;\n  opacity: 1;\n}\n.react-grid-page-buttons:focus {\n  outline: none;\n}\n.react-grid-page-buttons:active {\n  opacity: 1;\n  background-color: #52bf57;\n}\n.react-grid-page-buttons:hover {\n  opacity: 0.6;\n}\n.react-grid-page-buttons:disabled {\n  background-color: #fff;\n  color: #161616;\n  cursor: initial;\n}\n.react-grid-cell {\n  border-bottom: 1px solid #f7f7f7;\n  height: 20px;\n  font-family: 'Open Sans', sans-serif;\n  font-size: 13px;\n  padding: 4px 10px 4px 10px;\n  position: relative;\n  text-overflow: ellipsis;\n  overflow: hidden;\n}\n.react-grid-container {\n  position: relative;\n}\n.react-grid-table {\n  -webkit-border-radius: 4px;\n  -moz-border-radius: 4px;\n  border-radius: 4px;\n  border-collapse: collapse;\n  box-shadow: 2px 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);\n  font-size: 14px;\n  position: relative;\n  text-align: left;\n  table-layout: fixed;\n  white-space: nowrap;\n  width: 100%;\n}\n.react-grid-header {\n  background-color: #f7f7f7;\n  border-bottom: 1px solid #e9e9e9;\n  color: #3f3f3f;\n  font-family: 'Open Sans', sans-serif;\n  height: 24px;\n}\n.react-grid-header th {\n  position: relative;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n.react-grid-header th.react-grid-checkbox-container {\n  border-bottom: 1px solid #e9e9e9;\n}\n.react-grid-header th .react-grid-column {\n  display: inline-block;\n  text-overflow: ellipsis;\n  overflow: hidden;\n  width: 80%;\n}\n.react-grid-header th .react-grid-sort-handle {\n  float: left;\n  opacity: 0;\n  transition-duration: 150ms;\n  transition-property: opacity;\n  transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);\n  visibility: hidden;\n}\n.react-grid-header th .react-grid-sort-handle.react-grid-descend {\n  cursor: pointer;\n}\n.react-grid-header th .react-grid-sort-handle.react-grid-descend::before {\n  font-family: FontAwesome;\n  font-size: 12px;\n  font-weight: normal;\n  font-style: normal;\n  content: '\\F0D8';\n}\n.react-grid-header th .react-grid-sort-handle.react-grid-descend::before {\n  top: -1px;\n}\n.react-grid-header th .react-grid-sort-handle.react-grid-ascend {\n  cursor: pointer;\n}\n.react-grid-header th .react-grid-sort-handle.react-grid-ascend::before {\n  font-family: FontAwesome;\n  font-size: 12px;\n  font-weight: normal;\n  font-style: normal;\n  content: '\\F0D7';\n}\n.react-grid-header th .react-grid-sort-handle::before {\n  cursor: pointer;\n  position: relative;\n  right: 1px;\n}\n.react-grid-header th .react-grid-drag-handle::after {\n  border-right: 1px solid #f7f7f7;\n  content: ' ';\n  cursor: ew-resize;\n  position: absolute;\n  right: 0px;\n  top: 0px;\n  width: 10px;\n  height: 100%;\n  transition-duration: 150ms;\n  transition-property: border;\n  transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);\n}\n.react-grid-header th .react-grid-draggable-column {\n  cursor: move;\n}\n.react-grid-header th:hover .react-grid-drag-handle::after {\n  border-color: #e9e9e9;\n}\n.react-grid-header th:hover .react-grid-sort-handle-visible {\n  opacity: 1;\n  visibility: visible;\n}\n.react-grid-header th:nth-last-child(1),\n.react-grid-header th:nth-last-child(2) {\n  overflow: initial;\n}\n.react-grid-header th:nth-last-child(1) .react-grid-drag-handle::after,\n.react-grid-header th:nth-last-child(2) .react-grid-drag-handle::after {\n  border: none;\n  cursor: auto;\n}\n.react-grid-action-menu-container {\n  background-color: #fff;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  border-radius: 3px;\n  box-shadow: 2px 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);\n  right: 6px;\n  list-style-type: none;\n  list-style-position: outside;\n  padding: 0px;\n  position: absolute;\n  top: 10px;\n  z-index: 11;\n}\n.react-grid-action-menu-item {\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  border-radius: 3px;\n  font-family: 'Open Sans', sans-serif;\n  font-size: 12px;\n  padding: 6px 30px 6px 6px;\n  line-height: 1.2;\n}\n.react-grid-action-menu-item:hover {\n  background-color: #f7f7f7;\n}\n.react-grid-row {\n  background-color: #fff;\n  text-overflow: ellipsis;\n  transition-duration: 150ms;\n  transition-property: background-color;\n  transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);\n}\n.react-grid-row:hover {\n  background-color: #f5f5f5;\n}\n.react-grid-row.react-grid-empty-row {\n  text-align: center;\n  height: 80px;\n}\n.react-grid-row.react-grid-active {\n  background-color: #e9e9e9;\n}\n.react-grid-row.react-grid-edit {\n  color: #fff;\n  background-color: #b2b2b2;\n  box-shadow: 2px 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);\n}\n.react-grid-row.react-grid-edit .react-grid-action-menu-container {\n  color: initial;\n}\n.react-grid-row.react-grid-edit:hover {\n  background-color: #b2b2b2;\n}\n.react-grid-row.react-grid-edit td {\n  border-bottom: 2px solid transparent;\n}\n.react-grid-row.react-grid-edit td:focus {\n  border-bottom: 2px solid #2e7d32;\n  outline: none;\n}\n.react-grid-inline-editor {\n  opacity: 0;\n  position: absolute;\n  left: 0px;\n  transform: translateX(0px) translateY(0px);\n  text-align: center;\n  margin: 0px auto;\n  transition-duration: 150ms;\n  transition-property: transform opacity;\n  transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);\n  right: 0px;\n}\n.react-grid-inline-editor .react-grid-button-container {\n  background-color: #b2b2b2;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  border-radius: 3px;\n  box-shadow: 2px 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);\n  display: inline-block;\n  margin-top: 5px;\n  padding: 5px;\n}\n.react-grid-inline-editor .react-grid-button-container .react-grid-save-button {\n  background-color: #2e7d32;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  border-radius: 3px;\n  border: none;\n  color: #fff;\n  cursor: pointer;\n  font-family: 'Open Sans', sans-serif;\n  opacity: 1;\n}\n.react-grid-inline-editor .react-grid-button-container .react-grid-save-button:focus {\n  outline: none;\n}\n.react-grid-inline-editor .react-grid-button-container .react-grid-save-button:active {\n  opacity: 1;\n  background-color: #52bf57;\n}\n.react-grid-inline-editor .react-grid-button-container .react-grid-save-button:hover {\n  opacity: 0.6;\n}\n.react-grid-inline-editor .react-grid-button-container .react-grid-save-button:disabled {\n  background-color: #fff;\n  color: #161616;\n  cursor: initial;\n}\n.react-grid-inline-editor .react-grid-button-container .react-grid-cancel-button {\n  background-color: #f7f7f7;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  border-radius: 3px;\n  border: none;\n  color: #161616;\n  cursor: pointer;\n  font-family: 'Open Sans', sans-serif;\n  opacity: 1;\n}\n.react-grid-inline-editor .react-grid-button-container .react-grid-cancel-button:focus {\n  outline: none;\n}\n.react-grid-inline-editor .react-grid-button-container .react-grid-cancel-button:active {\n  opacity: 1;\n  background-color: #f9f9f9;\n}\n.react-grid-inline-editor .react-grid-button-container .react-grid-cancel-button:hover {\n  opacity: 0.6;\n}\n.react-grid-inline-editor .react-grid-button-container .react-grid-cancel-button:disabled {\n  background-color: #fff;\n  color: #161616;\n  cursor: initial;\n}\n.react-grid-inline-editor.react-grid-shown {\n  opacity: 1;\n  display: block;\n  transform: translateY(-7px);\n}\n.react-grid-inline-editor.react-grid-hidden {\n  top: -10000px;\n}\n.react-grid-error-container {\n  background-color: #f7f7f7;\n  bottom: 0px;\n  box-shadow: 2px 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);\n  color: #e9e9e9;\n  height: 100px;\n  left: 0px;\n  margin: auto;\n  position: absolute;\n  perspective: 1300px;\n  transform-style: preserve-3d;\n  transform: rotateX(-70deg);\n  transition-duration: 0.2s;\n  transition-property: transform;\n  transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);\n  opacity: 0;\n  right: 0px;\n  top: -10000px;\n  width: 50%;\n  z-index: 10;\n}\n.react-grid-error-container .react-grid-error-message {\n  color: #3f3f3f;\n  font-family: 'Open Sans', sans-serif;\n  height: 20px;\n  margin-top: -20px;\n  top: 50%;\n  left: 0;\n  right: 0;\n  position: absolute;\n}\n.react-grid-error-container button {\n  background-color: #2e7d32;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  border-radius: 3px;\n  border: none;\n  color: #fff;\n  cursor: pointer;\n  font-family: 'Open Sans', sans-serif;\n  opacity: 1;\n  position: absolute;\n  right: 10px;\n  bottom: 10px;\n}\n.react-grid-error-container button:focus {\n  outline: none;\n}\n.react-grid-error-container button:active {\n  opacity: 1;\n  background-color: #52bf57;\n}\n.react-grid-error-container button:hover {\n  opacity: 0.6;\n}\n.react-grid-error-container button:disabled {\n  background-color: #fff;\n  color: #161616;\n  cursor: initial;\n}\n.react-grid-error-container.react-grid-shown {\n  top: 0px;\n  transform: rotateX(0deg);\n  opacity: 1;\n}\nth.react-grid-action-container {\n  border-bottom: 1px solid #e9e9e9;\n}\n.react-grid-action-container {\n  cursor: pointer;\n  position: relative;\n  width: 5px;\n  border-bottom: 1px solid #f7f7f7;\n  height: 20px;\n  font-family: 'Open Sans', sans-serif;\n}\n.react-grid-action-container .react-grid-action-icon {\n  cursor: pointer;\n  cursor: pointer;\n  padding-left: 5px;\n  position: relative;\n}\n.react-grid-action-container .react-grid-action-icon::before {\n  font-family: FontAwesome;\n  font-size: 12px;\n  font-weight: normal;\n  font-style: normal;\n  content: '\\F142';\n}\n.react-grid-action-container .react-grid-action-icon::before {\n  cursor: pointer;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  border-radius: 3px;\n  position: absolute;\n  text-align: center;\n  top: 5px;\n  right: 5px;\n  width: 6px;\n}\n.react-grid-action-container.react-grid-action-menu-selected span::before {\n  background-color: #e9e9e9;\n}\n.react-grid-loading-bar {\n  display: none;\n  position: absolute;\n  height: 4px;\n  width: 100%;\n}\n.react-grid-loading-bar.react-grid-active {\n  display: block;\n}\n.react-grid-loading-bar::before {\n  display: block;\n  position: absolute;\n  content: \"\";\n  left: -200px;\n  width: 200px;\n  height: 4px;\n  background-color: #2e7d32;\n  animation: loading 2s linear infinite;\n}\n@-moz-keyframes loading {\n  from {\n    left: 0px;\n    width: 30%;\n  }\n  50% {\n    width: 30%;\n  }\n  70% {\n    width: 44%;\n  }\n  80% {\n    left: 55%;\n  }\n  95% {\n    left: 66%;\n  }\n  to {\n    left: 72%;\n  }\n}\n@-webkit-keyframes loading {\n  from {\n    left: 0px;\n    width: 30%;\n  }\n  50% {\n    width: 30%;\n  }\n  70% {\n    width: 44%;\n  }\n  80% {\n    left: 55%;\n  }\n  95% {\n    left: 66%;\n  }\n  to {\n    left: 72%;\n  }\n}\n@-o-keyframes loading {\n  from {\n    left: 0px;\n    width: 30%;\n  }\n  50% {\n    width: 30%;\n  }\n  70% {\n    width: 44%;\n  }\n  80% {\n    left: 55%;\n  }\n  95% {\n    left: 66%;\n  }\n  to {\n    left: 72%;\n  }\n}\n@keyframes loading {\n  from {\n    left: 0px;\n    width: 30%;\n  }\n  50% {\n    width: 30%;\n  }\n  70% {\n    width: 44%;\n  }\n  80% {\n    left: 55%;\n  }\n  95% {\n    left: 66%;\n  }\n  to {\n    left: 72%;\n  }\n}\n.react-grid-pager-toolbar {\n  background-color: #f7f7f7;\n  border-top: 1px solid #e9e9e9;\n  height: 24px;\n}\n.react-grid-pager-toolbar td {\n  background-color: #f7f7f7;\n}\n.react-grid-pager-toolbar td div {\n  font-family: 'Open Sans', sans-serif;\n  text-indent: 10px;\n}\n.react-grid-pager-toolbar td div button {\n  float: right;\n  margin: 0px 10px;\n}\n.react-grid-checkbox-container {\n  border-bottom: 1px solid #f7f7f7;\n  height: 20px;\n  font-family: 'Open Sans', sans-serif;\n  font-size: 13px;\n  padding: 4px 10px 4px 10px;\n  position: relative;\n  text-overflow: ellipsis;\n  overflow: hidden;\n  padding: 0px 10px;\n  width: 10px;\n}\n.react-grid-bulkaction-container {\n  background-color: #b2b2b2;\n  -webkit-border-radius: 3px 3px 0px 0px;\n  -moz-border-radius: 3px 3px 0px 0px;\n  border-radius: 3px 3px 0px 0px;\n  height: 28px;\n  transition-duration: 150ms;\n  transition-property: transform opacity top;\n  transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);\n  position: absolute;\n  text-align: left;\n  transform: translateX(0px) translateY(-7px);\n  top: -7px;\n  opacity: 0;\n  z-index: 12;\n  width: 100%;\n}\n.react-grid-bulkaction-container .react-grid-bulkaction-description {\n  display: inline-block;\n  font-family: 'Open Sans', sans-serif;\n  font-size: 13px;\n  overflow: hidden;\n  padding-left: 15px;\n  text-overflow: ellipsis;\n  min-width: 70px;\n  position: relative;\n  top: 3px;\n}\n.react-grid-bulkaction-container .react-grid-checkbox-container {\n  border-bottom: 1px solid transparent;\n}\n.react-grid-bulkaction-container button {\n  background-color: #2e7d32;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  border-radius: 3px;\n  border: none;\n  color: #fff;\n  cursor: pointer;\n  font-family: 'Open Sans', sans-serif;\n  opacity: 1;\n  margin: 5px 8px;\n  position: relative;\n  top: -1px;\n}\n.react-grid-bulkaction-container button:focus {\n  outline: none;\n}\n.react-grid-bulkaction-container button:active {\n  opacity: 1;\n  background-color: #52bf57;\n}\n.react-grid-bulkaction-container button:hover {\n  opacity: 0.6;\n}\n.react-grid-bulkaction-container button:disabled {\n  background-color: #fff;\n  color: #161616;\n  cursor: initial;\n}\n.react-grid-bulkaction-container.react-grid-removed {\n  top: -100px;\n}\n.react-grid-bulkaction-container.react-grid-shown {\n  top: 0px;\n  opacity: 1;\n  transform: translateY(0px);\n}\n.react-grid-filter-container {\n  background-color: #f7f7f7;\n  -webkit-border-radius: 3px 3px 0px 0px;\n  -moz-border-radius: 3px 3px 0px 0px;\n  border-radius: 3px 3px 0px 0px;\n  padding: 5px 0px;\n  position: relative;\n  text-align: center;\n  width: 100%;\n}\n.react-grid-filter-container .react-grid-filter-input {\n  border: 1px solid #e9e9e9;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  border-radius: 3px;\n  font-family: 'Open Sans', sans-serif;\n  font-size: 14px;\n  color: #b2b2b2;\n  display: inline-block;\n  padding: 0px;\n  text-indent: 5px;\n  transition-duration: 150ms;\n  transition-property: color;\n  transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);\n  width: 99%;\n}\n.react-grid-filter-container .react-grid-filter-input:focus {\n  color: #8e8e8e;\n  outline: none;\n}\n.react-grid-filter-container:hover .react-grid-filter-input {\n  color: #8e8e8e;\n}\n.react-grid-filter-container .react-grid-filter-button-container {\n  display: inline-block;\n  position: absolute;\n  right: 5px;\n}\n.react-grid-filter-container .react-grid-filter-button-container > i {\n  padding: 0px 3px 0px 0px;\n}\n.react-grid-filter-container .react-grid-filter-button-container > i::before {\n  color: #b2b2b2;\n  transition-duration: 150ms;\n  transition-property: color;\n  transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);\n}\n.react-grid-filter-container .react-grid-filter-button-container > i:hover::before {\n  color: #8e8e8e;\n}\n.react-grid-filter-container .react-grid-filter-button-container > i.react-grid-active::before {\n  color: #2e7d32;\n}\n.react-grid-filter-container .react-grid-filter-button-container .react-grid-filter-search-button {\n  cursor: pointer;\n}\n.react-grid-filter-container .react-grid-filter-button-container .react-grid-filter-search-button::before {\n  font-family: FontAwesome;\n  font-size: 12px;\n  font-weight: normal;\n  font-style: normal;\n  content: '\\F002';\n}\n.react-grid-filter-container .react-grid-filter-button-container .react-grid-filter-clear-button {\n  cursor: pointer;\n}\n.react-grid-filter-container .react-grid-filter-button-container .react-grid-filter-clear-button::before {\n  font-family: FontAwesome;\n  font-size: 12px;\n  font-weight: normal;\n  font-style: normal;\n  content: '\\F00D';\n}\n.react-grid-filter-container .react-grid-filter-button-container .react-grid-filter-menu-button {\n  cursor: pointer;\n}\n.react-grid-filter-container .react-grid-filter-button-container .react-grid-filter-menu-button::before {\n  font-family: FontAwesome;\n  font-size: 12px;\n  font-weight: normal;\n  font-style: normal;\n  content: '\\F0B0';\n}\n.react-grid-advanced-filter-menu-container {\n  background-color: #f7f7f7;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  border-radius: 3px;\n  box-shadow: 10px 15px 30px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);\n  font-family: 'Open Sans', sans-serif;\n  position: absolute;\n  right: 10px;\n  top: 24px;\n  width: 400px;\n  z-index: 13;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-title {\n  display: inline-block;\n  padding: 5px 10px;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-field-container {\n  display: block;\n  padding: 5px 0px;\n  text-align: left;\n  font-size: 13px;\n  margin: 0px auto;\n  width: 90%;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-field-container .react-grid-advanced-filter-menu-field-label {\n  display: inline-block;\n  padding: 5px 0px;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-field-container .react-grid-advanced-filter-menu-field-input {\n  border: 1px solid #e9e9e9;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  border-radius: 3px;\n  font-family: 'Open Sans', sans-serif;\n  font-size: 14px;\n  color: #b2b2b2;\n  display: inline-block;\n  padding: 0px;\n  text-indent: 5px;\n  transition-duration: 150ms;\n  transition-property: color;\n  transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);\n  width: 100%;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-field-container .react-grid-advanced-filter-menu-field-input:focus {\n  color: #8e8e8e;\n  outline: none;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container {\n  padding: 10px 10px;\n  margin: 0px auto;\n  width: 90%;\n  text-align: left;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container .react-grid-advanced-filter-menu-button {\n  background-color: #2e7d32;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  border-radius: 3px;\n  border: none;\n  color: #fff;\n  cursor: pointer;\n  font-family: 'Open Sans', sans-serif;\n  opacity: 1;\n  margin-right: 5px;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container .react-grid-advanced-filter-menu-button:focus {\n  outline: none;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container .react-grid-advanced-filter-menu-button:active {\n  opacity: 1;\n  background-color: #52bf57;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container .react-grid-advanced-filter-menu-button:hover {\n  opacity: 0.6;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container .react-grid-advanced-filter-menu-button:disabled {\n  background-color: #fff;\n  color: #161616;\n  cursor: initial;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container .react-grid-advanced-filter-menu-button.react-grid-secondary {\n  background-color: #fff;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  border-radius: 3px;\n  border: none;\n  color: #fff;\n  cursor: pointer;\n  font-family: 'Open Sans', sans-serif;\n  opacity: 1;\n  color: #161616;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container .react-grid-advanced-filter-menu-button.react-grid-secondary:focus {\n  outline: none;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container .react-grid-advanced-filter-menu-button.react-grid-secondary:active {\n  opacity: 1;\n  background-color: #fff;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container .react-grid-advanced-filter-menu-button.react-grid-secondary:hover {\n  opacity: 0.6;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container .react-grid-advanced-filter-menu-button.react-grid-secondary:disabled {\n  background-color: #fff;\n  color: #161616;\n  cursor: initial;\n}\n", ""]);
+	exports.push([module.id, "@font-face {\n  font-family: 'Open Sans';\n  src: url(" + __webpack_require__(245) + ") format('');\n  font-weight: normarl;\n  font-style: normal;\n}\n@font-face {\n  font-family: 'FontAwesome';\n  src: url(" + __webpack_require__(246) + ") format('');\n  src: url(" + __webpack_require__(247) + "?#iefix&v=3.0.1) format('embedded-opentype');\n  src: url(" + __webpack_require__(248) + ") format('woff');\n  src: url(" + __webpack_require__(249) + ") format('truetype');\n  font-weight: normarl;\n  font-style: normal;\n}\n.react-grid-page-buttons {\n  background-color: #2e7d32;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  border-radius: 3px;\n  border: none;\n  color: #fff;\n  cursor: pointer;\n  font-family: 'Open Sans', sans-serif;\n  opacity: 1;\n}\n.react-grid-page-buttons:focus {\n  outline: none;\n}\n.react-grid-page-buttons:active {\n  opacity: 1;\n  background-color: #52bf57;\n}\n.react-grid-page-buttons:hover {\n  opacity: 0.6;\n}\n.react-grid-page-buttons:disabled {\n  background-color: #fff;\n  color: #161616;\n  cursor: initial;\n}\n.react-grid-cell {\n  border-bottom: 1px solid #f7f7f7;\n  height: 20px;\n  font-family: 'Open Sans', sans-serif;\n  font-size: 13px;\n  padding: 4px 10px 4px 10px;\n  position: relative;\n  text-overflow: ellipsis;\n  overflow: hidden;\n}\n.react-grid-container {\n  box-shadow: 2px 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);\n  position: relative;\n}\n.react-grid-table {\n  -webkit-border-radius: 4px;\n  -moz-border-radius: 4px;\n  border-radius: 4px;\n  border-collapse: collapse;\n  font-size: 14px;\n  position: relative;\n  text-align: left;\n  table-layout: fixed;\n  white-space: nowrap;\n  width: 100%;\n}\n.react-grid-table.react-grid-header-fixed {\n  box-shadow: none;\n  z-index: 9;\n}\n.react-grid-table-container {\n  background-color: #fff;\n  overflow: hidden;\n  overflow-y: auto;\n  overflow-x: hidden;\n  margin-top: -25px;\n}\n.react-grid-header {\n  background-color: #f7f7f7;\n  border-bottom: 1px solid #e9e9e9;\n  color: #3f3f3f;\n  font-family: 'Open Sans', sans-serif;\n  height: 24px;\n}\n.react-grid-header.react-grid-header-hidden {\n  visibility: hidden;\n}\n.react-grid-header.react-grid-header-hidden th {\n  height: 0px;\n}\n.react-grid-header th {\n  position: relative;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n.react-grid-header th.react-grid-checkbox-container {\n  border-bottom: 1px solid #e9e9e9;\n}\n.react-grid-header th .react-grid-column {\n  display: inline-block;\n  text-overflow: ellipsis;\n  overflow: hidden;\n  width: 80%;\n}\n.react-grid-header th .react-grid-sort-handle {\n  float: left;\n  opacity: 0;\n  transition-duration: 150ms;\n  transition-property: opacity;\n  transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);\n  visibility: hidden;\n}\n.react-grid-header th .react-grid-sort-handle.react-grid-descend {\n  cursor: pointer;\n}\n.react-grid-header th .react-grid-sort-handle.react-grid-descend::before {\n  font-family: FontAwesome;\n  font-size: 12px;\n  font-weight: normal;\n  font-style: normal;\n  content: '\\F0D8';\n}\n.react-grid-header th .react-grid-sort-handle.react-grid-descend::before {\n  top: -1px;\n}\n.react-grid-header th .react-grid-sort-handle.react-grid-ascend {\n  cursor: pointer;\n}\n.react-grid-header th .react-grid-sort-handle.react-grid-ascend::before {\n  font-family: FontAwesome;\n  font-size: 12px;\n  font-weight: normal;\n  font-style: normal;\n  content: '\\F0D7';\n}\n.react-grid-header th .react-grid-sort-handle::before {\n  cursor: pointer;\n  position: relative;\n  right: 1px;\n}\n.react-grid-header th .react-grid-drag-handle::after {\n  border-right: 1px solid #f7f7f7;\n  content: ' ';\n  cursor: ew-resize;\n  position: absolute;\n  right: 0px;\n  top: 0px;\n  width: 10px;\n  height: 100%;\n  transition-duration: 150ms;\n  transition-property: border;\n  transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);\n}\n.react-grid-header th .react-grid-draggable-column {\n  cursor: move;\n}\n.react-grid-header th:hover .react-grid-drag-handle::after {\n  border-color: #e9e9e9;\n}\n.react-grid-header th:hover .react-grid-sort-handle-visible {\n  opacity: 1;\n  visibility: visible;\n}\n.react-grid-header th:nth-last-child(1),\n.react-grid-header th:nth-last-child(2) {\n  overflow: initial;\n}\n.react-grid-header th:nth-last-child(1) .react-grid-drag-handle::after,\n.react-grid-header th:nth-last-child(2) .react-grid-drag-handle::after {\n  border: none;\n  cursor: auto;\n}\n.react-grid-action-menu-container {\n  background-color: #fff;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  border-radius: 3px;\n  box-shadow: 2px 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);\n  right: 6px;\n  list-style-type: none;\n  list-style-position: outside;\n  padding: 0px;\n  position: absolute;\n  top: 10px;\n  z-index: 11;\n}\n.react-grid-action-menu-item {\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  border-radius: 3px;\n  font-family: 'Open Sans', sans-serif;\n  font-size: 12px;\n  padding: 6px 30px 6px 6px;\n  line-height: 1.2;\n}\n.react-grid-action-menu-item:hover {\n  background-color: #f7f7f7;\n}\n.react-grid-row {\n  background-color: #fff;\n  text-overflow: ellipsis;\n  transition-duration: 150ms;\n  transition-property: background-color;\n  transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);\n}\n.react-grid-row:hover {\n  background-color: #f5f5f5;\n}\n.react-grid-row.react-grid-empty-row {\n  text-align: center;\n  height: 80px;\n}\n.react-grid-row.react-grid-active {\n  background-color: #e9e9e9;\n}\n.react-grid-row.react-grid-edit {\n  color: #fff;\n  background-color: #b2b2b2;\n  box-shadow: 2px 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);\n}\n.react-grid-row.react-grid-edit .react-grid-action-menu-container {\n  color: initial;\n}\n.react-grid-row.react-grid-edit:hover {\n  background-color: #b2b2b2;\n}\n.react-grid-row.react-grid-edit td {\n  border-bottom: 2px solid transparent;\n}\n.react-grid-row.react-grid-edit td:focus {\n  border-bottom: 2px solid #2e7d32;\n  outline: none;\n}\n.react-grid-inline-editor {\n  opacity: 0;\n  position: absolute;\n  left: 0px;\n  transform: translateX(0px) translateY(0px);\n  text-align: center;\n  margin: 0px auto;\n  transition-duration: 150ms;\n  transition-property: transform opacity;\n  transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);\n  right: 0px;\n}\n.react-grid-inline-editor .react-grid-button-container {\n  background-color: #b2b2b2;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  border-radius: 3px;\n  box-shadow: 2px 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);\n  display: inline-block;\n  margin-top: 5px;\n  padding: 5px;\n}\n.react-grid-inline-editor .react-grid-button-container .react-grid-save-button {\n  background-color: #2e7d32;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  border-radius: 3px;\n  border: none;\n  color: #fff;\n  cursor: pointer;\n  font-family: 'Open Sans', sans-serif;\n  opacity: 1;\n}\n.react-grid-inline-editor .react-grid-button-container .react-grid-save-button:focus {\n  outline: none;\n}\n.react-grid-inline-editor .react-grid-button-container .react-grid-save-button:active {\n  opacity: 1;\n  background-color: #52bf57;\n}\n.react-grid-inline-editor .react-grid-button-container .react-grid-save-button:hover {\n  opacity: 0.6;\n}\n.react-grid-inline-editor .react-grid-button-container .react-grid-save-button:disabled {\n  background-color: #fff;\n  color: #161616;\n  cursor: initial;\n}\n.react-grid-inline-editor .react-grid-button-container .react-grid-cancel-button {\n  background-color: #f7f7f7;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  border-radius: 3px;\n  border: none;\n  color: #161616;\n  cursor: pointer;\n  font-family: 'Open Sans', sans-serif;\n  opacity: 1;\n}\n.react-grid-inline-editor .react-grid-button-container .react-grid-cancel-button:focus {\n  outline: none;\n}\n.react-grid-inline-editor .react-grid-button-container .react-grid-cancel-button:active {\n  opacity: 1;\n  background-color: #f9f9f9;\n}\n.react-grid-inline-editor .react-grid-button-container .react-grid-cancel-button:hover {\n  opacity: 0.6;\n}\n.react-grid-inline-editor .react-grid-button-container .react-grid-cancel-button:disabled {\n  background-color: #fff;\n  color: #161616;\n  cursor: initial;\n}\n.react-grid-inline-editor.react-grid-shown {\n  opacity: 1;\n  display: block;\n  transform: translateY(-7px);\n}\n.react-grid-inline-editor.react-grid-hidden {\n  top: -10000px;\n}\n.react-grid-error-container {\n  background-color: #f7f7f7;\n  bottom: 0px;\n  box-shadow: 2px 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);\n  color: #e9e9e9;\n  height: 100px;\n  left: 0px;\n  margin: auto;\n  position: absolute;\n  perspective: 1300px;\n  transform-style: preserve-3d;\n  transform: rotateX(-70deg);\n  transition-duration: 0.2s;\n  transition-property: transform;\n  transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);\n  opacity: 0;\n  right: 0px;\n  top: -10000px;\n  width: 50%;\n  z-index: 10;\n}\n.react-grid-error-container .react-grid-error-message {\n  color: #3f3f3f;\n  font-family: 'Open Sans', sans-serif;\n  height: 20px;\n  margin-top: -20px;\n  top: 50%;\n  left: 0;\n  right: 0;\n  position: absolute;\n}\n.react-grid-error-container button {\n  background-color: #2e7d32;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  border-radius: 3px;\n  border: none;\n  color: #fff;\n  cursor: pointer;\n  font-family: 'Open Sans', sans-serif;\n  opacity: 1;\n  position: absolute;\n  right: 10px;\n  bottom: 10px;\n}\n.react-grid-error-container button:focus {\n  outline: none;\n}\n.react-grid-error-container button:active {\n  opacity: 1;\n  background-color: #52bf57;\n}\n.react-grid-error-container button:hover {\n  opacity: 0.6;\n}\n.react-grid-error-container button:disabled {\n  background-color: #fff;\n  color: #161616;\n  cursor: initial;\n}\n.react-grid-error-container.react-grid-shown {\n  top: 0px;\n  transform: rotateX(0deg);\n  opacity: 1;\n}\nth.react-grid-action-container {\n  border-bottom: 1px solid #e9e9e9;\n}\n.react-grid-action-container {\n  cursor: pointer;\n  position: relative;\n  width: 5px;\n  border-bottom: 1px solid #f7f7f7;\n  height: 20px;\n  font-family: 'Open Sans', sans-serif;\n}\n.react-grid-action-container .react-grid-action-icon {\n  cursor: pointer;\n  cursor: pointer;\n  padding-left: 5px;\n  position: relative;\n}\n.react-grid-action-container .react-grid-action-icon::before {\n  font-family: FontAwesome;\n  font-size: 12px;\n  font-weight: normal;\n  font-style: normal;\n  content: '\\F142';\n}\n.react-grid-action-container .react-grid-action-icon::before {\n  cursor: pointer;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  border-radius: 3px;\n  position: absolute;\n  text-align: center;\n  top: 5px;\n  right: 5px;\n  width: 6px;\n}\n.react-grid-action-container.react-grid-action-menu-selected span::before {\n  background-color: #e9e9e9;\n}\n.react-grid-loading-bar {\n  display: none;\n  position: absolute;\n  height: 4px;\n  width: 100%;\n}\n.react-grid-loading-bar.react-grid-active {\n  display: block;\n}\n.react-grid-loading-bar::before {\n  display: block;\n  position: absolute;\n  content: \"\";\n  left: -200px;\n  width: 200px;\n  height: 4px;\n  background-color: #2e7d32;\n  animation: loading 2s linear infinite;\n}\n@-moz-keyframes loading {\n  from {\n    left: 0px;\n    width: 30%;\n  }\n  50% {\n    width: 30%;\n  }\n  70% {\n    width: 44%;\n  }\n  80% {\n    left: 55%;\n  }\n  95% {\n    left: 66%;\n  }\n  to {\n    left: 72%;\n  }\n}\n@-webkit-keyframes loading {\n  from {\n    left: 0px;\n    width: 30%;\n  }\n  50% {\n    width: 30%;\n  }\n  70% {\n    width: 44%;\n  }\n  80% {\n    left: 55%;\n  }\n  95% {\n    left: 66%;\n  }\n  to {\n    left: 72%;\n  }\n}\n@-o-keyframes loading {\n  from {\n    left: 0px;\n    width: 30%;\n  }\n  50% {\n    width: 30%;\n  }\n  70% {\n    width: 44%;\n  }\n  80% {\n    left: 55%;\n  }\n  95% {\n    left: 66%;\n  }\n  to {\n    left: 72%;\n  }\n}\n@keyframes loading {\n  from {\n    left: 0px;\n    width: 30%;\n  }\n  50% {\n    width: 30%;\n  }\n  70% {\n    width: 44%;\n  }\n  80% {\n    left: 55%;\n  }\n  95% {\n    left: 66%;\n  }\n  to {\n    left: 72%;\n  }\n}\n.react-grid-pager-toolbar {\n  background-color: #f7f7f7;\n  border-top: 1px solid #e9e9e9;\n  -webkit-border-radius: 0px 0px 3px 3px;\n  -moz-border-radius: 0px 0px 3px 3px;\n  border-radius: 0px 0px 3px 3px;\n  font-family: 'Open Sans', sans-serif;\n  height: 24px;\n  text-indent: 10px;\n}\n.react-grid-pager-toolbar span {\n  display: block;\n  position: relative;\n  top: 2px;\n}\n.react-grid-pager-toolbar span:first-child {\n  font-size: 14px;\n  font-family: 'Open Sans', sans-serif;\n  float: left;\n}\n.react-grid-pager-toolbar button {\n  float: right;\n  margin: 0px 10px;\n}\n.react-grid-checkbox-container {\n  border-bottom: 1px solid #f7f7f7;\n  height: 20px;\n  font-family: 'Open Sans', sans-serif;\n  font-size: 13px;\n  padding: 4px 10px 4px 10px;\n  position: relative;\n  text-overflow: ellipsis;\n  overflow: hidden;\n  padding: 0px 10px;\n  width: 10px;\n}\n.react-grid-bulkaction-container {\n  background-color: #b2b2b2;\n  -webkit-border-radius: 3px 3px 0px 0px;\n  -moz-border-radius: 3px 3px 0px 0px;\n  border-radius: 3px 3px 0px 0px;\n  height: 28px;\n  transition-duration: 150ms;\n  transition-property: transform opacity top;\n  transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);\n  position: absolute;\n  text-align: left;\n  transform: translateX(0px) translateY(-7px);\n  top: -7px;\n  opacity: 0;\n  z-index: 12;\n  width: 100%;\n}\n.react-grid-bulkaction-container .react-grid-bulkaction-description {\n  display: inline-block;\n  font-family: 'Open Sans', sans-serif;\n  font-size: 13px;\n  overflow: hidden;\n  padding-left: 15px;\n  text-overflow: ellipsis;\n  min-width: 70px;\n  position: relative;\n  top: 3px;\n}\n.react-grid-bulkaction-container .react-grid-checkbox-container {\n  border-bottom: 1px solid transparent;\n}\n.react-grid-bulkaction-container button {\n  background-color: #2e7d32;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  border-radius: 3px;\n  border: none;\n  color: #fff;\n  cursor: pointer;\n  font-family: 'Open Sans', sans-serif;\n  opacity: 1;\n  margin: 5px 8px;\n  position: relative;\n  top: -1px;\n}\n.react-grid-bulkaction-container button:focus {\n  outline: none;\n}\n.react-grid-bulkaction-container button:active {\n  opacity: 1;\n  background-color: #52bf57;\n}\n.react-grid-bulkaction-container button:hover {\n  opacity: 0.6;\n}\n.react-grid-bulkaction-container button:disabled {\n  background-color: #fff;\n  color: #161616;\n  cursor: initial;\n}\n.react-grid-bulkaction-container.react-grid-removed {\n  top: -100px;\n}\n.react-grid-bulkaction-container.react-grid-shown {\n  top: 0px;\n  opacity: 1;\n  transform: translateY(0px);\n}\n.react-grid-filter-container {\n  background-color: #f7f7f7;\n  -webkit-border-radius: 3px 3px 0px 0px;\n  -moz-border-radius: 3px 3px 0px 0px;\n  border-radius: 3px 3px 0px 0px;\n  padding: 5px 0px;\n  position: relative;\n  text-align: center;\n  width: 100%;\n}\n.react-grid-filter-container .react-grid-filter-input {\n  border: 1px solid #e9e9e9;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  border-radius: 3px;\n  font-family: 'Open Sans', sans-serif;\n  font-size: 14px;\n  color: #b2b2b2;\n  display: inline-block;\n  padding: 0px;\n  text-indent: 5px;\n  transition-duration: 150ms;\n  transition-property: color;\n  transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);\n  width: 99%;\n}\n.react-grid-filter-container .react-grid-filter-input:focus {\n  color: #8e8e8e;\n  outline: none;\n}\n.react-grid-filter-container:hover .react-grid-filter-input {\n  color: #8e8e8e;\n}\n.react-grid-filter-container .react-grid-filter-button-container {\n  display: inline-block;\n  position: absolute;\n  right: 5px;\n}\n.react-grid-filter-container .react-grid-filter-button-container > i {\n  padding: 0px 3px 0px 0px;\n}\n.react-grid-filter-container .react-grid-filter-button-container > i::before {\n  color: #b2b2b2;\n  transition-duration: 150ms;\n  transition-property: color;\n  transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);\n}\n.react-grid-filter-container .react-grid-filter-button-container > i:hover::before {\n  color: #8e8e8e;\n}\n.react-grid-filter-container .react-grid-filter-button-container > i.react-grid-active::before {\n  color: #2e7d32;\n}\n.react-grid-filter-container .react-grid-filter-button-container .react-grid-filter-search-button {\n  cursor: pointer;\n}\n.react-grid-filter-container .react-grid-filter-button-container .react-grid-filter-search-button::before {\n  font-family: FontAwesome;\n  font-size: 12px;\n  font-weight: normal;\n  font-style: normal;\n  content: '\\F002';\n}\n.react-grid-filter-container .react-grid-filter-button-container .react-grid-filter-clear-button {\n  cursor: pointer;\n}\n.react-grid-filter-container .react-grid-filter-button-container .react-grid-filter-clear-button::before {\n  font-family: FontAwesome;\n  font-size: 12px;\n  font-weight: normal;\n  font-style: normal;\n  content: '\\F00D';\n}\n.react-grid-filter-container .react-grid-filter-button-container .react-grid-filter-menu-button {\n  cursor: pointer;\n}\n.react-grid-filter-container .react-grid-filter-button-container .react-grid-filter-menu-button::before {\n  font-family: FontAwesome;\n  font-size: 12px;\n  font-weight: normal;\n  font-style: normal;\n  content: '\\F0B0';\n}\n.react-grid-advanced-filter-menu-container {\n  background-color: #f7f7f7;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  border-radius: 3px;\n  box-shadow: 10px 15px 30px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);\n  font-family: 'Open Sans', sans-serif;\n  position: absolute;\n  right: 10px;\n  top: 24px;\n  width: 400px;\n  z-index: 13;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-title {\n  display: inline-block;\n  padding: 5px 10px;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-field-container {\n  display: block;\n  padding: 5px 0px;\n  text-align: left;\n  font-size: 13px;\n  margin: 0px auto;\n  width: 90%;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-field-container .react-grid-advanced-filter-menu-field-label {\n  display: inline-block;\n  padding: 5px 0px;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-field-container .react-grid-advanced-filter-menu-field-input {\n  border: 1px solid #e9e9e9;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  border-radius: 3px;\n  font-family: 'Open Sans', sans-serif;\n  font-size: 14px;\n  color: #b2b2b2;\n  display: inline-block;\n  padding: 0px;\n  text-indent: 5px;\n  transition-duration: 150ms;\n  transition-property: color;\n  transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);\n  width: 100%;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-field-container .react-grid-advanced-filter-menu-field-input:focus {\n  color: #8e8e8e;\n  outline: none;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container {\n  padding: 10px 10px;\n  margin: 0px auto;\n  width: 90%;\n  text-align: left;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container .react-grid-advanced-filter-menu-button {\n  background-color: #2e7d32;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  border-radius: 3px;\n  border: none;\n  color: #fff;\n  cursor: pointer;\n  font-family: 'Open Sans', sans-serif;\n  opacity: 1;\n  margin-right: 5px;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container .react-grid-advanced-filter-menu-button:focus {\n  outline: none;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container .react-grid-advanced-filter-menu-button:active {\n  opacity: 1;\n  background-color: #52bf57;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container .react-grid-advanced-filter-menu-button:hover {\n  opacity: 0.6;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container .react-grid-advanced-filter-menu-button:disabled {\n  background-color: #fff;\n  color: #161616;\n  cursor: initial;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container .react-grid-advanced-filter-menu-button.react-grid-secondary {\n  background-color: #fff;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  border-radius: 3px;\n  border: none;\n  color: #fff;\n  cursor: pointer;\n  font-family: 'Open Sans', sans-serif;\n  opacity: 1;\n  color: #161616;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container .react-grid-advanced-filter-menu-button.react-grid-secondary:focus {\n  outline: none;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container .react-grid-advanced-filter-menu-button.react-grid-secondary:active {\n  opacity: 1;\n  background-color: #fff;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container .react-grid-advanced-filter-menu-button.react-grid-secondary:hover {\n  opacity: 0.6;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container .react-grid-advanced-filter-menu-button.react-grid-secondary:disabled {\n  background-color: #fff;\n  color: #161616;\n  cursor: initial;\n}\n", ""]);
 
 	// exports
 
 
 /***/ },
-/* 224 */
+/* 244 */
 /***/ function(module, exports) {
 
 	/*
@@ -25702,37 +26612,37 @@
 
 
 /***/ },
-/* 225 */
+/* 245 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "1bf71be111189e76987a4bb9b3115cb7.ttf";
 
 /***/ },
-/* 226 */
+/* 246 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "32400f4e08932a94d8bfd2422702c446.eot";
 
 /***/ },
-/* 227 */
+/* 247 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "32400f4e08932a94d8bfd2422702c446.eot";
 
 /***/ },
-/* 228 */
+/* 248 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "a35720c2fed2c7f043bc7e4ffb45e073.woff";
 
 /***/ },
-/* 229 */
+/* 249 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "a3de2170e4e9df77161ea5d3f31b2668.ttf";
 
 /***/ },
-/* 230 */
+/* 250 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -25986,7 +26896,7 @@
 
 
 /***/ },
-/* 231 */
+/* 251 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -25997,7 +26907,7 @@
 	  value: true
 	});
 
-	var _configureStore = __webpack_require__(232);
+	var _configureStore = __webpack_require__(252);
 
 	var _configureStore2 = _interopRequireDefault(_configureStore);
 
@@ -26010,7 +26920,7 @@
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "store.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 232 */
+/* 252 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -26022,13 +26932,17 @@
 	});
 	exports.default = configureStore;
 
-	var _redux = __webpack_require__(171);
+	var _redux = __webpack_require__(162);
 
-	var _reducers = __webpack_require__(233);
+	var _reducers = __webpack_require__(253);
 
 	var _reducers2 = _interopRequireDefault(_reducers);
 
-	var _reduxThunk = __webpack_require__(246);
+	var _reduxDiffLogger = __webpack_require__(265);
+
+	var _reduxDiffLogger2 = _interopRequireDefault(_reduxDiffLogger);
+
+	var _reduxThunk = __webpack_require__(267);
 
 	var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
 
@@ -26051,7 +26965,7 @@
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "configureStore.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 233 */
+/* 253 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -26061,75 +26975,84 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
+	exports.Reducers = undefined;
 
-	var _redux = __webpack_require__(171);
+	var _redux = __webpack_require__(162);
 
-	var _grid = __webpack_require__(234);
+	var _grid = __webpack_require__(254);
 
 	var _grid2 = _interopRequireDefault(_grid);
 
-	var _datasource = __webpack_require__(236);
+	var _datasource = __webpack_require__(256);
 
 	var _datasource2 = _interopRequireDefault(_datasource);
 
-	var _columnmanager = __webpack_require__(237);
-
-	var _columnmanager2 = _interopRequireDefault(_columnmanager);
-
-	var _editor = __webpack_require__(238);
+	var _editor = __webpack_require__(257);
 
 	var _editor2 = _interopRequireDefault(_editor);
 
-	var _menu = __webpack_require__(239);
+	var _menu = __webpack_require__(258);
 
 	var _menu2 = _interopRequireDefault(_menu);
 
-	var _pager = __webpack_require__(240);
+	var _pager = __webpack_require__(259);
 
 	var _pager2 = _interopRequireDefault(_pager);
 
-	var _loader = __webpack_require__(241);
+	var _loader = __webpack_require__(260);
 
 	var _loader2 = _interopRequireDefault(_loader);
 
-	var _bulkaction = __webpack_require__(242);
+	var _bulkaction = __webpack_require__(261);
 
 	var _bulkaction2 = _interopRequireDefault(_bulkaction);
 
-	var _filter = __webpack_require__(243);
+	var _filter = __webpack_require__(262);
 
 	var _filter2 = _interopRequireDefault(_filter);
 
-	var _selection = __webpack_require__(244);
+	var _selection = __webpack_require__(263);
 
 	var _selection2 = _interopRequireDefault(_selection);
 
-	var _errorhandler = __webpack_require__(245);
+	var _errorhandler = __webpack_require__(264);
 
 	var _errorhandler2 = _interopRequireDefault(_errorhandler);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var rootReducer = (0, _redux.combineReducers)({
-	    grid: _grid2.default,
+	    bulkaction: _bulkaction2.default,
 	    dataSource: _datasource2.default,
-	    columnManager: _columnmanager2.default,
 	    editor: _editor2.default,
+	    errorhandler: _errorhandler2.default,
+	    grid: _grid2.default,
 	    menu: _menu2.default,
 	    pager: _pager2.default,
 	    loader: _loader2.default,
-	    bulkaction: _bulkaction2.default,
 	    filter: _filter2.default,
-	    selection: _selection2.default,
-	    errorhandler: _errorhandler2.default
+	    selection: _selection2.default
 	});
+
+	var Reducers = exports.Reducers = {
+	    BulkActions: _bulkaction2.default,
+	    DataSource: _datasource2.default,
+	    Editor: _editor2.default,
+	    ErrorHandler: _errorhandler2.default,
+	    Filter: _filter2.default,
+	    Grid: _grid2.default,
+	    Loader: _loader2.default,
+	    Menu: _menu2.default,
+	    Pager: _pager2.default,
+	    Selection: _selection2.default
+	};
 
 	exports.default = rootReducer;
 
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "index.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 234 */
+/* 254 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -26141,9 +27064,9 @@
 	});
 	exports.default = gridState;
 
-	var _immutable = __webpack_require__(235);
+	var _immutable = __webpack_require__(255);
 
-	var _ActionTypes = __webpack_require__(190);
+	var _ActionTypes = __webpack_require__(189);
 
 	var initialState = (0, _immutable.fromJS)({
 	    gridState: _immutable.fromJS.Map
@@ -26157,7 +27080,6 @@
 	    switch (action.type) {
 
 	        case _ActionTypes.SET_COLUMNS:
-
 	            return state.set('gridState', {
 	                columns: action.columns
 	            });
@@ -26183,7 +27105,7 @@
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "grid.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 235 */
+/* 255 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -31170,7 +32092,7 @@
 	}));
 
 /***/ },
-/* 236 */
+/* 256 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -31182,9 +32104,9 @@
 	});
 	exports.default = dataSource;
 
-	var _immutable = __webpack_require__(235);
+	var _immutable = __webpack_require__(255);
 
-	var _ActionTypes = __webpack_require__(190);
+	var _ActionTypes = __webpack_require__(189);
 
 	var initialState = (0, _immutable.fromJS)({
 	    gridData: _immutable.fromJS.Map
@@ -31200,8 +32122,8 @@
 	            return state.set('gridData', Object.assign({}, state.get('gridData'), {
 	                data: action.data,
 	                proxy: action.data,
-	                total: action.total,
-	                currentRecords: action.currentRecords
+	                total: action.total || action.data.length,
+	                currentRecords: action.currentRecords || action.data
 	            }));
 
 	        case _ActionTypes.SORT_DATA:
@@ -31227,42 +32149,7 @@
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "datasource.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 237 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.default = columnManager;
-
-	var _immutable = __webpack_require__(235);
-
-	__webpack_require__(190);
-
-	var initialState = (0, _immutable.fromJS)({
-	    columnStates: _immutable.fromJS.Map
-	});
-
-	function columnManager() {
-	    var state = arguments.length <= 0 || arguments[0] === undefined ? initialState : arguments[0];
-	    var action = arguments[1];
-
-
-	    switch (action.type) {
-
-	        default:
-	            return state;
-	    }
-	}
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "columnmanager.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-
-/***/ },
-/* 238 */
+/* 257 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -31274,9 +32161,9 @@
 	});
 	exports.default = editor;
 
-	var _immutable = __webpack_require__(235);
+	var _immutable = __webpack_require__(255);
 
-	var _ActionTypes = __webpack_require__(190);
+	var _ActionTypes = __webpack_require__(189);
 
 	var initialState = (0, _immutable.fromJS)({
 	    editorState: _immutable.fromJS.Map
@@ -31308,7 +32195,7 @@
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "editor.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 239 */
+/* 258 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -31320,9 +32207,9 @@
 	});
 	exports.default = menu;
 
-	var _immutable = __webpack_require__(235);
+	var _immutable = __webpack_require__(255);
 
-	var _ActionTypes = __webpack_require__(190);
+	var _ActionTypes = __webpack_require__(189);
 
 	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
@@ -31356,7 +32243,7 @@
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "menu.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 240 */
+/* 259 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -31368,9 +32255,9 @@
 	});
 	exports.default = pager;
 
-	var _immutable = __webpack_require__(235);
+	var _immutable = __webpack_require__(255);
 
-	var _ActionTypes = __webpack_require__(190);
+	var _ActionTypes = __webpack_require__(189);
 
 	var initialState = (0, _immutable.fromJS)({
 	    pagerState: _immutable.fromJS.Map
@@ -31401,7 +32288,7 @@
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "pager.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 241 */
+/* 260 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -31413,9 +32300,9 @@
 	});
 	exports.default = loader;
 
-	var _immutable = __webpack_require__(235);
+	var _immutable = __webpack_require__(255);
 
-	var _ActionTypes = __webpack_require__(190);
+	var _ActionTypes = __webpack_require__(189);
 
 	var initialState = (0, _immutable.fromJS)({
 	    loaderState: _immutable.fromJS.Map
@@ -31439,7 +32326,7 @@
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "loader.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 242 */
+/* 261 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -31451,9 +32338,9 @@
 	});
 	exports.default = bulkaction;
 
-	var _immutable = __webpack_require__(235);
+	var _immutable = __webpack_require__(255);
 
-	var _ActionTypes = __webpack_require__(190);
+	var _ActionTypes = __webpack_require__(189);
 
 	var initialState = (0, _immutable.fromJS)({
 	    bulkActionState: {
@@ -31481,7 +32368,7 @@
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "bulkaction.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 243 */
+/* 262 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -31493,9 +32380,9 @@
 	});
 	exports.default = filter;
 
-	var _immutable = __webpack_require__(235);
+	var _immutable = __webpack_require__(255);
 
-	var _ActionTypes = __webpack_require__(190);
+	var _ActionTypes = __webpack_require__(189);
 
 	var initialState = (0, _immutable.fromJS)({
 	    filterState: _immutable.fromJS.Map
@@ -31529,7 +32416,7 @@
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "filter.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 244 */
+/* 263 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -31541,9 +32428,9 @@
 	});
 	exports.default = selection;
 
-	var _immutable = __webpack_require__(235);
+	var _immutable = __webpack_require__(255);
 
-	var _ActionTypes = __webpack_require__(190);
+	var _ActionTypes = __webpack_require__(189);
 
 	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
@@ -31584,7 +32471,7 @@
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "selection.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 245 */
+/* 264 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -31596,9 +32483,9 @@
 	});
 	exports.default = errorhandler;
 
-	var _immutable = __webpack_require__(235);
+	var _immutable = __webpack_require__(255);
 
-	var _ActionTypes = __webpack_require__(190);
+	var _ActionTypes = __webpack_require__(189);
 
 	var initialState = (0, _immutable.fromJS)({
 	    errorState: _immutable.fromJS.Map
@@ -31631,7 +32518,513 @@
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "errorhandler.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 246 */
+/* 265 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// https://github.com/flitbit/diff#differences
+	'use strict';
+
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	var _deepDiff = __webpack_require__(266);
+
+	var _deepDiff2 = _interopRequireDefault(_deepDiff);
+
+	var dictionary = {
+	  E: {
+	    color: '#2196F3',
+	    text: 'CHANGED:'
+	  },
+	  N: {
+	    color: '#4CAF50',
+	    text: 'ADDED:'
+	  },
+	  D: {
+	    color: '#F44336',
+	    text: 'DELETED:'
+	  },
+	  A: {
+	    color: '#2196F3',
+	    text: 'ARRAY:'
+	  }
+	};
+
+	function style(kind) {
+	  return 'color: ' + dictionary[kind].color + '; font-weight: bold';
+	}
+
+	function render(diff) {
+	  var kind = diff.kind;
+	  var path = diff.path;
+	  var lhs = diff.lhs;
+	  var rhs = diff.rhs;
+	  var index = diff.index;
+	  var item = diff.item;
+
+	  switch (kind) {
+	    case 'E':
+	      return path.join('.') + ' ' + lhs + ' → ' + rhs;
+	    case 'N':
+	      return path.join('.') + ' ' + rhs;
+	    case 'D':
+	      return '' + path.join('.');
+	    case 'A':
+	      return (path.join('.') + '[' + index + ']', item);
+	    default:
+	      return null;
+	  }
+	}
+
+	function logger(_ref) {
+	  var getState = _ref.getState;
+
+	  return function (next) {
+	    return function (action) {
+	      var prevState = getState();
+	      var returnValue = next(action);
+	      var newState = getState();
+	      var time = new Date();
+
+	      var diff = (0, _deepDiff2['default'])(prevState, newState);
+
+	      console.group('diff @', time.getHours() + ':' + time.getMinutes() + ':' + time.getSeconds());
+	      if (diff) {
+	        diff.forEach(function (elem) {
+	          var kind = elem.kind;
+
+	          var output = render(elem);
+
+	          console.log('%c ' + dictionary[kind].text, style(kind), output);
+	        });
+	      } else {
+	        console.log('—— no diff ——');
+	      }
+	      console.groupEnd('diff');
+
+	      return returnValue;
+	    };
+	  };
+	}
+
+	exports['default'] = logger;
+	module.exports = exports['default'];
+
+/***/ },
+/* 266 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(global) {/*!
+	 * deep-diff.
+	 * Licensed under the MIT License.
+	 */
+	;(function(root, factory) {
+	  'use strict';
+	  if (true) {
+	    // AMD. Register as an anonymous module.
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	  } else if (typeof exports === 'object') {
+	    // Node. Does not work with strict CommonJS, but
+	    // only CommonJS-like environments that support module.exports,
+	    // like Node.
+	    module.exports = factory();
+	  } else {
+	    // Browser globals (root is window)
+	    root.DeepDiff = factory();
+	  }
+	}(this, function(undefined) {
+	  'use strict';
+
+	  var $scope, conflict, conflictResolution = [];
+	  if (typeof global === 'object' && global) {
+	    $scope = global;
+	  } else if (typeof window !== 'undefined') {
+	    $scope = window;
+	  } else {
+	    $scope = {};
+	  }
+	  conflict = $scope.DeepDiff;
+	  if (conflict) {
+	    conflictResolution.push(
+	      function() {
+	        if ('undefined' !== typeof conflict && $scope.DeepDiff === accumulateDiff) {
+	          $scope.DeepDiff = conflict;
+	          conflict = undefined;
+	        }
+	      });
+	  }
+
+	  // nodejs compatible on server side and in the browser.
+	  function inherits(ctor, superCtor) {
+	    ctor.super_ = superCtor;
+	    ctor.prototype = Object.create(superCtor.prototype, {
+	      constructor: {
+	        value: ctor,
+	        enumerable: false,
+	        writable: true,
+	        configurable: true
+	      }
+	    });
+	  }
+
+	  function Diff(kind, path) {
+	    Object.defineProperty(this, 'kind', {
+	      value: kind,
+	      enumerable: true
+	    });
+	    if (path && path.length) {
+	      Object.defineProperty(this, 'path', {
+	        value: path,
+	        enumerable: true
+	      });
+	    }
+	  }
+
+	  function DiffEdit(path, origin, value) {
+	    DiffEdit.super_.call(this, 'E', path);
+	    Object.defineProperty(this, 'lhs', {
+	      value: origin,
+	      enumerable: true
+	    });
+	    Object.defineProperty(this, 'rhs', {
+	      value: value,
+	      enumerable: true
+	    });
+	  }
+	  inherits(DiffEdit, Diff);
+
+	  function DiffNew(path, value) {
+	    DiffNew.super_.call(this, 'N', path);
+	    Object.defineProperty(this, 'rhs', {
+	      value: value,
+	      enumerable: true
+	    });
+	  }
+	  inherits(DiffNew, Diff);
+
+	  function DiffDeleted(path, value) {
+	    DiffDeleted.super_.call(this, 'D', path);
+	    Object.defineProperty(this, 'lhs', {
+	      value: value,
+	      enumerable: true
+	    });
+	  }
+	  inherits(DiffDeleted, Diff);
+
+	  function DiffArray(path, index, item) {
+	    DiffArray.super_.call(this, 'A', path);
+	    Object.defineProperty(this, 'index', {
+	      value: index,
+	      enumerable: true
+	    });
+	    Object.defineProperty(this, 'item', {
+	      value: item,
+	      enumerable: true
+	    });
+	  }
+	  inherits(DiffArray, Diff);
+
+	  function arrayRemove(arr, from, to) {
+	    var rest = arr.slice((to || from) + 1 || arr.length);
+	    arr.length = from < 0 ? arr.length + from : from;
+	    arr.push.apply(arr, rest);
+	    return arr;
+	  }
+
+	  function realTypeOf(subject) {
+	    var type = typeof subject;
+	    if (type !== 'object') {
+	      return type;
+	    }
+
+	    if (subject === Math) {
+	      return 'math';
+	    } else if (subject === null) {
+	      return 'null';
+	    } else if (Array.isArray(subject)) {
+	      return 'array';
+	    } else if (subject instanceof Date) {
+	      return 'date';
+	    } else if (/^\/.*\//.test(subject.toString())) {
+	      return 'regexp';
+	    }
+	    return 'object';
+	  }
+
+	  function deepDiff(lhs, rhs, changes, prefilter, path, key, stack) {
+	    path = path || [];
+	    var currentPath = path.slice(0);
+	    if (typeof key !== 'undefined') {
+	      if (prefilter && prefilter(currentPath, key, { lhs: lhs, rhs: rhs })) {
+	        return;
+	      }
+	      currentPath.push(key);
+	    }
+	    var ltype = typeof lhs;
+	    var rtype = typeof rhs;
+	    if (ltype === 'undefined') {
+	      if (rtype !== 'undefined') {
+	        changes(new DiffNew(currentPath, rhs));
+	      }
+	    } else if (rtype === 'undefined') {
+	      changes(new DiffDeleted(currentPath, lhs));
+	    } else if (realTypeOf(lhs) !== realTypeOf(rhs)) {
+	      changes(new DiffEdit(currentPath, lhs, rhs));
+	    } else if (lhs instanceof Date && rhs instanceof Date && ((lhs - rhs) !== 0)) {
+	      changes(new DiffEdit(currentPath, lhs, rhs));
+	    } else if (ltype === 'object' && lhs !== null && rhs !== null) {
+	      stack = stack || [];
+	      if (stack.indexOf(lhs) < 0) {
+	        stack.push(lhs);
+	        if (Array.isArray(lhs)) {
+	          var i, len = lhs.length;
+	          for (i = 0; i < lhs.length; i++) {
+	            if (i >= rhs.length) {
+	              changes(new DiffArray(currentPath, i, new DiffDeleted(undefined, lhs[i])));
+	            } else {
+	              deepDiff(lhs[i], rhs[i], changes, prefilter, currentPath, i, stack);
+	            }
+	          }
+	          while (i < rhs.length) {
+	            changes(new DiffArray(currentPath, i, new DiffNew(undefined, rhs[i++])));
+	          }
+	        } else {
+	          var akeys = Object.keys(lhs);
+	          var pkeys = Object.keys(rhs);
+	          akeys.forEach(function(k, i) {
+	            var other = pkeys.indexOf(k);
+	            if (other >= 0) {
+	              deepDiff(lhs[k], rhs[k], changes, prefilter, currentPath, k, stack);
+	              pkeys = arrayRemove(pkeys, other);
+	            } else {
+	              deepDiff(lhs[k], undefined, changes, prefilter, currentPath, k, stack);
+	            }
+	          });
+	          pkeys.forEach(function(k) {
+	            deepDiff(undefined, rhs[k], changes, prefilter, currentPath, k, stack);
+	          });
+	        }
+	        stack.length = stack.length - 1;
+	      }
+	    } else if (lhs !== rhs) {
+	      if (!(ltype === 'number' && isNaN(lhs) && isNaN(rhs))) {
+	        changes(new DiffEdit(currentPath, lhs, rhs));
+	      }
+	    }
+	  }
+
+	  function accumulateDiff(lhs, rhs, prefilter, accum) {
+	    accum = accum || [];
+	    deepDiff(lhs, rhs,
+	      function(diff) {
+	        if (diff) {
+	          accum.push(diff);
+	        }
+	      },
+	      prefilter);
+	    return (accum.length) ? accum : undefined;
+	  }
+
+	  function applyArrayChange(arr, index, change) {
+	    if (change.path && change.path.length) {
+	      var it = arr[index],
+	        i, u = change.path.length - 1;
+	      for (i = 0; i < u; i++) {
+	        it = it[change.path[i]];
+	      }
+	      switch (change.kind) {
+	        case 'A':
+	          applyArrayChange(it[change.path[i]], change.index, change.item);
+	          break;
+	        case 'D':
+	          delete it[change.path[i]];
+	          break;
+	        case 'E':
+	        case 'N':
+	          it[change.path[i]] = change.rhs;
+	          break;
+	      }
+	    } else {
+	      switch (change.kind) {
+	        case 'A':
+	          applyArrayChange(arr[index], change.index, change.item);
+	          break;
+	        case 'D':
+	          arr = arrayRemove(arr, index);
+	          break;
+	        case 'E':
+	        case 'N':
+	          arr[index] = change.rhs;
+	          break;
+	      }
+	    }
+	    return arr;
+	  }
+
+	  function applyChange(target, source, change) {
+	    if (target && source && change && change.kind) {
+	      var it = target,
+	        i = -1,
+	        last = change.path ? change.path.length - 1 : 0;
+	      while (++i < last) {
+	        if (typeof it[change.path[i]] === 'undefined') {
+	          it[change.path[i]] = (typeof change.path[i] === 'number') ? [] : {};
+	        }
+	        it = it[change.path[i]];
+	      }
+	      switch (change.kind) {
+	        case 'A':
+	          applyArrayChange(change.path ? it[change.path[i]] : it, change.index, change.item);
+	          break;
+	        case 'D':
+	          delete it[change.path[i]];
+	          break;
+	        case 'E':
+	        case 'N':
+	          it[change.path[i]] = change.rhs;
+	          break;
+	      }
+	    }
+	  }
+
+	  function revertArrayChange(arr, index, change) {
+	    if (change.path && change.path.length) {
+	      // the structure of the object at the index has changed...
+	      var it = arr[index],
+	        i, u = change.path.length - 1;
+	      for (i = 0; i < u; i++) {
+	        it = it[change.path[i]];
+	      }
+	      switch (change.kind) {
+	        case 'A':
+	          revertArrayChange(it[change.path[i]], change.index, change.item);
+	          break;
+	        case 'D':
+	          it[change.path[i]] = change.lhs;
+	          break;
+	        case 'E':
+	          it[change.path[i]] = change.lhs;
+	          break;
+	        case 'N':
+	          delete it[change.path[i]];
+	          break;
+	      }
+	    } else {
+	      // the array item is different...
+	      switch (change.kind) {
+	        case 'A':
+	          revertArrayChange(arr[index], change.index, change.item);
+	          break;
+	        case 'D':
+	          arr[index] = change.lhs;
+	          break;
+	        case 'E':
+	          arr[index] = change.lhs;
+	          break;
+	        case 'N':
+	          arr = arrayRemove(arr, index);
+	          break;
+	      }
+	    }
+	    return arr;
+	  }
+
+	  function revertChange(target, source, change) {
+	    if (target && source && change && change.kind) {
+	      var it = target,
+	        i, u;
+	      u = change.path.length - 1;
+	      for (i = 0; i < u; i++) {
+	        if (typeof it[change.path[i]] === 'undefined') {
+	          it[change.path[i]] = {};
+	        }
+	        it = it[change.path[i]];
+	      }
+	      switch (change.kind) {
+	        case 'A':
+	          // Array was modified...
+	          // it will be an array...
+	          revertArrayChange(it[change.path[i]], change.index, change.item);
+	          break;
+	        case 'D':
+	          // Item was deleted...
+	          it[change.path[i]] = change.lhs;
+	          break;
+	        case 'E':
+	          // Item was edited...
+	          it[change.path[i]] = change.lhs;
+	          break;
+	        case 'N':
+	          // Item is new...
+	          delete it[change.path[i]];
+	          break;
+	      }
+	    }
+	  }
+
+	  function applyDiff(target, source, filter) {
+	    if (target && source) {
+	      var onChange = function(change) {
+	        if (!filter || filter(target, source, change)) {
+	          applyChange(target, source, change);
+	        }
+	      };
+	      deepDiff(target, source, onChange);
+	    }
+	  }
+
+	  Object.defineProperties(accumulateDiff, {
+
+	    diff: {
+	      value: accumulateDiff,
+	      enumerable: true
+	    },
+	    observableDiff: {
+	      value: deepDiff,
+	      enumerable: true
+	    },
+	    applyDiff: {
+	      value: applyDiff,
+	      enumerable: true
+	    },
+	    applyChange: {
+	      value: applyChange,
+	      enumerable: true
+	    },
+	    revertChange: {
+	      value: revertChange,
+	      enumerable: true
+	    },
+	    isConflict: {
+	      value: function() {
+	        return 'undefined' !== typeof conflict;
+	      },
+	      enumerable: true
+	    },
+	    noConflict: {
+	      value: function() {
+	        if (conflictResolution) {
+	          conflictResolution.forEach(function(it) {
+	            it();
+	          });
+	          conflictResolution = null;
+	        }
+	        return accumulateDiff;
+	      },
+	      enumerable: true
+	    }
+	  });
+
+	  return accumulateDiff;
+	}));
+
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
+
+/***/ },
+/* 267 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -31650,7 +33043,560 @@
 	module.exports = thunkMiddleware;
 
 /***/ },
-/* 247 */
+/* 268 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	exports.__esModule = true;
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	var _react = __webpack_require__(149);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _componentsCreateAll = __webpack_require__(269);
+
+	var _componentsCreateAll2 = _interopRequireDefault(_componentsCreateAll);
+
+	var _createAll = _componentsCreateAll2['default'](_react2['default']);
+
+	var Provider = _createAll.Provider;
+	var connect = _createAll.connect;
+	exports.Provider = Provider;
+	exports.connect = connect;
+
+/***/ },
+/* 269 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	exports.__esModule = true;
+	exports['default'] = createAll;
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	var _createProvider = __webpack_require__(270);
+
+	var _createProvider2 = _interopRequireDefault(_createProvider);
+
+	var _createConnect = __webpack_require__(272);
+
+	var _createConnect2 = _interopRequireDefault(_createConnect);
+
+	function createAll(React) {
+	  var Provider = _createProvider2['default'](React);
+	  var connect = _createConnect2['default'](React);
+
+	  return { Provider: Provider, connect: connect };
+	}
+
+	module.exports = exports['default'];
+
+/***/ },
+/* 270 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	exports.__esModule = true;
+	exports['default'] = createProvider;
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var _utilsCreateStoreShape = __webpack_require__(271);
+
+	var _utilsCreateStoreShape2 = _interopRequireDefault(_utilsCreateStoreShape);
+
+	function isUsingOwnerContext(React) {
+	  var version = React.version;
+
+	  if (typeof version !== 'string') {
+	    return true;
+	  }
+
+	  var sections = version.split('.');
+	  var major = parseInt(sections[0], 10);
+	  var minor = parseInt(sections[1], 10);
+
+	  return major === 0 && minor === 13;
+	}
+
+	function createProvider(React) {
+	  var Component = React.Component;
+	  var PropTypes = React.PropTypes;
+	  var Children = React.Children;
+
+	  var storeShape = _utilsCreateStoreShape2['default'](PropTypes);
+	  var requireFunctionChild = isUsingOwnerContext(React);
+
+	  var didWarnAboutChild = false;
+	  function warnAboutFunctionChild() {
+	    if (didWarnAboutChild || requireFunctionChild) {
+	      return;
+	    }
+
+	    didWarnAboutChild = true;
+	    console.error( // eslint-disable-line no-console
+	    'With React 0.14 and later versions, you no longer need to ' + 'wrap <Provider> child into a function.');
+	  }
+	  function warnAboutElementChild() {
+	    if (didWarnAboutChild || !requireFunctionChild) {
+	      return;
+	    }
+
+	    didWarnAboutChild = true;
+	    console.error( // eslint-disable-line no-console
+	    'With React 0.13, you need to ' + 'wrap <Provider> child into a function. ' + 'This restriction will be removed with React 0.14.');
+	  }
+
+	  var didWarnAboutReceivingStore = false;
+	  function warnAboutReceivingStore() {
+	    if (didWarnAboutReceivingStore) {
+	      return;
+	    }
+
+	    didWarnAboutReceivingStore = true;
+	    console.error( // eslint-disable-line no-console
+	    '<Provider> does not support changing `store` on the fly. ' + 'It is most likely that you see this error because you updated to ' + 'Redux 2.x and React Redux 2.x which no longer hot reload reducers ' + 'automatically. See https://github.com/rackt/react-redux/releases/' + 'tag/v2.0.0 for the migration instructions.');
+	  }
+
+	  var Provider = (function (_Component) {
+	    _inherits(Provider, _Component);
+
+	    Provider.prototype.getChildContext = function getChildContext() {
+	      return { store: this.store };
+	    };
+
+	    function Provider(props, context) {
+	      _classCallCheck(this, Provider);
+
+	      _Component.call(this, props, context);
+	      this.store = props.store;
+	    }
+
+	    Provider.prototype.componentWillReceiveProps = function componentWillReceiveProps(nextProps) {
+	      var store = this.store;
+	      var nextStore = nextProps.store;
+
+	      if (store !== nextStore) {
+	        warnAboutReceivingStore();
+	      }
+	    };
+
+	    Provider.prototype.render = function render() {
+	      var children = this.props.children;
+
+	      if (typeof children === 'function') {
+	        warnAboutFunctionChild();
+	        children = children();
+	      } else {
+	        warnAboutElementChild();
+	      }
+
+	      return Children.only(children);
+	    };
+
+	    return Provider;
+	  })(Component);
+
+	  Provider.childContextTypes = {
+	    store: storeShape.isRequired
+	  };
+	  Provider.propTypes = {
+	    store: storeShape.isRequired,
+	    children: (requireFunctionChild ? PropTypes.func : PropTypes.element).isRequired
+	  };
+
+	  return Provider;
+	}
+
+	module.exports = exports['default'];
+
+/***/ },
+/* 271 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	exports.__esModule = true;
+	exports["default"] = createStoreShape;
+
+	function createStoreShape(PropTypes) {
+	  return PropTypes.shape({
+	    subscribe: PropTypes.func.isRequired,
+	    dispatch: PropTypes.func.isRequired,
+	    getState: PropTypes.func.isRequired
+	  });
+	}
+
+	module.exports = exports["default"];
+
+/***/ },
+/* 272 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
+
+	exports.__esModule = true;
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	exports['default'] = createConnect;
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var _utilsCreateStoreShape = __webpack_require__(271);
+
+	var _utilsCreateStoreShape2 = _interopRequireDefault(_utilsCreateStoreShape);
+
+	var _utilsShallowEqual = __webpack_require__(273);
+
+	var _utilsShallowEqual2 = _interopRequireDefault(_utilsShallowEqual);
+
+	var _utilsIsPlainObject = __webpack_require__(274);
+
+	var _utilsIsPlainObject2 = _interopRequireDefault(_utilsIsPlainObject);
+
+	var _utilsWrapActionCreators = __webpack_require__(275);
+
+	var _utilsWrapActionCreators2 = _interopRequireDefault(_utilsWrapActionCreators);
+
+	var _hoistNonReactStatics = __webpack_require__(182);
+
+	var _hoistNonReactStatics2 = _interopRequireDefault(_hoistNonReactStatics);
+
+	var _invariant = __webpack_require__(183);
+
+	var _invariant2 = _interopRequireDefault(_invariant);
+
+	var defaultMapStateToProps = function defaultMapStateToProps() {
+	  return {};
+	};
+	var defaultMapDispatchToProps = function defaultMapDispatchToProps(dispatch) {
+	  return { dispatch: dispatch };
+	};
+	var defaultMergeProps = function defaultMergeProps(stateProps, dispatchProps, parentProps) {
+	  return _extends({}, parentProps, stateProps, dispatchProps);
+	};
+
+	function getDisplayName(Component) {
+	  return Component.displayName || Component.name || 'Component';
+	}
+
+	// Helps track hot reloading.
+	var nextVersion = 0;
+
+	function createConnect(React) {
+	  var Component = React.Component;
+	  var PropTypes = React.PropTypes;
+
+	  var storeShape = _utilsCreateStoreShape2['default'](PropTypes);
+
+	  return function connect(mapStateToProps, mapDispatchToProps, mergeProps) {
+	    var options = arguments.length <= 3 || arguments[3] === undefined ? {} : arguments[3];
+
+	    var shouldSubscribe = Boolean(mapStateToProps);
+	    var finalMapStateToProps = mapStateToProps || defaultMapStateToProps;
+	    var finalMapDispatchToProps = _utilsIsPlainObject2['default'](mapDispatchToProps) ? _utilsWrapActionCreators2['default'](mapDispatchToProps) : mapDispatchToProps || defaultMapDispatchToProps;
+	    var finalMergeProps = mergeProps || defaultMergeProps;
+	    var shouldUpdateStateProps = finalMapStateToProps.length > 1;
+	    var shouldUpdateDispatchProps = finalMapDispatchToProps.length > 1;
+	    var _options$pure = options.pure;
+	    var pure = _options$pure === undefined ? true : _options$pure;
+
+	    // Helps track hot reloading.
+	    var version = nextVersion++;
+
+	    function computeStateProps(store, props) {
+	      var state = store.getState();
+	      var stateProps = shouldUpdateStateProps ? finalMapStateToProps(state, props) : finalMapStateToProps(state);
+
+	      _invariant2['default'](_utilsIsPlainObject2['default'](stateProps), '`mapStateToProps` must return an object. Instead received %s.', stateProps);
+	      return stateProps;
+	    }
+
+	    function computeDispatchProps(store, props) {
+	      var dispatch = store.dispatch;
+
+	      var dispatchProps = shouldUpdateDispatchProps ? finalMapDispatchToProps(dispatch, props) : finalMapDispatchToProps(dispatch);
+
+	      _invariant2['default'](_utilsIsPlainObject2['default'](dispatchProps), '`mapDispatchToProps` must return an object. Instead received %s.', dispatchProps);
+	      return dispatchProps;
+	    }
+
+	    function _computeNextState(stateProps, dispatchProps, parentProps) {
+	      var mergedProps = finalMergeProps(stateProps, dispatchProps, parentProps);
+	      _invariant2['default'](_utilsIsPlainObject2['default'](mergedProps), '`mergeProps` must return an object. Instead received %s.', mergedProps);
+	      return mergedProps;
+	    }
+
+	    return function wrapWithConnect(WrappedComponent) {
+	      var Connect = (function (_Component) {
+	        _inherits(Connect, _Component);
+
+	        Connect.prototype.shouldComponentUpdate = function shouldComponentUpdate(nextProps, nextState) {
+	          if (!pure) {
+	            this.updateStateProps(nextProps);
+	            this.updateDispatchProps(nextProps);
+	            this.updateState(nextProps);
+	            return true;
+	          }
+
+	          var storeChanged = nextState.storeState !== this.state.storeState;
+	          var propsChanged = !_utilsShallowEqual2['default'](nextProps, this.props);
+	          var mapStateProducedChange = false;
+	          var dispatchPropsChanged = false;
+
+	          if (storeChanged || propsChanged && shouldUpdateStateProps) {
+	            mapStateProducedChange = this.updateStateProps(nextProps);
+	          }
+
+	          if (propsChanged && shouldUpdateDispatchProps) {
+	            dispatchPropsChanged = this.updateDispatchProps(nextProps);
+	          }
+
+	          if (propsChanged || mapStateProducedChange || dispatchPropsChanged) {
+	            this.updateState(nextProps);
+	            return true;
+	          }
+
+	          return false;
+	        };
+
+	        function Connect(props, context) {
+	          _classCallCheck(this, Connect);
+
+	          _Component.call(this, props, context);
+	          this.version = version;
+	          this.store = props.store || context.store;
+
+	          _invariant2['default'](this.store, 'Could not find "store" in either the context or ' + ('props of "' + this.constructor.displayName + '". ') + 'Either wrap the root component in a <Provider>, ' + ('or explicitly pass "store" as a prop to "' + this.constructor.displayName + '".'));
+
+	          this.stateProps = computeStateProps(this.store, props);
+	          this.dispatchProps = computeDispatchProps(this.store, props);
+	          this.state = { storeState: null };
+	          this.updateState();
+	        }
+
+	        Connect.prototype.computeNextState = function computeNextState() {
+	          var props = arguments.length <= 0 || arguments[0] === undefined ? this.props : arguments[0];
+
+	          return _computeNextState(this.stateProps, this.dispatchProps, props);
+	        };
+
+	        Connect.prototype.updateStateProps = function updateStateProps() {
+	          var props = arguments.length <= 0 || arguments[0] === undefined ? this.props : arguments[0];
+
+	          var nextStateProps = computeStateProps(this.store, props);
+	          if (_utilsShallowEqual2['default'](nextStateProps, this.stateProps)) {
+	            return false;
+	          }
+
+	          this.stateProps = nextStateProps;
+	          return true;
+	        };
+
+	        Connect.prototype.updateDispatchProps = function updateDispatchProps() {
+	          var props = arguments.length <= 0 || arguments[0] === undefined ? this.props : arguments[0];
+
+	          var nextDispatchProps = computeDispatchProps(this.store, props);
+	          if (_utilsShallowEqual2['default'](nextDispatchProps, this.dispatchProps)) {
+	            return false;
+	          }
+
+	          this.dispatchProps = nextDispatchProps;
+	          return true;
+	        };
+
+	        Connect.prototype.updateState = function updateState() {
+	          var props = arguments.length <= 0 || arguments[0] === undefined ? this.props : arguments[0];
+
+	          this.nextState = this.computeNextState(props);
+	        };
+
+	        Connect.prototype.isSubscribed = function isSubscribed() {
+	          return typeof this.unsubscribe === 'function';
+	        };
+
+	        Connect.prototype.trySubscribe = function trySubscribe() {
+	          if (shouldSubscribe && !this.unsubscribe) {
+	            this.unsubscribe = this.store.subscribe(this.handleChange.bind(this));
+	            this.handleChange();
+	          }
+	        };
+
+	        Connect.prototype.tryUnsubscribe = function tryUnsubscribe() {
+	          if (this.unsubscribe) {
+	            this.unsubscribe();
+	            this.unsubscribe = null;
+	          }
+	        };
+
+	        Connect.prototype.componentDidMount = function componentDidMount() {
+	          this.trySubscribe();
+	        };
+
+	        Connect.prototype.componentWillUnmount = function componentWillUnmount() {
+	          this.tryUnsubscribe();
+	        };
+
+	        Connect.prototype.handleChange = function handleChange() {
+	          if (!this.unsubscribe) {
+	            return;
+	          }
+
+	          this.setState({
+	            storeState: this.store.getState()
+	          });
+	        };
+
+	        Connect.prototype.getWrappedInstance = function getWrappedInstance() {
+	          return this.refs.wrappedInstance;
+	        };
+
+	        Connect.prototype.render = function render() {
+	          return React.createElement(WrappedComponent, _extends({ ref: 'wrappedInstance'
+	          }, this.nextState));
+	        };
+
+	        return Connect;
+	      })(Component);
+
+	      Connect.displayName = 'Connect(' + getDisplayName(WrappedComponent) + ')';
+	      Connect.WrappedComponent = WrappedComponent;
+	      Connect.contextTypes = {
+	        store: storeShape
+	      };
+	      Connect.propTypes = {
+	        store: storeShape
+	      };
+
+	      if (process.env.NODE_ENV !== 'production') {
+	        Connect.prototype.componentWillUpdate = function componentWillUpdate() {
+	          if (this.version === version) {
+	            return;
+	          }
+
+	          // We are hot reloading!
+	          this.version = version;
+
+	          // Update the state and bindings.
+	          this.trySubscribe();
+	          this.updateStateProps();
+	          this.updateDispatchProps();
+	          this.updateState();
+	        };
+	      }
+
+	      return _hoistNonReactStatics2['default'](Connect, WrappedComponent);
+	    };
+	  };
+	}
+
+	module.exports = exports['default'];
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
+
+/***/ },
+/* 273 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	exports.__esModule = true;
+	exports["default"] = shallowEqual;
+
+	function shallowEqual(objA, objB) {
+	  if (objA === objB) {
+	    return true;
+	  }
+
+	  var keysA = Object.keys(objA);
+	  var keysB = Object.keys(objB);
+
+	  if (keysA.length !== keysB.length) {
+	    return false;
+	  }
+
+	  // Test for A's keys different from B.
+	  var hasOwn = Object.prototype.hasOwnProperty;
+	  for (var i = 0; i < keysA.length; i++) {
+	    if (!hasOwn.call(objB, keysA[i]) || objA[keysA[i]] !== objB[keysA[i]]) {
+	      return false;
+	    }
+	  }
+
+	  return true;
+	}
+
+	module.exports = exports["default"];
+
+/***/ },
+/* 274 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	exports.__esModule = true;
+	exports['default'] = isPlainObject;
+	var fnToString = function fnToString(fn) {
+	  return Function.prototype.toString.call(fn);
+	};
+
+	/**
+	 * @param {any} obj The object to inspect.
+	 * @returns {boolean} True if the argument appears to be a plain object.
+	 */
+
+	function isPlainObject(obj) {
+	  if (!obj || typeof obj !== 'object') {
+	    return false;
+	  }
+
+	  var proto = typeof obj.constructor === 'function' ? Object.getPrototypeOf(obj) : Object.prototype;
+
+	  if (proto === null) {
+	    return true;
+	  }
+
+	  var constructor = proto.constructor;
+
+	  return typeof constructor === 'function' && constructor instanceof constructor && fnToString(constructor) === fnToString(Object);
+	}
+
+	module.exports = exports['default'];
+
+/***/ },
+/* 275 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	exports.__esModule = true;
+	exports['default'] = wrapActionCreators;
+
+	var _redux = __webpack_require__(162);
+
+	function wrapActionCreators(actionCreators) {
+	  return function (dispatch) {
+	    return _redux.bindActionCreators(actionCreators, dispatch);
+	  };
+	}
+
+	module.exports = exports['default'];
+
+/***/ },
+/* 276 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
