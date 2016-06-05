@@ -7,6 +7,7 @@ import GridContainer from './app/GridContainer';
 import './../style/main.styl';
 
 const TITLE = 'React Redux Grid';
+const DEFAULT = 'Simple';
 
 export const App = (
   { grid, store }
@@ -19,6 +20,10 @@ export const App = (
     const className = `${PREFIX}app-container`;
 
     grid = grid ? grid : location.hash.substring(1);
+
+    if (!grid) {
+        grid = DEFAULT;
+    }
 
     return (
         <div>
