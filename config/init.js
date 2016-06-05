@@ -2,14 +2,15 @@
 * @Author: ben_cripps
 * @Date:   2015-05-18 19:34:42
 * @Last Modified by:   ben_cripps
-* @Last Modified time: 2016-01-15 23:03:32
+* @Last Modified time: 2016-05-31 20:40:16
 */
 
-import { Helper } from './helpers.js';
+'use strict';
 
 const path = require('path');
+const Helper = require('./helpers.js');
 
-export class App {
+module.exports = class App {
 
     constructor(args) {
         this.env = args.length === 3 && args[2] === 'dev' ? args[2] : 'min';

@@ -1,6 +1,8 @@
-import { data } from '../config/fakedata';
+'use strict';
 
-export class Functions {
+const data = require('../config/fakedata');
+
+module.exports = class Functions {
     constructor() {
 
     }
@@ -34,4 +36,4 @@ export class Functions {
         });
     }
 
-}
+};

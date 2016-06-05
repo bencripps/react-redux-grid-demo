@@ -21,7 +21,7 @@
     "gulp-uglify": "^1.2.0",
     "imagemin-pngquant": "^4.1.0",
     "babel-polyfill": "^6.2.0",
-    "react-redux-grid": "1.1.0",
+    "react-redux-grid": "https://github.com/bencripps/react-redux-grid.git",
     "immutable": "^3.7.5",
     "react": "^0.14.3",
     "react-dom": "^0.14.3",
@@ -70,12 +70,10 @@
     "webpack-dev-server": "1.10.1"
   },
   "scripts": {
-        "dev": "nodemon --exec npm run babel-node -- ./server.js dev",
+        "dev": "nodemon --exec node -- ./server.js dev",
         "babel-node": "babel-node",
-        "start": "./node_modules/.bin/babel-node -- ./server.js",
-        "hot-complex": "webpack-dev-server --hot --inline --pretty --config webpack/webpack.config.hot.complex.js",
-        "hot-simple": "webpack-dev-server --hot --inline --pretty --config webpack/webpack.config.hot.simple.js",
-        "prod-complex": "webpack --pretty --config webpack/webpack.config.prod.complex.js",
-        "prod-simple": "webpack --pretty --config webpack/webpack.config.prod.simple.js"
+        "start": "node ./server.js",
+        "hot": "webpack-dev-server --hot --inline --pretty --config webpack/webpack.config.hot.js",
+        "prod": "webpack --pretty --config webpack/webpack.config.prod.js"
     }
 }

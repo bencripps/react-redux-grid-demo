@@ -2,10 +2,10 @@
 * @Author: ben_cripps
 * @Date:   2015-05-18 20:58:33
 * @Last Modified by:   ben_cripps
-* @Last Modified time: 2016-01-17 19:35:26
+* @Last Modified time: 2016-05-31 20:54:13
 */
 
-import { Functions } from './functions';
+const Functions = require('./functions');
 
 const funcs = new Functions();
 
@@ -15,7 +15,7 @@ const scriptSrc = {
     createBlog: ['main.js', 'createBlog.js']
 };
 
-export const routes = [
+module.exports = [
     {
         uri: '/',
         method: 'get',
@@ -45,7 +45,7 @@ export const routes = [
             routeName: 'simple',
             routeTitle: 'home'
         }
-    }, 
+    },
     {
         uri: '/complex',
         method: 'get',

@@ -2,8 +2,10 @@
 * @Author: ben_cripps
 * @Date:   2015-09-23 21:28:42
 * @Last Modified by:   ben_cripps
-* @Last Modified time: 2015-11-19 20:54:20
+* @Last Modified time: 2016-05-31 20:41:54
 */
+
+'use strict';
 
 const colors = [
     '#C91F37',
@@ -105,5 +107,5 @@ const randomizedColors = function(colors) {
 
 };
 
-export default randomizedColors.bind(this, colors);
+module.exports = randomizedColors.bind(this, colors);
 

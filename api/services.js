@@ -2,12 +2,14 @@
 * @Author: ben_cripps
 * @Date:   2015-05-18 20:33:19
 * @Last Modified by:   ben_cripps
-* @Last Modified time: 2015-11-19 21:00:00
+* @Last Modified time: 2016-05-31 20:42:41
 */
 
-import { routes } from './routes';
+'use strict';
 
-export class Api {
+const routes = require('./routes');
+
+module.exports = class Api {
     constructor(app) {
         this.app = app.server;
         this.env = app.env;
@@ -16,4 +18,4 @@ export class Api {
     initRoutes() {
         routes.forEach((route) => this.app[route.method](route.uri, route.func.bind(this, route.vars)), this);
     }
-}
+};

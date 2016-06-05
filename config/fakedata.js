@@ -1,4 +1,4 @@
-export const data = [
+module.exports = [
     {
         "Name": "Sawyer",
         "Phone Number": "(209) 915-9426",
