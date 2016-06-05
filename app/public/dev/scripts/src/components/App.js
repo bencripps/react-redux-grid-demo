@@ -7,7 +7,7 @@ import GridContainer from './app/GridContainer';
 import './../style/main.styl';
 
 const TITLE = 'React Redux Grid';
-const DEFAULT = 'Simple';
+const DEFAULT = 'simple';
 
 export const App = (
   { grid, store }

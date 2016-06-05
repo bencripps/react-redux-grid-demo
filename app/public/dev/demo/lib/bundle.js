@@ -21250,6 +21250,7 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var TITLE = 'React Redux Grid';
+	var DEFAULT = 'simple';
 
 	var App = exports.App = function App(_ref) {
 	    var grid = _ref.grid;
@@ -21263,6 +21264,10 @@
 	    var className = _constants.PREFIX + 'app-container';
 
 	    grid = grid ? grid : location.hash.substring(1);
+
+	    if (!grid) {
+	        grid = DEFAULT;
+	    }
 
 	    return _react2.default.createElement(
 	        'div',
