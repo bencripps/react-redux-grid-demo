@@ -4,6 +4,7 @@ import { PREFIX } from './../../constants';
 import Simple from './grid-container/Simple';
 import Complex from './grid-container/Complex';
 import Sticky from './grid-container/Sticky';
+import ColRenderer from './grid-container/ColRenderer';
 
 export const Navigation = (
   { grid, store }
@@ -36,6 +37,18 @@ const getGrid = (type, store) => {
     else if (type === 'sticky') {
         return (
             <Sticky { ...{ store } } />
+            );
+    }
+
+    else if (type === 'sticky') {
+        return (
+            <Sticky { ...{ store } } />
+            );
+    }
+
+    else if (type === 'colRenderer') {
+        return (
+            <ColRenderer { ...{ store } } />
             );
     }
 };

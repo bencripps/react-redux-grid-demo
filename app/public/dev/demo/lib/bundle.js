@@ -187,6 +187,31 @@
 	// shim for using process in browser
 
 	var process = module.exports = {};
+
+	// cached from whatever global is present so that test runners that stub it
+	// don't break things.  But we need to wrap it in a try catch in case it is
+	// wrapped in strict mode code which doesn't define any globals.  It's inside a
+	// function because try/catches deoptimize in certain engines.
+
+	var cachedSetTimeout;
+	var cachedClearTimeout;
+
+	(function () {
+	  try {
+	    cachedSetTimeout = setTimeout;
+	  } catch (e) {
+	    cachedSetTimeout = function () {
+	      throw new Error('setTimeout is not defined');
+	    }
+	  }
+	  try {
+	    cachedClearTimeout = clearTimeout;
+	  } catch (e) {
+	    cachedClearTimeout = function () {
+	      throw new Error('clearTimeout is not defined');
+	    }
+	  }
+	} ())
 	var queue = [];
 	var draining = false;
 	var currentQueue;
@@ -211,7 +236,7 @@
 	    if (draining) {
 	        return;
 	    }
-	    var timeout = setTimeout(cleanUpNextTick);
+	    var timeout = cachedSetTimeout(cleanUpNextTick);
 	    draining = true;
 
 	    var len = queue.length;
@@ -228,7 +253,7 @@
 	    }
 	    currentQueue = null;
 	    draining = false;
-	    clearTimeout(timeout);
+	    cachedClearTimeout(timeout);
 	}
 
 	process.nextTick = function (fun) {
@@ -240,7 +265,7 @@
 	    }
 	    queue.push(new Item(fun, args));
 	    if (queue.length === 1 && !draining) {
-	        setTimeout(drainQueue, 0);
+	        cachedSetTimeout(drainQueue, 0);
 	    }
 	};
 
@@ -18710,7 +18735,7 @@
 
 	var _App2 = _interopRequireDefault(_App);
 
-	var _store = __webpack_require__(295);
+	var _store = __webpack_require__(323);
 
 	var _store2 = _interopRequireDefault(_store);
 
@@ -21140,11 +21165,19 @@
 	    arity: true
 	};
 
-	module.exports = function hoistNonReactStatics(targetComponent, sourceComponent) {
+	var isGetOwnPropertySymbolsAvailable = typeof Object.getOwnPropertySymbols === 'function';
+
+	module.exports = function hoistNonReactStatics(targetComponent, sourceComponent, customStatics) {
 	    if (typeof sourceComponent !== 'string') { // don't hoist over string (html) components
 	        var keys = Object.getOwnPropertyNames(sourceComponent);
-	        for (var i=0; i<keys.length; ++i) {
-	            if (!REACT_STATICS[keys[i]] && !KNOWN_STATICS[keys[i]]) {
+
+	        /* istanbul ignore else */
+	        if (isGetOwnPropertySymbolsAvailable) {
+	            keys = keys.concat(Object.getOwnPropertySymbols(sourceComponent));
+	        }
+
+	        for (var i = 0; i < keys.length; ++i) {
+	            if (!REACT_STATICS[keys[i]] && !KNOWN_STATICS[keys[i]] && (!customStatics || !customStatics[keys[i]])) {
 	                try {
 	                    targetComponent[keys[i]] = sourceComponent[keys[i]];
 	                } catch (error) {
@@ -21245,7 +21278,7 @@
 
 	var _GridContainer2 = _interopRequireDefault(_GridContainer);
 
-	__webpack_require__(293);
+	__webpack_require__(319);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -21267,6 +21300,10 @@
 
 	    if (!grid) {
 	        grid = DEFAULT;
+	    }
+
+	    if (grid === 'columnrenderer') {
+	        grid = 'colRenderer';
 	    }
 
 	    return _react2.default.createElement(
@@ -21375,6 +21412,12 @@
 	        children: 'Sticky'
 	    };
 
+	    var colRendererProps = {
+	        className: _constants.PREFIX + 'nav-link',
+	        onClick: handleLinkClick.bind(null, store),
+	        children: 'Column Renderer'
+	    };
+
 	    return _react2.default.createElement(
 	        'div',
 	        { className: className },
@@ -21395,6 +21438,11 @@
 	                'li',
 	                null,
 	                _react2.default.createElement('a', stickyProps)
+	            ),
+	            _react2.default.createElement(
+	                'li',
+	                null,
+	                _react2.default.createElement('a', colRendererProps)
 	            )
 	        )
 	    );
@@ -21416,6 +21464,9 @@
 	        case 'Sticky':
 	            func = _actions.loadSticky;
 	            break;
+	        case 'Column Renderer':
+	            func = _actions.loadColRenderer;
+	            break;
 
 	        default:
 	            func = function func() {
@@ -21425,7 +21476,7 @@
 	            };
 	    }
 
-	    history.pushState({}, type, location.protocol + '//' + location.host + '/#' + type.toLowerCase());
+	    history.pushState({}, type, location.protocol + '//' + location.host + '/#' + type.replace(/\s/g, '').toLowerCase());
 
 	    store.dispatch(func());
 	};
@@ -21454,7 +21505,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	exports.loadSticky = exports.loadComplex = exports.loadSimple = undefined;
+	exports.loadColRenderer = exports.loadSticky = exports.loadComplex = exports.loadSimple = undefined;
 
 	var _actionTypes = __webpack_require__(188);
 
@@ -21476,6 +21527,12 @@
 	    };
 	};
 
+	var loadColRenderer = exports.loadColRenderer = function loadColRenderer() {
+	    return {
+	        type: _actionTypes.LOAD_COL_RENDERER
+	    };
+	};
+
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "index.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
@@ -21492,6 +21549,7 @@
 	var LOAD_COMPLEX = exports.LOAD_COMPLEX = 'LOAD_COMPLEX';
 	var LOAD_SIMPLE = exports.LOAD_SIMPLE = 'LOAD_SIMPLE';
 	var LOAD_STICKY = exports.LOAD_STICKY = 'LOAD_STICKY';
+	var LOAD_COL_RENDERER = exports.LOAD_COL_RENDERER = 'LOAD_COL_RENDERER';
 
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "actionTypes.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
@@ -21518,13 +21576,17 @@
 
 	var _Simple2 = _interopRequireDefault(_Simple);
 
-	var _Complex = __webpack_require__(291);
+	var _Complex = __webpack_require__(316);
 
 	var _Complex2 = _interopRequireDefault(_Complex);
 
-	var _Sticky = __webpack_require__(292);
+	var _Sticky = __webpack_require__(317);
 
 	var _Sticky2 = _interopRequireDefault(_Sticky);
+
+	var _ColRenderer = __webpack_require__(318);
+
+	var _ColRenderer2 = _interopRequireDefault(_ColRenderer);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -21551,6 +21613,10 @@
 	        return _react2.default.createElement(_Complex2.default, { store: store });
 	    } else if (type === 'sticky') {
 	        return _react2.default.createElement(_Sticky2.default, { store: store });
+	    } else if (type === 'sticky') {
+	        return _react2.default.createElement(_Sticky2.default, { store: store });
+	    } else if (type === 'colRenderer') {
+	        return _react2.default.createElement(_ColRenderer2.default, { store: store });
 	    }
 	};
 
@@ -21586,7 +21652,7 @@
 
 	var _reactReduxGrid = __webpack_require__(191);
 
-	var _demodata = __webpack_require__(290);
+	var _demodata = __webpack_require__(315);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -21629,17 +21695,17 @@
 
 	'use strict';
 
-	var _redux = __webpack_require__(169);
+	var _redux = __webpack_require__(192);
 
-	var _Grid = __webpack_require__(192);
+	var _Grid = __webpack_require__(205);
 
-	var _store = __webpack_require__(272);
+	var _store = __webpack_require__(298);
 
 	var _store2 = _interopRequireDefault(_store);
 
-	var _reducers = __webpack_require__(274);
+	var _reducers = __webpack_require__(300);
 
-	var _actions = __webpack_require__(289);
+	var _actions = __webpack_require__(314);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -21659,7 +21725,847 @@
 /* 192 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
+
+	exports.__esModule = true;
+	exports.compose = exports.applyMiddleware = exports.bindActionCreators = exports.combineReducers = exports.createStore = undefined;
+
+	var _createStore = __webpack_require__(193);
+
+	var _createStore2 = _interopRequireDefault(_createStore);
+
+	var _combineReducers = __webpack_require__(200);
+
+	var _combineReducers2 = _interopRequireDefault(_combineReducers);
+
+	var _bindActionCreators = __webpack_require__(202);
+
+	var _bindActionCreators2 = _interopRequireDefault(_bindActionCreators);
+
+	var _applyMiddleware = __webpack_require__(203);
+
+	var _applyMiddleware2 = _interopRequireDefault(_applyMiddleware);
+
+	var _compose = __webpack_require__(204);
+
+	var _compose2 = _interopRequireDefault(_compose);
+
+	var _warning = __webpack_require__(201);
+
+	var _warning2 = _interopRequireDefault(_warning);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+	/*
+	* This is a dummy function to check if the function name has been altered by minification.
+	* If the function has been minified and NODE_ENV !== 'production', warn the user.
+	*/
+	function isCrushed() {}
+
+	if (process.env.NODE_ENV !== 'production' && typeof isCrushed.name === 'string' && isCrushed.name !== 'isCrushed') {
+	  (0, _warning2["default"])('You are currently using minified code outside of NODE_ENV === \'production\'. ' + 'This means that you are running a slower development build of Redux. ' + 'You can use loose-envify (https://github.com/zertosh/loose-envify) for browserify ' + 'or DefinePlugin for webpack (http://stackoverflow.com/questions/30030031) ' + 'to ensure you have the correct code for your production build.');
+	}
+
+	exports.createStore = _createStore2["default"];
+	exports.combineReducers = _combineReducers2["default"];
+	exports.bindActionCreators = _bindActionCreators2["default"];
+	exports.applyMiddleware = _applyMiddleware2["default"];
+	exports.compose = _compose2["default"];
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
+
+/***/ },
+/* 193 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	exports.__esModule = true;
+	exports.ActionTypes = undefined;
+	exports["default"] = createStore;
+
+	var _isPlainObject = __webpack_require__(194);
+
+	var _isPlainObject2 = _interopRequireDefault(_isPlainObject);
+
+	var _symbolObservable = __webpack_require__(198);
+
+	var _symbolObservable2 = _interopRequireDefault(_symbolObservable);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+	/**
+	 * These are private action types reserved by Redux.
+	 * For any unknown actions, you must return the current state.
+	 * If the current state is undefined, you must return the initial state.
+	 * Do not reference these action types directly in your code.
+	 */
+	var ActionTypes = exports.ActionTypes = {
+	  INIT: '@@redux/INIT'
+	};
+
+	/**
+	 * Creates a Redux store that holds the state tree.
+	 * The only way to change the data in the store is to call `dispatch()` on it.
+	 *
+	 * There should only be a single store in your app. To specify how different
+	 * parts of the state tree respond to actions, you may combine several reducers
+	 * into a single reducer function by using `combineReducers`.
+	 *
+	 * @param {Function} reducer A function that returns the next state tree, given
+	 * the current state tree and the action to handle.
+	 *
+	 * @param {any} [initialState] The initial state. You may optionally specify it
+	 * to hydrate the state from the server in universal apps, or to restore a
+	 * previously serialized user session.
+	 * If you use `combineReducers` to produce the root reducer function, this must be
+	 * an object with the same shape as `combineReducers` keys.
+	 *
+	 * @param {Function} enhancer The store enhancer. You may optionally specify it
+	 * to enhance the store with third-party capabilities such as middleware,
+	 * time travel, persistence, etc. The only store enhancer that ships with Redux
+	 * is `applyMiddleware()`.
+	 *
+	 * @returns {Store} A Redux store that lets you read the state, dispatch actions
+	 * and subscribe to changes.
+	 */
+	function createStore(reducer, initialState, enhancer) {
+	  var _ref2;
+
+	  if (typeof initialState === 'function' && typeof enhancer === 'undefined') {
+	    enhancer = initialState;
+	    initialState = undefined;
+	  }
+
+	  if (typeof enhancer !== 'undefined') {
+	    if (typeof enhancer !== 'function') {
+	      throw new Error('Expected the enhancer to be a function.');
+	    }
+
+	    return enhancer(createStore)(reducer, initialState);
+	  }
+
+	  if (typeof reducer !== 'function') {
+	    throw new Error('Expected the reducer to be a function.');
+	  }
+
+	  var currentReducer = reducer;
+	  var currentState = initialState;
+	  var currentListeners = [];
+	  var nextListeners = currentListeners;
+	  var isDispatching = false;
+
+	  function ensureCanMutateNextListeners() {
+	    if (nextListeners === currentListeners) {
+	      nextListeners = currentListeners.slice();
+	    }
+	  }
+
+	  /**
+	   * Reads the state tree managed by the store.
+	   *
+	   * @returns {any} The current state tree of your application.
+	   */
+	  function getState() {
+	    return currentState;
+	  }
+
+	  /**
+	   * Adds a change listener. It will be called any time an action is dispatched,
+	   * and some part of the state tree may potentially have changed. You may then
+	   * call `getState()` to read the current state tree inside the callback.
+	   *
+	   * You may call `dispatch()` from a change listener, with the following
+	   * caveats:
+	   *
+	   * 1. The subscriptions are snapshotted just before every `dispatch()` call.
+	   * If you subscribe or unsubscribe while the listeners are being invoked, this
+	   * will not have any effect on the `dispatch()` that is currently in progress.
+	   * However, the next `dispatch()` call, whether nested or not, will use a more
+	   * recent snapshot of the subscription list.
+	   *
+	   * 2. The listener should not expect to see all state changes, as the state
+	   * might have been updated multiple times during a nested `dispatch()` before
+	   * the listener is called. It is, however, guaranteed that all subscribers
+	   * registered before the `dispatch()` started will be called with the latest
+	   * state by the time it exits.
+	   *
+	   * @param {Function} listener A callback to be invoked on every dispatch.
+	   * @returns {Function} A function to remove this change listener.
+	   */
+	  function subscribe(listener) {
+	    if (typeof listener !== 'function') {
+	      throw new Error('Expected listener to be a function.');
+	    }
+
+	    var isSubscribed = true;
+
+	    ensureCanMutateNextListeners();
+	    nextListeners.push(listener);
+
+	    return function unsubscribe() {
+	      if (!isSubscribed) {
+	        return;
+	      }
+
+	      isSubscribed = false;
+
+	      ensureCanMutateNextListeners();
+	      var index = nextListeners.indexOf(listener);
+	      nextListeners.splice(index, 1);
+	    };
+	  }
+
+	  /**
+	   * Dispatches an action. It is the only way to trigger a state change.
+	   *
+	   * The `reducer` function, used to create the store, will be called with the
+	   * current state tree and the given `action`. Its return value will
+	   * be considered the **next** state of the tree, and the change listeners
+	   * will be notified.
+	   *
+	   * The base implementation only supports plain object actions. If you want to
+	   * dispatch a Promise, an Observable, a thunk, or something else, you need to
+	   * wrap your store creating function into the corresponding middleware. For
+	   * example, see the documentation for the `redux-thunk` package. Even the
+	   * middleware will eventually dispatch plain object actions using this method.
+	   *
+	   * @param {Object} action A plain object representing “what changed”. It is
+	   * a good idea to keep actions serializable so you can record and replay user
+	   * sessions, or use the time travelling `redux-devtools`. An action must have
+	   * a `type` property which may not be `undefined`. It is a good idea to use
+	   * string constants for action types.
+	   *
+	   * @returns {Object} For convenience, the same action object you dispatched.
+	   *
+	   * Note that, if you use a custom middleware, it may wrap `dispatch()` to
+	   * return something else (for example, a Promise you can await).
+	   */
+	  function dispatch(action) {
+	    if (!(0, _isPlainObject2["default"])(action)) {
+	      throw new Error('Actions must be plain objects. ' + 'Use custom middleware for async actions.');
+	    }
+
+	    if (typeof action.type === 'undefined') {
+	      throw new Error('Actions may not have an undefined "type" property. ' + 'Have you misspelled a constant?');
+	    }
+
+	    if (isDispatching) {
+	      throw new Error('Reducers may not dispatch actions.');
+	    }
+
+	    try {
+	      isDispatching = true;
+	      currentState = currentReducer(currentState, action);
+	    } finally {
+	      isDispatching = false;
+	    }
+
+	    var listeners = currentListeners = nextListeners;
+	    for (var i = 0; i < listeners.length; i++) {
+	      listeners[i]();
+	    }
+
+	    return action;
+	  }
+
+	  /**
+	   * Replaces the reducer currently used by the store to calculate the state.
+	   *
+	   * You might need this if your app implements code splitting and you want to
+	   * load some of the reducers dynamically. You might also need this if you
+	   * implement a hot reloading mechanism for Redux.
+	   *
+	   * @param {Function} nextReducer The reducer for the store to use instead.
+	   * @returns {void}
+	   */
+	  function replaceReducer(nextReducer) {
+	    if (typeof nextReducer !== 'function') {
+	      throw new Error('Expected the nextReducer to be a function.');
+	    }
+
+	    currentReducer = nextReducer;
+	    dispatch({ type: ActionTypes.INIT });
+	  }
+
+	  /**
+	   * Interoperability point for observable/reactive libraries.
+	   * @returns {observable} A minimal observable of state changes.
+	   * For more information, see the observable proposal:
+	   * https://github.com/zenparsing/es-observable
+	   */
+	  function observable() {
+	    var _ref;
+
+	    var outerSubscribe = subscribe;
+	    return _ref = {
+	      /**
+	       * The minimal observable subscription method.
+	       * @param {Object} observer Any object that can be used as an observer.
+	       * The observer object should have a `next` method.
+	       * @returns {subscription} An object with an `unsubscribe` method that can
+	       * be used to unsubscribe the observable from the store, and prevent further
+	       * emission of values from the observable.
+	       */
+
+	      subscribe: function subscribe(observer) {
+	        if (typeof observer !== 'object') {
+	          throw new TypeError('Expected the observer to be an object.');
+	        }
+
+	        function observeState() {
+	          if (observer.next) {
+	            observer.next(getState());
+	          }
+	        }
+
+	        observeState();
+	        var unsubscribe = outerSubscribe(observeState);
+	        return { unsubscribe: unsubscribe };
+	      }
+	    }, _ref[_symbolObservable2["default"]] = function () {
+	      return this;
+	    }, _ref;
+	  }
+
+	  // When a store is created, an "INIT" action is dispatched so that every
+	  // reducer returns their initial state. This effectively populates
+	  // the initial state tree.
+	  dispatch({ type: ActionTypes.INIT });
+
+	  return _ref2 = {
+	    dispatch: dispatch,
+	    subscribe: subscribe,
+	    getState: getState,
+	    replaceReducer: replaceReducer
+	  }, _ref2[_symbolObservable2["default"]] = observable, _ref2;
+	}
+
+/***/ },
+/* 194 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var getPrototype = __webpack_require__(195),
+	    isHostObject = __webpack_require__(196),
+	    isObjectLike = __webpack_require__(197);
+
+	/** `Object#toString` result references. */
+	var objectTag = '[object Object]';
+
+	/** Used for built-in method references. */
+	var objectProto = Object.prototype;
+
+	/** Used to resolve the decompiled source of functions. */
+	var funcToString = Function.prototype.toString;
+
+	/** Used to check objects for own properties. */
+	var hasOwnProperty = objectProto.hasOwnProperty;
+
+	/** Used to infer the `Object` constructor. */
+	var objectCtorString = funcToString.call(Object);
+
+	/**
+	 * Used to resolve the
+	 * [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
+	 * of values.
+	 */
+	var objectToString = objectProto.toString;
+
+	/**
+	 * Checks if `value` is a plain object, that is, an object created by the
+	 * `Object` constructor or one with a `[[Prototype]]` of `null`.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 0.8.0
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is a plain object,
+	 *  else `false`.
+	 * @example
+	 *
+	 * function Foo() {
+	 *   this.a = 1;
+	 * }
+	 *
+	 * _.isPlainObject(new Foo);
+	 * // => false
+	 *
+	 * _.isPlainObject([1, 2, 3]);
+	 * // => false
+	 *
+	 * _.isPlainObject({ 'x': 0, 'y': 0 });
+	 * // => true
+	 *
+	 * _.isPlainObject(Object.create(null));
+	 * // => true
+	 */
+	function isPlainObject(value) {
+	  if (!isObjectLike(value) ||
+	      objectToString.call(value) != objectTag || isHostObject(value)) {
+	    return false;
+	  }
+	  var proto = getPrototype(value);
+	  if (proto === null) {
+	    return true;
+	  }
+	  var Ctor = hasOwnProperty.call(proto, 'constructor') && proto.constructor;
+	  return (typeof Ctor == 'function' &&
+	    Ctor instanceof Ctor && funcToString.call(Ctor) == objectCtorString);
+	}
+
+	module.exports = isPlainObject;
+
+
+/***/ },
+/* 195 */
+/***/ function(module, exports) {
+
+	/* Built-in method references for those with the same name as other `lodash` methods. */
+	var nativeGetPrototype = Object.getPrototypeOf;
+
+	/**
+	 * Gets the `[[Prototype]]` of `value`.
+	 *
+	 * @private
+	 * @param {*} value The value to query.
+	 * @returns {null|Object} Returns the `[[Prototype]]`.
+	 */
+	function getPrototype(value) {
+	  return nativeGetPrototype(Object(value));
+	}
+
+	module.exports = getPrototype;
+
+
+/***/ },
+/* 196 */
+/***/ function(module, exports) {
+
+	/**
+	 * Checks if `value` is a host object in IE < 9.
+	 *
+	 * @private
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is a host object, else `false`.
+	 */
+	function isHostObject(value) {
+	  // Many host objects are `Object` objects that can coerce to strings
+	  // despite having improperly defined `toString` methods.
+	  var result = false;
+	  if (value != null && typeof value.toString != 'function') {
+	    try {
+	      result = !!(value + '');
+	    } catch (e) {}
+	  }
+	  return result;
+	}
+
+	module.exports = isHostObject;
+
+
+/***/ },
+/* 197 */
+/***/ function(module, exports) {
+
+	/**
+	 * Checks if `value` is object-like. A value is object-like if it's not `null`
+	 * and has a `typeof` result of "object".
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 4.0.0
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+	 * @example
+	 *
+	 * _.isObjectLike({});
+	 * // => true
+	 *
+	 * _.isObjectLike([1, 2, 3]);
+	 * // => true
+	 *
+	 * _.isObjectLike(_.noop);
+	 * // => false
+	 *
+	 * _.isObjectLike(null);
+	 * // => false
+	 */
+	function isObjectLike(value) {
+	  return !!value && typeof value == 'object';
+	}
+
+	module.exports = isObjectLike;
+
+
+/***/ },
+/* 198 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(global) {/* global window */
+	'use strict';
+
+	module.exports = __webpack_require__(199)(global || window || this);
+
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
+
+/***/ },
+/* 199 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	module.exports = function symbolObservablePonyfill(root) {
+		var result;
+		var Symbol = root.Symbol;
+
+		if (typeof Symbol === 'function') {
+			if (Symbol.observable) {
+				result = Symbol.observable;
+			} else {
+				result = Symbol('observable');
+				Symbol.observable = result;
+			}
+		} else {
+			result = '@@observable';
+		}
+
+		return result;
+	};
+
+
+/***/ },
+/* 200 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
+
+	exports.__esModule = true;
+	exports["default"] = combineReducers;
+
+	var _createStore = __webpack_require__(193);
+
+	var _isPlainObject = __webpack_require__(194);
+
+	var _isPlainObject2 = _interopRequireDefault(_isPlainObject);
+
+	var _warning = __webpack_require__(201);
+
+	var _warning2 = _interopRequireDefault(_warning);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+	function getUndefinedStateErrorMessage(key, action) {
+	  var actionType = action && action.type;
+	  var actionName = actionType && '"' + actionType.toString() + '"' || 'an action';
+
+	  return 'Given action ' + actionName + ', reducer "' + key + '" returned undefined. ' + 'To ignore an action, you must explicitly return the previous state.';
+	}
+
+	function getUnexpectedStateShapeWarningMessage(inputState, reducers, action) {
+	  var reducerKeys = Object.keys(reducers);
+	  var argumentName = action && action.type === _createStore.ActionTypes.INIT ? 'initialState argument passed to createStore' : 'previous state received by the reducer';
+
+	  if (reducerKeys.length === 0) {
+	    return 'Store does not have a valid reducer. Make sure the argument passed ' + 'to combineReducers is an object whose values are reducers.';
+	  }
+
+	  if (!(0, _isPlainObject2["default"])(inputState)) {
+	    return 'The ' + argumentName + ' has unexpected type of "' + {}.toString.call(inputState).match(/\s([a-z|A-Z]+)/)[1] + '". Expected argument to be an object with the following ' + ('keys: "' + reducerKeys.join('", "') + '"');
+	  }
+
+	  var unexpectedKeys = Object.keys(inputState).filter(function (key) {
+	    return !reducers.hasOwnProperty(key);
+	  });
+
+	  if (unexpectedKeys.length > 0) {
+	    return 'Unexpected ' + (unexpectedKeys.length > 1 ? 'keys' : 'key') + ' ' + ('"' + unexpectedKeys.join('", "') + '" found in ' + argumentName + '. ') + 'Expected to find one of the known reducer keys instead: ' + ('"' + reducerKeys.join('", "') + '". Unexpected keys will be ignored.');
+	  }
+	}
+
+	function assertReducerSanity(reducers) {
+	  Object.keys(reducers).forEach(function (key) {
+	    var reducer = reducers[key];
+	    var initialState = reducer(undefined, { type: _createStore.ActionTypes.INIT });
+
+	    if (typeof initialState === 'undefined') {
+	      throw new Error('Reducer "' + key + '" returned undefined during initialization. ' + 'If the state passed to the reducer is undefined, you must ' + 'explicitly return the initial state. The initial state may ' + 'not be undefined.');
+	    }
+
+	    var type = '@@redux/PROBE_UNKNOWN_ACTION_' + Math.random().toString(36).substring(7).split('').join('.');
+	    if (typeof reducer(undefined, { type: type }) === 'undefined') {
+	      throw new Error('Reducer "' + key + '" returned undefined when probed with a random type. ' + ('Don\'t try to handle ' + _createStore.ActionTypes.INIT + ' or other actions in "redux/*" ') + 'namespace. They are considered private. Instead, you must return the ' + 'current state for any unknown actions, unless it is undefined, ' + 'in which case you must return the initial state, regardless of the ' + 'action type. The initial state may not be undefined.');
+	    }
+	  });
+	}
+
+	/**
+	 * Turns an object whose values are different reducer functions, into a single
+	 * reducer function. It will call every child reducer, and gather their results
+	 * into a single state object, whose keys correspond to the keys of the passed
+	 * reducer functions.
+	 *
+	 * @param {Object} reducers An object whose values correspond to different
+	 * reducer functions that need to be combined into one. One handy way to obtain
+	 * it is to use ES6 `import * as reducers` syntax. The reducers may never return
+	 * undefined for any action. Instead, they should return their initial state
+	 * if the state passed to them was undefined, and the current state for any
+	 * unrecognized action.
+	 *
+	 * @returns {Function} A reducer function that invokes every reducer inside the
+	 * passed object, and builds a state object with the same shape.
+	 */
+	function combineReducers(reducers) {
+	  var reducerKeys = Object.keys(reducers);
+	  var finalReducers = {};
+	  for (var i = 0; i < reducerKeys.length; i++) {
+	    var key = reducerKeys[i];
+	    if (typeof reducers[key] === 'function') {
+	      finalReducers[key] = reducers[key];
+	    }
+	  }
+	  var finalReducerKeys = Object.keys(finalReducers);
+
+	  var sanityError;
+	  try {
+	    assertReducerSanity(finalReducers);
+	  } catch (e) {
+	    sanityError = e;
+	  }
+
+	  return function combination() {
+	    var state = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+	    var action = arguments[1];
+
+	    if (sanityError) {
+	      throw sanityError;
+	    }
+
+	    if (process.env.NODE_ENV !== 'production') {
+	      var warningMessage = getUnexpectedStateShapeWarningMessage(state, finalReducers, action);
+	      if (warningMessage) {
+	        (0, _warning2["default"])(warningMessage);
+	      }
+	    }
+
+	    var hasChanged = false;
+	    var nextState = {};
+	    for (var i = 0; i < finalReducerKeys.length; i++) {
+	      var key = finalReducerKeys[i];
+	      var reducer = finalReducers[key];
+	      var previousStateForKey = state[key];
+	      var nextStateForKey = reducer(previousStateForKey, action);
+	      if (typeof nextStateForKey === 'undefined') {
+	        var errorMessage = getUndefinedStateErrorMessage(key, action);
+	        throw new Error(errorMessage);
+	      }
+	      nextState[key] = nextStateForKey;
+	      hasChanged = hasChanged || nextStateForKey !== previousStateForKey;
+	    }
+	    return hasChanged ? nextState : state;
+	  };
+	}
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
+
+/***/ },
+/* 201 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	exports.__esModule = true;
+	exports["default"] = warning;
+	/**
+	 * Prints a warning in the console if it exists.
+	 *
+	 * @param {String} message The warning message.
+	 * @returns {void}
+	 */
+	function warning(message) {
+	  /* eslint-disable no-console */
+	  if (typeof console !== 'undefined' && typeof console.error === 'function') {
+	    console.error(message);
+	  }
+	  /* eslint-enable no-console */
+	  try {
+	    // This error was thrown as a convenience so that if you enable
+	    // "break on all exceptions" in your console,
+	    // it would pause the execution at this line.
+	    throw new Error(message);
+	    /* eslint-disable no-empty */
+	  } catch (e) {}
+	  /* eslint-enable no-empty */
+	}
+
+/***/ },
+/* 202 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	exports.__esModule = true;
+	exports["default"] = bindActionCreators;
+	function bindActionCreator(actionCreator, dispatch) {
+	  return function () {
+	    return dispatch(actionCreator.apply(undefined, arguments));
+	  };
+	}
+
+	/**
+	 * Turns an object whose values are action creators, into an object with the
+	 * same keys, but with every function wrapped into a `dispatch` call so they
+	 * may be invoked directly. This is just a convenience method, as you can call
+	 * `store.dispatch(MyActionCreators.doSomething())` yourself just fine.
+	 *
+	 * For convenience, you can also pass a single function as the first argument,
+	 * and get a function in return.
+	 *
+	 * @param {Function|Object} actionCreators An object whose values are action
+	 * creator functions. One handy way to obtain it is to use ES6 `import * as`
+	 * syntax. You may also pass a single function.
+	 *
+	 * @param {Function} dispatch The `dispatch` function available on your Redux
+	 * store.
+	 *
+	 * @returns {Function|Object} The object mimicking the original object, but with
+	 * every action creator wrapped into the `dispatch` call. If you passed a
+	 * function as `actionCreators`, the return value will also be a single
+	 * function.
+	 */
+	function bindActionCreators(actionCreators, dispatch) {
+	  if (typeof actionCreators === 'function') {
+	    return bindActionCreator(actionCreators, dispatch);
+	  }
+
+	  if (typeof actionCreators !== 'object' || actionCreators === null) {
+	    throw new Error('bindActionCreators expected an object or a function, instead received ' + (actionCreators === null ? 'null' : typeof actionCreators) + '. ' + 'Did you write "import ActionCreators from" instead of "import * as ActionCreators from"?');
+	  }
+
+	  var keys = Object.keys(actionCreators);
+	  var boundActionCreators = {};
+	  for (var i = 0; i < keys.length; i++) {
+	    var key = keys[i];
+	    var actionCreator = actionCreators[key];
+	    if (typeof actionCreator === 'function') {
+	      boundActionCreators[key] = bindActionCreator(actionCreator, dispatch);
+	    }
+	  }
+	  return boundActionCreators;
+	}
+
+/***/ },
+/* 203 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	exports.__esModule = true;
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	exports["default"] = applyMiddleware;
+
+	var _compose = __webpack_require__(204);
+
+	var _compose2 = _interopRequireDefault(_compose);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+	/**
+	 * Creates a store enhancer that applies middleware to the dispatch method
+	 * of the Redux store. This is handy for a variety of tasks, such as expressing
+	 * asynchronous actions in a concise manner, or logging every action payload.
+	 *
+	 * See `redux-thunk` package as an example of the Redux middleware.
+	 *
+	 * Because middleware is potentially asynchronous, this should be the first
+	 * store enhancer in the composition chain.
+	 *
+	 * Note that each middleware will be given the `dispatch` and `getState` functions
+	 * as named arguments.
+	 *
+	 * @param {...Function} middlewares The middleware chain to be applied.
+	 * @returns {Function} A store enhancer applying the middleware.
+	 */
+	function applyMiddleware() {
+	  for (var _len = arguments.length, middlewares = Array(_len), _key = 0; _key < _len; _key++) {
+	    middlewares[_key] = arguments[_key];
+	  }
+
+	  return function (createStore) {
+	    return function (reducer, initialState, enhancer) {
+	      var store = createStore(reducer, initialState, enhancer);
+	      var _dispatch = store.dispatch;
+	      var chain = [];
+
+	      var middlewareAPI = {
+	        getState: store.getState,
+	        dispatch: function dispatch(action) {
+	          return _dispatch(action);
+	        }
+	      };
+	      chain = middlewares.map(function (middleware) {
+	        return middleware(middlewareAPI);
+	      });
+	      _dispatch = _compose2["default"].apply(undefined, chain)(store.dispatch);
+
+	      return _extends({}, store, {
+	        dispatch: _dispatch
+	      });
+	    };
+	  };
+	}
+
+/***/ },
+/* 204 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	exports.__esModule = true;
+	exports["default"] = compose;
+	/**
+	 * Composes single-argument functions from right to left. The rightmost
+	 * function can take multiple arguments as it provides the signature for
+	 * the resulting composite function.
+	 *
+	 * @param {...Function} funcs The functions to compose.
+	 * @returns {Function} A function obtained by composing the argument functions
+	 * from right to left. For example, compose(f, g, h) is identical to doing
+	 * (...args) => f(g(h(...args))).
+	 */
+
+	function compose() {
+	  for (var _len = arguments.length, funcs = Array(_len), _key = 0; _key < _len; _key++) {
+	    funcs[_key] = arguments[_key];
+	  }
+
+	  if (funcs.length === 0) {
+	    return function (arg) {
+	      return arg;
+	    };
+	  } else {
+	    var _ret = function () {
+	      var last = funcs[funcs.length - 1];
+	      var rest = funcs.slice(0, -1);
+	      return {
+	        v: function v() {
+	          return rest.reduceRight(function (composed, f) {
+	            return f(composed);
+	          }, last.apply(undefined, arguments));
+	        }
+	      };
+	    }();
+
+	    if (typeof _ret === "object") return _ret.v;
+	  }
+	}
+
+/***/ },
+/* 205 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
 
 	'use strict';
 
@@ -21674,51 +22580,61 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _reactRedux = __webpack_require__(193);
+	var _reactRedux = __webpack_require__(206);
 
-	var _Header = __webpack_require__(200);
+	var _Header = __webpack_require__(215);
 
-	var _FixedHeader = __webpack_require__(217);
+	var _Header2 = _interopRequireDefault(_Header);
 
-	var _Row = __webpack_require__(220);
+	var _FixedHeader = __webpack_require__(232);
 
-	var _Toolbar = __webpack_require__(229);
+	var _FixedHeader2 = _interopRequireDefault(_FixedHeader);
 
-	var _Message = __webpack_require__(233);
+	var _TableRow = __webpack_require__(236);
 
-	var _Toolbar2 = __webpack_require__(235);
+	var _TableRow2 = _interopRequireDefault(_TableRow);
+
+	var _Toolbar = __webpack_require__(254);
+
+	var _Message = __webpack_require__(258);
+
+	var _Toolbar2 = __webpack_require__(260);
 
 	var _Toolbar3 = _interopRequireDefault(_Toolbar2);
 
-	var _Toolbar4 = __webpack_require__(238);
+	var _Toolbar4 = __webpack_require__(263);
 
 	var _Toolbar5 = _interopRequireDefault(_Toolbar4);
 
-	var _LoadingBar = __webpack_require__(248);
+	var _LoadingBar = __webpack_require__(273);
 
 	var _LoadingBar2 = _interopRequireDefault(_LoadingBar);
 
-	var _ColumnManager = __webpack_require__(249);
+	var _ColumnManager = __webpack_require__(274);
 
 	var _ColumnManager2 = _interopRequireDefault(_ColumnManager);
 
-	var _Model = __webpack_require__(258);
+	var _Model = __webpack_require__(282);
 
 	var _Model2 = _interopRequireDefault(_Model);
 
-	var _Manager = __webpack_require__(260);
+	var _Manager = __webpack_require__(284);
 
 	var _Manager2 = _interopRequireDefault(_Manager);
 
-	var _prefix = __webpack_require__(204);
+	var _prefix = __webpack_require__(219);
 
-	var _GridConstants = __webpack_require__(205);
+	var _GridConstants = __webpack_require__(220);
 
-	var _GridActions = __webpack_require__(210);
+	var _GridActions = __webpack_require__(225);
 
-	var _stateGetter = __webpack_require__(216);
+	var _mapStateToProps = __webpack_require__(288);
 
-	__webpack_require__(263);
+	var _shouldComponentUpdate = __webpack_require__(246);
+
+	var _isPluginEnabled = __webpack_require__(235);
+
+	__webpack_require__(289);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -21741,6 +22657,7 @@
 	            var columnState = _props.columnState;
 	            var gridData = _props.gridData;
 	            var height = _props.height;
+	            var loadingState = _props.loadingState;
 	            var pageSize = _props.pageSize;
 	            var plugins = _props.plugins;
 	            var events = _props.events;
@@ -21750,6 +22667,7 @@
 	            var pager = _props.pager;
 	            var editorState = _props.editorState;
 	            var selectedRows = _props.selectedRows;
+	            var menuState = _props.menuState;
 
 
 	            var columns = columnState && columnState.columns ? columnState.columns : [];
@@ -21778,6 +22696,8 @@
 	                store: store
 	            };
 
+	            var bulkActionCmp = (0, _isPluginEnabled.isPluginEnabled)(plugins, 'BULK_ACTIONS') ? _react2.default.createElement(_Toolbar3.default, bulkActionProps) : null;
+
 	            var filterProps = {
 	                columnManager: this.columnManager,
 	                pageSize: pageSize,
@@ -21787,15 +22707,21 @@
 	                store: store
 	            };
 
+	            var filterCmp = (0, _isPluginEnabled.isPluginEnabled)(plugins, 'FILTER_CONTAINER') ? _react2.default.createElement(_Toolbar5.default, filterProps) : null;
+
 	            var headerProps = {
 	                columnManager: this.columnManager,
 	                columns: columns,
 	                plugins: plugins,
 	                reducerKeys: reducerKeys,
+	                dataSource: gridData,
+	                pager: pager,
+	                columnState: columnState,
 	                selectionModel: this.selectionModel,
 	                stateKey: stateKey,
 	                store: store,
-	                visible: false
+	                visible: false,
+	                menuState: menuState
 	            };
 
 	            var fixedHeaderProps = Object.assign({
@@ -21825,7 +22751,8 @@
 	                reducerKeys: reducerKeys,
 	                selectionModel: this.selectionModel,
 	                stateKey: stateKey,
-	                store: store
+	                store: store,
+	                menuState: menuState
 	            };
 
 	            var tableProps = {
@@ -21848,24 +22775,25 @@
 	                plugins: plugins,
 	                reducerKeys: reducerKeys,
 	                stateKey: stateKey,
-	                store: store
+	                store: store,
+	                loadingState: loadingState
 	            };
 
 	            return _react2.default.createElement(
 	                'div',
 	                containerProps,
 	                _react2.default.createElement(_Message.Message, messageProps),
-	                _react2.default.createElement(_Toolbar3.default, bulkActionProps),
-	                _react2.default.createElement(_Toolbar5.default, filterProps),
-	                _react2.default.createElement(_FixedHeader.ConnectedFixedHeader, fixedHeaderProps),
+	                bulkActionCmp,
+	                filterCmp,
+	                _react2.default.createElement(_FixedHeader2.default, fixedHeaderProps),
 	                _react2.default.createElement(
 	                    'div',
 	                    tableContainerProps,
 	                    _react2.default.createElement(
 	                        'table',
 	                        tableProps,
-	                        _react2.default.createElement(_Header.ConnectedHeader, headerProps),
-	                        _react2.default.createElement(_Row.Row, rowProps)
+	                        _react2.default.createElement(_Header2.default, headerProps),
+	                        _react2.default.createElement(_TableRow2.default, rowProps)
 	                    ),
 	                    editorComponent
 	                ),
@@ -21919,6 +22847,8 @@
 	        _classCallCheck(this, Grid);
 
 	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Grid).call(this, props));
+
+	        _this.shouldComponentUpdate = _shouldComponentUpdate.shouldGridUpdate.bind(_this);
 
 	        _this.columnManager = new _ColumnManager2.default();
 
@@ -21976,6 +22906,8 @@
 	    events: _react.PropTypes.object,
 	    gridData: _react.PropTypes.object,
 	    height: _react.PropTypes.oneOfType([_react.PropTypes.string, _react.PropTypes.number]),
+	    loadingState: _react.PropTypes.object,
+	    menuState: _react.PropTypes.object,
 	    pageSize: _react.PropTypes.number,
 	    pager: _react.PropTypes.object,
 	    plugins: _react.PropTypes.object,
@@ -21994,25 +22926,15 @@
 	};
 
 
-	function mapStateToProps(state, props) {
-	    return {
-	        columnState: (0, _stateGetter.stateGetter)(state, props, 'grid', props.stateKey),
-	        gridData: (0, _stateGetter.stateGetter)(state, props, 'dataSource', props.stateKey),
-	        editorState: (0, _stateGetter.stateGetter)(state, props, 'editor', props.stateKey),
-	        pager: (0, _stateGetter.stateGetter)(state, props, 'pager', props.stateKey),
-	        selectedRows: (0, _stateGetter.stateGetter)(state, props, 'selection', props.stateKey)
-	    };
-	}
-
-	var ConnectedGrid = (0, _reactRedux.connect)(mapStateToProps)(Grid);
+	var ConnectedGrid = (0, _reactRedux.connect)(_mapStateToProps.mapStateToProps)(Grid);
 
 	exports.Grid = Grid;
 	exports.ConnectedGrid = ConnectedGrid;
 
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Grid.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Grid.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 193 */
+/* 206 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22020,11 +22942,11 @@
 	exports.__esModule = true;
 	exports.connect = exports.Provider = undefined;
 
-	var _Provider = __webpack_require__(194);
+	var _Provider = __webpack_require__(207);
 
 	var _Provider2 = _interopRequireDefault(_Provider);
 
-	var _connect = __webpack_require__(197);
+	var _connect = __webpack_require__(210);
 
 	var _connect2 = _interopRequireDefault(_connect);
 
@@ -22034,7 +22956,7 @@
 	exports.connect = _connect2["default"];
 
 /***/ },
-/* 194 */
+/* 207 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -22044,11 +22966,11 @@
 
 	var _react = __webpack_require__(149);
 
-	var _storeShape = __webpack_require__(195);
+	var _storeShape = __webpack_require__(208);
 
 	var _storeShape2 = _interopRequireDefault(_storeShape);
 
-	var _warning = __webpack_require__(196);
+	var _warning = __webpack_require__(209);
 
 	var _warning2 = _interopRequireDefault(_warning);
 
@@ -22118,7 +23040,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 195 */
+/* 208 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22134,7 +23056,7 @@
 	});
 
 /***/ },
-/* 196 */
+/* 209 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -22163,7 +23085,7 @@
 	}
 
 /***/ },
-/* 197 */
+/* 210 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -22175,31 +23097,31 @@
 
 	var _react = __webpack_require__(149);
 
-	var _storeShape = __webpack_require__(195);
+	var _storeShape = __webpack_require__(208);
 
 	var _storeShape2 = _interopRequireDefault(_storeShape);
 
-	var _shallowEqual = __webpack_require__(198);
+	var _shallowEqual = __webpack_require__(211);
 
 	var _shallowEqual2 = _interopRequireDefault(_shallowEqual);
 
-	var _wrapActionCreators = __webpack_require__(199);
+	var _wrapActionCreators = __webpack_require__(212);
 
 	var _wrapActionCreators2 = _interopRequireDefault(_wrapActionCreators);
 
-	var _warning = __webpack_require__(196);
+	var _warning = __webpack_require__(209);
 
 	var _warning2 = _interopRequireDefault(_warning);
 
-	var _isPlainObject = __webpack_require__(171);
+	var _isPlainObject = __webpack_require__(194);
 
 	var _isPlainObject2 = _interopRequireDefault(_isPlainObject);
 
-	var _hoistNonReactStatics = __webpack_require__(182);
+	var _hoistNonReactStatics = __webpack_require__(213);
 
 	var _hoistNonReactStatics2 = _interopRequireDefault(_hoistNonReactStatics);
 
-	var _invariant = __webpack_require__(183);
+	var _invariant = __webpack_require__(214);
 
 	var _invariant2 = _interopRequireDefault(_invariant);
 
@@ -22562,7 +23484,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 198 */
+/* 211 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -22593,7 +23515,7 @@
 	}
 
 /***/ },
-/* 199 */
+/* 212 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22601,7 +23523,7 @@
 	exports.__esModule = true;
 	exports["default"] = wrapActionCreators;
 
-	var _redux = __webpack_require__(169);
+	var _redux = __webpack_require__(192);
 
 	function wrapActionCreators(actionCreators) {
 	  return function (dispatch) {
@@ -22610,17 +23532,131 @@
 	}
 
 /***/ },
-/* 200 */
+/* 213 */
+/***/ function(module, exports) {
+
+	/**
+	 * Copyright 2015, Yahoo! Inc.
+	 * Copyrights licensed under the New BSD License. See the accompanying LICENSE file for terms.
+	 */
+	'use strict';
+
+	var REACT_STATICS = {
+	    childContextTypes: true,
+	    contextTypes: true,
+	    defaultProps: true,
+	    displayName: true,
+	    getDefaultProps: true,
+	    mixins: true,
+	    propTypes: true,
+	    type: true
+	};
+
+	var KNOWN_STATICS = {
+	    name: true,
+	    length: true,
+	    prototype: true,
+	    caller: true,
+	    arguments: true,
+	    arity: true
+	};
+
+	var isGetOwnPropertySymbolsAvailable = typeof Object.getOwnPropertySymbols === 'function';
+
+	module.exports = function hoistNonReactStatics(targetComponent, sourceComponent, customStatics) {
+	    if (typeof sourceComponent !== 'string') { // don't hoist over string (html) components
+	        var keys = Object.getOwnPropertyNames(sourceComponent);
+
+	        /* istanbul ignore else */
+	        if (isGetOwnPropertySymbolsAvailable) {
+	            keys = keys.concat(Object.getOwnPropertySymbols(sourceComponent));
+	        }
+
+	        for (var i = 0; i < keys.length; ++i) {
+	            if (!REACT_STATICS[keys[i]] && !KNOWN_STATICS[keys[i]] && (!customStatics || !customStatics[keys[i]])) {
+	                try {
+	                    targetComponent[keys[i]] = sourceComponent[keys[i]];
+	                } catch (error) {
+
+	                }
+	            }
+	        }
+	    }
+
+	    return targetComponent;
+	};
+
+
+/***/ },
+/* 214 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 */
+
+	'use strict';
+
+	/**
+	 * Use invariant() to assert state which your program assumes to be true.
+	 *
+	 * Provide sprintf-style format (only %s is supported) and arguments
+	 * to provide information about what broke and what you were
+	 * expecting.
+	 *
+	 * The invariant message will be stripped in production, but the invariant
+	 * will remain to ensure logic does not differ in production.
+	 */
+
+	var invariant = function(condition, format, a, b, c, d, e, f) {
+	  if (process.env.NODE_ENV !== 'production') {
+	    if (format === undefined) {
+	      throw new Error('invariant requires an error message argument');
+	    }
+	  }
+
+	  if (!condition) {
+	    var error;
+	    if (format === undefined) {
+	      error = new Error(
+	        'Minified exception occurred; use the non-minified dev environment ' +
+	        'for the full error message and additional helpful warnings.'
+	      );
+	    } else {
+	      var args = [a, b, c, d, e, f];
+	      var argIndex = 0;
+	      error = new Error(
+	        format.replace(/%s/g, function() { return args[argIndex++]; })
+	      );
+	      error.name = 'Invariant Violation';
+	    }
+
+	    error.framesToPop = 1; // we don't care about invariant's own frame
+	    throw error;
+	  }
+	};
+
+	module.exports = invariant;
+
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
+
+/***/ },
+/* 215 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
 
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	exports.ConnectedHeader = exports.Header = exports.handleColumnClick = exports.handleDrag = exports.addEmptyInsert = undefined;
+	exports.handleColumnClick = exports.handleDrag = exports.addEmptyInsert = undefined;
 	var _arguments = arguments;
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -22629,23 +23665,21 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _reactRedux = __webpack_require__(193);
+	var _Column = __webpack_require__(216);
 
-	var _Column = __webpack_require__(201);
+	var _EmptyHeader = __webpack_require__(229);
 
-	var _EmptyHeader = __webpack_require__(214);
-
-	var _DragAndDropManager = __webpack_require__(215);
+	var _DragAndDropManager = __webpack_require__(230);
 
 	var _DragAndDropManager2 = _interopRequireDefault(_DragAndDropManager);
 
-	var _prefix = __webpack_require__(204);
+	var _prefix = __webpack_require__(219);
 
-	var _stateGetter = __webpack_require__(216);
+	var _stateGetter = __webpack_require__(231);
 
-	var _keyGenerator = __webpack_require__(207);
+	var _keyGenerator = __webpack_require__(222);
 
-	var _GridConstants = __webpack_require__(205);
+	var _GridConstants = __webpack_require__(220);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -22659,15 +23693,6 @@
 
 	var Header = function (_Component) {
 	    _inherits(Header, _Component);
-
-	    function Header() {
-	        _classCallCheck(this, Header);
-
-	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Header).call(this));
-
-	        _this.handleDrag = handleDrag;
-	        return _this;
-	    }
 
 	    _createClass(Header, [{
 	        key: 'render',
@@ -22741,6 +23766,15 @@
 	        }
 	    }]);
 
+	    function Header() {
+	        _classCallCheck(this, Header);
+
+	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Header).call(this));
+
+	        _this.handleDrag = handleDrag;
+	        return _this;
+	    }
+
 	    return Header;
 	}(_react.Component);
 
@@ -22787,27 +23821,15 @@
 	    }
 	};
 
-	function mapStateToProps(state, props) {
-	    return {
-	        columnState: (0, _stateGetter.stateGetter)(state, props, 'grid', props.stateKey),
-	        dataSource: (0, _stateGetter.stateGetter)(state, props, 'dataSource', props.stateKey),
-	        pager: (0, _stateGetter.stateGetter)(state, props, 'pager', props.stateKey)
-	    };
-	}
+	exports.default = Header;
 
-	var ConnectedHeader = (0, _reactRedux.connect)(mapStateToProps)(Header);
-
-	exports.Header = Header;
-	exports.ConnectedHeader = ConnectedHeader;
-	exports.default = (0, _reactRedux.connect)(mapStateToProps)(Header);
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Header.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Header.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 201 */
+/* 216 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
 
 	'use strict';
 
@@ -22821,21 +23843,21 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _DragHandle = __webpack_require__(202);
+	var _DragHandle = __webpack_require__(217);
 
-	var _SortHandle = __webpack_require__(203);
+	var _SortHandle = __webpack_require__(218);
 
-	var _Text = __webpack_require__(206);
+	var _Text = __webpack_require__(221);
 
-	var _keyGenerator = __webpack_require__(207);
+	var _keyGenerator = __webpack_require__(222);
 
-	var _prefix = __webpack_require__(204);
+	var _prefix = __webpack_require__(219);
 
-	var _GridConstants = __webpack_require__(205);
+	var _GridConstants = __webpack_require__(220);
 
-	var _ColumnManager = __webpack_require__(208);
+	var _ColumnManager = __webpack_require__(223);
 
-	var _GridActions = __webpack_require__(210);
+	var _GridActions = __webpack_require__(225);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -22876,7 +23898,15 @@
 
 	    var handleDrag = scope.handleDrag.bind(scope, scope, columns, key, columnManager, store, nextColumnKey, stateKey);
 
-	    var sortHandle = sortable ? _react2.default.createElement(_SortHandle.SortHandle, { col: col, columns: columns, columnManager: columnManager, dataSource: dataSource, direction: direction, pager: pager, sortHandleCls: sortHandleCls, store: store }) : null;
+	    var sortHandle = sortable ? _react2.default.createElement(_SortHandle.SortHandle, {
+	        col: col,
+	        columns: columns,
+	        columnManager: columnManager,
+	        dataSource: dataSource,
+	        direction: direction,
+	        pager: pager,
+	        sortHandleCls: sortHandleCls,
+	        store: store }) : null;
 
 	    var dragHandle = isResizable ? _react2.default.createElement(_DragHandle.DragHandle, { col: col, dragAndDropManager: dragAndDropManager, handleDrag: handleDrag }) : null;
 
@@ -22924,7 +23954,11 @@
 	        };
 	    }
 
-	    var innerHTML = _react2.default.createElement(_Text.Text, { col: col, index: index, columnManager: columnManager, dragAndDropManager: dragAndDropManager, sortHandle: sortHandle });
+	    var innerHTML = _react2.default.createElement(_Text.Text, { col: col,
+	        index: index,
+	        columnManager: columnManager,
+	        dragAndDropManager: dragAndDropManager,
+	        sortHandle: sortHandle });
 
 	    return _react2.default.createElement(
 	        'th',
@@ -22970,7 +24004,12 @@
 
 	    var newDirection = direction === _GridConstants.SORT_DIRECTIONS.ASCEND ? _GridConstants.SORT_DIRECTIONS.DESCEND : _GridConstants.SORT_DIRECTIONS.ASCEND;
 
-	    store.dispatch((0, _GridActions.setSortDirection)(columns, col.id, newDirection));
+	    store.dispatch((0, _GridActions.setSortDirection)({
+	        columns: columns,
+	        id: col.id,
+	        sortDirection: newDirection,
+	        stateKey: stateKey
+	    }));
 
 	    if (columnManager.config.sortable.method.toUpperCase() === _GridConstants.SORT_METHODS.LOCAL) {
 	        columnManager.doSort({
@@ -23020,9 +24059,9 @@
 	        return col.sortable;
 	    } else if (columnManager.config.sortable.enabled !== undefined) {
 	        return columnManager.config.sortable.enabled;
-	    } else {
-	        return columnManager.config.defaultSortable;
 	    }
+
+	    return columnManager.config.defaultSortable;
 	};
 
 	var getWidth = exports.getWidth = function getWidth(col, key, columns, defaultColumnWidth) {
@@ -23054,18 +24093,18 @@
 	        return col.resizable;
 	    } else if (columnManager.config.resizable !== undefined) {
 	        return columnManager.config.resizable;
-	    } else {
-	        return columnManager.config.defaultResizable;
 	    }
+
+	    return columnManager.config.defaultResizable;
 	};
 
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Column.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Column.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 202 */
+/* 217 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
 
 	'use strict';
 
@@ -23099,13 +24138,13 @@
 	    dragAndDropManager: _react.PropTypes.object
 	};
 
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "DragHandle.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "DragHandle.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 203 */
+/* 218 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
 
 	'use strict';
 
@@ -23118,9 +24157,9 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _prefix = __webpack_require__(204);
+	var _prefix = __webpack_require__(219);
 
-	var _GridConstants = __webpack_require__(205);
+	var _GridConstants = __webpack_require__(220);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -23147,13 +24186,13 @@
 	    store: _react.PropTypes.object
 	};
 
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "SortHandle.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "SortHandle.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 204 */
+/* 219 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
 
 	'use strict';
 
@@ -23162,7 +24201,7 @@
 	});
 	exports.prefix = prefix;
 
-	var _GridConstants = __webpack_require__(205);
+	var _GridConstants = __webpack_require__(220);
 
 	function prefix() {
 	    for (var _len = arguments.length, classes = Array(_len), _key = 0; _key < _len; _key++) {
@@ -23181,13 +24220,13 @@
 	    }).join(' ');
 	}
 
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "prefix.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "prefix.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 205 */
+/* 220 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
 
 	'use strict';
 
@@ -23199,6 +24238,13 @@
 	var ROW_HEIGHT = exports.ROW_HEIGHT = 26;
 
 	var DEFAULT_PAGE_SIZE = exports.DEFAULT_PAGE_SIZE = 20;
+
+	var SELECTION_MODES = exports.SELECTION_MODES = {
+	    single: 'single',
+	    multi: 'multi',
+	    checkboxSingle: 'checkbox-single',
+	    checkboxMulti: 'checkbox-multi'
+	};
 
 	var SORT_DIRECTIONS = exports.SORT_DIRECTIONS = {
 	    ASCEND: 'ASC',
@@ -23229,6 +24275,7 @@
 	    TABLE: 'table',
 	    TABLE_CONTAINER: 'table-container',
 	    HEADER: 'header',
+	    THEADER: 't-head',
 	    HEADER_HIDDEN: 'header-hidden',
 	    HEADER_FIXED: 'header-fixed',
 	    HEADER_STUCK: 'header-stuck',
@@ -23268,6 +24315,7 @@
 	        CONTAINER: 'action-container',
 	        SELECTED_CLASS: 'action-menu-selected',
 	        NO_ACTIONS: 'no-actions',
+	        DISABLED: 'disabled',
 	        MENU: {
 	            CONTAINER: 'action-menu-container',
 	            ITEM: 'action-menu-item'
@@ -23301,13 +24349,13 @@
 
 	};
 
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "GridConstants.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "GridConstants.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 206 */
+/* 221 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
 
 	'use strict';
 
@@ -23320,11 +24368,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _prefix = __webpack_require__(204);
+	var _prefix = __webpack_require__(219);
 
-	var _keyGenerator = __webpack_require__(207);
+	var _keyGenerator = __webpack_require__(222);
 
-	var _GridConstants = __webpack_require__(205);
+	var _GridConstants = __webpack_require__(220);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -23368,13 +24416,13 @@
 	    sortHandle: _react.PropTypes.element
 	};
 
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Text.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Text.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 207 */
+/* 222 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
 
 	'use strict';
 
@@ -23404,13 +24452,13 @@
 	    }
 	}
 
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "keyGenerator.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "keyGenerator.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 208 */
+/* 223 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
 
 	'use strict';
 
@@ -23419,7 +24467,7 @@
 	});
 	exports.reorderColumn = undefined;
 
-	var _ActionTypes = __webpack_require__(209);
+	var _ActionTypes = __webpack_require__(224);
 
 	var reorderColumn = exports.reorderColumn = function reorderColumn(_ref) {
 	    var draggedIndex = _ref.draggedIndex;
@@ -23442,13 +24490,13 @@
 	    };
 	};
 
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "ColumnManager.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "ColumnManager.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 209 */
+/* 224 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
 
 	'use strict';
 
@@ -23486,6 +24534,7 @@
 	var NO_EVENT = exports.NO_EVENT = 'NO_EVENT';
 
 	var EDIT_ROW = exports.EDIT_ROW = 'EDIT_ROW';
+	var REPOSITION_EDITOR = exports.REPOSITION_EDITOR = 'REPOSITION_EDITOR';
 	var REMOVE_ROW = exports.REMOVE_ROW = 'REMOVE_ROW';
 	var ADD_NEW_ROW = exports.ADD_NEW_ROW = 'ADD_NEW_ROW';
 	var CANCEL_ROW = exports.CANCEL_ROW = 'CANCEL_ROW';
@@ -23502,13 +24551,13 @@
 	var SHOW_FILTER_MENU = exports.SHOW_FILTER_MENU = 'SHOW_FILTER_MENU';
 	var SET_FILTER_MENU_VALUES = exports.SET_FILTER_MENU_VALUES = 'SET_FILTER_MENU_VALUES';
 
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "ActionTypes.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "ActionTypes.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 210 */
+/* 225 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
 
 	'use strict';
 
@@ -23524,15 +24573,15 @@
 	exports.resizeColumns = resizeColumns;
 	exports.setData = setData;
 
-	var _ActionTypes = __webpack_require__(209);
+	var _ActionTypes = __webpack_require__(224);
 
-	var _LoaderActions = __webpack_require__(211);
+	var _LoaderActions = __webpack_require__(226);
 
-	var _EditorActions = __webpack_require__(212);
+	var _EditorActions = __webpack_require__(227);
 
-	var _keyGenerator = __webpack_require__(207);
+	var _keyGenerator = __webpack_require__(222);
 
-	var _Request = __webpack_require__(213);
+	var _Request = __webpack_require__(228);
 
 	var _Request2 = _interopRequireDefault(_Request);
 
@@ -23557,7 +24606,7 @@
 
 	                    dispatch((0, _LoaderActions.setLoaderState)({ state: false, stateKey: stateKey }));
 
-	                    return dispatch({
+	                    dispatch({
 	                        type: _ActionTypes.SET_DATA,
 	                        data: response.data,
 	                        total: response.total,
@@ -23565,18 +24614,19 @@
 	                        success: true,
 	                        stateKey: stateKey
 	                    });
+	                    return;
 	                }
 
 	                if (response && !response.data) {
 	                    /* eslint-disable no-console */
 	                    console.warn('A response was recieved\n                         but no data entry was found');
-	                    console.warn('Please see \n                         https://github.com/bencripps/react-redux-grid\n                         for documentation');
+	                    console.warn('Please see\n                         https://github.com/bencripps/react-redux-grid\n                         for documentation');
 	                    /* eslint-enable no-console */
 	                }
 
 	                dispatch((0, _LoaderActions.setLoaderState)({ state: false, stateKey: stateKey }));
 
-	                return dispatch({
+	                dispatch({
 	                    type: _ActionTypes.ERROR_OCCURRED,
 	                    error: 'Unable to Retrieve Grid Data',
 	                    errorOccurred: true,
@@ -23632,11 +24682,16 @@
 	    return { type: _ActionTypes.SET_COLUMNS, columns: cols, stateKey: stateKey };
 	}
 
-	function setSortDirection(cols, id, sortDirection) {
+	function setSortDirection(_ref3) {
+	    var columns = _ref3.columns;
+	    var id = _ref3.id;
+	    var sortDirection = _ref3.sortDirection;
+	    var stateKey = _ref3.stateKey;
 
-	    var columns = cols;
 
-	    columns = cols.map(function (col) {
+	    var cols = columns;
+
+	    cols = columns.map(function (col) {
 
 	        if (col.id === id) {
 	            col.sortDirection = sortDirection;
@@ -23649,22 +24704,22 @@
 	        return col;
 	    });
 
-	    return { type: _ActionTypes.SET_SORT_DIRECTION, columns: columns };
+	    return { type: _ActionTypes.SET_SORT_DIRECTION, columns: cols, stateKey: stateKey };
 	}
 
-	function doLocalSort(_ref3) {
-	    var data = _ref3.data;
-	    var stateKey = _ref3.stateKey;
+	function doLocalSort(_ref4) {
+	    var data = _ref4.data;
+	    var stateKey = _ref4.stateKey;
 
 	    return { type: _ActionTypes.SORT_DATA, data: data, stateKey: stateKey };
 	}
 
-	function doRemoteSort(_ref4) {
-	    var dataSource = _ref4.dataSource;
-	    var pageIndex = _ref4.pageIndex;
-	    var pageSize = _ref4.pageSize;
-	    var sortParams = _ref4.sortParams;
-	    var stateKey = _ref4.stateKey;
+	function doRemoteSort(_ref5) {
+	    var dataSource = _ref5.dataSource;
+	    var pageIndex = _ref5.pageIndex;
+	    var pageSize = _ref5.pageSize;
+	    var sortParams = _ref5.sortParams;
+	    var stateKey = _ref5.stateKey;
 
 
 	    return function (dispatch) {
@@ -23680,7 +24735,7 @@
 	                        type: _ActionTypes.SET_DATA,
 	                        data: response.data,
 	                        total: response.total,
-	                        currentRecords: response.items,
+	                        currentRecords: response.data,
 	                        success: true,
 	                        stateKey: stateKey
 	                    });
@@ -23689,7 +24744,7 @@
 	                    if (response && !response.data) {
 	                        /* eslint-disable no-console */
 	                        console.warn('A response was recieved but no data\n                             entry was found');
-	                        console.warn('Please see \n                             https://github.com/bencripps/react-redux-grid \n                             for documentation');
+	                        console.warn('Please see\n                             https://github.com/bencripps/react-redux-grid\n                             for documentation');
 	                        /* eslint-enable no-console */
 	                    }
 
@@ -23737,11 +24792,11 @@
 	    };
 	}
 
-	function setColumnVisibility(_ref5) {
-	    var columns = _ref5.columns;
-	    var column = _ref5.column;
-	    var isHidden = _ref5.isHidden;
-	    var stateKey = _ref5.stateKey;
+	function setColumnVisibility(_ref6) {
+	    var columns = _ref6.columns;
+	    var column = _ref6.column;
+	    var isHidden = _ref6.isHidden;
+	    var stateKey = _ref6.stateKey;
 
 	    var hidden = !isHidden;
 
@@ -23756,9 +24811,15 @@
 	    return { type: _ActionTypes.SET_COLUMNS, columns: columnsArr, stateKey: stateKey };
 	}
 
-	function resizeColumns(width, id, nextColumn, cols, stateKey) {
+	function resizeColumns(_ref7) {
+	    var width = _ref7.width;
+	    var id = _ref7.id;
+	    var nextColumn = _ref7.nextColumn;
+	    var columns = _ref7.columns;
+	    var stateKey = _ref7.stateKey;
 
-	    var columns = cols.map(function (col) {
+
+	    var cols = columns.map(function (col) {
 
 	        if (col.id === id) {
 	            col.width = width + '%';
@@ -23772,24 +24833,24 @@
 	    return {
 	        type: _ActionTypes.RESIZE_COLUMNS,
 	        stateKey: stateKey,
-	        columns: columns
+	        columns: cols
 	    };
 	}
 
-	function setData(_ref6) {
-	    var data = _ref6.data;
-	    var stateKey = _ref6.stateKey;
+	function setData(_ref8) {
+	    var data = _ref8.data;
+	    var stateKey = _ref8.stateKey;
 
 	    return { type: _ActionTypes.SET_DATA, data: data, stateKey: stateKey };
 	}
 
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "GridActions.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "GridActions.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 211 */
+/* 226 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
 
 	'use strict';
 
@@ -23798,7 +24859,7 @@
 	});
 	exports.setLoaderState = setLoaderState;
 
-	var _ActionTypes = __webpack_require__(209);
+	var _ActionTypes = __webpack_require__(224);
 
 	function setLoaderState(_ref) {
 	    var state = _ref.state;
@@ -23807,13 +24868,13 @@
 	    return { type: _ActionTypes.SET_LOADING_STATE, state: state, stateKey: stateKey };
 	}
 
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "LoaderActions.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "LoaderActions.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 212 */
+/* 227 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
 
 	'use strict';
 
@@ -23821,6 +24882,7 @@
 	    value: true
 	});
 	exports.editRow = editRow;
+	exports.repositionEditor = repositionEditor;
 	exports.dismissEditor = dismissEditor;
 	exports.updateCellValue = updateCellValue;
 	exports.saveRow = saveRow;
@@ -23829,9 +24891,9 @@
 	exports.setEditorValidation = setEditorValidation;
 	exports.addNewRow = addNewRow;
 
-	var _ActionTypes = __webpack_require__(209);
+	var _ActionTypes = __webpack_require__(224);
 
-	var _keyGenerator = __webpack_require__(207);
+	var _keyGenerator = __webpack_require__(222);
 
 	function editRow(_ref) {
 	    var rowId = _ref.rowId;
@@ -23854,18 +24916,29 @@
 	    };
 	}
 
-	function dismissEditor(_ref2) {
+	function repositionEditor(_ref2) {
+	    var top = _ref2.top;
 	    var stateKey = _ref2.stateKey;
+
+	    return {
+	        type: _ActionTypes.REPOSITION_EDITOR,
+	        stateKey: stateKey,
+	        top: top
+	    };
+	}
+
+	function dismissEditor(_ref3) {
+	    var stateKey = _ref3.stateKey;
 
 	    return { type: _ActionTypes.DISMISS_EDITOR, stateKey: stateKey };
 	}
 
-	function updateCellValue(_ref3) {
-	    var value = _ref3.value;
-	    var name = _ref3.name;
-	    var column = _ref3.column;
-	    var columns = _ref3.columns;
-	    var stateKey = _ref3.stateKey;
+	function updateCellValue(_ref4) {
+	    var value = _ref4.value;
+	    var name = _ref4.name;
+	    var column = _ref4.column;
+	    var columns = _ref4.columns;
+	    var stateKey = _ref4.stateKey;
 
 	    return {
 	        type: _ActionTypes.ROW_VALUE_CHANGE,
@@ -23877,38 +24950,38 @@
 	    };
 	}
 
-	function saveRow(_ref4) {
-	    var values = _ref4.values;
-	    var rowIndex = _ref4.rowIndex;
-	    var stateKey = _ref4.stateKey;
+	function saveRow(_ref5) {
+	    var values = _ref5.values;
+	    var rowIndex = _ref5.rowIndex;
+	    var stateKey = _ref5.stateKey;
 
 	    return { type: _ActionTypes.SAVE_ROW, values: values, rowIndex: rowIndex, stateKey: stateKey };
 	}
 
-	function cancelRow(_ref5) {
-	    var stateKey = _ref5.stateKey;
+	function cancelRow(_ref6) {
+	    var stateKey = _ref6.stateKey;
 
 	    return { type: _ActionTypes.CANCEL_ROW, stateKey: stateKey };
 	}
 
-	function removeRow(_ref6) {
-	    var rowIndex = _ref6.rowIndex;
-	    var stateKey = _ref6.stateKey;
+	function removeRow(_ref7) {
+	    var rowIndex = _ref7.rowIndex;
+	    var stateKey = _ref7.stateKey;
 
 	    return { type: _ActionTypes.REMOVE_ROW, rowIndex: rowIndex, stateKey: stateKey };
 	}
 
-	function setEditorValidation(_ref7) {
-	    var validationState = _ref7.validationState;
-	    var stateKey = _ref7.stateKey;
+	function setEditorValidation(_ref8) {
+	    var validationState = _ref8.validationState;
+	    var stateKey = _ref8.stateKey;
 
 	    return { type: _ActionTypes.EDITOR_VALIDATION, validationState: validationState, stateKey: stateKey };
 	}
 
-	function addNewRow(_ref8) {
-	    var columns = _ref8.columns;
-	    var data = _ref8.data;
-	    var stateKey = _ref8.stateKey;
+	function addNewRow(_ref9) {
+	    var columns = _ref9.columns;
+	    var data = _ref9.data;
+	    var stateKey = _ref9.stateKey;
 
 
 	    return function (dispatch) {
@@ -23932,13 +25005,13 @@
 	    };
 	}
 
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "EditorActions.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "EditorActions.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 213 */
+/* 228 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
 
 	'use strict';
 
@@ -24063,13 +25136,13 @@
 
 	exports.default = Request;
 
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Request.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Request.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 214 */
+/* 229 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
 
 	'use strict';
 
@@ -24102,13 +25175,13 @@
 	    props: _react.PropTypes.object
 	};
 
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "EmptyHeader.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "EmptyHeader.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 215 */
+/* 230 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
 
 	'use strict';
 
@@ -24118,9 +25191,9 @@
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _GridConstants = __webpack_require__(205);
+	var _GridConstants = __webpack_require__(220);
 
-	var _prefix = __webpack_require__(204);
+	var _prefix = __webpack_require__(219);
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -24198,13 +25271,13 @@
 
 	exports.default = DragAndDropManager;
 
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "DragAndDropManager.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "DragAndDropManager.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 216 */
+/* 231 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
 
 	"use strict";
 
@@ -24212,19 +25285,33 @@
 	    value: true
 	});
 	exports.stateGetter = stateGetter;
+	/*
+	* central function to retrieve state from reducer
+	* used inside of mapStateToProps by grid and other plugins
+	* @returns {object} state
+
+	* will not return immutable object, only plain JS object
+
+	* if a dynamic reducerKey is passed, it will favor that key
+	* over the build in grid keys
+
+	*/
+
 	function stateGetter(state, props, key, entry) {
 
 	    if (props && props.reducerKeys && Object.keys(props.reducerKeys).length > 0 && props.reducerKeys[key]) {
 
 	        var dynamicKey = props.reducerKeys[key];
 
-	        return state && state[dynamicKey] && state[dynamicKey].get && state[dynamicKey].get(entry) ? state[dynamicKey].get(entry) : null;
+	        var dynamicState = state && state[dynamicKey] && state[dynamicKey].get && state[dynamicKey].get(entry) ? state[dynamicKey].get(entry) : null;
+
+	        return dynamicState && dynamicState.toJS ? dynamicState.toJS() : dynamicState;
 	    }
 
 	    var firstTry = state && state[key] && state[key].get && state[key].get(entry) ? state[key].get(entry) : null;
 
 	    if (firstTry) {
-	        return firstTry;
+	        return firstTry.toJS ? firstTry.toJS() : firstTry;
 	    }
 
 	    var keys = Object.keys(state);
@@ -24235,26 +25322,28 @@
 	    var keyIndex = normalizedKeys.indexOf(key.toLowerCase());
 
 	    if (keyIndex !== -1) {
-	        return state && state[keys[keyIndex]] && state[keys[keyIndex]].get && state[keys[keyIndex]].get(entry) ? state[keys[keyIndex]].get(entry) : null;
+	        var secondTry = state && state[keys[keyIndex]] && state[keys[keyIndex]].get && state[keys[keyIndex]].get(entry) ? state[keys[keyIndex]].get(entry) : null;
+
+	        return secondTry && secondTry.toJS ? secondTry.toJS() : secondTry;
 	    }
 
 	    return null;
 	}
 
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "stateGetter.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "stateGetter.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 217 */
+/* 232 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
 
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	exports.ConnectedFixedHeader = exports.FixedHeader = exports.handleColumnClick = exports.handleDrag = exports.addEmptyInsert = undefined;
+	exports.handleColumnClick = exports.handleDrag = exports.addEmptyInsert = undefined;
 	var _arguments = arguments;
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -24263,31 +25352,27 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _reactDom = __webpack_require__(218);
+	var _reactDom = __webpack_require__(233);
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _reactRedux = __webpack_require__(193);
+	var _Column = __webpack_require__(216);
 
-	var _Column = __webpack_require__(201);
+	var _EmptyHeader = __webpack_require__(229);
 
-	var _EmptyHeader = __webpack_require__(214);
-
-	var _DragAndDropManager = __webpack_require__(215);
+	var _DragAndDropManager = __webpack_require__(230);
 
 	var _DragAndDropManager2 = _interopRequireDefault(_DragAndDropManager);
 
-	var _prefix = __webpack_require__(204);
+	var _prefix = __webpack_require__(219);
 
-	var _keyGenerator = __webpack_require__(207);
+	var _throttle = __webpack_require__(234);
 
-	var _throttle = __webpack_require__(219);
+	var _isPluginEnabled = __webpack_require__(235);
 
-	var _stateGetter = __webpack_require__(216);
+	var _GridConstants = __webpack_require__(220);
 
-	var _GridConstants = __webpack_require__(205);
-
-	var _GridActions = __webpack_require__(210);
+	var _GridActions = __webpack_require__(225);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -24317,6 +25402,7 @@
 	            var store = _props.store;
 	            var pager = _props.pager;
 	            var plugins = _props.plugins;
+	            var menuState = _props.menuState;
 	            var _state = this.state;
 	            var bottom = _state.bottom;
 	            var classes = _state.classes;
@@ -24378,6 +25464,10 @@
 	                tableProps.style = {};
 	            }
 
+	            var theadProps = {
+	                className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.THEADER, headerOffset > 0 ? 'adjusted' : '')
+	            };
+
 	            var headerProps = {
 	                className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.HEADER)
 	            };
@@ -24387,11 +25477,13 @@
 	            }
 
 	            columnManager.addActionColumn({
+	                columns: columns,
 	                cells: headers,
 	                type: 'header',
 	                id: 'header-row',
 	                reducerKeys: reducerKeys,
-	                stateKey: stateKey
+	                stateKey: stateKey,
+	                menuState: menuState
 	            });
 
 	            addEmptyInsert(headers, visibleColumns, plugins, headerOffset);
@@ -24405,7 +25497,7 @@
 	                    tableProps,
 	                    _react2.default.createElement(
 	                        'thead',
-	                        null,
+	                        theadProps,
 	                        _react2.default.createElement(
 	                            'tr',
 	                            headerProps,
@@ -24422,7 +25514,7 @@
 	            var plugins = this.props.plugins;
 
 
-	            var isSticky = plugins.STICKY_HEADER ? plugins.STICKY_HEADER.enabled : false;
+	            var isSticky = (0, _isPluginEnabled.isPluginEnabled)(plugins, 'STICKY_HEADER');
 
 	            var headerDOM = _reactDom2.default.findDOMNode(this);
 	            var tableHeight = headerDOM.parentNode.clientHeight;
@@ -24436,7 +25528,23 @@
 	    }, {
 	        key: 'componentDidUpdate',
 	        value: function componentDidUpdate() {
-	            this.getScrollWidth();
+
+	            if (!this.updateFunc) {
+	                this.updateFunc = (0, _throttle.debounce)(this.getScrollWidth, 1000, true);
+	            }
+
+	            this.updateFunc();
+	        }
+	    }, {
+	        key: 'componentWillUnmount',
+	        value: function componentWillUnmount() {
+	            if (this.scrollTarget) {
+	                this.scrollTarget.removeEventListener('scroll', this._scrollListener);
+	            }
+
+	            if (this._scrollListener) {
+	                delete this._scrollListener;
+	            }
 	        }
 	    }]);
 
@@ -24462,10 +25570,12 @@
 	            var scope = this;
 
 	            window.addEventListener('resize', function () {
-	                var stuck = _this3.state.stuck;
+	                var _state2 = _this3.state;
+	                var stuck = _state2.stuck;
+	                var stuckToBottom = _state2.stuckToBottom;
 
 
-	                if (stuck) {
+	                if (stuck || stuckToBottom) {
 	                    scope.setState({
 	                        width: headerDOM.parentNode.getBoundingClientRect().width
 	                    });
@@ -24531,9 +25641,13 @@
 	                }
 	            };
 
-	            target.addEventListener('scroll', config.listener ? config.listener.bind(this, {
+	            this._scrollListener = config.listener ? config.listener.bind(this, {
 	                headerDOM: headerDOM
-	            }) : defaultListener);
+	            }) : defaultListener;
+
+	            this.scrollTarget = target;
+
+	            this.scrollTarget.addEventListener('scroll', this._scrollListener);
 	        }
 	    }, {
 	        key: 'getScrollWidth',
@@ -24567,6 +25681,7 @@
 	    columnState: _react.PropTypes.object,
 	    columns: _react.PropTypes.arrayOf(_react.PropTypes.object).isRequired,
 	    dataSource: _react.PropTypes.object,
+	    menuState: _react.PropTypes.object,
 	    pager: _react.PropTypes.object,
 	    plugins: _react.PropTypes.object,
 	    reducerKeys: _react.PropTypes.object,
@@ -24631,10 +25746,16 @@
 	        return false;
 	    }
 
-	    store.dispatch((0, _GridActions.resizeColumns)(width, id, {
-	        id: nextColumnKey,
-	        width: nextColWidth
-	    }, columns, stateKey));
+	    store.dispatch((0, _GridActions.resizeColumns)({
+	        width: width,
+	        id: id,
+	        nextColumn: {
+	            id: nextColumnKey,
+	            width: nextColWidth
+	        },
+	        columns: columns,
+	        stateKey: stateKey
+	    }));
 	};
 
 	var handleColumnClick = exports.handleColumnClick = function handleColumnClick(col) {
@@ -24643,24 +25764,12 @@
 	    }
 	};
 
-	function mapStateToProps(state, props) {
-	    return {
-	        columnState: (0, _stateGetter.stateGetter)(state, props, 'grid', props.stateKey),
-	        dataSource: (0, _stateGetter.stateGetter)(state, props, 'dataSource', props.stateKey),
-	        pager: (0, _stateGetter.stateGetter)(state, props, 'pager', props.stateKey)
-	    };
-	}
+	exports.default = FixedHeader;
 
-	var ConnectedFixedHeader = (0, _reactRedux.connect)(mapStateToProps)(FixedHeader);
-
-	exports.FixedHeader = FixedHeader;
-	exports.ConnectedFixedHeader = ConnectedFixedHeader;
-	exports.default = (0, _reactRedux.connect)(mapStateToProps)(FixedHeader);
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "FixedHeader.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "FixedHeader.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 218 */
+/* 233 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -24669,10 +25778,10 @@
 
 
 /***/ },
-/* 219 */
+/* 234 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
 
 	"use strict";
 
@@ -24680,6 +25789,7 @@
 	    value: true
 	});
 	exports.throttle = throttle;
+	exports.debounce = debounce;
 	function throttle(callback, scope, limit) {
 	    var wait = false;
 
@@ -24696,73 +25806,356 @@
 	    };
 	}
 
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "throttle.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+	function debounce(func, wait, immediate) {
+	    var timeout = void 0;
+
+	    return function doDebounce() {
+	        var context = this;
+	        var args = arguments;
+
+	        var later = function later() {
+	            timeout = null;
+	            if (!immediate) {
+	                func.apply(context, args);
+	            }
+	        };
+
+	        var callNow = immediate && !timeout;
+
+	        clearTimeout(timeout);
+
+	        timeout = setTimeout(later, wait);
+
+	        if (callNow) {
+	            func.apply(context, args);
+	        }
+	    };
+	}
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "throttle.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 220 */
+/* 235 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	var isPluginEnabled = exports.isPluginEnabled = function isPluginEnabled() {
+	    var plugins = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+	    var name = arguments[1];
+
+	    var enabled = plugins && plugins[name] && plugins[name].enabled;
+
+	    return !!enabled;
+	};
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "isPluginEnabled.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 236 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
 
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	exports.getRows = exports.getRowSelection = exports.handleRowSingleClickEvent = exports.handleRowDoubleClickEvent = exports.getRowComponents = exports.addEmptyCells = exports.getCellData = exports.addEmptyInsert = exports.Row = undefined;
+	exports.getRows = exports.getRowSelection = exports.getRowComponents = exports.TableRow = undefined;
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 	var _react = __webpack_require__(149);
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _Cell = __webpack_require__(221);
+	var _Row = __webpack_require__(237);
 
-	var _EmptyCell = __webpack_require__(226);
+	var _Row2 = _interopRequireDefault(_Row);
 
-	var _PlaceHolder = __webpack_require__(227);
+	var _PlaceHolder = __webpack_require__(252);
 
-	var _keyGenerator = __webpack_require__(207);
+	var _isPluginEnabled = __webpack_require__(235);
 
-	var _prefix = __webpack_require__(204);
-
-	var _getCurrentRecords = __webpack_require__(228);
-
-	var _GridConstants = __webpack_require__(205);
+	var _getCurrentRecords = __webpack_require__(253);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var Row = exports.Row = function Row(_ref) {
-	    var columnManager = _ref.columnManager;
-	    var columns = _ref.columns;
-	    var dataSource = _ref.dataSource;
-	    var editor = _ref.editor;
-	    var editorState = _ref.editorState;
-	    var emptyDataMessage = _ref.emptyDataMessage;
-	    var events = _ref.events;
-	    var pageSize = _ref.pageSize;
-	    var pager = _ref.pager;
-	    var plugins = _ref.plugins;
-	    var reducerKeys = _ref.reducerKeys;
-	    var selectedRows = _ref.selectedRows;
-	    var selectionModel = _ref.selectionModel;
-	    var stateKey = _ref.stateKey;
-	    var store = _ref.store;
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var TableRow = exports.TableRow = function (_Component) {
+	    _inherits(TableRow, _Component);
+
+	    _createClass(TableRow, [{
+	        key: 'render',
+	        value: function render() {
+	            var _props = this.props;
+	            var columnManager = _props.columnManager;
+	            var columns = _props.columns;
+	            var dataSource = _props.dataSource;
+	            var editor = _props.editor;
+	            var editorState = _props.editorState;
+	            var emptyDataMessage = _props.emptyDataMessage;
+	            var events = _props.events;
+	            var menuState = _props.menuState;
+	            var pageSize = _props.pageSize;
+	            var pager = _props.pager;
+	            var plugins = _props.plugins;
+	            var reducerKeys = _props.reducerKeys;
+	            var selectedRows = _props.selectedRows;
+	            var selectionModel = _props.selectionModel;
+	            var stateKey = _props.stateKey;
+	            var store = _props.store;
 
 
-	    var pageIndex = pager && pager.pageIndex ? pager.pageIndex : 0;
+	            var pageIndex = pager && pager.pageIndex ? pager.pageIndex : 0;
 
-	    var rows = getRowSelection(dataSource, pageIndex, pageSize, pager, plugins, stateKey, store);
+	            var rows = getRowSelection(dataSource, pageIndex, pageSize, pager, plugins, stateKey, store);
 
-	    var rowComponents = getRows(columns, columnManager, editor, editorState, reducerKeys, rows, events, plugins, selectionModel, selectedRows, stateKey, store);
+	            var rowComponents = getRows(columns, columnManager, editor, editorState, menuState, reducerKeys, rows, events, plugins, selectionModel, selectedRows, stateKey, store);
 
-	    var rowInsert = rowComponents ? rowComponents : _react2.default.createElement(_PlaceHolder.PlaceHolder, { emptyDataMessage: emptyDataMessage });
+	            var rowInsert = rowComponents ? rowComponents : _react2.default.createElement(_PlaceHolder.PlaceHolder, { emptyDataMessage: emptyDataMessage });
 
-	    return _react2.default.createElement(
-	        'tbody',
-	        null,
-	        rowInsert
-	    );
+	            return _react2.default.createElement(
+	                'tbody',
+	                null,
+	                rowInsert
+	            );
+	        }
+	    }]);
+
+	    function TableRow(props) {
+	        _classCallCheck(this, TableRow);
+
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(TableRow).call(this, props));
+	    }
+
+	    return TableRow;
+	}(_react.Component);
+
+	TableRow.propTypes = {
+	    columnManager: _react.PropTypes.object.isRequired,
+	    columns: _react.PropTypes.arrayOf(_react.PropTypes.object).isRequired,
+	    data: _react.PropTypes.arrayOf(_react.PropTypes.object),
+	    dataSource: _react.PropTypes.object,
+	    editor: _react.PropTypes.object,
+	    editorState: _react.PropTypes.object,
+	    emptyDataMessage: _react.PropTypes.string,
+	    events: _react.PropTypes.object,
+	    menuState: _react.PropTypes.object,
+	    pageSize: _react.PropTypes.number,
+	    pager: _react.PropTypes.object,
+	    plugins: _react.PropTypes.object,
+	    reducerKeys: _react.PropTypes.object,
+	    selectedRows: _react.PropTypes.object,
+	    selectionModel: _react.PropTypes.object,
+	    stateKey: _react.PropTypes.string,
+	    store: _react.PropTypes.object.isRequired
 	};
+	TableRow.defaultProps = {
+	    emptyDataMessage: 'No Data Available'
+	};
+	var getRowComponents = exports.getRowComponents = function getRowComponents(columns, columnManager, editor, editorState, menuState, reducerKeys, row, events, plugins, selectionModel, selectedRows, stateKey, store, index) {
+
+	    return _react2.default.createElement(_Row2.default, {
+	        columns: columns,
+	        columnManager: columnManager,
+	        editor: editor,
+	        editorState: editorState,
+	        menuState: menuState,
+	        reducerKeys: reducerKeys,
+	        row: row,
+	        events: events,
+	        plugins: plugins,
+	        selectionModel: selectionModel,
+	        selectedRows: selectedRows,
+	        stateKey: stateKey,
+	        store: store,
+	        index: index
+	    });
+	};
+
+	var getRowSelection = exports.getRowSelection = function getRowSelection(dataSource, pageIndex, pageSize, pager, plugins) {
+	    if (!dataSource) {
+	        return false;
+	    }
+
+	    if (!(0, _isPluginEnabled.isPluginEnabled)(plugins, 'PAGER') || plugins.PAGER.pagingType === 'remote') {
+	        return dataSource.data;
+	    }
+
+	    return (0, _getCurrentRecords.getCurrentRecords)(dataSource, pageIndex, pageSize);
+	};
+
+	var getRows = exports.getRows = function getRows(columns, columnManager, editor, editorState, menuState, reducerKeys, rows, events, plugins, selectionModel, selectedRows, stateKey, store) {
+
+	    return Array.isArray(rows) ? rows.map(function (row, i) {
+	        return getRowComponents(columns, columnManager, editor, editorState, menuState, reducerKeys, row, events, plugins, selectionModel, selectedRows, stateKey, store, i);
+	    }) : null;
+	};
+
+	exports.default = TableRow;
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "TableRow.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 237 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.handleRowSingleClickEvent = exports.getSelectedText = exports.handleRowDoubleClickEvent = exports.addEmptyCells = exports.getCellData = exports.addEmptyInsert = exports.getCellValues = exports.Row = undefined;
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(149);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _Cell = __webpack_require__(238);
+
+	var _EmptyCell = __webpack_require__(245);
+
+	var _keyGenerator = __webpack_require__(222);
+
+	var _shouldComponentUpdate = __webpack_require__(246);
+
+	var _prefix = __webpack_require__(219);
+
+	var _getData = __webpack_require__(241);
+
+	var _GridConstants = __webpack_require__(220);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var Row = exports.Row = function (_Component) {
+	    _inherits(Row, _Component);
+
+	    _createClass(Row, [{
+	        key: 'render',
+	        value: function render() {
+	            var _props = this.props;
+	            var columns = _props.columns;
+	            var columnManager = _props.columnManager;
+	            var editor = _props.editor;
+	            var editorState = _props.editorState;
+	            var menuState = _props.menuState;
+	            var reducerKeys = _props.reducerKeys;
+	            var row = _props.row;
+	            var events = _props.events;
+	            var plugins = _props.plugins;
+	            var selectionModel = _props.selectionModel;
+	            var selectedRows = _props.selectedRows;
+	            var stateKey = _props.stateKey;
+	            var store = _props.store;
+	            var index = _props.index;
+
+
+	            var id = (0, _keyGenerator.keyGenerator)('row', index);
+	            var visibleColumns = columns.filter(function (col) {
+	                return !col.hidden;
+	            });
+	            var cellValues = getCellValues(columns, row);
+
+	            if (Object.keys(row).length !== columns.length) {
+	                addEmptyCells(row, columns);
+	            }
+
+	            var cells = Object.keys(cellValues).map(function (k, i) {
+
+	                var cellProps = {
+	                    index: i,
+	                    rowId: id,
+	                    cellData: getCellData(columns, row, k, i, store),
+	                    columns: columns,
+	                    editor: editor,
+	                    editorState: editorState,
+	                    events: events,
+	                    key: (0, _keyGenerator.keyGenerator)(k),
+	                    reducerKeys: reducerKeys,
+	                    rowIndex: index,
+	                    rowData: cellValues,
+	                    selectionModel: selectionModel,
+	                    stateKey: stateKey,
+	                    store: store
+	                };
+
+	                return _react2.default.createElement(_Cell.Cell, cellProps);
+	            });
+
+	            var isSelected = selectedRows ? selectedRows[id] : false;
+
+	            var editClass = editorState && editorState.row && editorState.row.key === id ? selectionModel.defaults.editCls : '';
+
+	            var selectedClass = isSelected ? selectionModel.defaults.activeCls : '';
+
+	            var rowProps = {
+	                key: id,
+	                className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.ROW, selectedClass, editClass),
+	                onClick: function onClick(e) {
+	                    handleRowSingleClickEvent(events, row, id, selectionModel, e);
+	                },
+	                onDoubleClick: function onDoubleClick(e) {
+	                    handleRowDoubleClickEvent(events, row, id, selectionModel, e);
+	                }
+	            };
+
+	            columnManager.addActionColumn({
+	                cells: cells,
+	                columns: columns,
+	                type: 'row',
+	                id: id,
+	                reducerKeys: reducerKeys,
+	                rowData: row,
+	                rowIndex: index,
+	                stateKey: stateKey,
+	                menuState: menuState
+	            });
+
+	            selectionModel.updateCells(cells, id, 'row', reducerKeys, stateKey);
+
+	            addEmptyInsert(cells, visibleColumns, plugins);
+
+	            return _react2.default.createElement(
+	                'tr',
+	                rowProps,
+	                cells
+	            );
+	        }
+	    }]);
+
+	    function Row(props) {
+	        _classCallCheck(this, Row);
+
+	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Row).call(this, props));
+
+	        _this.shouldComponentUpdate = _shouldComponentUpdate.shouldRowUpdate.bind(_this);
+	        return _this;
+	    }
+
+	    return Row;
+	}(_react.Component);
 
 	Row.propTypes = {
 	    columnManager: _react.PropTypes.object.isRequired,
@@ -24773,18 +26166,33 @@
 	    editorState: _react.PropTypes.object,
 	    emptyDataMessage: _react.PropTypes.string,
 	    events: _react.PropTypes.object,
+	    index: _react.PropTypes.number,
+	    menuState: _react.PropTypes.object,
 	    pageSize: _react.PropTypes.number,
 	    pager: _react.PropTypes.object,
 	    plugins: _react.PropTypes.object,
 	    reducerKeys: _react.PropTypes.object,
+	    row: _react.PropTypes.object,
 	    selectedRows: _react.PropTypes.object,
 	    selectionModel: _react.PropTypes.object,
 	    stateKey: _react.PropTypes.string,
 	    store: _react.PropTypes.object.isRequired
 	};
-
 	Row.defaultProps = {
 	    emptyDataMessage: 'No Data Available'
+	};
+	var getCellValues = exports.getCellValues = function getCellValues(columns, row) {
+
+	    var result = {};
+	    var dataIndexes = columns.map(function (col) {
+	        return col.dataIndex;
+	    });
+
+	    dataIndexes.forEach(function (idx) {
+	        result[idx] = row[idx];
+	    });
+
+	    return result;
 	};
 
 	var addEmptyInsert = exports.addEmptyInsert = function addEmptyInsert(cells, visibleColumns, plugins) {
@@ -24803,7 +26211,7 @@
 
 	var getCellData = exports.getCellData = function getCellData(columns, row, key, index, store) {
 
-	    var valueAtDataIndex = row && columns[index] && columns[index].dataIndex ? row[columns[index].dataIndex] : null;
+	    var valueAtDataIndex = (0, _getData.getData)(row, columns, index);
 
 	    // if a render has been provided, default to this
 	    if (row && columns[index] && columns[index].renderer && typeof columns[index].renderer === 'function') {
@@ -24824,12 +26232,16 @@
 	        }
 
 	    // else no data index found
-	    console.warn('No dataIndex found for this column ', columns);
 	};
 
 	var addEmptyCells = exports.addEmptyCells = function addEmptyCells(rowData, columns) {
 
 	    columns.forEach(function (col) {
+
+	        // const data = nameFromDataIndex(col);
+	        // come back to this
+	        // how we retrieve and store data, especially editable
+	        // may need to be updated based on array dataIndex
 
 	        if (rowData && !rowData.hasOwnProperty(col.dataIndex)) {
 	            rowData[col.dataIndex] = '';
@@ -24837,77 +26249,6 @@
 	    });
 
 	    return rowData;
-	};
-
-	var getRowComponents = exports.getRowComponents = function getRowComponents(columns, columnManager, editor, editorState, reducerKeys, row, events, plugins, selectionModel, selectedRows, stateKey, store, index) {
-
-	    var id = (0, _keyGenerator.keyGenerator)('row', index);
-	    var visibleColumns = columns.filter(function (col) {
-	        return !col.hidden;
-	    });
-
-	    if (Object.keys(row).length !== columns.length) {
-	        addEmptyCells(row, columns);
-	    }
-
-	    var cells = Object.keys(row).map(function (k, i) {
-
-	        var cellProps = {
-	            index: i,
-	            rowId: id,
-	            cellData: getCellData(columns, row, k, i, store),
-	            columns: columns,
-	            editor: editor,
-	            editorState: editorState,
-	            events: events,
-	            key: (0, _keyGenerator.keyGenerator)(k),
-	            reducerKeys: reducerKeys,
-	            rowIndex: index,
-	            rowData: row,
-	            selectionModel: selectionModel,
-	            stateKey: stateKey,
-	            store: store
-	        };
-
-	        return _react2.default.createElement(_Cell.Cell, cellProps);
-	    });
-
-	    var isSelected = selectedRows ? selectedRows[id] : false;
-
-	    var editClass = editorState && editorState.row && editorState.row.key === id ? selectionModel.defaults.editCls : '';
-
-	    var selectedClass = isSelected ? selectionModel.defaults.activeCls : '';
-
-	    var rowProps = {
-	        key: id,
-	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.ROW, selectedClass, editClass),
-	        onClick: function onClick(e) {
-	            handleRowSingleClickEvent(events, row, id, selectionModel, e);
-	        },
-	        onDoubleClick: function onDoubleClick(e) {
-	            handleRowDoubleClickEvent(events, row, id, selectionModel, e);
-	        }
-	    };
-
-	    columnManager.addActionColumn({
-	        cells: cells,
-	        type: 'row',
-	        id: id,
-	        reducerKeys: reducerKeys,
-	        rowData: row,
-	        rowIndex: index,
-	        stateKey: stateKey
-	    });
-
-	    selectionModel.updateCells(cells, id, 'row', reducerKeys, stateKey);
-
-	    addEmptyInsert(cells, visibleColumns, plugins);
-
-	    return _react2.default.createElement(
-	        'tr',
-	        rowProps,
-	        cells
-	    );
 	};
 
 	var handleRowDoubleClickEvent = exports.handleRowDoubleClickEvent = function handleRowDoubleClickEvent(events, rowData, rowId, selectionModel, reactEvent, id, browserEvent) {
@@ -24925,7 +26266,21 @@
 	    }
 	};
 
+	var getSelectedText = exports.getSelectedText = function getSelectedText() {
+	    var text = '';
+	    if (typeof window.getSelection !== 'undefined') {
+	        text = window.getSelection().toString();
+	    } else if (typeof document.selection !== 'undefined' && document.selection.type === 'Text') {
+	        text = document.selection.createRange().text;
+	    }
+	    return text;
+	};
+
 	var handleRowSingleClickEvent = exports.handleRowSingleClickEvent = function handleRowSingleClickEvent(events, rowData, rowId, selectionModel, reactEvent, id, browserEvent) {
+
+	    if (getSelectedText()) {
+	        return false;
+	    }
 
 	    if (selectionModel && selectionModel.defaults.selectionEvent === selectionModel.eventTypes.singleclick && selectionModel.defaults.editEvent !== selectionModel.eventTypes.singleclick) {
 
@@ -24941,32 +26296,15 @@
 	    }
 	};
 
-	var getRowSelection = exports.getRowSelection = function getRowSelection(dataSource, pageIndex, pageSize, pager, plugins) {
-	    if (!dataSource) {
-	        return false;
-	    }
+	exports.default = Row;
 
-	    if (!plugins.PAGER || !plugins.PAGER.enabled || plugins.PAGER.pagingType === 'remote') {
-	        return dataSource.data;
-	    }
-
-	    return (0, _getCurrentRecords.getCurrentRecords)(dataSource, pageIndex, pageSize);
-	};
-
-	var getRows = exports.getRows = function getRows(columns, columnManager, editor, editorState, reducerKeys, rows, events, plugins, selectionModel, selectedRows, stateKey, store) {
-
-	    return Array.isArray(rows) ? rows.map(function (row, i) {
-	        return getRowComponents(columns, columnManager, editor, editorState, reducerKeys, row, events, plugins, selectionModel, selectedRows, stateKey, store, i);
-	    }) : null;
-	};
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Row.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Row.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 221 */
+/* 238 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
 
 	'use strict';
 
@@ -24980,19 +26318,15 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _reactRedux = __webpack_require__(193);
+	var _Editor = __webpack_require__(239);
 
-	var _Editor = __webpack_require__(222);
+	var _prefix = __webpack_require__(219);
 
-	var _prefix = __webpack_require__(204);
+	var _handleEditClick = __webpack_require__(243);
 
-	var _stateGetter = __webpack_require__(216);
+	var _elementContains = __webpack_require__(244);
 
-	var _handleEditClick = __webpack_require__(224);
-
-	var _elementContains = __webpack_require__(225);
-
-	var _GridConstants = __webpack_require__(205);
+	var _GridConstants = __webpack_require__(220);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -25073,9 +26407,7 @@
 	    return _react2.default.createElement(
 	        'span',
 	        null,
-	        ' ',
-	        cellData,
-	        ' '
+	        cellData
 	    );
 	};
 
@@ -25099,7 +26431,9 @@
 
 	    if (selectionModel.defaults.editEvent === selectionModel.eventTypes.singleclick) {
 
-	        if (!editorState || Object.keys(editorState).length === 0) {
+	        // if a row is clicked and the editorState is empty except
+	        // for last update integer, trigger edit event
+	        if (!editorState || Object.keys(editorState).length === 1) {
 	            (0, _handleEditClick.handleEditClick)(editor, store, rowId, rowData, rowIndex, columns, stateKey, { reactEvent: reactEvent });
 	        } else if (editorState && editorState.row && editorState.row.rowIndex !== rowIndex) {
 	            (0, _handleEditClick.handleEditClick)(editor, store, rowId, rowData, rowIndex, columns, stateKey, { reactEvent: reactEvent });
@@ -25156,13 +26490,13 @@
 
 	exports.Cell = Cell;
 
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Cell.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Cell.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 222 */
+/* 239 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
 
 	'use strict';
 
@@ -25175,11 +26509,13 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _Input = __webpack_require__(223);
+	var _Input = __webpack_require__(240);
 
-	var _GridConstants = __webpack_require__(205);
+	var _GridConstants = __webpack_require__(220);
 
-	var _prefix = __webpack_require__(204);
+	var _prefix = __webpack_require__(219);
+
+	var _getData = __webpack_require__(241);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -25196,7 +26532,7 @@
 	    var store = _ref.store;
 
 
-	    var colName = columns && columns[index] && columns[index].dataIndex ? columns[index].dataIndex : '';
+	    var colName = columns && columns[index] ? (0, _getData.nameFromDataIndex)(columns[index]) : '';
 
 	    if (!colName) {
 	        colName = columns && columns[index] && columns[index].name ? columns[index].name : '';
@@ -25260,13 +26596,13 @@
 
 	Editor.defaultProps = {};
 
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Editor.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Editor.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 223 */
+/* 240 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
 
 	'use strict';
 
@@ -25279,7 +26615,9 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _EditorActions = __webpack_require__(212);
+	var _EditorActions = __webpack_require__(227);
+
+	var _getData = __webpack_require__(241);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -25293,7 +26631,7 @@
 	    var store = _ref.store;
 
 
-	    var colName = column && column.dataIndex ? column.dataIndex : '';
+	    var colName = (0, _getData.nameFromDataIndex)(column);
 
 	    var placeholder = column && column.placeholder ? column.placeholder : false;
 
@@ -25303,8 +26641,8 @@
 
 	    var inputProps = {
 	        disabled: disabled,
-	        onChange: function onChange() {
-	            handleChange(column, columns, rowId, stateKey, store);
+	        onChange: function onChange(e) {
+	            handleChange(column, columns, rowId, stateKey, store, e);
 	        },
 	        type: 'text',
 	        value: value,
@@ -25317,7 +26655,7 @@
 	var handleChange = exports.handleChange = function handleChange(columnDefinition, columns, rowId, stateKey, store, reactEvent) {
 	    store.dispatch((0, _EditorActions.updateCellValue)({
 	        value: reactEvent.target.value,
-	        name: columnDefinition.dataIndex,
+	        name: (0, _getData.nameFromDataIndex)(columnDefinition),
 	        column: columnDefinition,
 	        columns: columns,
 	        stateKey: stateKey
@@ -25334,13 +26672,137 @@
 	    store: _react.PropTypes.object
 	};
 
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Input.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Input.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 224 */
+/* 241 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.nameFromDataIndex = exports.getValueFromDataIndexArr = exports.setDataAtDataIndex = exports.getData = undefined;
+
+	var _camelize = __webpack_require__(242);
+
+	var getData = exports.getData = function getData() {
+	    var rowData = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+	    var columns = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+	    var colIndex = arguments.length <= 2 || arguments[2] === undefined ? 0 : arguments[2];
+
+
+	    var column = columns[colIndex];
+
+	    if (!column) {
+	        return undefined;
+	    }
+
+	    var dataIndex = column.dataIndex || null;
+
+	    if (!dataIndex) {
+	        throw new Error('No dataIndex found on column', column);
+	    }
+
+	    if (typeof dataIndex === 'string') {
+	        return rowData && rowData[dataIndex] !== undefined ? rowData[dataIndex] : null;
+	    } else if (Array.isArray(dataIndex)) {
+	        return getValueFromDataIndexArr(rowData, dataIndex);
+	    }
+	};
+
+	var setDataAtDataIndex = exports.setDataAtDataIndex = function setDataAtDataIndex() {
+	    var rowData = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+	    var dataIndex = arguments[1];
+	    var val = arguments[2];
+
+
+	    if (typeof dataIndex === 'string') {
+	        rowData[dataIndex] = val;
+	        return rowData;
+	    }
+
+	    var temp = rowData;
+
+	    for (var i = 0; i < dataIndex.length - 1; i++) {
+	        temp = temp[dataIndex[i]];
+	    }
+
+	    if (!temp[dataIndex[[dataIndex.length - 1]]]) {
+	        throw new Error('Invalid key path');
+	    }
+
+	    temp[dataIndex[dataIndex.length - 1]] = val;
+
+	    return rowData;
+	};
+
+	var getValueFromDataIndexArr = exports.getValueFromDataIndexArr = function getValueFromDataIndexArr(rowData, dataIndex) {
+	    var temp = rowData;
+
+	    for (var i = 0; i < dataIndex.length; i++) {
+
+	        if (!temp[dataIndex[i]]) {
+	            // preferring silent failure on get
+	            // but we throw an error on the update
+	            // if the key path is invalid
+	            return '';
+	        }
+
+	        temp = temp[dataIndex[i]];
+	    }
+
+	    return temp;
+	};
+
+	var nameFromDataIndex = exports.nameFromDataIndex = function nameFromDataIndex(column) {
+
+	    if (!column) {
+	        return '';
+	    }
+
+	    if (typeof column.dataIndex === 'string') {
+	        return column.dataIndex;
+	    }
+
+	    if (Array.isArray(column.dataIndex)) {
+	        return column.dataIndex[column.dataIndex.length - 1];
+	    }
+
+	    if (!column.dataIndex) {
+	        return (0, _camelize.camelize)(column.name);
+	    }
+	};
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "getData.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 242 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	var camelize = exports.camelize = function camelize(str) {
+	    return str.replace(/(?:^\w|[A-Z]|\b\w)/g, function (letter, index) {
+	        return index === 0 ? letter.toLowerCase() : letter.toUpperCase();
+	    }).replace(/\s+/g, '');
+	};
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "camelize.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 243 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
 
 	'use strict';
 
@@ -25349,7 +26811,7 @@
 	});
 	exports.closestRow = exports.handleEditClick = undefined;
 
-	var _EditorActions = __webpack_require__(212);
+	var _EditorActions = __webpack_require__(227);
 
 	var handleEditClick = exports.handleEditClick = function handleEditClick(editor, store, rowId, rowData, rowIndex, columns, stateKey, data) {
 	    var row = closestRow(data.reactEvent.target);
@@ -25374,13 +26836,13 @@
 	    }
 	};
 
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "handleEditClick.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "handleEditClick.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 225 */
+/* 244 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
 
 	'use strict';
 
@@ -25409,13 +26871,13 @@
 	    }
 	}
 
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "elementContains.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "elementContains.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 226 */
+/* 245 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
 
 	'use strict';
 
@@ -25430,7 +26892,9 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _Cell = __webpack_require__(221);
+	var _Cell = __webpack_require__(238);
+
+	var _Cell2 = _interopRequireDefault(_Cell);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -25442,4180 +26906,120 @@
 	        }
 	    }, props);
 
-	    return _react2.default.createElement(_Cell.ConnectedCell, cellProps);
+	    return _react2.default.createElement(_Cell2.default, cellProps);
 	};
 
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "EmptyCell.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-
-/***/ },
-/* 227 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.PlaceHolder = undefined;
-
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-	var _react = __webpack_require__(149);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _prefix = __webpack_require__(204);
-
-	var _GridConstants = __webpack_require__(205);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var PlaceHolder = exports.PlaceHolder = function PlaceHolder(message) {
-
-	    var rowProps = {
-	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.ROW)
-	    };
-
-	    var tdProps = {
-	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.ROW, _GridConstants.CLASS_NAMES.EMPTY_ROW)
-	    };
-
-	    return _react2.default.createElement(
-	        'tr',
-	        rowProps,
-	        _react2.default.createElement(
-	            'td',
-	            _extends({ colSpan: '100%' }, tdProps),
-	            message.emptyDataMessage
-	        )
-	    );
-	};
-
-	PlaceHolder.propTypes = {
-	    message: _react.PropTypes.object
-	};
-
-	_react.PropTypes.defaultProps = {
-	    message: {
-	        emptyDataMessage: ''
-	    }
-	};
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "PlaceHolder.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-
-/***/ },
-/* 228 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	var getCurrentRecords = exports.getCurrentRecords = function getCurrentRecords(dataSource, pageIndex, pageSize) {
-	    if (!dataSource) {
-	        return null;
-	    }
-
-	    var selectedRows = dataSource.data.slice(pageIndex * pageSize, (pageIndex + 1) * pageSize);
-
-	    return selectedRows;
-	};
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "getCurrentRecords.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-
-/***/ },
-/* 229 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.ConnectedPagerToolbar = exports.getPagingSource = exports.getPager = exports.getTotal = exports.getCurrentRecordTotal = exports.getCustomComponent = exports.PagerToolbar = undefined;
-
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _react = __webpack_require__(149);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _reactDom = __webpack_require__(218);
-
-	var _reactDom2 = _interopRequireDefault(_reactDom);
-
-	var _reactRedux = __webpack_require__(193);
-
-	var _Button = __webpack_require__(230);
-
-	var _Description = __webpack_require__(232);
-
-	var _prefix = __webpack_require__(204);
-
-	var _stateGetter = __webpack_require__(216);
-
-	var _GridConstants = __webpack_require__(205);
-
-	var _getCurrentRecords = __webpack_require__(228);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var PagerToolbar = exports.PagerToolbar = function (_Component) {
-	    _inherits(PagerToolbar, _Component);
-
-	    _createClass(PagerToolbar, [{
-	        key: 'render',
-	        value: function render() {
-	            var _props = this.props;
-	            var BUTTON_TYPES = _props.BUTTON_TYPES;
-	            var dataSource = _props.dataSource;
-	            var pageSize = _props.pageSize;
-	            var pager = _props.pager;
-	            var pagerState = _props.pagerState;
-	            var plugins = _props.plugins;
-	            var recordType = _props.recordType;
-	            var stateKey = _props.stateKey;
-	            var store = _props.store;
-	            var toolbarRenderer = _props.toolbarRenderer;
-
-
-	            var pagerDataSource = getPagingSource(plugins, dataSource);
-
-	            var _state = this.state;
-	            var stuck = _state.stuck;
-	            var stuckBottom = _state.stuckBottom;
-	            var width = _state.width;
-	            var top = _state.top;
-
-
-	            var customComponent = getCustomComponent(plugins, _extends({
-	                dataSource: dataSource,
-	                pageSize: pageSize,
-	                pager: pager
-	            }, { gridData: pagerState }, {
-	                plugins: plugins,
-	                recordType: recordType,
-	                store: store
-	            }));
-
-	            if (customComponent) {
-	                return customComponent;
-	            }
-
-	            var component = plugins && plugins.PAGER && plugins.PAGER.enabled ? getPager(pagerDataSource, pageSize, recordType, BUTTON_TYPES, pager, plugins, pagerState, pagerDataSource, toolbarRenderer, stateKey, stuck, stuckBottom, store, top, width) : _react2.default.createElement('div', null);
-
-	            return component;
-	        }
-	    }, {
-	        key: 'componentDidMount',
-	        value: function componentDidMount() {
-	            var plugins = this.props.plugins;
-
-
-	            var isSticky = plugins.STICKY_FOOTER ? plugins.STICKY_FOOTER.enabled : false;
-
-	            var footerDOM = _reactDom2.default.findDOMNode(this);
-
-	            this.FOOTER_HEIGHT = footerDOM.clientHeight;
-
-	            if (isSticky && !this._scrollListener) {
-	                this.createScrollListener(plugins.STICKY_FOOTER, footerDOM);
-	            }
-	        }
-	    }]);
-
-	    function PagerToolbar(props) {
-	        _classCallCheck(this, PagerToolbar);
-
-	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(PagerToolbar).call(this, props));
-
-	        _this.state = {
-	            stuck: false,
-	            stuckBottom: false,
-	            classes: [],
-	            top: false
-	        };
-	        return _this;
-	    }
-
-	    _createClass(PagerToolbar, [{
-	        key: 'isElementInViewport',
-	        value: function isElementInViewport(el) {
-
-	            var rect = el.getBoundingClientRect();
-
-	            return rect.top >= 0 && rect.left >= 0 && rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) && rect.right <= (window.innerWidth || document.documentElement.clientWidth);
-	        }
-	    }, {
-	        key: 'shouldStick',
-	        value: function shouldStick(footerDOM) {
-
-	            var isTableVisible = this.isElementInViewport(footerDOM.parentNode.querySelector('.react-grid-header-fixed'));
-
-	            var isFooterVisible = footerDOM.parentNode.getBoundingClientRect().bottom < window.innerHeight;
-
-	            return isTableVisible && !isFooterVisible;
-	        }
-	    }, {
-	        key: 'setWidthResetListener',
-	        value: function setWidthResetListener(footerDOM) {
-	            var _this2 = this;
-
-	            var scope = this;
-
-	            window.addEventListener('resize', function () {
-	                var stuck = _this2.state.stuck;
-
-
-	                if (stuck) {
-	                    scope.setState({
-	                        width: footerDOM.parentNode.getBoundingClientRect().width
-	                    });
-	                }
-	            });
-	        }
-	    }, {
-	        key: 'createScrollListener',
-	        value: function createScrollListener(config, footerDOM) {
-	            var _this3 = this;
-
-	            var scope = this;
-	            var BUFFER = 52;
-	            var target = config.scrollTarget ? document.querySelector(config.scrollTarget) : document;
-
-	            target = target || document;
-
-	            this.setWidthResetListener(footerDOM);
-
-	            var defaultListener = function defaultListener() {
-	                var stuck = scope.state.stuck;
-
-	                var shouldStick = _this3.shouldStick(footerDOM);
-	                var shouldStop = footerDOM.parentNode.getBoundingClientRect().top + BUFFER > window.innerHeight;
-
-	                if (shouldStop) {
-	                    return scope.setState({
-	                        stuckBottom: true,
-	                        stuck: false,
-	                        width: null,
-	                        top: 25
-	                    });
-	                }
-
-	                if (shouldStick && !stuck) {
-	                    scope.setState({
-	                        stuckBottom: false,
-	                        stuck: true,
-	                        width: footerDOM.clientWidth,
-	                        top: null
-	                    });
-	                } else if (!shouldStick && stuck) {
-	                    scope.setState({
-	                        stuckBottom: false,
-	                        stuck: false,
-	                        width: null,
-	                        top: null
-	                    });
-	                }
-	            };
-
-	            target.addEventListener('scroll', config.listener ? config.listener.bind(this, {
-	                footerDOM: footerDOM
-	            }) : defaultListener);
-	        }
-	    }]);
-
-	    return PagerToolbar;
-	}(_react.Component);
-
-	PagerToolbar.propTypes = {
-	    BUTTON_TYPES: _react.PropTypes.object,
-	    dataSource: _react.PropTypes.any,
-	    gridState: _react.PropTypes.object,
-	    nextButtonText: _react.PropTypes.string,
-	    pageSize: _react.PropTypes.number.isRequired,
-	    pager: _react.PropTypes.object,
-	    pagerState: _react.PropTypes.object,
-	    plugins: _react.PropTypes.object,
-	    recordType: _react.PropTypes.string,
-	    stateKey: _react.PropTypes.string,
-	    store: _react.PropTypes.object.isRequired,
-	    toolbarRenderer: _react.PropTypes.func
-	};
-	PagerToolbar.defaultProps = {
-	    recordType: 'Records',
-	    BUTTON_TYPES: {
-	        NEXT: 'NEXT',
-	        BACK: 'BACK'
-	    },
-	    toolbarRenderer: function toolbarRenderer(pageIndex, pageSize, total, currentRecords, recordType) {
-	        if (!currentRecords) {
-	            return 'No ' + recordType + ' Available';
-	        }
-
-	        return pageIndex * pageSize + '\n                through ' + (pageIndex * pageSize + currentRecords) + '\n                of ' + total + ' ' + recordType + ' Displayed';
-	    }
-	};
-	var getCustomComponent = exports.getCustomComponent = function getCustomComponent(plugins) {
-	    return plugins && plugins.PAGER && plugins.PAGER.pagerComponent ? plugins.PAGER.pagerComponent : false;
-	};
-
-	var getCurrentRecordTotal = exports.getCurrentRecordTotal = function getCurrentRecordTotal(pagerState, pageSize, pageIndex, plugins) {
-
-	    if (plugins.PAGER.pagingType === 'remote' && pagerState && pagerState.currentRecords) {
-	        return pagerState.currentRecords.length;
-	    } else if (plugins.PAGER.pagingType === 'local') {
-	        var records = (0, _getCurrentRecords.getCurrentRecords)(pagerState, pageIndex, pageSize);
-	        return records ? records.length : 0;
-	    }
-	};
-
-	var getTotal = exports.getTotal = function getTotal(dataSource, pagerDefaults) {
-
-	    if (!dataSource || !dataSource.data) {
-	        return 0;
-	    }
-
-	    if (pagerDefaults && pagerDefaults.pagingType === 'remote') {
-	        return dataSource.total;
-	    } else if (pagerDefaults && pagerDefaults.pagingType === 'local') {
-	        return dataSource.data.length;
-	    }
-	};
-
-	var getPager = exports.getPager = function getPager(dataSource, pageSize, recordType, BUTTON_TYPES, pager, plugins, pagerState, pagerDataSource, toolbarRenderer, stateKey, stuck, stuckBottom, store, top, width) {
-
-	    var pageIndex = pager && pager.pageIndex || 0;
-
-	    var toolbarProps = {
-	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.PAGERTOOLBAR, stuck ? 'is-stuck' : '', stuckBottom ? 'is-stuck-bottom' : '')
-	    };
-
-	    if (width) {
-	        toolbarProps.style = {};
-	        toolbarProps.style.width = width + 'px';
-	    }
-
-	    if (top) {
-	        toolbarProps.style = toolbarProps.style || {};
-	        toolbarProps.style.top = top + 'px';
-	    }
-
-	    var currentRecords = getCurrentRecordTotal(pagerState, pageSize, pageIndex, plugins, dataSource);
-
-	    var total = getTotal(pagerState, plugins.PAGER);
-
-	    var descriptionProps = {
-	        pageIndex: pageIndex,
-	        pageSize: pageSize,
-	        total: total,
-	        currentRecords: currentRecords,
-	        recordType: recordType
-	    };
-
-	    var spacerProps = {
-	        style: {
-	            height: '33px'
-	        }
-	    };
-
-	    var spacer = stuck || stuckBottom ? _react2.default.createElement('div', spacerProps) : null;
-
-	    return _react2.default.createElement(
-	        'div',
-	        null,
-	        spacer,
-	        _react2.default.createElement(
-	            'div',
-	            toolbarProps,
-	            _react2.default.createElement(
-	                'span',
-	                null,
-	                _react2.default.createElement(_Button.Button, {
-	                    BUTTON_TYPES: BUTTON_TYPES,
-	                    type: BUTTON_TYPES.BACK,
-	                    pageIndex: pageIndex,
-	                    pageSize: pageSize,
-	                    plugins: plugins,
-	                    currentRecords: currentRecords,
-	                    total: total,
-	                    dataSource: dataSource,
-	                    stateKey: stateKey,
-	                    store: store }),
-	                _react2.default.createElement(_Button.Button, {
-	                    BUTTON_TYPES: BUTTON_TYPES,
-	                    type: BUTTON_TYPES.NEXT,
-	                    pageIndex: pageIndex,
-	                    pageSize: pageSize,
-	                    plugins: plugins,
-	                    currentRecords: currentRecords,
-	                    total: total,
-	                    dataSource: dataSource,
-	                    stateKey: stateKey,
-	                    store: store })
-	            ),
-	            _react2.default.createElement(_Description.Description, descriptionProps)
-	        )
-	    );
-	};
-
-	var getPagingSource = exports.getPagingSource = function getPagingSource(plugins, dataSource) {
-	    if (plugins && plugins.PAGER && plugins.PAGER.pagingSource) {
-	        return plugins.PAGER.pagingSource;
-	    }
-
-	    return dataSource;
-	};
-
-	function mapStateToProps(state, props) {
-
-	    return {
-	        pager: (0, _stateGetter.stateGetter)(state, props, 'pager', props.stateKey),
-	        pagerState: (0, _stateGetter.stateGetter)(state, props, 'dataSource', props.stateKey),
-	        gridState: (0, _stateGetter.stateGetter)(state, props, 'grid', props.stateKey)
-	    };
-	}
-
-	var ConnectedPagerToolbar = (0, _reactRedux.connect)(mapStateToProps)(PagerToolbar);
-
-	exports.PagerToolbar = PagerToolbar;
-	exports.ConnectedPagerToolbar = ConnectedPagerToolbar;
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Toolbar.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-
-/***/ },
-/* 230 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.isButtonDisabled = exports.handleButtonClick = exports.Button = undefined;
-
-	var _react = __webpack_require__(149);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _prefix = __webpack_require__(204);
-
-	var _GridConstants = __webpack_require__(205);
-
-	var _PagerActions = __webpack_require__(231);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var Button = exports.Button = function Button(_ref) {
-	    var BUTTON_TYPES = _ref.BUTTON_TYPES;
-	    var type = _ref.type;
-	    var pageIndex = _ref.pageIndex;
-	    var pageSize = _ref.pageSize;
-	    var plugins = _ref.plugins;
-	    var currentRecords = _ref.currentRecords;
-	    var total = _ref.total;
-	    var dataSource = _ref.dataSource;
-	    var backButtonText = _ref.backButtonText;
-	    var nextButtonText = _ref.nextButtonText;
-	    var stateKey = _ref.stateKey;
-	    var store = _ref.store;
-
-
-	    var buttonProps = {
-	        onClick: handleButtonClick.bind(undefined, type, pageIndex, pageSize, dataSource, BUTTON_TYPES, plugins, stateKey, store),
-	        children: type === BUTTON_TYPES.NEXT ? nextButtonText : backButtonText,
-	        disabled: isButtonDisabled(type, pageIndex, pageSize, currentRecords, total, BUTTON_TYPES),
-	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.BUTTONS.PAGER, type.toLowerCase())
-	    };
-
-	    return _react2.default.createElement('button', buttonProps);
-	};
-
-	var handleButtonClick = exports.handleButtonClick = function handleButtonClick(type, pageIndex, pageSize, dataSource, BUTTON_TYPES, plugins, stateKey, store) {
-
-	    var PAGER = plugins.PAGER;
-
-	    if (PAGER.pagingType === 'local') {
-	        store.dispatch((0, _PagerActions.setPage)({ index: pageIndex, type: type, BUTTON_TYPES: BUTTON_TYPES, stateKey: stateKey }));
-	    } else if (PAGER.pagingType === 'remote' && dataSource) {
-	        store.dispatch((0, _PagerActions.setPageAsync)({ index: pageIndex, pageSize: pageSize, type: type, BUTTON_TYPES: BUTTON_TYPES, dataSource: dataSource, stateKey: stateKey }));
-	    } else {
-	        console.warn('Please configure paging plugin pagingType to local if no pagingSource is provided');
-	    }
-	};
-
-	var isButtonDisabled = exports.isButtonDisabled = function isButtonDisabled(type, pageIndex, pageSize, currentRecords, total, BUTTON_TYPES) {
-
-	    if (type === BUTTON_TYPES.BACK) {
-	        return pageIndex === 0;
-	    } else if (type === BUTTON_TYPES.NEXT) {
-	        return currentRecords < pageSize || pageIndex * pageSize + currentRecords === total;
-	    }
-	};
-
-	Button.propTypes = {
-	    BUTTON_TYPES: _react.PropTypes.object,
-	    backButtonText: _react.PropTypes.string,
-	    currentRecords: _react.PropTypes.number,
-	    dataSource: _react.PropTypes.any,
-	    nextButtonText: _react.PropTypes.string,
-	    pageIndex: _react.PropTypes.number,
-	    pageSize: _react.PropTypes.number,
-	    plugins: _react.PropTypes.object,
-	    store: _react.PropTypes.object,
-	    total: _react.PropTypes.number,
-	    type: _react.PropTypes.string
-	};
-
-	Button.defaultProps = {
-	    BUTTON_TYPES: {
-	        NEXT: 'NEXT',
-	        BACK: 'BACK'
-	    },
-	    nextButtonText: 'Next',
-	    backButtonText: 'Back'
-	};
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Button.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-
-/***/ },
-/* 231 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.setPage = setPage;
-	exports.setPageIndexAsync = setPageIndexAsync;
-	exports.setPageAsync = setPageAsync;
-
-	var _ActionTypes = __webpack_require__(209);
-
-	var _LoaderActions = __webpack_require__(211);
-
-	var _EditorActions = __webpack_require__(212);
-
-	var _Request = __webpack_require__(213);
-
-	var _Request2 = _interopRequireDefault(_Request);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function setPage(_ref) {
-	    var index = _ref.index;
-	    var type = _ref.type;
-	    var BUTTON_TYPES = _ref.BUTTON_TYPES;
-
-
-	    var pageIndex = type === BUTTON_TYPES.NEXT ? index + 1 : index - 1;
-
-	    return { type: _ActionTypes.PAGE_LOCAL, pageIndex: pageIndex };
-	}
-
-	function setPageIndexAsync(_ref2) {
-	    var pageIndex = _ref2.pageIndex;
-	    var pageSize = _ref2.pageSize;
-	    var dataSource = _ref2.dataSource;
-	    var filterFields = _ref2.filterFields;
-	    var sort = _ref2.sort;
-	    var stateKey = _ref2.stateKey;
-	    var afterAsyncFunc = _ref2.afterAsyncFunc;
-
-
-	    if (typeof dataSource === 'function') {
-
-	        return function (dispatch) {
-
-	            dispatch((0, _EditorActions.dismissEditor)({ stateKey: stateKey }));
-
-	            dispatch((0, _LoaderActions.setLoaderState)({ state: true, stateKey: stateKey }));
-
-	            dataSource({ pageIndex: pageIndex, pageSize: pageSize }, filterFields, sort).then(function (response) {
-
-	                if (response && response.data) {
-
-	                    dispatch({
-	                        type: _ActionTypes.SET_DATA,
-	                        data: response.data,
-	                        total: response.total,
-	                        currentRecords: response.items,
-	                        success: true,
-	                        stateKey: stateKey
-	                    });
-
-	                    if (afterAsyncFunc && typeof afterAsyncFunc === 'function') {
-	                        afterAsyncFunc();
-	                    }
-	                } else {
-
-	                    if (response && !response.data) {
-	                        console.warn('A response was recieved but no data entry was found');
-	                        console.warn('Please see https://github.com/bencripps/react-redux-grid for documentation');
-	                    }
-
-	                    dispatch({
-	                        type: _ActionTypes.ERROR_OCCURRED,
-	                        error: 'Unable to Retrieve Grid Data',
-	                        errorOccurred: true,
-	                        stateKey: stateKey
-	                    });
-	                }
-
-	                dispatch((0, _LoaderActions.setLoaderState)({ state: false, stateKey: stateKey }));
-	            });
-	        };
-	    }
-	}
-
-	function setPageAsync(_ref3) {
-	    var index = _ref3.index;
-	    var pageSize = _ref3.pageSize;
-	    var type = _ref3.type;
-	    var BUTTON_TYPES = _ref3.BUTTON_TYPES;
-	    var dataSource = _ref3.dataSource;
-	    var stateKey = _ref3.stateKey;
-
-
-	    var pageIndex = type === BUTTON_TYPES.NEXT ? index + 1 : index - 1;
-
-	    return function (dispatch) {
-
-	        dispatch((0, _LoaderActions.setLoaderState)({ state: true, stateKey: stateKey }));
-
-	        return _Request2.default.api({
-	            route: dataSource,
-	            method: 'POST',
-	            data: {
-	                pageIndex: pageIndex,
-	                pageSize: pageSize
-	            }
-	        }).then(function (response) {
-
-	            if (response && response.data) {
-
-	                dispatch({
-	                    type: _ActionTypes.PAGE_REMOTE,
-	                    pageIndex: pageIndex,
-	                    stateKey: stateKey
-	                });
-
-	                dispatch({
-	                    type: _ActionTypes.SET_DATA,
-	                    data: response.data,
-	                    total: response.total,
-	                    currentRecords: response.data,
-	                    success: true,
-	                    stateKey: stateKey
-	                });
-
-	                dispatch((0, _LoaderActions.setLoaderState)({ state: false, stateKey: stateKey }));
-	            } else {
-	                dispatch({
-	                    type: _ActionTypes.ERROR_OCCURRED,
-	                    error: response,
-	                    errorOccurred: true,
-	                    stateKey: stateKey
-	                });
-	            }
-	        });
-	    };
-	}
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "PagerActions.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-
-/***/ },
-/* 232 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.Description = undefined;
-
-	var _react = __webpack_require__(149);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var Description = exports.Description = function Description(_ref) {
-	    var toolbarRenderer = _ref.toolbarRenderer;
-	    var pageIndex = _ref.pageIndex;
-	    var pageSize = _ref.pageSize;
-	    var total = _ref.total;
-	    var currentRecords = _ref.currentRecords;
-	    var recordType = _ref.recordType;
-
-
-	    return _react2.default.createElement(
-	        'span',
-	        null,
-	        toolbarRenderer(pageIndex, pageSize, total, currentRecords, recordType)
-	    );
-	};
-
-	Description.propTypes = {
-	    toolbarRenderer: _react.PropTypes.func
-	};
-
-	Description.defaultProps = {
-	    toolbarRenderer: function toolbarRenderer(pageIndex, pageSize, total, currentRecords, recordType) {
-	        if (!currentRecords) {
-	            return 'No ' + recordType + ' Available';
-	        }
-
-	        var firstIndex = pageIndex * pageSize + 1;
-
-	        return firstIndex + '\n            through ' + (pageIndex * pageSize + currentRecords) + '\n            of ' + total + ' ' + recordType + ' Displayed';
-	    }
-	};
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Description.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-
-/***/ },
-/* 233 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.getMessage = exports.handleButtonClick = exports.Message = undefined;
-
-	var _react = __webpack_require__(149);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _reactRedux = __webpack_require__(193);
-
-	var _prefix = __webpack_require__(204);
-
-	var _stateGetter = __webpack_require__(216);
-
-	var _GridConstants = __webpack_require__(205);
-
-	var _ErrorHandlerActions = __webpack_require__(234);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var Message = exports.Message = function Message(_ref) {
-	    var errorHandler = _ref.errorHandler;
-	    var plugins = _ref.plugins;
-	    var store = _ref.store;
-
-
-	    var defaultMessage = plugins && plugins.ERROR_HANDLER && plugins.ERROR_HANDLER.defaultErrorMessage ? plugins.ERROR_HANDLER.defaultErrorMessage : 'An Error Occurred';
-
-	    var showError = errorHandler && errorHandler.errorOccurred;
-
-	    var message = errorHandler && errorHandler.error ? errorHandler.error : defaultMessage;
-
-	    var errorMessage = getMessage(message, showError, store);
-
-	    return errorMessage;
-	};
-
-	var handleButtonClick = exports.handleButtonClick = function handleButtonClick(store) {
-	    store.dispatch((0, _ErrorHandlerActions.dismissError)());
-	};
-
-	var getMessage = exports.getMessage = function getMessage(message, isShown, store) {
-
-	    var messageContainerProps = {
-	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.ERROR_HANDLER.CONTAINER, isShown ? 'shown' : null)
-	    };
-
-	    var messageProps = {
-	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.ERROR_HANDLER.MESSAGE)
-	    };
-
-	    var buttonProps = {
-	        onClick: handleButtonClick.bind(undefined, store)
-	    };
-
-	    return _react2.default.createElement(
-	        'div',
-	        messageContainerProps,
-	        _react2.default.createElement(
-	            'span',
-	            messageProps,
-	            ' ',
-	            message,
-	            ' '
-	        ),
-	        _react2.default.createElement(
-	            'button',
-	            buttonProps,
-	            'Close'
-	        )
-	    );
-	};
-
-	Message.propTypes = {
-	    errorHandler: _react.PropTypes.object,
-	    plugins: _react.PropTypes.object,
-	    store: _react.PropTypes.object
-	};
-
-	Message.defaultProps = {};
-
-	function mapStateToProps(state, props) {
-	    return {
-	        errorHandler: (0, _stateGetter.stateGetter)(state, props, 'errorhandler', 'errorState')
-	    };
-	}
-
-	exports.default = (0, _reactRedux.connect)(mapStateToProps)(Message);
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Message.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-
-/***/ },
-/* 234 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.dismissError = dismissError;
-
-	var _ActionTypes = __webpack_require__(209);
-
-	function dismissError() {
-	    return { type: _ActionTypes.DISMISS_ERROR };
-	}
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "ErrorHandlerActions.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-
-/***/ },
-/* 235 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.getAction = exports.getToolbar = exports.getTotalSelection = undefined;
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _react = __webpack_require__(149);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _reactRedux = __webpack_require__(193);
-
-	var _prefix = __webpack_require__(204);
-
-	var _stateGetter = __webpack_require__(216);
-
-	var _keyGenerator = __webpack_require__(207);
-
-	var _GridConstants = __webpack_require__(205);
-
-	var _ToolbarActions = __webpack_require__(236);
-
-	var _ModelActions = __webpack_require__(237);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var BulkActionToolbar = function (_Component) {
-	    _inherits(BulkActionToolbar, _Component);
-
-	    function BulkActionToolbar() {
-	        _classCallCheck(this, BulkActionToolbar);
-
-	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(BulkActionToolbar).call(this));
-
-	        _this.removeTimeout = null;
-	        return _this;
-	    }
-
-	    _createClass(BulkActionToolbar, [{
-	        key: 'componentDidUpdate',
-	        value: function componentDidUpdate() {
-	            var _props = this.props;
-	            var store = _props.store;
-	            var stateKey = _props.stateKey;
-	            var bulkActionState = _props.bulkActionState;
-	            var selectedRows = _props.selectedRows;
-
-	            var isRemoved = bulkActionState && bulkActionState.isRemoved;
-	            var totalCount = getTotalSelection(selectedRows);
-
-	            if (totalCount === 0 && !isRemoved) {
-	                clearTimeout(this.removeTimeout);
-	                this.removeTimeout = setTimeout(function () {
-	                    store.dispatch((0, _ToolbarActions.removeToolbar)({ state: true, stateKey: stateKey }));
-	                }, 300);
-	            } else if (totalCount > 0 && isRemoved) {
-	                store.dispatch((0, _ToolbarActions.removeToolbar)({ state: false, stateKey: stateKey }));
-	            }
-	        }
-	    }, {
-	        key: 'handleChange',
-	        value: function handleChange(reactEvent) {
-	            var _props2 = this.props;
-	            var stateKey = _props2.stateKey;
-	            var store = _props2.store;
-	            var dataSource = _props2.dataSource;
-
-
-	            if (reactEvent.target && reactEvent.target.checked) {
-	                store.dispatch((0, _ModelActions.selectAll)({ data: dataSource, stateKey: stateKey }));
-	            } else {
-	                store.dispatch((0, _ModelActions.deselectAll)({ stateKey: stateKey }));
-	            }
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            var _props3 = this.props;
-	            var bulkActionState = _props3.bulkActionState;
-	            var selectedRows = _props3.selectedRows;
-	            var stateKey = _props3.stateKey;
-	            var plugins = _props3.plugins;
-
-
-	            var toolbar = plugins && plugins.BULK_ACTIONS && plugins.BULK_ACTIONS.enabled && plugins.BULK_ACTIONS.actions && plugins.BULK_ACTIONS.actions.length > 0 ? getToolbar(plugins.BULK_ACTIONS.actions, bulkActionState, selectedRows) : _react2.default.createElement('div', null);
-
-	            return toolbar;
-	        }
-	    }]);
-
-	    return BulkActionToolbar;
-	}(_react.Component);
-
-	BulkActionToolbar.propTypes = {
-	    bulkActionState: _react.PropTypes.object,
-	    dataSource: _react.PropTypes.object,
-	    plugins: _react.PropTypes.object.isRequired,
-	    selectedRows: _react.PropTypes.object,
-	    selectionModel: _react.PropTypes.object.isRequired,
-	    stateKey: _react.PropTypes.string,
-	    store: _react.PropTypes.object.isRequired
-	};
-	var getTotalSelection = exports.getTotalSelection = function getTotalSelection(selectedRows) {
-	    var count = selectedRows && Object.keys(selectedRows).length ? Object.keys(selectedRows).filter(function (k) {
-	        return selectedRows[k];
-	    }).length : 0;
-
-	    return count;
-	};
-
-	var getToolbar = exports.getToolbar = function getToolbar(actions, bulkActionState, selectedRows) {
-	    var totalCount = getTotalSelection(selectedRows);
-
-	    var shownCls = totalCount > 0 ? _GridConstants.CLASS_NAMES.BULK_ACTIONS.SHOWN : _GridConstants.CLASS_NAMES.BULK_ACTIONS.HIDDEN;
-
-	    var removedCls = bulkActionState && bulkActionState.isRemoved ? 'removed' : null;
-
-	    var containerProps = {
-	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.BULK_ACTIONS.CONTAINER, shownCls, removedCls)
-	    };
-
-	    var spanProps = {
-	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.BULK_ACTIONS.DESCRIPTION),
-	        text: totalCount + ' Selected'
-	    };
-
-	    var buttons = actions.map(getAction);
-
-	    return _react2.default.createElement(
-	        'div',
-	        containerProps,
-	        _react2.default.createElement(
-	            'span',
-	            spanProps,
-	            spanProps.text
-	        ),
-	        buttons
-	    );
-	};
-
-	var getAction = exports.getAction = function getAction(action) {
-
-	    var buttonProps = {
-	        text: action.text,
-	        onClick: action.EVENT_HANDLER,
-	        key: (0, _keyGenerator.keyFromObject)(action)
-	    };
-
-	    return _react2.default.createElement(
-	        'button',
-	        buttonProps,
-	        buttonProps.text
-	    );
-	};
-
-	function mapStateToProps(state, props) {
-
-	    return {
-	        dataSource: (0, _stateGetter.stateGetter)(state, props, 'dataSource', props.stateKey),
-	        selectedRows: (0, _stateGetter.stateGetter)(state, props, 'selection', props.stateKey),
-	        bulkActionState: (0, _stateGetter.stateGetter)(state, props, 'bulkaction', props.stateKey)
-	    };
-	}
-
-	exports.default = (0, _reactRedux.connect)(mapStateToProps)(BulkActionToolbar);
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Toolbar.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-
-/***/ },
-/* 236 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.removeToolbar = removeToolbar;
-
-	var _ActionTypes = __webpack_require__(209);
-
-	function removeToolbar(_ref) {
-	    var state = _ref.state;
-	    var stateKey = _ref.stateKey;
-
-	    return { type: _ActionTypes.REMOVE_TOOLBAR, value: state, stateKey: stateKey };
-	}
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "ToolbarActions.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-
-/***/ },
-/* 237 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.selectAll = selectAll;
-	exports.deselectAll = deselectAll;
-	exports.setSelection = setSelection;
-
-	var _ActionTypes = __webpack_require__(209);
-
-	var _keyGenerator = __webpack_require__(207);
-
-	function selectAll(_ref) {
-	    var data = _ref.data;
-	    var stateKey = _ref.stateKey;
-
-	    var keys = data.currentRecords.map(function (row, i) {
-	        return (0, _keyGenerator.keyGenerator)('row', i);
-	    });
-
-	    var selection = keys.reduce(function (obj, k) {
-	        obj[k] = true;
-	        return obj;
-	    }, {});
-	    return { type: _ActionTypes.SELECT_ALL, selection: selection, stateKey: stateKey };
-	}
-
-	function deselectAll(_ref2) {
-	    var stateKey = _ref2.stateKey;
-
-	    return { type: _ActionTypes.DESELECT_ALL, stateKey: stateKey };
-	}
-
-	function setSelection(_ref3) {
-	    var id = _ref3.id;
-	    var defaults = _ref3.defaults;
-	    var modes = _ref3.modes;
-	    var stateKey = _ref3.stateKey;
-
-
-	    var allowDeselect = defaults.allowDeselect;
-	    var clearSelections = defaults.mode === modes.checkboxSingle || defaults.mode === modes.single;
-
-	    if (!defaults.enabled) {
-	        console.warn('Selection model has been disabled');
-	        return { type: _ActionTypes.NO_EVENT };
-	    }
-
-	    if (defaults.mode === modes.single) {
-	        return { type: _ActionTypes.SET_SELECTION, id: id, clearSelections: clearSelections, allowDeselect: allowDeselect, stateKey: stateKey };
-	    } else if (defaults.mode === modes.multi) {
-	        return { type: _ActionTypes.SET_SELECTION, id: id, allowDeselect: allowDeselect, stateKey: stateKey };
-	    } else if (defaults.mode === modes.checkboxSingle || defaults.mode === modes.checkboxMulti) {
-	        return { type: _ActionTypes.SET_SELECTION, id: id, clearSelections: clearSelections, allowDeselect: allowDeselect, stateKey: stateKey };
-	    }
-	}
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "ModelActions.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-
-/***/ },
-/* 238 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.handleKeyUp = exports.setFilterValue = exports.getToolbar = exports.FilterToolbar = undefined;
-
-	var _react = __webpack_require__(149);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _reactRedux = __webpack_require__(193);
-
-	var _Menu = __webpack_require__(239);
-
-	var _Menu2 = _interopRequireDefault(_Menu);
-
-	var _Input = __webpack_require__(244);
-
-	var _SearchButton = __webpack_require__(245);
-
-	var _ClearButton = __webpack_require__(246);
-
-	var _FilterButton = __webpack_require__(247);
-
-	var _prefix = __webpack_require__(204);
-
-	var _filterUtils = __webpack_require__(241);
-
-	var _filterUtils2 = _interopRequireDefault(_filterUtils);
-
-	var _stateGetter = __webpack_require__(216);
-
-	var _GridConstants = __webpack_require__(205);
-
-	var _FilterActions = __webpack_require__(242);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var FilterToolbar = exports.FilterToolbar = function FilterToolbar(_ref) {
-	    var columnManager = _ref.columnManager;
-	    var dataSource = _ref.dataSource;
-	    var defaultSortMethod = _ref.defaultSortMethod;
-	    var filter = _ref.filter;
-	    var placeHolderText = _ref.placeHolderText;
-	    var pager = _ref.pager;
-	    var pageSize = _ref.pageSize;
-	    var plugins = _ref.plugins;
-	    var stateKey = _ref.stateKey;
-	    var store = _ref.store;
-
-
-	    var customComponent = plugins && plugins.FILTER_CONTAINER && plugins.FILTER_CONTAINER.component ? plugins.FILTER_CONTAINER.component : null;
-
-	    if (customComponent) {
-	        return customComponent;
-	    }
-
-	    var toolbar = plugins && plugins.FILTER_CONTAINER && plugins.FILTER_CONTAINER.enabled ? getToolbar(columnManager, dataSource, defaultSortMethod, filter, placeHolderText, pager, pageSize, plugins, stateKey, store) : _react2.default.createElement('div', null);
-
-	    return toolbar;
-	};
-
-	FilterToolbar.propTypes = {
-	    columnManager: _react.PropTypes.object,
-	    dataSource: _react.PropTypes.object,
-	    defaultSortMethod: _react.PropTypes.string,
-	    filter: _react.PropTypes.object,
-	    pageSize: _react.PropTypes.number,
-	    pager: _react.PropTypes.object,
-	    placeHolderText: _react.PropTypes.string,
-	    plugins: _react.PropTypes.object,
-	    selectionModel: _react.PropTypes.object,
-	    store: _react.PropTypes.object.isRequired
-	};
-
-	FilterToolbar.defaultProps = {
-	    defaultSortMethod: _GridConstants.FILTER_METHODS.LOCAL,
-	    placeHolderText: 'Search'
-	};
-
-	var getToolbar = exports.getToolbar = function getToolbar(columnManager, dataSource, defaultSortMethod, filter, placeHolderText, pager, pageSize, plugins, stateKey, store) {
-
-	    var dataUri = columnManager.config.dataSource || '';
-
-	    var filterMenuShown = plugins && plugins.FILTER_CONTAINER && plugins.FILTER_CONTAINER.enableFilterMenu && filter && filter.filterMenuShown;
-
-	    var method = plugins && plugins.FILTER_CONTAINER && plugins.FILTER_CONTAINER.method ? plugins.FILTER_CONTAINER.method.toUpperCase() : defaultSortMethod;
-
-	    var inputValue = filter && filter.filterValue ? filter.filterValue : '';
-
-	    if (filter && filter.filterMenuValues && Object.keys(filter.filterMenuValues).length > 0) {
-	        inputValue = JSON.stringify(filter.filterMenuValues);
-	    }
-
-	    var applicableButton = inputValue && inputValue.length > 0 ? _react2.default.createElement(_ClearButton.ClearButton, { dataUri: dataUri, method: method, stateKey: stateKey, store: store }) : _react2.default.createElement(_SearchButton.SearchButton, null);
-
-	    var filterMenuButton = plugins.FILTER_CONTAINER.enableFilterMenu ? _react2.default.createElement(_FilterButton.FilterButton, { filter: filter, filterMenuShown: filterMenuShown, stateKey: stateKey, store: store }) : null;
-
-	    var filterMenu = filterMenuShown ? _react2.default.createElement(_Menu2.default, { store: store, stateKey: stateKey, plugins: plugins }) : null;
-
-	    return _react2.default.createElement(
-	        'div',
-	        { className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.FILTER_CONTAINER.CONTAINER) },
-	        _react2.default.createElement(_Input.Input, {
-	            dataSource: dataSource,
-	            method: method,
-	            placeHolderText: placeHolderText,
-	            inputValue: inputValue,
-	            plugins: plugins,
-	            pager: pager,
-	            pageSize: pageSize,
-	            stateKey: stateKey,
-	            store: store
-	        }),
-	        _react2.default.createElement(
-	            'div',
-	            { className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.FILTER_CONTAINER.BUTTON_CONTAINER) },
-	            applicableButton,
-	            filterMenuButton
-	        ),
-	        filterMenu
-	    );
-	};
-
-	var setFilterValue = exports.setFilterValue = function setFilterValue(store, reactEvent) {
-
-	    var value = reactEvent.target.value;
-
-	    store.dispatch((0, _FilterActions.setFilter)(value));
-	};
-
-	var handleKeyUp = exports.handleKeyUp = function handleKeyUp(value, method, dataSource, plugins, pager, pageSize, store, reactEvent) {
-
-	    var filterSource = plugins.FILTER_CONTAINER;
-
-	    var pageIndex = pager ? pager.pageIndex : 0;
-
-	    if (reactEvent.which !== _GridConstants.KEYBOARD_MAP.ENTER) {
-	        return false;
-	    }
-
-	    if (method === _GridConstants.FILTER_METHODS.LOCAL) {
-	        store.dispatch((0, _FilterActions.doLocalFilter)(_filterUtils2.default.byKeyword(value, dataSource)));
-	    } else if (method === _GridConstants.FILTER_METHODS.REMOTE) {
-	        store.dispatch((0, _FilterActions.doRemoteFilter)({
-	            keyword: value
-	        }, pageIndex, pageSize, filterSource));
-	    } else {
-	        console.warn('The filter method has not been created!');
-	    }
-	};
-
-	function mapStateToProps(state, props) {
-
-	    return {
-	        dataSource: (0, _stateGetter.stateGetter)(state, props, 'dataSource', props.stateKey),
-	        selectedRows: (0, _stateGetter.stateGetter)(state, props, 'selection', props.stateKey),
-	        filter: (0, _stateGetter.stateGetter)(state, props, 'filter', props.stateKey),
-	        pager: (0, _stateGetter.stateGetter)(state, props, 'pager', props.stateKey)
-	    };
-	}
-
-	exports.default = (0, _reactRedux.connect)(mapStateToProps)(FilterToolbar);
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Toolbar.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-
-/***/ },
-/* 239 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.FilterMenu = undefined;
-
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-	var _react = __webpack_require__(149);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _reactRedux = __webpack_require__(193);
-
-	var _Button = __webpack_require__(240);
-
-	var _Input = __webpack_require__(243);
-
-	var _prefix = __webpack_require__(204);
-
-	var _stateGetter = __webpack_require__(216);
-
-	var _GridConstants = __webpack_require__(205);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var FilterMenu = exports.FilterMenu = function FilterMenu(_ref) {
-	    var buttonText = _ref.buttonText;
-	    var buttonTypes = _ref.buttonTypes;
-	    var dataSource = _ref.dataSource;
-	    var menuTitle = _ref.menuTitle;
-	    var filter = _ref.filter;
-	    var plugins = _ref.plugins;
-	    var pager = _ref.pager;
-	    var stateKey = _ref.stateKey;
-	    var store = _ref.store;
-
-
-	    var menuContainerProps = {
-	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.FILTER_CONTAINER.MENU.CONTAINER)
-	    };
-
-	    var menuTitleProps = {
-	        text: menuTitle,
-	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.FILTER_CONTAINER.MENU.TITLE)
-	    };
-
-	    var buttonContainerProps = {
-	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.FILTER_CONTAINER.MENU.BUTTON_CONTAINER)
-	    };
-
-	    var inputs = plugins.FILTER_CONTAINER.fields && plugins.FILTER_CONTAINER.fields.length > 0 ? plugins.FILTER_CONTAINER.fields.map(function (field) {
-	        return _react2.default.createElement(_Input.Input, { field: field, filter: filter, stateKey: stateKey, store: store });
-	    }) : null;
-
-	    var buttonProps = {
-	        buttonText: buttonText,
-	        buttonTypes: buttonTypes,
-	        dataSource: dataSource,
-	        filter: filter,
-	        plugins: plugins,
-	        pager: pager,
-	        store: store
-	    };
-
-	    return _react2.default.createElement(
-	        'div',
-	        menuContainerProps,
-	        _react2.default.createElement(
-	            'span',
-	            menuTitleProps,
-	            menuTitleProps.text
-	        ),
-	        _react2.default.createElement(
-	            'div',
-	            null,
-	            inputs
-	        ),
-	        _react2.default.createElement(
-	            'div',
-	            buttonContainerProps,
-	            _react2.default.createElement(_Button.Button, _extends({}, buttonProps, { stateKey: stateKey, type: buttonTypes.CANCEL })),
-	            _react2.default.createElement(_Button.Button, _extends({}, buttonProps, { stateKey: stateKey, type: buttonTypes.SUBMIT }))
-	        )
-	    );
-	};
-
-	FilterMenu.propTypes = {
-	    buttonText: _react.PropTypes.object,
-	    buttonTypes: _react.PropTypes.object,
-	    dataSource: _react.PropTypes.object,
-	    filter: _react.PropTypes.string,
-	    menuTitle: _react.PropTypes.string.isRequired,
-	    pager: _react.PropTypes.object,
-	    plugins: _react.PropTypes.object.isRequired,
-	    stateKey: _react.PropTypes.string,
-	    store: _react.PropTypes.object.isRequired
-	};
-
-	FilterMenu.defaultProps = {
-	    buttonTypes: {
-	        SUBMIT: 'SUBMIT',
-	        CANCEL: 'CANCEL'
-	    },
-	    buttonText: {
-	        SUBMIT: 'Submit',
-	        CANCEL: 'Cancel'
-	    },
-	    defaultSortMethod: _GridConstants.FILTER_METHODS.LOCAL,
-	    menuTitle: 'Advanced Filter Menu',
-	    placeHolderText: 'Search',
-	    plugins: _react2.default.PropTypes.object.isRequired,
-	    selectionModel: _react2.default.PropTypes.object.isRequired
-	};
-
-	function mapStateToProps(state, props) {
-
-	    return {
-	        dataSource: (0, _stateGetter.stateGetter)(state, props, 'dataSource', props.stateKey),
-	        selectedRows: (0, _stateGetter.stateGetter)(state, props, 'selection', props.stateKey),
-	        filter: (0, _stateGetter.stateGetter)(state, props, 'filter', props.stateKey),
-	        pager: (0, _stateGetter.stateGetter)(state, props, 'pager', props.stateKey)
-	    };
-	}
-
-	exports.default = (0, _reactRedux.connect)(mapStateToProps)(FilterMenu);
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Menu.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-
-/***/ },
-/* 240 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.handleButtonClick = exports.Button = undefined;
-
-	var _react = __webpack_require__(149);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _prefix = __webpack_require__(204);
-
-	var _filterUtils = __webpack_require__(241);
-
-	var _filterUtils2 = _interopRequireDefault(_filterUtils);
-
-	var _GridConstants = __webpack_require__(205);
-
-	var _FilterActions = __webpack_require__(242);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var Button = exports.Button = function Button(_ref) {
-	    var buttonText = _ref.buttonText;
-	    var buttonTypes = _ref.buttonTypes;
-	    var dataSource = _ref.dataSource;
-	    var filter = _ref.filter;
-	    var plugins = _ref.plugins;
-	    var pager = _ref.pager;
-	    var type = _ref.type;
-	    var stateKey = _ref.stateKey;
-	    var store = _ref.store;
-
-
-	    var buttonProps = {
-	        text: buttonText[type],
-	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.FILTER_CONTAINER.MENU.BUTTON, type === buttonTypes.CANCEL ? _GridConstants.CLASS_NAMES.SECONDARY_CLASS : ''),
-	        onClick: handleButtonClick.bind(undefined, buttonTypes, dataSource, filter, plugins, pager, type, stateKey, store)
-	    };
-
-	    return _react2.default.createElement(
-	        'button',
-	        buttonProps,
-	        buttonProps.text
-	    );
-	};
-
-	Button.propTypes = {
-	    buttonText: _react.PropTypes.string,
-	    buttonTypes: _react.PropTypes.object,
-	    dataSource: _react.PropTypes.object,
-	    filter: _react.PropTypes.object,
-	    pager: _react.PropTypes.object,
-	    plugins: _react.PropTypes.object,
-	    store: _react.PropTypes.object.isRequired,
-	    type: _react.PropTypes.object
-	};
-
-	Button.defaultProps = {};
-
-	var handleButtonClick = exports.handleButtonClick = function handleButtonClick(buttonTypes, dataSource, filter, plugins, pager, type, stateKey, store) {
-
-	    var method = plugins.FILTER_CONTAINER.method ? plugins.FILTER_CONTAINER.method.toUpperCase() : _GridConstants.FILTER_METHODS.LOCAL;
-	    var filterSource = plugins.FILTER_CONTAINER.filterSource;
-
-	    var pageSize = pager ? pager.pageSize : _GridConstants.DEFAULT_PAGE_SIZE;
-	    var pageIndex = 0;
-
-	    if (pager) {
-	        pageIndex = pager.pageIndex;
-	    }
-
-	    if (type === buttonTypes.CANCEL) {
-	        store.dispatch((0, _FilterActions.showFilterMenu)({ value: true, stateKey: stateKey }));
-	        store.dispatch((0, _FilterActions.clearFilterLocal)({ dataSource: dataSource, stateKey: stateKey }));
-	    } else if (type === buttonTypes.SUBMIT) {
-
-	        if (method === _GridConstants.FILTER_METHODS.LOCAL) {
-	            store.dispatch((0, _FilterActions.doLocalFilter)({
-	                data: _filterUtils2.default.byMenu(filter.filterMenuValues, dataSource),
-	                stateKey: stateKey
-	            }));
-	        } else if (method === _GridConstants.FILTER_METHODS.REMOTE) {
-	            store.dispatch((0, _FilterActions.doRemoteFilter)({
-	                filterParams: filter.filterMenuValues,
-	                pageIndex: pageIndex,
-	                pageSize: pageSize,
-	                dataSource: filterSource,
-	                stateKey: stateKey
-	            }));
-	        }
-	    }
-	};
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Button.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-
-/***/ },
-/* 241 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	var FilterUtils = function () {
-	    function FilterUtils() {
-	        _classCallCheck(this, FilterUtils);
-	    }
-
-	    _createClass(FilterUtils, [{
-	        key: "byKeyword",
-	        value: function byKeyword(value, datasource) {
-	            return datasource.proxy.filter(function (obj) {
-
-	                var keys = Object.keys(obj);
-
-	                for (var i = 0; i < keys.length; i++) {
-	                    if (obj[keys[i]].toLowerCase().indexOf(value) !== -1) {
-	                        return true;
-	                    }
-	                }
-
-	                return false;
-	            });
-	        }
-	    }, {
-	        key: "byMenu",
-	        value: function byMenu(filterObj, datasource) {
-
-	            if (!filterObj) {
-	                return datasource.proxy;
-	            }
-
-	            return datasource.proxy.filter(function (obj) {
-
-	                var keys = Object.keys(obj);
-
-	                for (var i = 0; i < keys.length; i++) {
-
-	                    var key = keys[i].toLowerCase();
-	                    var value = filterObj[key] ? filterObj[key].toLowerCase() : null;
-
-	                    if (filterObj[key]) {
-	                        if (obj[keys[i]].toLowerCase().indexOf(value) === -1) {
-
-	                            return false;
-	                        }
-	                    }
-	                }
-
-	                return true;
-	            });
-	        }
-	    }]);
-
-	    return FilterUtils;
-	}();
-
-	exports.default = new FilterUtils();
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "filterUtils.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-
-/***/ },
-/* 242 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.setFilter = setFilter;
-	exports.doLocalFilter = doLocalFilter;
-	exports.doRemoteFilter = doRemoteFilter;
-	exports.setFilterMenuValues = setFilterMenuValues;
-	exports.clearFilterRemote = clearFilterRemote;
-	exports.clearFilterLocal = clearFilterLocal;
-	exports.showFilterMenu = showFilterMenu;
-
-	var _ActionTypes = __webpack_require__(209);
-
-	var _Request = __webpack_require__(213);
-
-	var _Request2 = _interopRequireDefault(_Request);
-
-	var _LoaderActions = __webpack_require__(211);
-
-	var _GridActions = __webpack_require__(210);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function setFilter(_ref) {
-	    var value = _ref.value;
-	    var stateKey = _ref.stateKey;
-
-
-	    var metaData = {
-	        filterMenuShown: false,
-	        filterMenuValues: {},
-	        filterValue: ''
-	    };
-
-	    if (value || value.length > 0) {
-	        return { type: _ActionTypes.SET_FILTER_VALUE, value: value, stateKey: stateKey };
-	    }
-
-	    return { type: _ActionTypes.SHOW_FILTER_MENU, metaData: metaData, stateKey: stateKey };
-	}
-
-	function doLocalFilter(_ref2) {
-	    var data = _ref2.data;
-	    var stateKey = _ref2.stateKey;
-
-	    return { type: _ActionTypes.FILTER_DATA, data: data, stateKey: stateKey };
-	}
-
-	function doRemoteFilter(_ref3) {
-	    var filterParams = _ref3.filterParams;
-	    var pageIndex = _ref3.pageIndex;
-	    var pageSize = _ref3.pageSize;
-	    var dataSource = _ref3.dataSource;
-	    var stateKey = _ref3.stateKey;
-
-
-	    return function (dispatch) {
-
-	        dispatch((0, _LoaderActions.setLoaderState)({ state: true, stateKey: stateKey }));
-
-	        return _Request2.default.api({
-	            route: dataSource,
-	            method: 'POST',
-	            data: {
-	                pageIndex: pageIndex,
-	                pageSize: pageSize,
-	                filterParams: filterParams
-	            }
-	        }).then(function (response) {
-
-	            if (response && response.data) {
-
-	                dispatch({
-	                    type: _ActionTypes.SET_DATA,
-	                    data: response.data,
-	                    total: response.total,
-	                    currentRecords: response.data,
-	                    success: true
-	                });
-	            } else {
-	                dispatch({
-	                    type: _ActionTypes.ERROR_OCCURRED,
-	                    error: 'Unable to Retrieve Grid Data',
-	                    errorOccurred: true
-	                });
-	            }
-
-	            dispatch((0, _LoaderActions.setLoaderState)({ state: false, stateKey: stateKey }));
-	        });
-	    };
-	}
-
-	function setFilterMenuValues(_ref4) {
-	    var filter = _ref4.filter;
-	    var stateKey = _ref4.stateKey;
-
-	    return { type: _ActionTypes.SET_FILTER_MENU_VALUES, filter: filter, stateKey: stateKey };
-	}
-
-	function clearFilterRemote(_ref5) {
-	    var dataSource = _ref5.dataSource;
-	    var stateKey = _ref5.stateKey;
-
-	    return (0, _GridActions.getAsyncData)({ dataSource: dataSource, stateKey: stateKey });
-	}
-
-	function clearFilterLocal(_ref6) {
-	    var stateKey = _ref6.stateKey;
-
-	    return { type: _ActionTypes.CLEAR_FILTER_LOCAL, stateKey: stateKey };
-	}
-
-	function showFilterMenu(_ref7) {
-	    var value = _ref7.value;
-	    var removeFilters = _ref7.removeFilters;
-	    var stateKey = _ref7.stateKey;
-
-	    var isShown = !value;
-
-	    var metaData = {
-	        filterMenuShown: isShown
-	    };
-
-	    if (removeFilters) {
-	        metaData.filterMenuValues = {};
-	    }
-
-	    return { type: _ActionTypes.SHOW_FILTER_MENU, metaData: metaData, stateKey: stateKey };
-	}
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "FilterActions.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-
-/***/ },
-/* 243 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.handleDynamicInputChange = exports.Input = undefined;
-
-	var _react = __webpack_require__(149);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _prefix = __webpack_require__(204);
-
-	var _GridConstants = __webpack_require__(205);
-
-	var _keyGenerator = __webpack_require__(207);
-
-	var _FilterActions = __webpack_require__(242);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-	var Input = exports.Input = function Input(_ref) {
-	    var filter = _ref.filter;
-	    var field = _ref.field;
-	    var stateKey = _ref.stateKey;
-	    var store = _ref.store;
-
-
-	    console.log(stateKey);
-
-	    var value = filter && filter.filterMenuValues && filter.filterMenuValues[field.name] ? filter.filterMenuValues[field.name] : null;
-
-	    var containerProps = {
-	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.FILTER_CONTAINER.MENU.FIELD.CONTAINER),
-	        key: (0, _keyGenerator.keyFromObject)(field, ['container'])
-	    };
-
-	    var inputProps = {
-	        type: field.type,
-	        key: (0, _keyGenerator.keyFromObject)(field),
-	        placeholder: field.placeholder,
-	        name: field.name,
-	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.FILTER_CONTAINER.MENU.FIELD.INPUT),
-	        onChange: handleDynamicInputChange.bind(undefined, filter, stateKey, store),
-	        value: value
-	    };
-
-	    var labelProps = {
-	        key: (0, _keyGenerator.keyFromObject)(inputProps),
-	        text: field.label,
-	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.FILTER_CONTAINER.MENU.FIELD.LABEL)
-	    };
-
-	    return _react2.default.createElement(
-	        'span',
-	        containerProps,
-	        _react2.default.createElement(
-	            'label',
-	            labelProps,
-	            labelProps.text
-	        ),
-	        _react2.default.createElement('input', inputProps)
-	    );
-	};
-
-	Input.propTypes = {
-	    field: _react.PropTypes.object,
-	    filter: _react.PropTypes.object,
-	    store: _react.PropTypes.object
-	};
-
-	Input.defaultProps = {};
-
-	var handleDynamicInputChange = exports.handleDynamicInputChange = function handleDynamicInputChange(filter, stateKey, store, reactEvent) {
-
-	    var name = reactEvent.target.name;
-	    var value = reactEvent.target.value;
-	    var existingFilter = filter && filter.filterMenuValues ? filter.filterMenuValues : {};
-	    var newFilterValues = Object.assign(existingFilter, _defineProperty({}, name, value));
-
-	    if (!name) {
-	        console.warn('All registered inputs require a name property for dynamic filtering!');
-	        return false;
-	    }
-
-	    store.dispatch((0, _FilterActions.setFilterMenuValues)({ filter: newFilterValues, stateKey: stateKey }));
-	};
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Input.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-
-/***/ },
-/* 244 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.setFilterValue = exports.handleKeyUp = exports.Input = undefined;
-
-	var _react = __webpack_require__(149);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _prefix = __webpack_require__(204);
-
-	var _GridConstants = __webpack_require__(205);
-
-	var _filterUtils = __webpack_require__(241);
-
-	var _filterUtils2 = _interopRequireDefault(_filterUtils);
-
-	var _FilterActions = __webpack_require__(242);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var Input = exports.Input = function Input(_ref) {
-	    var dataSource = _ref.dataSource;
-	    var method = _ref.method;
-	    var placeHolderText = _ref.placeHolderText;
-	    var inputValue = _ref.inputValue;
-	    var plugins = _ref.plugins;
-	    var pager = _ref.pager;
-	    var pageSize = _ref.pageSize;
-	    var store = _ref.store;
-
-
-	    var inputProps = {
-	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.FILTER_CONTAINER.INPUT),
-	        placeholder: placeHolderText,
-	        onChange: setFilterValue.bind(undefined, store),
-	        onKeyUp: handleKeyUp.bind(undefined, inputValue, method, dataSource, plugins, pager, pageSize, store),
-	        value: inputValue
-	    };
-
-	    return _react2.default.createElement('input', inputProps);
-	};
-
-	var handleKeyUp = exports.handleKeyUp = function handleKeyUp(value, method, dataSource, plugins, pager, pageSize, store, reactEvent) {
-
-	    var filterSource = plugins.FILTER_CONTAINER;
-
-	    var pageIndex = pager ? pager.pageIndex : 0;
-
-	    if (reactEvent.which !== _GridConstants.KEYBOARD_MAP.ENTER) {
-	        return false;
-	    }
-
-	    if (method === _GridConstants.FILTER_METHODS.LOCAL) {
-	        store.dispatch((0, _FilterActions.doLocalFilter)(_filterUtils2.default.byKeyword(value, dataSource)));
-	    } else if (method === _GridConstants.FILTER_METHODS.REMOTE) {
-	        store.dispatch((0, _FilterActions.doRemoteFilter)({
-	            keyword: value
-	        }, pageIndex, pageSize, filterSource));
-	    } else {
-	        console.warn('The filter method has not been created!');
-	    }
-	};
-
-	var setFilterValue = exports.setFilterValue = function setFilterValue(store, reactEvent) {
-
-	    var value = reactEvent.target.value;
-
-	    store.dispatch((0, _FilterActions.setFilter)(value));
-	};
-
-	Input.propTypes = {
-	    className: _react.PropTypes.string,
-	    placeholder: _react.PropTypes.string,
-	    value: _react.PropTypes.any
-	};
-
-	Input.defaultProps = {};
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Input.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-
-/***/ },
-/* 245 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.SearchButton = undefined;
-
-	var _react = __webpack_require__(149);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _prefix = __webpack_require__(204);
-
-	var _GridConstants = __webpack_require__(205);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var SearchButton = exports.SearchButton = function SearchButton() {
-
-	    var buttonProps = {
-	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.FILTER_CONTAINER.SEARCH_BUTTON)
-	    };
-
-	    return _react2.default.createElement('i', buttonProps);
-	};
-
-	SearchButton.propTypes = {};
-
-	SearchButton.defaultProps = {};
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "SearchButton.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "EmptyCell.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
 /* 246 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
 
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	exports.clearFilter = exports.ClearButton = undefined;
+	exports.equalProps = undefined;
+	exports.shouldGridUpdate = shouldGridUpdate;
+	exports.shouldRowUpdate = shouldRowUpdate;
 
-	var _react = __webpack_require__(149);
+	var _immutable = __webpack_require__(247);
 
-	var _react2 = _interopRequireDefault(_react);
+	var _deepEqual = __webpack_require__(248);
 
-	var _prefix = __webpack_require__(204);
+	var _deepEqual2 = _interopRequireDefault(_deepEqual);
 
-	var _GridConstants = __webpack_require__(205);
+	var _keyGenerator = __webpack_require__(222);
 
-	var _FilterActions = __webpack_require__(242);
+	var _lastUpdate = __webpack_require__(251);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var ClearButton = exports.ClearButton = function ClearButton(_ref) {
-	    var dataUri = _ref.dataUri;
-	    var method = _ref.method;
-	    var stateKey = _ref.stateKey;
-	    var store = _ref.store;
+	function shouldGridUpdate(nextProps) {
+	    var result = true;
+
+	    var _props = this.props;
+	    var reducerKeys = _props.reducerKeys;
+	    var stateKey = _props.stateKey;
+	    var store = _props.store;
 
 
-	    var buttonProps = {
-	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.FILTER_CONTAINER.CLEAR_BUTTON),
-	        onClick: clearFilter.bind(undefined, dataUri, method, store)
-	    };
+	    var nextUpdate = (0, _lastUpdate.getLastUpdate)(store, stateKey, reducerKeys);
 
-	    return _react2.default.createElement('i', buttonProps);
-	};
+	    result = !(0, _deepEqual2.default)(nextUpdate, this._lastUpdate) || !equalProps(nextProps, this._lastProps);
 
-	var clearFilter = exports.clearFilter = function clearFilter(dataSource, method, stateKey, store) {
+	    this._lastUpdate = nextUpdate;
+	    this._lastProps = nextProps;
 
-	    if (method === _GridConstants.FILTER_METHODS.LOCAL) {
-	        store.dispatch((0, _FilterActions.clearFilterLocal)({ stateKey: stateKey }));
-	    } else if (method === _GridConstants.FILTER_METHODS.REMOTE) {
-	        store.dispatch((0, _FilterActions.clearFilterRemote)({ dataSource: dataSource, stateKey: stateKey }));
+	    return result;
+	}
+
+	function shouldRowUpdate(nextProps) {
+	    var result = true;
+	    var _nextProps = nextProps;
+	    var columns = _nextProps.columns;
+	    var editorState = _nextProps.editorState;
+	    var menuState = _nextProps.menuState;
+	    var row = _nextProps.row;
+	    var index = _nextProps.index;
+	    var selectedRows = _nextProps.selectedRows;
+
+	    // create id for row a single time
+
+	    this.id = this.id || (0, _keyGenerator.keyGenerator)('row', index);
+
+	    // update if selection change
+	    var isSelected = Boolean(selectedRows && selectedRows[this.id]);
+
+	    // update if menu is shown or hidden
+	    var isMenuShown = Boolean(menuState && menuState[this.id]);
+
+	    // update if editor state changes for only this row
+	    var isEdited = Boolean(editorState && editorState.row && editorState.row.rowIndex === index);
+
+	    // if row is currently being edited, cache the last value
+	    if (isEdited) {
+	        this._previousEditorState = editorState;
 	    }
 
-	    store.dispatch((0, _FilterActions.setFilter)({ filter: '', stateKey: stateKey }));
+	    nextProps = (0, _immutable.fromJS)({
+	        columns: columns,
+	        isSelected: isSelected,
+	        isMenuShown: isMenuShown,
+	        index: index,
+	        row: row,
+	        isEdited: isEdited,
+	        rowValuesUpdated: this._previousEditorState
+	    });
+
+	    // if this is the first pass, no previous values have been
+	    // cached, thusly just return true and create _lastProps
+	    if (!this._lastProps) {
+	        this._lastProps = nextProps;
+	        return true;
+	    }
+
+	    result = !(0, _immutable.is)(nextProps, this._lastProps);
+
+	    this._lastProps = nextProps;
+
+	    return result;
+	}
+
+	var equalProps = exports.equalProps = function equalProps() {
+	    var props = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+	    var newProps = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+
+	    return props.height === newProps.height && (0, _deepEqual2.default)(props.classNames, newProps.classNames) && (0, _deepEqual2.default)(props.events, newProps.events);
 	};
 
-	ClearButton.propTypes = {};
-
-	ClearButton.defaultProps = {};
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "ClearButton.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "shouldComponentUpdate.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
 /* 247 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.handleFilterMenuButtonClick = exports.FilterButton = undefined;
-
-	var _react = __webpack_require__(149);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _prefix = __webpack_require__(204);
-
-	var _GridConstants = __webpack_require__(205);
-
-	var _FilterActions = __webpack_require__(242);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var FilterButton = exports.FilterButton = function FilterButton(_ref) {
-	    var filter = _ref.filter;
-	    var filterMenuShown = _ref.filterMenuShown;
-	    var store = _ref.store;
-	    var stateKey = _ref.stateKey;
-
-
-	    var buttonProps = {
-	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.FILTER_CONTAINER.MENU_BUTTON, filterMenuShown ? _GridConstants.CLASS_NAMES.ACTIVE_CLASS : ''),
-	        onClick: handleFilterMenuButtonClick.bind(undefined, filter, stateKey, store)
-	    };
-
-	    return _react2.default.createElement('i', buttonProps);
-	};
-
-	var handleFilterMenuButtonClick = exports.handleFilterMenuButtonClick = function handleFilterMenuButtonClick(filter, stateKey, store) {
-	    var shown = filter ? filter.filterMenuShown : false;
-	    store.dispatch((0, _FilterActions.showFilterMenu)({ value: shown, stateKey: stateKey }));
-	};
-
-	FilterButton.propTypes = {
-	    filter: _react.PropTypes.object,
-	    filterMenuShown: _react.PropTypes.bool,
-	    store: _react.PropTypes.object
-	};
-
-	FilterButton.defaultProps = {};
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "FilterButton.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-
-/***/ },
-/* 248 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.LoadingBar = undefined;
-
-	var _react = __webpack_require__(149);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _reactRedux = __webpack_require__(193);
-
-	var _prefix = __webpack_require__(204);
-
-	var _stateGetter = __webpack_require__(216);
-
-	var _GridConstants = __webpack_require__(205);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var LoadingBar = exports.LoadingBar = function LoadingBar(_ref) {
-	    var isLoading = _ref.isLoading;
-	    var plugins = _ref.plugins;
-
-
-	    var showLoader = plugins && plugins.LOADER && plugins.LOADER.enabled && isLoading;
-
-	    var loadingBarProps = {
-	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.LOADING_BAR, showLoader ? 'active' : '')
-	    };
-
-	    return _react2.default.createElement('div', loadingBarProps);
-	};
-
-	LoadingBar.propTypes = {
-	    isLoading: _react.PropTypes.bool,
-	    plugins: _react.PropTypes.object,
-	    store: _react.PropTypes.object
-	};
-
-	LoadingBar.defaultProps = {};
-
-	function mapStateToProps(state, props) {
-	    return {
-	        isLoading: (0, _stateGetter.stateGetter)(state, props, 'loader', props.stateKey)
-	    };
-	}
-
-	exports.default = (0, _reactRedux.connect)(mapStateToProps)(LoadingBar);
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "LoadingBar.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-
-/***/ },
-/* 249 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _react = __webpack_require__(149);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _ActionColumn = __webpack_require__(250);
-
-	var _ActionColumn2 = _interopRequireDefault(_ActionColumn);
-
-	var _GridConstants = __webpack_require__(205);
-
-	var _keyGenerator = __webpack_require__(207);
-
-	var _camelize = __webpack_require__(256);
-
-	var _GridActions = __webpack_require__(210);
-
-	var _sorter = __webpack_require__(257);
-
-	var _sorter2 = _interopRequireDefault(_sorter);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	var ColumnManager = function () {
-	    function ColumnManager() {
-	        _classCallCheck(this, ColumnManager);
-	    }
-
-	    _createClass(ColumnManager, [{
-	        key: 'init',
-	        value: function init(_ref) {
-	            var plugins = _ref.plugins;
-	            var store = _ref.store;
-	            var events = _ref.events;
-	            var selModel = _ref.selModel;
-	            var editor = _ref.editor;
-	            var columns = _ref.columns;
-	            var dataSource = _ref.dataSource;
-
-
-	            var defaults = {
-	                defaultColumnWidth: 100 / columns.length + '%',
-	                dataSource: dataSource,
-	                minColumnWidth: 10,
-	                moveable: false,
-	                resizable: false,
-	                headerActionItemBuilder: null,
-	                sortable: {
-	                    enabled: true,
-	                    method: _GridConstants.SORT_METHODS.LOCAL,
-	                    sortingSource: plugins && plugins.COLUMN_MANAGER && plugins.COLUMN_MANAGER.sortable && plugins.COLUMN_MANAGER.sortable.sortingSource ? plugins.COLUMN_MANAGER.sortable.sortingSource : ''
-	                },
-
-	                /**
-	                    @private properties used by components
-	                        if properties are not available
-	                        i wouldn't remove these, but the
-	                        values can be flipped
-	                **/
-	                defaultResizable: false,
-	                defaultSortable: true
-	            };
-
-	            var config = plugins && plugins.COLUMN_MANAGER ? Object.assign(defaults, plugins.COLUMN_MANAGER) : defaults;
-
-	            this.plugins = plugins;
-	            this.store = store;
-	            this.sorter = _sorter2.default;
-	            this.events = events;
-	            this.selModel = selModel;
-	            this.editor = editor;
-	            this.columns = columns;
-	            this.config = config;
-	        }
-	    }, {
-	        key: 'doSort',
-	        value: function doSort(_ref2) {
-	            var method = _ref2.method;
-	            var column = _ref2.column;
-	            var direction = _ref2.direction;
-	            var dataSource = _ref2.dataSource;
-	            var pagerState = _ref2.pagerState;
-	            var stateKey = _ref2.stateKey;
-
-
-	            var propName = column.dataIndex || (0, _camelize.camelize)(column.name);
-
-	            var sortParams = {
-	                sort: {
-	                    property: propName,
-	                    direction: direction
-	                }
-	            };
-
-	            var pageIndex = pagerState && pagerState.pageIndex ? pagerState.pageIndex : 0;
-
-	            var pageSize = pagerState && pagerState.pageSize ? pagerState.pageSize : _GridConstants.DEFAULT_PAGE_SIZE;
-
-	            if (method === _GridConstants.SORT_METHODS.LOCAL) {
-	                this.store.dispatch((0, _GridActions.doLocalSort)({
-	                    data: this.sorter.sortBy(column.name, direction, dataSource),
-	                    stateKey: stateKey
-	                }));
-	            } else {
-	                this.store.dispatch((0, _GridActions.doRemoteSort)({
-	                    dataSource: this.config.sortable.sortingSource,
-	                    pageIndex: pageIndex,
-	                    pageSize: pageSize,
-	                    sortParams: sortParams,
-	                    stateKey: stateKey
-	                }));
-	            }
-	        }
-	    }, {
-	        key: 'addActionColumn',
-	        value: function addActionColumn(_ref3) {
-	            var cells = _ref3.cells;
-	            var type = _ref3.type;
-	            var id = _ref3.id;
-	            var reducerKeys = _ref3.reducerKeys;
-	            var rowData = _ref3.rowData;
-	            var rowIndex = _ref3.rowIndex;
-	            var stateKey = _ref3.stateKey;
-	            var GRID_ACTIONS = this.plugins.GRID_ACTIONS;
-
-	            var cellsCopy = cells;
-	            var actionProps = {
-	                actions: GRID_ACTIONS,
-	                store: this.store,
-	                type: type,
-	                columns: this.columns,
-	                rowId: id,
-	                rowData: rowData,
-	                rowIndex: rowIndex,
-	                editor: this.editor,
-	                reducerKeys: reducerKeys,
-	                selModel: this.selModel,
-	                stateKey: stateKey,
-	                headerActionItemBuilder: this.config.headerActionItemBuilder,
-	                key: (0, _keyGenerator.keyFromObject)(cells, ['row', 'actionhandler'])
-	            };
-
-	            if (GRID_ACTIONS) {
-	                cells.push(_react2.default.createElement(_ActionColumn2.default, actionProps));
-	            }
-
-	            return cellsCopy;
-	        }
-	    }]);
-
-	    return ColumnManager;
-	}();
-
-	exports.default = ColumnManager;
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "ColumnManager.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-
-/***/ },
-/* 250 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.handleActionClick = exports.handleHideMenu = exports.getColumn = exports.addKeysToActions = exports.getHeader = exports.ActionColumn = undefined;
-
-	var _react = __webpack_require__(149);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _Menu = __webpack_require__(251);
-
-	var _MenuActions = __webpack_require__(255);
-
-	var _reactRedux = __webpack_require__(193);
-
-	var _prefix = __webpack_require__(204);
-
-	var _keyGenerator = __webpack_require__(207);
-
-	var _elementContains = __webpack_require__(225);
-
-	var _stateGetter = __webpack_require__(216);
-
-	var _GridConstants = __webpack_require__(205);
-
-	var _GridActions = __webpack_require__(210);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var ActionColumn = exports.ActionColumn = function ActionColumn(_ref) {
-	    var actions = _ref.actions;
-	    var columns = _ref.columns;
-	    var editor = _ref.editor;
-	    var headerActionItemBuilder = _ref.headerActionItemBuilder;
-	    var iconCls = _ref.iconCls;
-	    var menuState = _ref.menuState;
-	    var rowId = _ref.rowId;
-	    var rowData = _ref.rowData;
-	    var store = _ref.store;
-	    var stateKey = _ref.stateKey;
-	    var type = _ref.type;
-	    var rowIndex = _ref.rowIndex;
-	    var reducerKeys = _ref.reducerKeys;
-
-
-	    var menuShown = menuState && menuState[rowId] ? menuState[rowId] : false;
-
-	    var containerProps = {
-	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.GRID_ACTIONS.CONTAINER, menuShown ? _GridConstants.CLASS_NAMES.GRID_ACTIONS.SELECTED_CLASS : ''),
-	        onClick: handleActionClick.bind(undefined, type, actions, rowId, stateKey, store)
-	    };
-
-	    var className = menuShown ? (0, _prefix.prefix)(actions.iconCls, 'active') || (0, _prefix.prefix)(iconCls, 'active') : (0, _prefix.prefix)(actions.iconCls) || (0, _prefix.prefix)(iconCls);
-
-	    var iconProps = {
-	        className: className
-	    };
-
-	    return type === 'header' ? getHeader(columns, containerProps, iconProps, menuShown, columns, store, editor, reducerKeys, rowId, rowData, rowIndex, stateKey, headerActionItemBuilder) : getColumn(columns, containerProps, iconProps, menuShown, actions, store, editor, reducerKeys, rowId, rowData, rowIndex, stateKey);
-	};
-
-	ActionColumn.propTypes = {
-	    actions: _react.PropTypes.object,
-	    columns: _react.PropTypes.array,
-	    editor: _react.PropTypes.object,
-	    iconCls: _react.PropTypes.string,
-	    menuState: _react.PropTypes.object,
-	    rowId: _react.PropTypes.string,
-	    store: _react.PropTypes.object,
-	    type: _react.PropTypes.string
-	};
-
-	ActionColumn.defaultProps = {
-	    iconCls: 'action-icon'
-	};
-
-	var removeableEvent = void 0;
-
-	var getHeader = exports.getHeader = function getHeader(cols, containerProps, iconProps, menuShown, columns, store, editor, reducerKeys, rowId, rowData, rowIndex, stateKey, headerActionItemBuilder) {
-
-	    var actions = void 0;
-
-	    if (!headerActionItemBuilder) {
-
-	        actions = columns.map(function (col) {
-
-	            var isChecked = col.hidden !== undefined ? !col.hidden : true;
-
-	            return {
-	                text: col.name,
-	                menuItemType: 'checkbox',
-	                checked: isChecked,
-	                onCheckboxChange: function onCheckboxChange() {},
-	                hideable: col.hideable,
-	                dismissOnClick: false,
-	                key: (0, _keyGenerator.keyFromObject)(col),
-	                EVENT_HANDLER: function EVENT_HANDLER() {
-	                    if (col.hideable === undefined || col.hideable) {
-	                        store.dispatch((0, _GridActions.setColumnVisibility)({
-	                            columns: columns,
-	                            column: col,
-	                            isHidden: col.hidden,
-	                            stateKey: stateKey
-	                        }));
-	                    }
-	                }
-	            };
-	        });
-	    } else {
-	        actions = columns.map(headerActionItemBuilder.bind(null, {
-	            store: store
-	        }));
-	    }
-
-	    var menuItems = {
-	        menu: actions
-	    };
-
-	    var menu = menuShown ? _react2.default.createElement(_Menu.Menu, { columns: cols,
-	        actions: menuItems,
-	        type: 'header',
-	        store: store,
-	        editor: editor,
-	        reducerKeys: reducerKeys,
-	        rowId: rowId,
-	        stateKey: stateKey }) : null;
-
-	    return _react2.default.createElement(
-	        'th',
-	        containerProps,
-	        _react2.default.createElement(
-	            'span',
-	            iconProps,
-	            menu
-	        )
-	    );
-	};
-
-	var addKeysToActions = exports.addKeysToActions = function addKeysToActions(action) {
-
-	    if (action && action.key) {
-	        return action;
-	    } else {
-	        action.key = (0, _keyGenerator.keyFromObject)(action);
-	        return action;
-	    }
-	};
-
-	var getColumn = exports.getColumn = function getColumn(cols, containerProps, iconProps, menuShown, actions, store, editor, reducerKeys, rowId, rowData, rowIndex, stateKey) {
-
-	    var menu = menuShown ? _react2.default.createElement(_Menu.Menu, {
-	        actions: addKeysToActions(actions),
-	        type: null,
-	        rowData: rowData,
-	        store: store,
-	        editor: editor,
-	        reducerKeys: reducerKeys,
-	        rowId: rowId,
-	        columns: cols,
-	        stateKey: stateKey,
-	        rowIndex: rowIndex }) : null;
-
-	    if (actions && actions.menu && actions.menu.length === 0) {
-	        iconProps.className += ' ' + (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.GRID_ACTIONS.NO_ACTIONS);
-	    }
-
-	    return _react2.default.createElement(
-	        'td',
-	        containerProps,
-	        _react2.default.createElement(
-	            'span',
-	            iconProps,
-	            menu
-	        )
-	    );
-	};
-
-	var handleHideMenu = exports.handleHideMenu = function handleHideMenu(stateKey, store, e) {
-
-	    var isHeaderMenu = (0, _elementContains.elementContains)(e.target, (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.HEADER));
-
-	    if (isHeaderMenu) {
-	        return false;
-	    }
-
-	    document.body.removeEventListener('click', removeableEvent);
-
-	    if (e.target.classList.contains('react-grid-action-icon')) {
-	        return false;
-	    }
-
-	    setTimeout(function () {
-	        store.dispatch((0, _MenuActions.hideMenu)({ stateKey: stateKey }));
-	    }, 0);
-	};
-
-	var handleActionClick = exports.handleActionClick = function handleActionClick(type, actions, id, stateKey, store, reactEvent) {
-
-	    reactEvent.stopPropagation();
-	    store.dispatch((0, _MenuActions.showMenu)({ id: id, stateKey: stateKey }));
-
-	    removeableEvent = handleHideMenu.bind(null, stateKey, store);
-
-	    document.body.addEventListener('click', removeableEvent);
-	};
-
-	function mapStateToProps(state, props) {
-	    return {
-	        menuState: (0, _stateGetter.stateGetter)(state, props, 'menu', props.stateKey),
-	        gridState: (0, _stateGetter.stateGetter)(state, props, 'grid', props.stateKey)
-	    };
-	}
-
-	exports.default = (0, _reactRedux.connect)(mapStateToProps)(ActionColumn);
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "ActionColumn.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-
-/***/ },
-/* 251 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.getEditAction = exports.Menu = undefined;
-
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-	var _react = __webpack_require__(149);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _Menu = __webpack_require__(252);
-
-	var _handleEditClick = __webpack_require__(224);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var Menu = exports.Menu = function Menu(_ref) {
-	    var actions = _ref.actions;
-	    var columns = _ref.columns;
-	    var type = _ref.type;
-	    var store = _ref.store;
-	    var editor = _ref.editor;
-	    var reducerKeys = _ref.reducerKeys;
-	    var rowId = _ref.rowId;
-	    var rowData = _ref.rowData;
-	    var rowIndex = _ref.rowIndex;
-	    var stateKey = _ref.stateKey;
-
-
-	    if (editor.config.enabled && type !== 'header') {
-	        actions.menu.unshift(getEditAction(editor, store, rowId, rowData, rowIndex, columns, stateKey));
-	    }
-
-	    var menuProps = _extends({}, actions, {
-	        metaData: {
-	            rowId: rowId,
-	            rowData: rowData,
-	            rowIndex: rowIndex
-	        },
-	        reducerKeys: reducerKeys,
-	        stateKey: stateKey,
-	        store: store
-	    });
-
-	    return _react2.default.createElement(_Menu.ConnectedMenu, menuProps);
-	};
-
-	var getEditAction = exports.getEditAction = function getEditAction(editor, store, rowId, rowData, rowIndex, columns, stateKey) {
-	    return {
-	        text: 'Edit',
-	        EVENT_HANDLER: _handleEditClick.handleEditClick.bind(undefined, editor, store, rowId, rowData, rowIndex, columns, stateKey),
-	        key: 'grid-edit-action'
-	    };
-	};
-
-	Menu.propTypes = {
-	    actions: _react.PropTypes.object,
-	    columns: _react.PropTypes.arrayOf(_react.PropTypes.object),
-	    editor: _react.PropTypes.object,
-	    reducerKeys: _react.PropTypes.object,
-	    rowId: _react.PropTypes.string,
-	    store: _react.PropTypes.object,
-	    type: _react.PropTypes.string
-	};
-
-	Menu.defaultProps = {};
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Menu.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-
-/***/ },
-/* 252 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.ConnectedMenu = exports.Menu = exports.getUniqueItems = undefined;
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _react = __webpack_require__(149);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _reactRedux = __webpack_require__(193);
-
-	var _MenuItem = __webpack_require__(253);
-
-	var _keyGenerator = __webpack_require__(207);
-
-	var _prefix = __webpack_require__(204);
-
-	var _GridConstants = __webpack_require__(205);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var Menu = function (_Component) {
-	    _inherits(Menu, _Component);
-
-	    function Menu() {
-	        _classCallCheck(this, Menu);
-
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(Menu).apply(this, arguments));
-	    }
-
-	    _createClass(Menu, [{
-	        key: 'getMenuItem',
-	        value: function getMenuItem(item) {
-	            var _props = this.props;
-	            var metaData = _props.metaData;
-	            var stateKey = _props.stateKey;
-	            var store = _props.store;
-
-
-	            if (!item.$$typeof) {
-	                var menuItemProps = {
-	                    data: item,
-	                    metaData: metaData,
-	                    type: item.type,
-	                    key: (0, _keyGenerator.keyFromObject)(item),
-	                    stateKey: stateKey,
-	                    store: store
-	                };
-
-	                return _react2.default.createElement(_MenuItem.MenuItem, menuItemProps);
-	            }
-	            return item;
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            var menu = this.props.menu;
-
-
-	            var menuProps = {
-	                className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.GRID_ACTIONS.MENU.CONTAINER)
-	            };
-
-	            var items = getUniqueItems(menu);
-
-	            var menuItems = items && items.length > 0 ? items.map(this.getMenuItem.bind(this)) : null;
-
-	            return _react2.default.createElement(
-	                'ul',
-	                menuProps,
-	                menuItems
-	            );
-	        }
-	    }]);
-
-	    return Menu;
-	}(_react.Component);
-
-	Menu.propTypes = {
-	    menu: _react2.default.PropTypes.array,
-	    metaData: _react2.default.PropTypes.object,
-	    stateKey: _react2.default.PropTypes.string,
-	    store: _react2.default.PropTypes.object
-	};
-	Menu.defaultProps = {
-	    metaData: {}
-	};
-	var getUniqueItems = exports.getUniqueItems = function getUniqueItems(items) {
-	    var keys = items.map(function (obj) {
-	        return obj.key;
-	    });
-	    var unique = items.filter(function (ob, i) {
-	        return keys.indexOf(ob.key) === i;
-	    });
-	    return unique;
-	};
-
-	function mapStateToProps() {
-	    return {};
-	}
-
-	var ConnectedMenu = (0, _reactRedux.connect)(mapStateToProps)(Menu);
-
-	exports.Menu = Menu;
-	exports.ConnectedMenu = ConnectedMenu;
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Menu.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-
-/***/ },
-/* 253 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.ConnectedMenuItem = exports.MenuItem = undefined;
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _react = __webpack_require__(149);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _prefix = __webpack_require__(204);
-
-	var _emptyFn = __webpack_require__(254);
-
-	var _GridConstants = __webpack_require__(205);
-
-	var _MenuActions = __webpack_require__(255);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var MenuItem = function (_Component) {
-	    _inherits(MenuItem, _Component);
-
-	    function MenuItem() {
-	        _classCallCheck(this, MenuItem);
-
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(MenuItem).apply(this, arguments));
-	    }
-
-	    _createClass(MenuItem, [{
-	        key: 'handleMenuItemClick',
-	        value: function handleMenuItemClick(data, metaData, stateKey, reactEvent) {
-	            if (reactEvent && reactEvent.stopPropagation) {
-	                reactEvent.stopPropagation();
-	            }
-
-	            var dismiss = data.dismissOnClick !== undefined ? data.dismissOnClick : true;
-
-	            var store = this.props.store;
-
-
-	            if (dismiss) {
-	                store.dispatch((0, _MenuActions.hideMenu)({ stateKey: stateKey }));
-	            }
-
-	            if (data.EVENT_HANDLER) {
-	                return data.EVENT_HANDLER({ data: data, metaData: metaData, reactEvent: reactEvent });
-	            }
-	        }
-	    }, {
-	        key: 'getCheckbox',
-	        value: function getCheckbox(data) {
-
-	            var readOnly = data.hideable !== undefined ? !data.hideable : false;
-
-	            var checkboxProps = {
-	                type: this.props.menuItemsTypes.checkbox,
-	                checked: data.checked,
-	                disabled: readOnly,
-	                onChange: data.onCheckboxChange || _emptyFn.emptyFn
-	            };
-
-	            return _react2.default.createElement('input', checkboxProps);
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            var _props = this.props;
-	            var data = _props.data;
-	            var metaData = _props.metaData;
-	            var menuItemsTypes = _props.menuItemsTypes;
-	            var stateKey = _props.stateKey;
-
-
-	            var menuItemProps = {
-	                className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.GRID_ACTIONS.MENU.ITEM),
-	                onClick: this.handleMenuItemClick.bind(this, data, metaData, stateKey)
-	            };
-
-	            var checkboxComponent = data.menuItemType === menuItemsTypes.checkbox ? this.getCheckbox(data) : null;
-
-	            return _react2.default.createElement(
-	                'li',
-	                menuItemProps,
-	                checkboxComponent,
-	                data.text
-	            );
-	        }
-	    }]);
-
-	    return MenuItem;
-	}(_react.Component);
-
-	MenuItem.propTypes = {
-	    data: _react2.default.PropTypes.object,
-	    menuItemsTypes: _react2.default.PropTypes.object,
-	    metaData: _react2.default.PropTypes.object,
-	    stateKey: _react2.default.PropTypes.string,
-	    store: _react2.default.PropTypes.object
-	};
-	MenuItem.defaultProps = {
-	    menuItemsTypes: {
-	        checkbox: 'checkbox'
-	    },
-	    metaData: {}
-	};
-
-
-	var ConnectedMenuItem = MenuItem;
-
-	exports.MenuItem = MenuItem;
-	exports.ConnectedMenuItem = ConnectedMenuItem;
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "MenuItem.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-
-/***/ },
-/* 254 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	var emptyFn = exports.emptyFn = function emptyFn() {};
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "emptyFn.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-
-/***/ },
-/* 255 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.showMenu = showMenu;
-	exports.hideMenu = hideMenu;
-
-	var _ActionTypes = __webpack_require__(209);
-
-	function showMenu(_ref) {
-	    var id = _ref.id;
-	    var stateKey = _ref.stateKey;
-
-	    return { type: _ActionTypes.SHOW_MENU, id: id, stateKey: stateKey };
-	}
-
-	function hideMenu(_ref2) {
-	    var id = _ref2.id;
-	    var stateKey = _ref2.stateKey;
-
-	    return { type: _ActionTypes.HIDE_MENU, id: id, stateKey: stateKey };
-	}
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "MenuActions.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-
-/***/ },
-/* 256 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	var camelize = exports.camelize = function camelize(str) {
-	    return str.replace(/(?:^\w|[A-Z]|\b\w)/g, function (letter, index) {
-	        return index === 0 ? letter.toLowerCase() : letter.toUpperCase();
-	    }).replace(/\s+/g, '');
-	};
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "camelize.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-
-/***/ },
-/* 257 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _GridConstants = __webpack_require__(205);
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	var Sorter = function () {
-	    function Sorter() {
-	        _classCallCheck(this, Sorter);
-	    }
-
-	    _createClass(Sorter, [{
-	        key: 'sortBy',
-	        value: function sortBy(name, direction, datasource) {
-	            return datasource.data.sort(function (a, b) {
-
-	                if (a[name] < b[name] && direction) {
-	                    return direction === _GridConstants.SORT_DIRECTIONS.ASCEND ? 1 : -1;
-	                } else if (a[name] > b[name]) {
-	                    return direction === _GridConstants.SORT_DIRECTIONS.ASCEND ? -1 : 1;
-	                }
-	            });
-	        }
-	    }]);
-
-	    return Sorter;
-	}();
-
-	exports.default = new Sorter();
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "sorter.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-
-/***/ },
-/* 258 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _react = __webpack_require__(149);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _keyGenerator = __webpack_require__(207);
-
-	var _ModelActions = __webpack_require__(237);
-
-	var _CheckBox = __webpack_require__(259);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	var Model = function () {
-	    function Model() {
-	        _classCallCheck(this, Model);
-	    }
-
-	    _createClass(Model, [{
-	        key: 'init',
-	        value: function init(plugins, stateKey, store, events) {
-
-	            var eventTypes = {
-	                singleclick: 'singleclick',
-	                doubleclick: 'doubleclick'
-	            };
-
-	            var modes = {
-	                single: 'single',
-	                multi: 'multi',
-	                checkboxSingle: 'checkbox-single',
-	                checkboxMulti: 'checkbox-multi'
-	            };
-
-	            var defaults = {
-	                mode: modes.single,
-	                enabled: true,
-	                editEvent: 'none',
-	                allowDeselect: true,
-	                activeCls: 'active',
-	                editCls: 'edit',
-	                selectionEvent: eventTypes.singleclick,
-	                store: store
-	            };
-
-	            var config = plugins && plugins.SELECTION_MODEL ? Object.assign(defaults, plugins.SELECTION_MODEL) : defaults;
-
-	            this.defaults = config;
-	            this.eventTypes = eventTypes;
-	            this.modes = modes;
-	            this.store = config.store;
-	            this.stateKey = stateKey;
-	            this.events = events;
-	        }
-	    }, {
-	        key: 'handleSelectionEvent',
-	        value: function handleSelectionEvent(selectionEvent) {
-
-	            if (this.events.HANDLE_BEFORE_SELECTION) {
-	                this.events.HANDLE_BEFORE_SELECTION(selectionEvent);
-	            }
-
-	            if (this.events.HANDLE_BEFORE_BULKACTION_SHOW) {
-	                this.events.HANDLE_BEFORE_BULKACTION_SHOW(selectionEvent);
-	            }
-
-	            this.store.dispatch((0, _ModelActions.setSelection)({
-	                id: selectionEvent.id,
-	                defaults: this.defaults,
-	                modes: this.modes,
-	                stateKey: this.stateKey
-	            }));
-
-	            if (this.events.HANDLE_AFTER_SELECTION) {
-	                this.events.HANDLE_AFTER_SELECTION(selectionEvent);
-	            }
-
-	            if (this.events.HANDLE_AFTER_BULKACTION_SHOW) {
-	                this.events.HANDLE_AFTER_BULKACTION_SHOW(selectionEvent);
-	            }
-	        }
-	    }, {
-	        key: 'updateCells',
-	        value: function updateCells(cells, rowId, type, reducerKeys, stateKey) {
-
-	            var cellsUpdate = cells;
-
-	            var checkBoxProps = {
-	                key: (0, _keyGenerator.keyFromObject)(rowId, ['checkbox-']),
-	                rowId: rowId,
-	                type: type,
-	                reducerKeys: reducerKeys,
-	                stateKey: stateKey,
-	                store: this.store
-	            };
-
-	            if (this.defaults.mode === this.modes.checkboxSingle || this.defaults.mode === this.modes.checkboxMulti) {
-	                cellsUpdate.unshift(_react2.default.createElement(_CheckBox.ConnectedCheckBox, checkBoxProps));
-	            }
-
-	            return cellsUpdate;
-	        }
-	    }]);
-
-	    return Model;
-	}();
-
-	exports.default = Model;
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Model.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-
-/***/ },
-/* 259 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.ConnectedCheckBox = exports.getColumn = exports.getHeader = exports.handleChange = exports.CheckBox = undefined;
-
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-	var _react = __webpack_require__(149);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _reactRedux = __webpack_require__(193);
-
-	var _prefix = __webpack_require__(204);
-
-	var _stateGetter = __webpack_require__(216);
-
-	var _GridConstants = __webpack_require__(205);
-
-	var _ModelActions = __webpack_require__(237);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var CheckBox = exports.CheckBox = function CheckBox(_ref) {
-	    var dataSource = _ref.dataSource;
-	    var rowId = _ref.rowId;
-	    var selectedRows = _ref.selectedRows;
-	    var store = _ref.store;
-	    var stateKey = _ref.stateKey;
-	    var type = _ref.type;
-
-
-	    var checkBoxContainerProps = {
-	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.SELECTION_MODEL.CHECKBOX_CONTAINER)
-	    };
-
-	    var checkBoxProps = {
-	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.SELECTION_MODEL.CHECKBOX),
-	        checked: selectedRows ? selectedRows[rowId] : false,
-	        type: 'checkbox',
-	        onChange: handleChange.bind(undefined, dataSource, store, type, stateKey)
-	    };
-
-	    return type === 'header' ? getHeader(checkBoxContainerProps, checkBoxProps) : getColumn(checkBoxContainerProps, checkBoxProps);
-	};
-
-	var handleChange = exports.handleChange = function handleChange(dataSource, store, type, stateKey, reactEvent) {
-	    var target = reactEvent.target;
-
-	    if (type === 'header') {
-	        if (target.checked) {
-	            store.dispatch((0, _ModelActions.selectAll)({ stateKey: stateKey, data: dataSource }));
-	        } else {
-	            store.dispatch((0, _ModelActions.deselectAll)({ stateKey: stateKey }));
-	        }
-	    }
-	};
-
-	var getHeader = exports.getHeader = function getHeader(checkBoxContainerProps, checkBoxProps) {
-
-	    return _react2.default.createElement(
-	        'th',
-	        checkBoxContainerProps,
-	        _react2.default.createElement('input', _extends({ type: 'checkbox' }, checkBoxProps))
-	    );
-	};
-
-	var getColumn = exports.getColumn = function getColumn(checkBoxContainerProps, checkBoxProps) {
-	    return _react2.default.createElement(
-	        'td',
-	        checkBoxContainerProps,
-	        _react2.default.createElement('input', _extends({ type: 'checkbox' }, checkBoxProps))
-	    );
-	};
-
-	CheckBox.propTypes = {
-	    dataSource: _react.PropTypes.object,
-	    rowId: _react.PropTypes.any,
-	    selectedRows: _react.PropTypes.object,
-	    store: _react.PropTypes.object,
-	    type: _react.PropTypes.string
-	};
-
-	CheckBox.defaultProps = {};
-
-	function mapStateToProps(state, props) {
-
-	    return {
-	        pager: (0, _stateGetter.stateGetter)(state, props, 'pager', props.stateKey),
-	        dataSource: (0, _stateGetter.stateGetter)(state, props, 'dataSource', props.stateKey),
-	        selectedRows: (0, _stateGetter.stateGetter)(state, props, 'selection', props.stateKey)
-	    };
-	}
-
-	var ConnectedCheckBox = (0, _reactRedux.connect)(mapStateToProps)(CheckBox);
-
-	exports.CheckBox = CheckBox;
-	exports.ConnectedCheckBox = ConnectedCheckBox;
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "CheckBox.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-
-/***/ },
-/* 260 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _react = __webpack_require__(149);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _Inline = __webpack_require__(261);
-
-	var _Inline2 = _interopRequireDefault(_Inline);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	var Manager = function () {
-	    function Manager() {
-	        _classCallCheck(this, Manager);
-	    }
-
-	    _createClass(Manager, [{
-	        key: 'init',
-	        value: function init(plugins, stateKey, store) {
-
-	            var defaults = {
-	                type: 'inline',
-	                enabled: false,
-	                focusOnEdit: true
-	            };
-
-	            var editModes = {
-	                inline: 'inline'
-	            };
-
-	            var config = plugins && plugins.EDITOR ? Object.assign(defaults, plugins.EDITOR) : defaults;
-
-	            this.stateKey = stateKey;
-	            this.config = config;
-	            this.editModes = editModes;
-	            this.store = store;
-	        }
-	    }, {
-	        key: 'getComponent',
-	        value: function getComponent(plugins, reducerKeys, store, events, selectionModel, editor, columns) {
-
-	            var editorProps = {
-	                columns: columns,
-	                config: this.config,
-	                reducerKeys: reducerKeys,
-	                store: store,
-	                stateKey: this.stateKey,
-	                events: events
-	            };
-
-	            if (!this.config.enabled) {
-	                return null;
-	            } else if (this.config.type === this.editModes.inline) {
-	                return _react2.default.createElement(_Inline2.default, editorProps);
-	            } else {
-	                return null;
-	            }
-	        }
-	    }]);
-
-	    return Manager;
-	}();
-
-	exports.default = Manager;
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Manager.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-
-/***/ },
-/* 261 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.isEditorShown = exports.focusFirstEditor = exports.Inline = undefined;
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _react = __webpack_require__(149);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _reactRedux = __webpack_require__(193);
-
-	var _Button = __webpack_require__(262);
-
-	var _prefix = __webpack_require__(204);
-
-	var _stateGetter = __webpack_require__(216);
-
-	var _GridConstants = __webpack_require__(205);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var Inline = exports.Inline = function (_Component) {
-	    _inherits(Inline, _Component);
-
-	    function Inline() {
-	        _classCallCheck(this, Inline);
-
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(Inline).apply(this, arguments));
-	    }
-
-	    _createClass(Inline, [{
-	        key: 'componentDidUpdate',
-	        value: function componentDidUpdate() {
-	            /*
-	            * lifecycle event used to focus on first available input
-	            */
-
-	            var _props = this.props;
-	            var config = _props.config;
-	            var editorState = _props.editorState;
-
-
-	            if (!config.focusOnEdit) {
-	                return false;
-	            }
-
-	            if (isEditorShown(editorState) && this.editedRow !== editorState.row.rowIndex) {
-	                this.editedRow = editorState.row.rowIndex;
-	                focusFirstEditor();
-	            } else if (!isEditorShown(editorState)) {
-	                this.editedRow = null;
-	            }
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            var _props2 = this.props;
-	            var BUTTON_TYPES = _props2.BUTTON_TYPES;
-	            var editorState = _props2.editorState;
-	            var events = _props2.events;
-	            var stateKey = _props2.stateKey;
-	            var store = _props2.store;
-
-
-	            var top = -100;
-
-	            if (isEditorShown(editorState)) {
-	                top = editorState.row.top;
-	            }
-
-	            var inlineEditorProps = {
-	                className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.EDITOR.INLINE.CONTAINER, editorState && editorState.row ? _GridConstants.CLASS_NAMES.EDITOR.INLINE.SHOWN : _GridConstants.CLASS_NAMES.EDITOR.INLINE.HIDDEN),
-	                style: {
-	                    top: top + 'px'
-	                }
-	            };
-
-	            var buttonContainerProps = {
-	                className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.EDITOR.INLINE.BUTTON_CONTAINER)
-	            };
-
-	            return _react2.default.createElement(
-	                'div',
-	                inlineEditorProps,
-	                _react2.default.createElement(
-	                    'span',
-	                    buttonContainerProps,
-	                    _react2.default.createElement(_Button.Button, { type: BUTTON_TYPES.SAVE, editorState: editorState, events: events, stateKey: stateKey, store: store }),
-	                    _react2.default.createElement(_Button.Button, { type: BUTTON_TYPES.CANCEL, editorState: editorState, events: events, stateKey: stateKey, store: store })
-	                )
-	            );
-	        }
-	    }]);
-
-	    return Inline;
-	}(_react.Component);
-
-	var focusFirstEditor = exports.focusFirstEditor = function focusFirstEditor() {
-	    var input = document.querySelector('.react-grid-edit .react-grid-editor-wrapper input:enabled');
-
-	    if (input && input.focus) {
-	        input.focus();
-	    }
-	};
-
-	var isEditorShown = exports.isEditorShown = function isEditorShown(editorState) {
-	    return editorState && editorState.row;
-	};
-
-	Inline.propTypes = {
-	    BUTTON_TYPES: _react.PropTypes.object,
-	    columns: _react.PropTypes.array,
-	    config: _react.PropTypes.object.isRequired,
-	    editorState: _react.PropTypes.object,
-	    events: _react.PropTypes.object,
-	    reducerKeys: _react.PropTypes.object,
-	    stateKey: _react.PropTypes.string,
-	    store: _react.PropTypes.object
-	};
-
-	Inline.defaultProps = {
-	    BUTTON_TYPES: {
-	        CANCEL: 'CANCEL',
-	        SAVE: 'SAVE'
-	    }
-	};
-
-	function mapStateToProps(state, props) {
-	    return {
-	        errorHandler: (0, _stateGetter.stateGetter)(state, props, 'errorhandler', props.stateKey),
-	        editorState: (0, _stateGetter.stateGetter)(state, props, 'editor', props.stateKey)
-	    };
-	}
-
-	exports.default = (0, _reactRedux.connect)(mapStateToProps)(Inline);
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Inline.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-
-/***/ },
-/* 262 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.onButtonClick = exports.Button = undefined;
-
-	var _react = __webpack_require__(149);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _prefix = __webpack_require__(204);
-
-	var _GridConstants = __webpack_require__(205);
-
-	var _EditorActions = __webpack_require__(212);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var Button = exports.Button = function Button(_ref) {
-	    var BUTTON_TYPES = _ref.BUTTON_TYPES;
-	    var saveText = _ref.saveText;
-	    var cancelText = _ref.cancelText;
-	    var editorState = _ref.editorState;
-	    var events = _ref.events;
-	    var stateKey = _ref.stateKey;
-	    var store = _ref.store;
-	    var type = _ref.type;
-
-
-	    var text = type === BUTTON_TYPES.SAVE ? saveText : cancelText;
-
-	    var buttonProps = {
-	        onClick: onButtonClick.bind(undefined, BUTTON_TYPES, editorState, events, type, stateKey, store),
-	        className: type === BUTTON_TYPES.SAVE ? (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.EDITOR.INLINE.SAVE_BUTTON) : (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.EDITOR.INLINE.CANCEL_BUTTON)
-	    };
-
-	    if (type === BUTTON_TYPES.SAVE && editorState && editorState.row && !editorState.row.valid) {
-	        buttonProps.disabled = true;
-	    }
-
-	    return _react2.default.createElement(
-	        'button',
-	        buttonProps,
-	        text
-	    );
-	};
-
-	Button.propTypes = {
-	    BUTTON_TYPES: _react.PropTypes.object,
-	    cancelText: _react.PropTypes.string,
-	    events: _react.PropTypes.object,
-	    saveText: _react.PropTypes.string,
-	    store: _react.PropTypes.object,
-	    type: _react.PropTypes.string
-	};
-
-	Button.defaultProps = {
-	    BUTTON_TYPES: {
-	        CANCEL: 'CANCEL',
-	        SAVE: 'SAVE'
-	    },
-	    cancelText: 'Cancel',
-	    saveText: 'Save'
-	};
-
-	var onButtonClick = exports.onButtonClick = function onButtonClick(BUTTON_TYPES, editorState, events, type, stateKey, store) {
-
-	    if (type === BUTTON_TYPES.CANCEL) {
-	        store.dispatch((0, _EditorActions.dismissEditor)({ stateKey: stateKey }));
-	    } else if (type === BUTTON_TYPES.SAVE) {
-
-	        store.dispatch((0, _EditorActions.saveRow)({
-	            values: editorState.row.values,
-	            rowIndex: editorState.row.rowIndex,
-	            stateKey: stateKey
-	        }));
-
-	        if (events.HANDLE_AFTER_INLINE_EDITOR_SAVE) {
-	            var values = editorState.row.values;
-
-	            events.HANDLE_AFTER_INLINE_EDITOR_SAVE({
-	                values: values, editorState: editorState
-	            });
-	        }
-
-	        store.dispatch((0, _EditorActions.dismissEditor)({ stateKey: stateKey }));
-	    }
-	};
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Button.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-
-/***/ },
-/* 263 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-
-	// load the styles
-	var content = __webpack_require__(264);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(271)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!./../../../css-loader/index.js!./../../../stylus-loader/index.js!./main.styl", function() {
-				var newContent = require("!!./../../../css-loader/index.js!./../../../stylus-loader/index.js!./main.styl");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
-/* 264 */
-/***/ function(module, exports, __webpack_require__) {
-
-	exports = module.exports = __webpack_require__(265)();
-	// imports
-
-
-	// module
-	exports.push([module.id, "@font-face {\n  font-family: 'Open Sans';\n  src: url(" + __webpack_require__(266) + ") format('');\n  font-weight: normarl;\n  font-style: normal;\n}\n@font-face {\n  font-family: 'FontAwesome';\n  src: url(" + __webpack_require__(267) + ") format('');\n  src: url(" + __webpack_require__(268) + "?#iefix&v=3.0.1) format('embedded-opentype');\n  src: url(" + __webpack_require__(269) + ") format('woff');\n  src: url(" + __webpack_require__(270) + ") format('truetype');\n  font-weight: normarl;\n  font-style: normal;\n}\n.react-grid-page-buttons {\n  background-color: #2e7d32;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  border-radius: 3px;\n  border: none;\n  color: #fff;\n  cursor: pointer;\n  font-family: 'Open Sans', sans-serif;\n  opacity: 1;\n}\n.react-grid-page-buttons:focus {\n  outline: none;\n}\n.react-grid-page-buttons:active {\n  opacity: 1;\n  background-color: #52bf57;\n}\n.react-grid-page-buttons:hover {\n  opacity: 0.6;\n}\n.react-grid-page-buttons:disabled {\n  background-color: #fff;\n  color: #161616;\n  cursor: initial;\n}\n.react-grid-cell {\n  border-bottom: 1px solid #f7f7f7;\n  height: 20px;\n  font-family: 'Open Sans', sans-serif;\n  font-size: 13px;\n  padding: 4px 10px 4px 10px;\n  position: relative;\n  text-overflow: ellipsis;\n  overflow: hidden;\n}\n.react-grid-cell .react-grid-inactive {\n  pointer-events: none;\n}\n.react-grid-container {\n  box-shadow: 2px 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);\n  position: relative;\n}\n.react-grid-table {\n  -webkit-border-radius: 4px;\n  -moz-border-radius: 4px;\n  border-radius: 4px;\n  border-collapse: collapse;\n  font-size: 14px;\n  position: relative;\n  text-align: left;\n  table-layout: fixed;\n  white-space: nowrap;\n  width: 100%;\n}\n.react-grid-table.react-grid-header-fixed {\n  box-shadow: none;\n  z-index: 9;\n}\n.react-grid-table.react-grid-header-fixed.react-grid-header-stuck {\n  margin-left: auto;\n  margin-right: auto;\n  position: fixed;\n  top: 0;\n}\n.react-grid-table.react-grid-header-fixed.react-grid-header-stuck-bottom {\n  position: absolute;\n}\n.react-grid-table.react-grid-header-hidden thead,\n.react-grid-table.react-grid-header-hidden thead * {\n  border: 0;\n  height: 0;\n}\n.react-grid-table.react-grid-header-hidden thead th * {\n  border: 0;\n  display: none;\n  height: 0;\n}\n.react-grid-table-container {\n  background-color: #fff;\n  overflow: hidden;\n  overflow-y: auto;\n  overflow-x: hidden;\n  position: relative;\n}\n.react-grid-header {\n  background-color: #f7f7f7;\n  border-bottom: 1px solid #e9e9e9;\n  color: #3f3f3f;\n  font-family: 'Open Sans', sans-serif;\n  height: 24px;\n}\n.react-grid-header.react-grid-header-hidden {\n  visibility: hidden;\n}\n.react-grid-header.react-grid-header-hidden th {\n  border: none;\n  height: 0px;\n  padding-bottom: 0px;\n  padding-top: 0px;\n}\n.react-grid-header.react-grid-header-hidden th.react-grid-checkbox-container {\n  border: none;\n  height: 0;\n  margin: 0;\n}\n.react-grid-header th {\n  position: relative;\n  text-overflow: ellipsis;\n}\n.react-grid-header th.react-grid-checkbox-container {\n  border-bottom: 1px solid #e9e9e9;\n}\n.react-grid-header th .react-grid-column {\n  display: inline-block;\n  text-overflow: ellipsis;\n  overflow: hidden;\n  width: 80%;\n}\n.react-grid-header th.react-grid-sort-handle-visible .react-grid-sort-handle {\n  visibility: visible;\n}\n.react-grid-header th .react-grid-sort-handle {\n  float: left;\n  transition-duration: 150ms;\n  transition-property: opacity;\n  transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);\n  visibility: hidden;\n}\n.react-grid-header th .react-grid-sort-handle.react-grid-desc {\n  cursor: pointer;\n}\n.react-grid-header th .react-grid-sort-handle.react-grid-desc::before {\n  font-family: FontAwesome;\n  font-size: 12px;\n  font-weight: normal;\n  font-style: normal;\n  content: '\\F0D8';\n}\n.react-grid-header th .react-grid-sort-handle.react-grid-desc::before {\n  top: -1px;\n}\n.react-grid-header th .react-grid-sort-handle.react-grid-asc {\n  cursor: pointer;\n}\n.react-grid-header th .react-grid-sort-handle.react-grid-asc::before {\n  font-family: FontAwesome;\n  font-size: 12px;\n  font-weight: normal;\n  font-style: normal;\n  content: '\\F0D7';\n}\n.react-grid-header th .react-grid-sort-handle::before {\n  cursor: pointer;\n  position: relative;\n  right: 1px;\n}\n.react-grid-header th .react-grid-drag-handle::after {\n  border-right: 1px solid #f7f7f7;\n  content: ' ';\n  cursor: ew-resize;\n  position: absolute;\n  right: 0px;\n  top: 0px;\n  width: 10px;\n  height: 100%;\n  transition-duration: 150ms;\n  transition-property: border;\n  transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);\n}\n.react-grid-header th:hover .react-grid-drag-handle::after {\n  border-color: #e9e9e9;\n}\n.react-grid-header th:nth-last-child(1),\n.react-grid-header th:nth-last-child(2) {\n  overflow: initial;\n}\n.react-grid-header th:nth-last-child(1) .react-grid-drag-handle::after,\n.react-grid-header th:nth-last-child(2) .react-grid-drag-handle::after {\n  border: none;\n  cursor: auto;\n}\n.react-grid-action-menu-container {\n  background-color: #fff;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  border-radius: 3px;\n  box-shadow: 2px 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);\n  right: 6px;\n  list-style-type: none;\n  list-style-position: outside;\n  padding: 0px;\n  position: absolute;\n  top: 10px;\n  z-index: 11;\n}\n.react-grid-action-menu-item {\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  border-radius: 3px;\n  font-family: 'Open Sans', sans-serif;\n  font-size: 12px;\n  padding: 6px 30px 6px 6px;\n  line-height: 1.2;\n}\n.react-grid-action-menu-item:hover {\n  background-color: #f7f7f7;\n}\n.react-grid-row {\n  background-color: #fff;\n  text-overflow: ellipsis;\n  transition-duration: 150ms;\n  transition-property: background-color;\n  transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);\n}\n.react-grid-row:hover {\n  background-color: #f5f5f5;\n}\n.react-grid-row.react-grid-empty-row {\n  text-align: center;\n  height: 80px;\n}\n.react-grid-row.react-grid-active {\n  background-color: #e9e9e9;\n}\n.react-grid-row.react-grid-edit {\n  color: #fff;\n  background-color: #b2b2b2;\n  box-shadow: 2px 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);\n}\n.react-grid-row.react-grid-edit .react-grid-action-menu-container {\n  color: initial;\n}\n.react-grid-row.react-grid-edit:hover {\n  background-color: #b2b2b2;\n}\n.react-grid-row.react-grid-edit td {\n  border-bottom: 2px solid transparent;\n}\n.react-grid-row.react-grid-edit td:focus {\n  border-bottom: 2px solid #2e7d32;\n  outline: none;\n}\n.react-grid-inline-editor {\n  opacity: 0;\n  position: absolute;\n  left: 0px;\n  transform: translateX(0px) translateY(0px);\n  text-align: center;\n  margin: 0px auto;\n  transition-duration: 150ms;\n  transition-property: transform opacity;\n  transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);\n  pointer-events: none;\n  right: 0px;\n}\n.react-grid-inline-editor .react-grid-button-container {\n  background-color: #b2b2b2;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  border-radius: 3px;\n  box-shadow: 2px 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);\n  display: inline-block;\n  margin-top: 5px;\n  padding: 5px;\n  pointer-events: all;\n}\n.react-grid-inline-editor .react-grid-button-container .react-grid-save-button {\n  background-color: #2e7d32;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  border-radius: 3px;\n  border: none;\n  color: #fff;\n  cursor: pointer;\n  font-family: 'Open Sans', sans-serif;\n  opacity: 1;\n}\n.react-grid-inline-editor .react-grid-button-container .react-grid-save-button:focus {\n  outline: none;\n}\n.react-grid-inline-editor .react-grid-button-container .react-grid-save-button:active {\n  opacity: 1;\n  background-color: #52bf57;\n}\n.react-grid-inline-editor .react-grid-button-container .react-grid-save-button:hover {\n  opacity: 0.6;\n}\n.react-grid-inline-editor .react-grid-button-container .react-grid-save-button:disabled {\n  background-color: #fff;\n  color: #161616;\n  cursor: initial;\n}\n.react-grid-inline-editor .react-grid-button-container .react-grid-cancel-button {\n  background-color: #f7f7f7;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  border-radius: 3px;\n  border: none;\n  color: #161616;\n  cursor: pointer;\n  font-family: 'Open Sans', sans-serif;\n  opacity: 1;\n}\n.react-grid-inline-editor .react-grid-button-container .react-grid-cancel-button:focus {\n  outline: none;\n}\n.react-grid-inline-editor .react-grid-button-container .react-grid-cancel-button:active {\n  opacity: 1;\n  background-color: #f9f9f9;\n}\n.react-grid-inline-editor .react-grid-button-container .react-grid-cancel-button:hover {\n  opacity: 0.6;\n}\n.react-grid-inline-editor .react-grid-button-container .react-grid-cancel-button:disabled {\n  background-color: #fff;\n  color: #161616;\n  cursor: initial;\n}\n.react-grid-inline-editor.react-grid-shown {\n  opacity: 1;\n  display: block;\n  transform: translateY(-7px);\n}\n.react-grid-inline-editor.react-grid-hidden {\n  top: -10000px;\n}\n.react-grid-error-container {\n  background-color: #f7f7f7;\n  bottom: 0px;\n  box-shadow: 2px 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);\n  color: #e9e9e9;\n  height: 100px;\n  left: 0px;\n  margin: auto;\n  position: absolute;\n  perspective: 1300px;\n  transform-style: preserve-3d;\n  transform: rotateX(-70deg);\n  transition-duration: 0.2s;\n  transition-property: transform;\n  transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);\n  opacity: 0;\n  right: 0px;\n  top: -10000px;\n  width: 50%;\n  z-index: 10;\n}\n.react-grid-error-container .react-grid-error-message {\n  color: #3f3f3f;\n  font-family: 'Open Sans', sans-serif;\n  height: 20px;\n  margin-top: -20px;\n  top: 50%;\n  left: 0;\n  right: 0;\n  position: absolute;\n}\n.react-grid-error-container button {\n  background-color: #2e7d32;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  border-radius: 3px;\n  border: none;\n  color: #fff;\n  cursor: pointer;\n  font-family: 'Open Sans', sans-serif;\n  opacity: 1;\n  position: absolute;\n  right: 10px;\n  bottom: 10px;\n}\n.react-grid-error-container button:focus {\n  outline: none;\n}\n.react-grid-error-container button:active {\n  opacity: 1;\n  background-color: #52bf57;\n}\n.react-grid-error-container button:hover {\n  opacity: 0.6;\n}\n.react-grid-error-container button:disabled {\n  background-color: #fff;\n  color: #161616;\n  cursor: initial;\n}\n.react-grid-error-container.react-grid-shown {\n  top: 0px;\n  transform: rotateX(0deg);\n  opacity: 1;\n}\nth.react-grid-action-container {\n  border-bottom: 1px solid #e9e9e9;\n}\n.react-grid-action-container {\n  cursor: pointer;\n  position: relative;\n  width: 5px;\n  border-bottom: 1px solid #f7f7f7;\n  height: 20px;\n  font-family: 'Open Sans', sans-serif;\n}\n.react-grid-action-container .react-grid-no-actions {\n  display: none;\n}\n.react-grid-action-container .react-grid-action-icon {\n  cursor: pointer;\n  cursor: pointer;\n  padding-left: 5px;\n  position: relative;\n}\n.react-grid-action-container .react-grid-action-icon::before {\n  font-family: FontAwesome;\n  font-size: 12px;\n  font-weight: normal;\n  font-style: normal;\n  content: '\\F142';\n}\n.react-grid-action-container .react-grid-action-icon::before {\n  cursor: pointer;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  border-radius: 3px;\n  position: absolute;\n  text-align: center;\n  top: 5px;\n  right: 5px;\n  width: 6px;\n}\n.react-grid-action-container.react-grid-action-menu-selected span::before {\n  background-color: #e9e9e9;\n}\n.react-grid-loading-bar {\n  display: none;\n  position: absolute;\n  height: 4px;\n  width: 100%;\n}\n.react-grid-loading-bar.react-grid-active {\n  display: block;\n}\n.react-grid-loading-bar::before {\n  display: block;\n  position: absolute;\n  content: \"\";\n  left: -200px;\n  width: 200px;\n  height: 4px;\n  background-color: #2e7d32;\n  animation: loading 2s linear infinite;\n}\n@-moz-keyframes loading {\n  from {\n    left: 0px;\n    width: 30%;\n  }\n  50% {\n    width: 30%;\n  }\n  70% {\n    width: 44%;\n  }\n  80% {\n    left: 55%;\n  }\n  95% {\n    left: 66%;\n  }\n  to {\n    left: 72%;\n  }\n}\n@-webkit-keyframes loading {\n  from {\n    left: 0px;\n    width: 30%;\n  }\n  50% {\n    width: 30%;\n  }\n  70% {\n    width: 44%;\n  }\n  80% {\n    left: 55%;\n  }\n  95% {\n    left: 66%;\n  }\n  to {\n    left: 72%;\n  }\n}\n@-o-keyframes loading {\n  from {\n    left: 0px;\n    width: 30%;\n  }\n  50% {\n    width: 30%;\n  }\n  70% {\n    width: 44%;\n  }\n  80% {\n    left: 55%;\n  }\n  95% {\n    left: 66%;\n  }\n  to {\n    left: 72%;\n  }\n}\n@keyframes loading {\n  from {\n    left: 0px;\n    width: 30%;\n  }\n  50% {\n    width: 30%;\n  }\n  70% {\n    width: 44%;\n  }\n  80% {\n    left: 55%;\n  }\n  95% {\n    left: 66%;\n  }\n  to {\n    left: 72%;\n  }\n}\n.react-grid-pager-toolbar {\n  background-color: #f7f7f7;\n  border-top: 1px solid #e9e9e9;\n  -webkit-border-radius: 0px 0px 3px 3px;\n  -moz-border-radius: 0px 0px 3px 3px;\n  border-radius: 0px 0px 3px 3px;\n  font-family: 'Open Sans', sans-serif;\n  font-size: 13px;\n  height: 24px;\n  text-indent: 10px;\n}\n.react-grid-pager-toolbar.react-grid-is-stuck {\n  bottom: 0;\n  position: fixed;\n}\n.react-grid-pager-toolbar.react-grid-is-stuck-bottom {\n  position: absolute;\n  width: 100%;\n}\n.react-grid-pager-toolbar span {\n  display: block;\n  float: right;\n  position: relative;\n  right: 5px;\n  top: 2px;\n}\n.react-grid-pager-toolbar span:first-child {\n  font-size: 14px;\n  font-family: 'Open Sans', sans-serif;\n  float: left;\n}\n.react-grid-pager-toolbar button {\n  margin: 0px 10px;\n}\n.react-grid-checkbox-container {\n  border-bottom: 1px solid #f7f7f7;\n  height: 20px;\n  font-family: 'Open Sans', sans-serif;\n  font-size: 13px;\n  padding: 4px 10px 4px 10px;\n  position: relative;\n  text-overflow: ellipsis;\n  overflow: hidden;\n  padding: 0px 10px;\n  width: 10px;\n}\n.react-grid-bulkaction-container {\n  background-color: #b2b2b2;\n  -webkit-border-radius: 3px 3px 0px 0px;\n  -moz-border-radius: 3px 3px 0px 0px;\n  border-radius: 3px 3px 0px 0px;\n  height: 28px;\n  transition-duration: 150ms;\n  transition-property: transform opacity top;\n  transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);\n  position: absolute;\n  text-align: left;\n  transform: translateX(0px) translateY(-7px);\n  top: -7px;\n  opacity: 0;\n  z-index: 12;\n  width: 100%;\n}\n.react-grid-bulkaction-container .react-grid-bulkaction-description {\n  display: inline-block;\n  font-family: 'Open Sans', sans-serif;\n  font-size: 13px;\n  overflow: hidden;\n  padding-left: 15px;\n  text-overflow: ellipsis;\n  min-width: 70px;\n  position: relative;\n  top: 3px;\n}\n.react-grid-bulkaction-container .react-grid-checkbox-container {\n  border-bottom: 1px solid transparent;\n}\n.react-grid-bulkaction-container button {\n  background-color: #2e7d32;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  border-radius: 3px;\n  border: none;\n  color: #fff;\n  cursor: pointer;\n  font-family: 'Open Sans', sans-serif;\n  opacity: 1;\n  margin: 5px 8px;\n  position: relative;\n  top: -1px;\n}\n.react-grid-bulkaction-container button:focus {\n  outline: none;\n}\n.react-grid-bulkaction-container button:active {\n  opacity: 1;\n  background-color: #52bf57;\n}\n.react-grid-bulkaction-container button:hover {\n  opacity: 0.6;\n}\n.react-grid-bulkaction-container button:disabled {\n  background-color: #fff;\n  color: #161616;\n  cursor: initial;\n}\n.react-grid-bulkaction-container.react-grid-removed {\n  top: -100px;\n}\n.react-grid-bulkaction-container.react-grid-shown {\n  top: 0px;\n  opacity: 1;\n  transform: translateY(0px);\n}\n.react-grid-filter-container {\n  background-color: #f7f7f7;\n  -webkit-border-radius: 3px 3px 0px 0px;\n  -moz-border-radius: 3px 3px 0px 0px;\n  border-radius: 3px 3px 0px 0px;\n  padding: 5px 0px;\n  position: relative;\n  text-align: center;\n  width: 100%;\n}\n.react-grid-filter-container .react-grid-filter-input {\n  border: 1px solid #e9e9e9;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  border-radius: 3px;\n  font-family: 'Open Sans', sans-serif;\n  font-size: 14px;\n  color: #b2b2b2;\n  display: inline-block;\n  padding: 0px;\n  text-indent: 5px;\n  transition-duration: 150ms;\n  transition-property: color;\n  transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);\n  width: 99%;\n}\n.react-grid-filter-container .react-grid-filter-input:focus {\n  color: #8e8e8e;\n  outline: none;\n}\n.react-grid-filter-container:hover .react-grid-filter-input {\n  color: #8e8e8e;\n}\n.react-grid-filter-container .react-grid-filter-button-container {\n  display: inline-block;\n  position: absolute;\n  right: 5px;\n}\n.react-grid-filter-container .react-grid-filter-button-container > i {\n  padding: 0px 3px 0px 0px;\n}\n.react-grid-filter-container .react-grid-filter-button-container > i::before {\n  color: #b2b2b2;\n  transition-duration: 150ms;\n  transition-property: color;\n  transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);\n}\n.react-grid-filter-container .react-grid-filter-button-container > i:hover::before {\n  color: #8e8e8e;\n}\n.react-grid-filter-container .react-grid-filter-button-container > i.react-grid-active::before {\n  color: #2e7d32;\n}\n.react-grid-filter-container .react-grid-filter-button-container .react-grid-filter-search-button {\n  cursor: pointer;\n}\n.react-grid-filter-container .react-grid-filter-button-container .react-grid-filter-search-button::before {\n  font-family: FontAwesome;\n  font-size: 12px;\n  font-weight: normal;\n  font-style: normal;\n  content: '\\F002';\n}\n.react-grid-filter-container .react-grid-filter-button-container .react-grid-filter-clear-button {\n  cursor: pointer;\n}\n.react-grid-filter-container .react-grid-filter-button-container .react-grid-filter-clear-button::before {\n  font-family: FontAwesome;\n  font-size: 12px;\n  font-weight: normal;\n  font-style: normal;\n  content: '\\F00D';\n}\n.react-grid-filter-container .react-grid-filter-button-container .react-grid-filter-menu-button {\n  cursor: pointer;\n}\n.react-grid-filter-container .react-grid-filter-button-container .react-grid-filter-menu-button::before {\n  font-family: FontAwesome;\n  font-size: 12px;\n  font-weight: normal;\n  font-style: normal;\n  content: '\\F0B0';\n}\n.react-grid-advanced-filter-menu-container {\n  background-color: #f7f7f7;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  border-radius: 3px;\n  box-shadow: 10px 15px 30px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);\n  font-family: 'Open Sans', sans-serif;\n  position: absolute;\n  right: 10px;\n  top: 24px;\n  width: 400px;\n  z-index: 13;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-title {\n  display: inline-block;\n  padding: 5px 10px;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-field-container {\n  display: block;\n  padding: 5px 0px;\n  text-align: left;\n  font-size: 13px;\n  margin: 0px auto;\n  width: 90%;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-field-container .react-grid-advanced-filter-menu-field-label {\n  display: inline-block;\n  padding: 5px 0px;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-field-container .react-grid-advanced-filter-menu-field-input {\n  border: 1px solid #e9e9e9;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  border-radius: 3px;\n  font-family: 'Open Sans', sans-serif;\n  font-size: 14px;\n  color: #b2b2b2;\n  display: inline-block;\n  padding: 0px;\n  text-indent: 5px;\n  transition-duration: 150ms;\n  transition-property: color;\n  transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);\n  width: 100%;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-field-container .react-grid-advanced-filter-menu-field-input:focus {\n  color: #8e8e8e;\n  outline: none;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container {\n  padding: 10px 10px;\n  margin: 0px auto;\n  width: 90%;\n  text-align: left;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container .react-grid-advanced-filter-menu-button {\n  background-color: #2e7d32;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  border-radius: 3px;\n  border: none;\n  color: #fff;\n  cursor: pointer;\n  font-family: 'Open Sans', sans-serif;\n  opacity: 1;\n  margin-right: 5px;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container .react-grid-advanced-filter-menu-button:focus {\n  outline: none;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container .react-grid-advanced-filter-menu-button:active {\n  opacity: 1;\n  background-color: #52bf57;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container .react-grid-advanced-filter-menu-button:hover {\n  opacity: 0.6;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container .react-grid-advanced-filter-menu-button:disabled {\n  background-color: #fff;\n  color: #161616;\n  cursor: initial;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container .react-grid-advanced-filter-menu-button.react-grid-secondary {\n  background-color: #fff;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  border-radius: 3px;\n  border: none;\n  color: #fff;\n  cursor: pointer;\n  font-family: 'Open Sans', sans-serif;\n  opacity: 1;\n  color: #161616;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container .react-grid-advanced-filter-menu-button.react-grid-secondary:focus {\n  outline: none;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container .react-grid-advanced-filter-menu-button.react-grid-secondary:active {\n  opacity: 1;\n  background-color: #fff;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container .react-grid-advanced-filter-menu-button.react-grid-secondary:hover {\n  opacity: 0.6;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container .react-grid-advanced-filter-menu-button.react-grid-secondary:disabled {\n  background-color: #fff;\n  color: #161616;\n  cursor: initial;\n}\n", ""]);
-
-	// exports
-
-
-/***/ },
-/* 265 */
-/***/ function(module, exports) {
-
-	/*
-		MIT License http://www.opensource.org/licenses/mit-license.php
-		Author Tobias Koppers @sokra
-	*/
-	// css base code, injected by the css-loader
-	module.exports = function() {
-		var list = [];
-
-		// return the list of modules as css string
-		list.toString = function toString() {
-			var result = [];
-			for(var i = 0; i < this.length; i++) {
-				var item = this[i];
-				if(item[2]) {
-					result.push("@media " + item[2] + "{" + item[1] + "}");
-				} else {
-					result.push(item[1]);
-				}
-			}
-			return result.join("");
-		};
-
-		// import a list of modules into the list
-		list.i = function(modules, mediaQuery) {
-			if(typeof modules === "string")
-				modules = [[null, modules, ""]];
-			var alreadyImportedModules = {};
-			for(var i = 0; i < this.length; i++) {
-				var id = this[i][0];
-				if(typeof id === "number")
-					alreadyImportedModules[id] = true;
-			}
-			for(i = 0; i < modules.length; i++) {
-				var item = modules[i];
-				// skip already imported module
-				// this implementation is not 100% perfect for weird media query combinations
-				//  when a module is imported multiple times with different media queries.
-				//  I hope this will never occur (Hey this way we have smaller bundles)
-				if(typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
-					if(mediaQuery && !item[2]) {
-						item[2] = mediaQuery;
-					} else if(mediaQuery) {
-						item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
-					}
-					list.push(item);
-				}
-			}
-		};
-		return list;
-	};
-
-
-/***/ },
-/* 266 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __webpack_require__.p + "1bf71be111189e76987a4bb9b3115cb7.ttf";
-
-/***/ },
-/* 267 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __webpack_require__.p + "32400f4e08932a94d8bfd2422702c446.eot";
-
-/***/ },
-/* 268 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __webpack_require__.p + "32400f4e08932a94d8bfd2422702c446.eot";
-
-/***/ },
-/* 269 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __webpack_require__.p + "a35720c2fed2c7f043bc7e4ffb45e073.woff";
-
-/***/ },
-/* 270 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __webpack_require__.p + "a3de2170e4e9df77161ea5d3f31b2668.ttf";
-
-/***/ },
-/* 271 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/*
-		MIT License http://www.opensource.org/licenses/mit-license.php
-		Author Tobias Koppers @sokra
-	*/
-	var stylesInDom = {},
-		memoize = function(fn) {
-			var memo;
-			return function () {
-				if (typeof memo === "undefined") memo = fn.apply(this, arguments);
-				return memo;
-			};
-		},
-		isOldIE = memoize(function() {
-			return /msie [6-9]\b/.test(window.navigator.userAgent.toLowerCase());
-		}),
-		getHeadElement = memoize(function () {
-			return document.head || document.getElementsByTagName("head")[0];
-		}),
-		singletonElement = null,
-		singletonCounter = 0,
-		styleElementsInsertedAtTop = [];
-
-	module.exports = function(list, options) {
-		if(false) {
-			if(typeof document !== "object") throw new Error("The style-loader cannot be used in a non-browser environment");
-		}
-
-		options = options || {};
-		// Force single-tag solution on IE6-9, which has a hard limit on the # of <style>
-		// tags it will allow on a page
-		if (typeof options.singleton === "undefined") options.singleton = isOldIE();
-
-		// By default, add <style> tags to the bottom of <head>.
-		if (typeof options.insertAt === "undefined") options.insertAt = "bottom";
-
-		var styles = listToStyles(list);
-		addStylesToDom(styles, options);
-
-		return function update(newList) {
-			var mayRemove = [];
-			for(var i = 0; i < styles.length; i++) {
-				var item = styles[i];
-				var domStyle = stylesInDom[item.id];
-				domStyle.refs--;
-				mayRemove.push(domStyle);
-			}
-			if(newList) {
-				var newStyles = listToStyles(newList);
-				addStylesToDom(newStyles, options);
-			}
-			for(var i = 0; i < mayRemove.length; i++) {
-				var domStyle = mayRemove[i];
-				if(domStyle.refs === 0) {
-					for(var j = 0; j < domStyle.parts.length; j++)
-						domStyle.parts[j]();
-					delete stylesInDom[domStyle.id];
-				}
-			}
-		};
-	}
-
-	function addStylesToDom(styles, options) {
-		for(var i = 0; i < styles.length; i++) {
-			var item = styles[i];
-			var domStyle = stylesInDom[item.id];
-			if(domStyle) {
-				domStyle.refs++;
-				for(var j = 0; j < domStyle.parts.length; j++) {
-					domStyle.parts[j](item.parts[j]);
-				}
-				for(; j < item.parts.length; j++) {
-					domStyle.parts.push(addStyle(item.parts[j], options));
-				}
-			} else {
-				var parts = [];
-				for(var j = 0; j < item.parts.length; j++) {
-					parts.push(addStyle(item.parts[j], options));
-				}
-				stylesInDom[item.id] = {id: item.id, refs: 1, parts: parts};
-			}
-		}
-	}
-
-	function listToStyles(list) {
-		var styles = [];
-		var newStyles = {};
-		for(var i = 0; i < list.length; i++) {
-			var item = list[i];
-			var id = item[0];
-			var css = item[1];
-			var media = item[2];
-			var sourceMap = item[3];
-			var part = {css: css, media: media, sourceMap: sourceMap};
-			if(!newStyles[id])
-				styles.push(newStyles[id] = {id: id, parts: [part]});
-			else
-				newStyles[id].parts.push(part);
-		}
-		return styles;
-	}
-
-	function insertStyleElement(options, styleElement) {
-		var head = getHeadElement();
-		var lastStyleElementInsertedAtTop = styleElementsInsertedAtTop[styleElementsInsertedAtTop.length - 1];
-		if (options.insertAt === "top") {
-			if(!lastStyleElementInsertedAtTop) {
-				head.insertBefore(styleElement, head.firstChild);
-			} else if(lastStyleElementInsertedAtTop.nextSibling) {
-				head.insertBefore(styleElement, lastStyleElementInsertedAtTop.nextSibling);
-			} else {
-				head.appendChild(styleElement);
-			}
-			styleElementsInsertedAtTop.push(styleElement);
-		} else if (options.insertAt === "bottom") {
-			head.appendChild(styleElement);
-		} else {
-			throw new Error("Invalid value for parameter 'insertAt'. Must be 'top' or 'bottom'.");
-		}
-	}
-
-	function removeStyleElement(styleElement) {
-		styleElement.parentNode.removeChild(styleElement);
-		var idx = styleElementsInsertedAtTop.indexOf(styleElement);
-		if(idx >= 0) {
-			styleElementsInsertedAtTop.splice(idx, 1);
-		}
-	}
-
-	function createStyleElement(options) {
-		var styleElement = document.createElement("style");
-		styleElement.type = "text/css";
-		insertStyleElement(options, styleElement);
-		return styleElement;
-	}
-
-	function createLinkElement(options) {
-		var linkElement = document.createElement("link");
-		linkElement.rel = "stylesheet";
-		insertStyleElement(options, linkElement);
-		return linkElement;
-	}
-
-	function addStyle(obj, options) {
-		var styleElement, update, remove;
-
-		if (options.singleton) {
-			var styleIndex = singletonCounter++;
-			styleElement = singletonElement || (singletonElement = createStyleElement(options));
-			update = applyToSingletonTag.bind(null, styleElement, styleIndex, false);
-			remove = applyToSingletonTag.bind(null, styleElement, styleIndex, true);
-		} else if(obj.sourceMap &&
-			typeof URL === "function" &&
-			typeof URL.createObjectURL === "function" &&
-			typeof URL.revokeObjectURL === "function" &&
-			typeof Blob === "function" &&
-			typeof btoa === "function") {
-			styleElement = createLinkElement(options);
-			update = updateLink.bind(null, styleElement);
-			remove = function() {
-				removeStyleElement(styleElement);
-				if(styleElement.href)
-					URL.revokeObjectURL(styleElement.href);
-			};
-		} else {
-			styleElement = createStyleElement(options);
-			update = applyToTag.bind(null, styleElement);
-			remove = function() {
-				removeStyleElement(styleElement);
-			};
-		}
-
-		update(obj);
-
-		return function updateStyle(newObj) {
-			if(newObj) {
-				if(newObj.css === obj.css && newObj.media === obj.media && newObj.sourceMap === obj.sourceMap)
-					return;
-				update(obj = newObj);
-			} else {
-				remove();
-			}
-		};
-	}
-
-	var replaceText = (function () {
-		var textStore = [];
-
-		return function (index, replacement) {
-			textStore[index] = replacement;
-			return textStore.filter(Boolean).join('\n');
-		};
-	})();
-
-	function applyToSingletonTag(styleElement, index, remove, obj) {
-		var css = remove ? "" : obj.css;
-
-		if (styleElement.styleSheet) {
-			styleElement.styleSheet.cssText = replaceText(index, css);
-		} else {
-			var cssNode = document.createTextNode(css);
-			var childNodes = styleElement.childNodes;
-			if (childNodes[index]) styleElement.removeChild(childNodes[index]);
-			if (childNodes.length) {
-				styleElement.insertBefore(cssNode, childNodes[index]);
-			} else {
-				styleElement.appendChild(cssNode);
-			}
-		}
-	}
-
-	function applyToTag(styleElement, obj) {
-		var css = obj.css;
-		var media = obj.media;
-
-		if(media) {
-			styleElement.setAttribute("media", media)
-		}
-
-		if(styleElement.styleSheet) {
-			styleElement.styleSheet.cssText = css;
-		} else {
-			while(styleElement.firstChild) {
-				styleElement.removeChild(styleElement.firstChild);
-			}
-			styleElement.appendChild(document.createTextNode(css));
-		}
-	}
-
-	function updateLink(linkElement, obj) {
-		var css = obj.css;
-		var sourceMap = obj.sourceMap;
-
-		if(sourceMap) {
-			// http://stackoverflow.com/a/26603875
-			css += "\n/*# sourceMappingURL=data:application/json;base64," + btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))) + " */";
-		}
-
-		var blob = new Blob([css], { type: "text/css" });
-
-		var oldSrc = linkElement.href;
-
-		linkElement.href = URL.createObjectURL(blob);
-
-		if(oldSrc)
-			URL.revokeObjectURL(oldSrc);
-	}
-
-
-/***/ },
-/* 272 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	exports.Store = undefined;
-
-	var _configureStore = __webpack_require__(273);
-
-	var _configureStore2 = _interopRequireDefault(_configureStore);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var store = (0, _configureStore2.default)();
-
-	exports.Store = store;
-	exports.default = store;
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "store.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-
-/***/ },
-/* 273 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.default = configureStore;
-
-	var _redux = __webpack_require__(169);
-
-	var _reducers = __webpack_require__(274);
-
-	var _reducers2 = _interopRequireDefault(_reducers);
-
-	var _reduxDiffLogger = __webpack_require__(286);
-
-	var _reduxDiffLogger2 = _interopRequireDefault(_reduxDiffLogger);
-
-	var _reduxThunk = __webpack_require__(288);
-
-	var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function configureStore(initialState) {
-	    var createStoreWithMiddleware = (0, _redux.applyMiddleware)(_reduxThunk2.default, _reduxDiffLogger2.default)(_redux.createStore);
-	    var store = createStoreWithMiddleware(_reducers2.default, initialState);
-
-	    if (false) {
-	        module.hot.accept('../reducers', function () {
-	            var nextReducer = require('../reducers');
-	            store.replaceReducer(nextReducer);
-	        });
-	    }
-
-	    return store;
-	}
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "configureStore.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-
-/***/ },
-/* 274 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.Reducers = undefined;
-
-	var _redux = __webpack_require__(169);
-
-	var _grid = __webpack_require__(275);
-
-	var _grid2 = _interopRequireDefault(_grid);
-
-	var _datasource = __webpack_require__(277);
-
-	var _datasource2 = _interopRequireDefault(_datasource);
-
-	var _editor = __webpack_require__(278);
-
-	var _editor2 = _interopRequireDefault(_editor);
-
-	var _menu = __webpack_require__(279);
-
-	var _menu2 = _interopRequireDefault(_menu);
-
-	var _pager = __webpack_require__(280);
-
-	var _pager2 = _interopRequireDefault(_pager);
-
-	var _loader = __webpack_require__(281);
-
-	var _loader2 = _interopRequireDefault(_loader);
-
-	var _bulkaction = __webpack_require__(282);
-
-	var _bulkaction2 = _interopRequireDefault(_bulkaction);
-
-	var _filter = __webpack_require__(283);
-
-	var _filter2 = _interopRequireDefault(_filter);
-
-	var _selection = __webpack_require__(284);
-
-	var _selection2 = _interopRequireDefault(_selection);
-
-	var _errorhandler = __webpack_require__(285);
-
-	var _errorhandler2 = _interopRequireDefault(_errorhandler);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var rootReducer = (0, _redux.combineReducers)({
-	    bulkaction: _bulkaction2.default,
-	    dataSource: _datasource2.default,
-	    editor: _editor2.default,
-	    errorhandler: _errorhandler2.default,
-	    grid: _grid2.default,
-	    menu: _menu2.default,
-	    pager: _pager2.default,
-	    loader: _loader2.default,
-	    filter: _filter2.default,
-	    selection: _selection2.default
-	});
-
-	var Reducers = exports.Reducers = {
-	    BulkActions: _bulkaction2.default,
-	    DataSource: _datasource2.default,
-	    Editor: _editor2.default,
-	    ErrorHandler: _errorhandler2.default,
-	    Filter: _filter2.default,
-	    Grid: _grid2.default,
-	    Loader: _loader2.default,
-	    Menu: _menu2.default,
-	    Pager: _pager2.default,
-	    Selection: _selection2.default
-	};
-
-	exports.default = rootReducer;
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "index.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-
-/***/ },
-/* 275 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.default = gridState;
-
-	var _immutable = __webpack_require__(276);
-
-	var _ActionTypes = __webpack_require__(209);
-
-	var initialState = (0, _immutable.fromJS)({});
-
-	function gridState() {
-	    var state = arguments.length <= 0 || arguments[0] === undefined ? initialState : arguments[0];
-	    var action = arguments[1];
-
-
-	    switch (action.type) {
-
-	        case _ActionTypes.SET_COLUMNS:
-	            return state.setIn([action.stateKey], {
-	                columns: action.columns
-	            });
-
-	        case _ActionTypes.SET_SORT_DIRECTION:
-	            return state.setIn([action.stateKey], {
-	                columns: action.columns
-	            });
-
-	        case _ActionTypes.RESIZE_COLUMNS:
-	            return state.set(action.stateKey, Object.assign({}, state.get('gridState'), {
-	                columns: action.columns
-	            }));
-
-	        // NOT USING IMMUTABLE
-	        // THIS ACTION IS FIRED AT SUCH A HIGH RATE, NEED TO OPTIMIZE
-	        // BY NOT USING IMMUTABLE STATE GETTER
-
-	        // return state.setIn([action.stateKey], {
-	        //     columns: action.columns
-	        // });
-
-	        default:
-
-	            return state;
-	    }
-	}
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "grid.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-
-/***/ },
-/* 276 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -34599,10 +32003,2390 @@
 	}));
 
 /***/ },
-/* 277 */
+/* 248 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+	var pSlice = Array.prototype.slice;
+	var objectKeys = __webpack_require__(249);
+	var isArguments = __webpack_require__(250);
+
+	var deepEqual = module.exports = function (actual, expected, opts) {
+	  if (!opts) opts = {};
+	  // 7.1. All identical values are equivalent, as determined by ===.
+	  if (actual === expected) {
+	    return true;
+
+	  } else if (actual instanceof Date && expected instanceof Date) {
+	    return actual.getTime() === expected.getTime();
+
+	  // 7.3. Other pairs that do not both pass typeof value == 'object',
+	  // equivalence is determined by ==.
+	  } else if (!actual || !expected || typeof actual != 'object' && typeof expected != 'object') {
+	    return opts.strict ? actual === expected : actual == expected;
+
+	  // 7.4. For all other Object pairs, including Array objects, equivalence is
+	  // determined by having the same number of owned properties (as verified
+	  // with Object.prototype.hasOwnProperty.call), the same set of keys
+	  // (although not necessarily the same order), equivalent values for every
+	  // corresponding key, and an identical 'prototype' property. Note: this
+	  // accounts for both named and indexed properties on Arrays.
+	  } else {
+	    return objEquiv(actual, expected, opts);
+	  }
+	}
+
+	function isUndefinedOrNull(value) {
+	  return value === null || value === undefined;
+	}
+
+	function isBuffer (x) {
+	  if (!x || typeof x !== 'object' || typeof x.length !== 'number') return false;
+	  if (typeof x.copy !== 'function' || typeof x.slice !== 'function') {
+	    return false;
+	  }
+	  if (x.length > 0 && typeof x[0] !== 'number') return false;
+	  return true;
+	}
+
+	function objEquiv(a, b, opts) {
+	  var i, key;
+	  if (isUndefinedOrNull(a) || isUndefinedOrNull(b))
+	    return false;
+	  // an identical 'prototype' property.
+	  if (a.prototype !== b.prototype) return false;
+	  //~~~I've managed to break Object.keys through screwy arguments passing.
+	  //   Converting to array solves the problem.
+	  if (isArguments(a)) {
+	    if (!isArguments(b)) {
+	      return false;
+	    }
+	    a = pSlice.call(a);
+	    b = pSlice.call(b);
+	    return deepEqual(a, b, opts);
+	  }
+	  if (isBuffer(a)) {
+	    if (!isBuffer(b)) {
+	      return false;
+	    }
+	    if (a.length !== b.length) return false;
+	    for (i = 0; i < a.length; i++) {
+	      if (a[i] !== b[i]) return false;
+	    }
+	    return true;
+	  }
+	  try {
+	    var ka = objectKeys(a),
+	        kb = objectKeys(b);
+	  } catch (e) {//happens when one is a string literal and the other isn't
+	    return false;
+	  }
+	  // having the same number of owned properties (keys incorporates
+	  // hasOwnProperty)
+	  if (ka.length != kb.length)
+	    return false;
+	  //the same set of keys (although not necessarily the same order),
+	  ka.sort();
+	  kb.sort();
+	  //~~~cheap key test
+	  for (i = ka.length - 1; i >= 0; i--) {
+	    if (ka[i] != kb[i])
+	      return false;
+	  }
+	  //equivalent values for every corresponding key, and
+	  //~~~possibly expensive deep test
+	  for (i = ka.length - 1; i >= 0; i--) {
+	    key = ka[i];
+	    if (!deepEqual(a[key], b[key], opts)) return false;
+	  }
+	  return typeof a === typeof b;
+	}
+
+
+/***/ },
+/* 249 */
+/***/ function(module, exports) {
+
+	exports = module.exports = typeof Object.keys === 'function'
+	  ? Object.keys : shim;
+
+	exports.shim = shim;
+	function shim (obj) {
+	  var keys = [];
+	  for (var key in obj) keys.push(key);
+	  return keys;
+	}
+
+
+/***/ },
+/* 250 */
+/***/ function(module, exports) {
+
+	var supportsArgumentsClass = (function(){
+	  return Object.prototype.toString.call(arguments)
+	})() == '[object Arguments]';
+
+	exports = module.exports = supportsArgumentsClass ? supported : unsupported;
+
+	exports.supported = supported;
+	function supported(object) {
+	  return Object.prototype.toString.call(object) == '[object Arguments]';
+	};
+
+	exports.unsupported = unsupported;
+	function unsupported(object){
+	  return object &&
+	    typeof object == 'object' &&
+	    typeof object.length == 'number' &&
+	    Object.prototype.hasOwnProperty.call(object, 'callee') &&
+	    !Object.prototype.propertyIsEnumerable.call(object, 'callee') ||
+	    false;
+	};
+
+
+/***/ },
+/* 251 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	var num = 0;
+
+	var REDUCER_KEYS = {
+	    BulkActions: 'bulkaction',
+	    DataSource: 'dataSource',
+	    Editor: 'editor',
+	    ErrorHandler: 'errorhandler',
+	    Filter: 'filter',
+	    Grid: 'grid',
+	    Loader: 'loader',
+	    Menu: 'menu',
+	    Pager: 'pager',
+	    Selection: 'selection'
+	};
+
+	var generateLastUpdate = exports.generateLastUpdate = function generateLastUpdate() {
+	    return ++num;
+	};
+
+	var resetLastUpdate = exports.resetLastUpdate = function resetLastUpdate() {
+	    num = 0;
+	};
+
+	var getLastUpdate = exports.getLastUpdate = function getLastUpdate(store, key) {
+	    var reducerKeys = arguments.length <= 2 || arguments[2] === undefined ? REDUCER_KEYS : arguments[2];
+
+	    var state = store.getState();
+
+	    var keys = Object.keys(reducerKeys);
+
+	    if (!keys.length) {
+	        reducerKeys = REDUCER_KEYS;
+	        keys = Object.keys(REDUCER_KEYS);
+	    }
+
+	    return keys.reduce(function (prev, reducerAccessor) {
+	        var reducerKey = reducerKeys[reducerAccessor];
+	        if (state[reducerKey] && state[reducerKey].toJS) {
+	            prev[reducerKey] = state[reducerKey].getIn([key, 'lastUpdate']);
+	        }
+	        return prev;
+	    }, {});
+	};
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "lastUpdate.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 252 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.PlaceHolder = undefined;
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var _react = __webpack_require__(149);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _prefix = __webpack_require__(219);
+
+	var _GridConstants = __webpack_require__(220);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var PlaceHolder = exports.PlaceHolder = function PlaceHolder(message) {
+
+	    var rowProps = {
+	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.ROW)
+	    };
+
+	    var tdProps = {
+	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.ROW, _GridConstants.CLASS_NAMES.EMPTY_ROW)
+	    };
+
+	    return _react2.default.createElement(
+	        'tr',
+	        rowProps,
+	        _react2.default.createElement(
+	            'td',
+	            _extends({ colSpan: '100%' }, tdProps),
+	            message.emptyDataMessage
+	        )
+	    );
+	};
+
+	PlaceHolder.propTypes = {
+	    message: _react.PropTypes.object
+	};
+
+	_react.PropTypes.defaultProps = {
+	    message: {
+	        emptyDataMessage: ''
+	    }
+	};
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "PlaceHolder.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 253 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	var getCurrentRecords = exports.getCurrentRecords = function getCurrentRecords(dataSource, pageIndex, pageSize) {
+	    if (!dataSource) {
+	        return null;
+	    }
+
+	    var selectedRows = dataSource.data.slice(pageIndex * pageSize, (pageIndex + 1) * pageSize);
+
+	    return selectedRows;
+	};
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "getCurrentRecords.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 254 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.ConnectedPagerToolbar = exports.getPagingSource = exports.getPager = exports.getTotal = exports.getCurrentRecordTotal = exports.getCustomComponent = exports.PagerToolbar = undefined;
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(149);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactDom = __webpack_require__(233);
+
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+
+	var _reactRedux = __webpack_require__(206);
+
+	var _Button = __webpack_require__(255);
+
+	var _Description = __webpack_require__(257);
+
+	var _prefix = __webpack_require__(219);
+
+	var _isPluginEnabled = __webpack_require__(235);
+
+	var _stateGetter = __webpack_require__(231);
+
+	var _GridConstants = __webpack_require__(220);
+
+	var _getCurrentRecords = __webpack_require__(253);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var PagerToolbar = exports.PagerToolbar = function (_Component) {
+	    _inherits(PagerToolbar, _Component);
+
+	    _createClass(PagerToolbar, [{
+	        key: 'render',
+	        value: function render() {
+	            var _props = this.props;
+	            var BUTTON_TYPES = _props.BUTTON_TYPES;
+	            var dataSource = _props.dataSource;
+	            var pageSize = _props.pageSize;
+	            var pager = _props.pager;
+	            var pagerState = _props.pagerState;
+	            var plugins = _props.plugins;
+	            var recordType = _props.recordType;
+	            var stateKey = _props.stateKey;
+	            var store = _props.store;
+	            var toolbarRenderer = _props.toolbarRenderer;
+
+
+	            var pagerDataSource = getPagingSource(plugins, dataSource);
+
+	            var _state = this.state;
+	            var stuck = _state.stuck;
+	            var stuckBottom = _state.stuckBottom;
+	            var width = _state.width;
+	            var top = _state.top;
+
+
+	            var customComponent = getCustomComponent(plugins, _extends({
+	                dataSource: dataSource,
+	                pageSize: pageSize,
+	                pager: pager
+	            }, { gridData: pagerState }, {
+	                plugins: plugins,
+	                recordType: recordType,
+	                store: store
+	            }));
+
+	            if (customComponent) {
+	                return customComponent;
+	            }
+
+	            var component = (0, _isPluginEnabled.isPluginEnabled)(plugins, 'PAGER') ? getPager(pagerDataSource, pageSize, recordType, BUTTON_TYPES, pager, plugins, pagerState, pagerDataSource, toolbarRenderer, stateKey, stuck, stuckBottom, store, top, width) : _react2.default.createElement('div', null);
+
+	            return component;
+	        }
+	    }, {
+	        key: 'componentDidMount',
+	        value: function componentDidMount() {
+	            var plugins = this.props.plugins;
+
+
+	            var isSticky = plugins.STICKY_FOOTER ? plugins.STICKY_FOOTER.enabled : false;
+
+	            var footerDOM = _reactDom2.default.findDOMNode(this);
+
+	            this.FOOTER_HEIGHT = footerDOM.clientHeight;
+
+	            if (isSticky && !this._scrollListener) {
+	                this.createScrollListener(plugins.STICKY_FOOTER, footerDOM);
+	            }
+	        }
+	    }]);
+
+	    function PagerToolbar(props) {
+	        _classCallCheck(this, PagerToolbar);
+
+	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(PagerToolbar).call(this, props));
+
+	        _this.state = {
+	            stuck: false,
+	            stuckBottom: false,
+	            classes: [],
+	            top: false
+	        };
+	        return _this;
+	    }
+
+	    _createClass(PagerToolbar, [{
+	        key: 'isElementInViewport',
+	        value: function isElementInViewport(el) {
+
+	            var rect = el.getBoundingClientRect();
+
+	            return rect.top >= 0 && rect.left >= 0 && rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) && rect.right <= (window.innerWidth || document.documentElement.clientWidth);
+	        }
+	    }, {
+	        key: 'shouldStick',
+	        value: function shouldStick(footerDOM) {
+
+	            var isTableVisible = this.isElementInViewport(footerDOM.parentNode.querySelector('.react-grid-header-fixed'));
+
+	            var isFooterVisible = footerDOM.parentNode.getBoundingClientRect().bottom < window.innerHeight;
+
+	            return isTableVisible && !isFooterVisible;
+	        }
+	    }, {
+	        key: 'setWidthResetListener',
+	        value: function setWidthResetListener(footerDOM) {
+	            var _this2 = this;
+
+	            var scope = this;
+
+	            window.addEventListener('resize', function () {
+	                var _state2 = _this2.state;
+	                var stuck = _state2.stuck;
+	                var stuckBottom = _state2.stuckBottom;
+
+
+	                if (stuck || stuckBottom) {
+	                    scope.setState({
+	                        width: footerDOM.parentNode.getBoundingClientRect().width
+	                    });
+	                }
+	            });
+	        }
+	    }, {
+	        key: 'createScrollListener',
+	        value: function createScrollListener(config, footerDOM) {
+	            var _this3 = this;
+
+	            var scope = this;
+	            var BUFFER = 52;
+	            var target = config.scrollTarget ? document.querySelector(config.scrollTarget) : document;
+
+	            target = target || document;
+
+	            this.setWidthResetListener(footerDOM);
+
+	            var defaultListener = function defaultListener() {
+	                var stuck = scope.state.stuck;
+
+	                var shouldStick = _this3.shouldStick(footerDOM);
+	                var shouldStop = footerDOM.parentNode.getBoundingClientRect().top + BUFFER > window.innerHeight;
+
+	                if (shouldStop) {
+	                    return scope.setState({
+	                        stuckBottom: true,
+	                        stuck: false,
+	                        width: null,
+	                        top: 25
+	                    });
+	                }
+
+	                if (shouldStick && !stuck) {
+	                    scope.setState({
+	                        stuckBottom: false,
+	                        stuck: true,
+	                        width: footerDOM.clientWidth,
+	                        top: null
+	                    });
+	                } else if (!shouldStick && stuck) {
+	                    scope.setState({
+	                        stuckBottom: false,
+	                        stuck: false,
+	                        width: null,
+	                        top: null
+	                    });
+	                }
+	            };
+
+	            target.addEventListener('scroll', config.listener ? config.listener.bind(this, {
+	                footerDOM: footerDOM
+	            }) : defaultListener);
+	        }
+	    }]);
+
+	    return PagerToolbar;
+	}(_react.Component);
+
+	PagerToolbar.propTypes = {
+	    BUTTON_TYPES: _react.PropTypes.object,
+	    dataSource: _react.PropTypes.any,
+	    gridState: _react.PropTypes.object,
+	    nextButtonText: _react.PropTypes.string,
+	    pageSize: _react.PropTypes.number.isRequired,
+	    pager: _react.PropTypes.object,
+	    pagerState: _react.PropTypes.object,
+	    plugins: _react.PropTypes.object,
+	    recordType: _react.PropTypes.string,
+	    stateKey: _react.PropTypes.string,
+	    store: _react.PropTypes.object.isRequired,
+	    toolbarRenderer: _react.PropTypes.func
+	};
+	PagerToolbar.defaultProps = {
+	    recordType: 'Records',
+	    BUTTON_TYPES: {
+	        NEXT: 'NEXT',
+	        BACK: 'BACK'
+	    },
+	    toolbarRenderer: function toolbarRenderer(pageIndex, pageSize, total, currentRecords, recordType) {
+	        if (!currentRecords) {
+	            return 'No ' + recordType + ' Available';
+	        }
+
+	        return pageIndex * pageSize + '\n                through ' + (pageIndex * pageSize + currentRecords) + '\n                of ' + total + ' ' + recordType + ' Displayed';
+	    }
+	};
+	var getCustomComponent = exports.getCustomComponent = function getCustomComponent(plugins) {
+	    return plugins && plugins.PAGER && plugins.PAGER.pagerComponent ? plugins.PAGER.pagerComponent : false;
+	};
+
+	var getCurrentRecordTotal = exports.getCurrentRecordTotal = function getCurrentRecordTotal(pagerState, pageSize, pageIndex, plugins) {
+
+	    if (plugins.PAGER.pagingType === 'remote' && pagerState && pagerState.currentRecords) {
+	        return pagerState.currentRecords.length;
+	    } else if (plugins.PAGER.pagingType === 'local') {
+	        var records = (0, _getCurrentRecords.getCurrentRecords)(pagerState, pageIndex, pageSize);
+	        return records ? records.length : 0;
+	    }
+	};
+
+	var getTotal = exports.getTotal = function getTotal(dataSource, pagerDefaults) {
+
+	    if (!dataSource || !dataSource.data) {
+	        return 0;
+	    }
+
+	    if (pagerDefaults && pagerDefaults.pagingType === 'remote') {
+	        return dataSource.total;
+	    } else if (pagerDefaults && pagerDefaults.pagingType === 'local') {
+	        return dataSource.data.length;
+	    }
+	};
+
+	var getPager = exports.getPager = function getPager(dataSource, pageSize, recordType, BUTTON_TYPES, pager, plugins, pagerState, pagerDataSource, toolbarRenderer, stateKey, stuck, stuckBottom, store, top, width) {
+
+	    var pageIndex = pager && pager.pageIndex || 0;
+
+	    var toolbarProps = {
+	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.PAGERTOOLBAR, stuck ? 'is-stuck' : '', stuckBottom ? 'is-stuck-bottom' : '')
+	    };
+
+	    if (width) {
+	        toolbarProps.style = {};
+	        toolbarProps.style.width = width + 'px';
+	    }
+
+	    if (top) {
+	        toolbarProps.style = toolbarProps.style || {};
+	        toolbarProps.style.top = top + 'px';
+	    }
+
+	    var currentRecords = getCurrentRecordTotal(pagerState, pageSize, pageIndex, plugins, dataSource);
+
+	    var total = getTotal(pagerState, plugins.PAGER);
+
+	    var descriptionProps = {
+	        pageIndex: pageIndex,
+	        pageSize: pageSize,
+	        total: total,
+	        currentRecords: currentRecords,
+	        recordType: recordType
+	    };
+
+	    var spacerProps = {
+	        style: {
+	            height: '33px'
+	        }
+	    };
+
+	    var spacer = stuck || stuckBottom ? _react2.default.createElement('div', spacerProps) : null;
+
+	    return _react2.default.createElement(
+	        'div',
+	        null,
+	        spacer,
+	        _react2.default.createElement(
+	            'div',
+	            toolbarProps,
+	            _react2.default.createElement(
+	                'span',
+	                null,
+	                _react2.default.createElement(_Button.Button, {
+	                    BUTTON_TYPES: BUTTON_TYPES,
+	                    type: BUTTON_TYPES.BACK,
+	                    pageIndex: pageIndex,
+	                    pageSize: pageSize,
+	                    plugins: plugins,
+	                    currentRecords: currentRecords,
+	                    total: total,
+	                    dataSource: dataSource,
+	                    stateKey: stateKey,
+	                    store: store }),
+	                _react2.default.createElement(_Button.Button, {
+	                    BUTTON_TYPES: BUTTON_TYPES,
+	                    type: BUTTON_TYPES.NEXT,
+	                    pageIndex: pageIndex,
+	                    pageSize: pageSize,
+	                    plugins: plugins,
+	                    currentRecords: currentRecords,
+	                    total: total,
+	                    dataSource: dataSource,
+	                    stateKey: stateKey,
+	                    store: store })
+	            ),
+	            _react2.default.createElement(_Description.Description, descriptionProps)
+	        )
+	    );
+	};
+
+	var getPagingSource = exports.getPagingSource = function getPagingSource(plugins, dataSource) {
+	    if (plugins && plugins.PAGER && plugins.PAGER.pagingSource) {
+	        return plugins.PAGER.pagingSource;
+	    }
+
+	    return dataSource;
+	};
+
+	function mapStateToProps(state, props) {
+
+	    return {
+	        pager: (0, _stateGetter.stateGetter)(state, props, 'pager', props.stateKey),
+	        pagerState: (0, _stateGetter.stateGetter)(state, props, 'dataSource', props.stateKey),
+	        gridState: (0, _stateGetter.stateGetter)(state, props, 'grid', props.stateKey)
+	    };
+	}
+
+	var ConnectedPagerToolbar = (0, _reactRedux.connect)(mapStateToProps)(PagerToolbar);
+
+	exports.PagerToolbar = PagerToolbar;
+	exports.ConnectedPagerToolbar = ConnectedPagerToolbar;
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Toolbar.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 255 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.isButtonDisabled = exports.handleButtonClick = exports.Button = undefined;
+
+	var _react = __webpack_require__(149);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _prefix = __webpack_require__(219);
+
+	var _GridConstants = __webpack_require__(220);
+
+	var _PagerActions = __webpack_require__(256);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var Button = exports.Button = function Button(_ref) {
+	    var BUTTON_TYPES = _ref.BUTTON_TYPES;
+	    var type = _ref.type;
+	    var pageIndex = _ref.pageIndex;
+	    var pageSize = _ref.pageSize;
+	    var plugins = _ref.plugins;
+	    var currentRecords = _ref.currentRecords;
+	    var total = _ref.total;
+	    var dataSource = _ref.dataSource;
+	    var backButtonText = _ref.backButtonText;
+	    var nextButtonText = _ref.nextButtonText;
+	    var stateKey = _ref.stateKey;
+	    var store = _ref.store;
+
+
+	    var buttonProps = {
+	        onClick: handleButtonClick.bind(undefined, type, pageIndex, pageSize, dataSource, BUTTON_TYPES, plugins, stateKey, store),
+	        children: type === BUTTON_TYPES.NEXT ? nextButtonText : backButtonText,
+	        disabled: isButtonDisabled(type, pageIndex, pageSize, currentRecords, total, BUTTON_TYPES),
+	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.BUTTONS.PAGER, type.toLowerCase())
+	    };
+
+	    return _react2.default.createElement('button', buttonProps);
+	};
+
+	var handleButtonClick = exports.handleButtonClick = function handleButtonClick(type, pageIndex, pageSize, dataSource, BUTTON_TYPES, plugins, stateKey, store) {
+
+	    var PAGER = plugins.PAGER;
+
+	    if (PAGER.pagingType === 'local') {
+	        store.dispatch((0, _PagerActions.setPage)({ index: pageIndex, type: type, BUTTON_TYPES: BUTTON_TYPES, stateKey: stateKey }));
+	    } else if (PAGER.pagingType === 'remote' && dataSource) {
+	        store.dispatch((0, _PagerActions.setPageAsync)({ index: pageIndex, pageSize: pageSize, type: type, BUTTON_TYPES: BUTTON_TYPES, dataSource: dataSource, stateKey: stateKey }));
+	    } else {
+	        console.warn('Please configure paging plugin pagingType to local if no pagingSource is provided');
+	    }
+	};
+
+	var isButtonDisabled = exports.isButtonDisabled = function isButtonDisabled(type, pageIndex, pageSize, currentRecords, total, BUTTON_TYPES) {
+
+	    if (type === BUTTON_TYPES.BACK) {
+	        return pageIndex === 0;
+	    } else if (type === BUTTON_TYPES.NEXT) {
+	        return currentRecords < pageSize || pageIndex * pageSize + currentRecords === total;
+	    }
+	};
+
+	Button.propTypes = {
+	    BUTTON_TYPES: _react.PropTypes.object,
+	    backButtonText: _react.PropTypes.string,
+	    currentRecords: _react.PropTypes.number,
+	    dataSource: _react.PropTypes.any,
+	    nextButtonText: _react.PropTypes.string,
+	    pageIndex: _react.PropTypes.number,
+	    pageSize: _react.PropTypes.number,
+	    plugins: _react.PropTypes.object,
+	    store: _react.PropTypes.object,
+	    total: _react.PropTypes.number,
+	    type: _react.PropTypes.string
+	};
+
+	Button.defaultProps = {
+	    BUTTON_TYPES: {
+	        NEXT: 'NEXT',
+	        BACK: 'BACK'
+	    },
+	    nextButtonText: 'Next',
+	    backButtonText: 'Back'
+	};
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Button.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 256 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.setPage = setPage;
+	exports.setPageIndexAsync = setPageIndexAsync;
+	exports.setPageAsync = setPageAsync;
+
+	var _ActionTypes = __webpack_require__(224);
+
+	var _LoaderActions = __webpack_require__(226);
+
+	var _EditorActions = __webpack_require__(227);
+
+	var _Request = __webpack_require__(228);
+
+	var _Request2 = _interopRequireDefault(_Request);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function setPage(_ref) {
+	    var index = _ref.index;
+	    var type = _ref.type;
+	    var BUTTON_TYPES = _ref.BUTTON_TYPES;
+
+
+	    var pageIndex = type === BUTTON_TYPES.NEXT ? index + 1 : index - 1;
+
+	    return { type: _ActionTypes.PAGE_LOCAL, pageIndex: pageIndex };
+	}
+
+	function setPageIndexAsync(_ref2) {
+	    var pageIndex = _ref2.pageIndex;
+	    var pageSize = _ref2.pageSize;
+	    var dataSource = _ref2.dataSource;
+	    var filterFields = _ref2.filterFields;
+	    var sort = _ref2.sort;
+	    var stateKey = _ref2.stateKey;
+	    var afterAsyncFunc = _ref2.afterAsyncFunc;
+
+
+	    if (typeof dataSource === 'function') {
+
+	        return function (dispatch) {
+
+	            dispatch((0, _EditorActions.dismissEditor)({ stateKey: stateKey }));
+
+	            dispatch((0, _LoaderActions.setLoaderState)({ state: true, stateKey: stateKey }));
+
+	            dataSource({ pageIndex: pageIndex, pageSize: pageSize }, filterFields, sort).then(function (response) {
+
+	                if (response && response.data) {
+
+	                    dispatch({
+	                        type: _ActionTypes.SET_DATA,
+	                        data: response.data,
+	                        total: response.total,
+	                        currentRecords: response.items,
+	                        success: true,
+	                        stateKey: stateKey
+	                    });
+
+	                    if (afterAsyncFunc && typeof afterAsyncFunc === 'function') {
+	                        afterAsyncFunc();
+	                    }
+	                } else {
+
+	                    if (response && !response.data) {
+	                        console.warn('A response was recieved but no data entry was found');
+	                        console.warn('Please see https://github.com/bencripps/react-redux-grid for documentation');
+	                    }
+
+	                    dispatch({
+	                        type: _ActionTypes.ERROR_OCCURRED,
+	                        error: 'Unable to Retrieve Grid Data',
+	                        errorOccurred: true,
+	                        stateKey: stateKey
+	                    });
+	                }
+
+	                dispatch((0, _LoaderActions.setLoaderState)({ state: false, stateKey: stateKey }));
+	            });
+	        };
+	    }
+	}
+
+	function setPageAsync(_ref3) {
+	    var index = _ref3.index;
+	    var pageSize = _ref3.pageSize;
+	    var type = _ref3.type;
+	    var BUTTON_TYPES = _ref3.BUTTON_TYPES;
+	    var dataSource = _ref3.dataSource;
+	    var stateKey = _ref3.stateKey;
+
+
+	    var pageIndex = type === BUTTON_TYPES.NEXT ? index + 1 : index - 1;
+
+	    return function (dispatch) {
+
+	        dispatch((0, _LoaderActions.setLoaderState)({ state: true, stateKey: stateKey }));
+
+	        return _Request2.default.api({
+	            route: dataSource,
+	            method: 'POST',
+	            data: {
+	                pageIndex: pageIndex,
+	                pageSize: pageSize
+	            }
+	        }).then(function (response) {
+
+	            if (response && response.data) {
+
+	                dispatch({
+	                    type: _ActionTypes.PAGE_REMOTE,
+	                    pageIndex: pageIndex,
+	                    stateKey: stateKey
+	                });
+
+	                dispatch({
+	                    type: _ActionTypes.SET_DATA,
+	                    data: response.data,
+	                    total: response.total,
+	                    currentRecords: response.data,
+	                    success: true,
+	                    stateKey: stateKey
+	                });
+
+	                dispatch((0, _LoaderActions.setLoaderState)({ state: false, stateKey: stateKey }));
+	            } else {
+	                dispatch({
+	                    type: _ActionTypes.ERROR_OCCURRED,
+	                    error: response,
+	                    errorOccurred: true,
+	                    stateKey: stateKey
+	                });
+	            }
+	        });
+	    };
+	}
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "PagerActions.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 257 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.Description = undefined;
+
+	var _react = __webpack_require__(149);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var Description = exports.Description = function Description(_ref) {
+	    var toolbarRenderer = _ref.toolbarRenderer;
+	    var pageIndex = _ref.pageIndex;
+	    var pageSize = _ref.pageSize;
+	    var total = _ref.total;
+	    var currentRecords = _ref.currentRecords;
+	    var recordType = _ref.recordType;
+
+
+	    return _react2.default.createElement(
+	        'span',
+	        null,
+	        toolbarRenderer(pageIndex, pageSize, total, currentRecords, recordType)
+	    );
+	};
+
+	Description.propTypes = {
+	    toolbarRenderer: _react.PropTypes.func
+	};
+
+	Description.defaultProps = {
+	    toolbarRenderer: function toolbarRenderer(pageIndex, pageSize, total, currentRecords, recordType) {
+	        if (!currentRecords) {
+	            return 'No ' + recordType + ' Available';
+	        }
+
+	        var firstIndex = pageIndex * pageSize + 1;
+
+	        return firstIndex + '\n            through ' + (pageIndex * pageSize + currentRecords) + '\n            of ' + total + ' ' + recordType + ' Displayed';
+	    }
+	};
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Description.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 258 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.getMessage = exports.handleButtonClick = exports.Message = undefined;
+
+	var _react = __webpack_require__(149);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRedux = __webpack_require__(206);
+
+	var _prefix = __webpack_require__(219);
+
+	var _stateGetter = __webpack_require__(231);
+
+	var _GridConstants = __webpack_require__(220);
+
+	var _ErrorHandlerActions = __webpack_require__(259);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var Message = exports.Message = function Message(_ref) {
+	    var errorHandler = _ref.errorHandler;
+	    var plugins = _ref.plugins;
+	    var store = _ref.store;
+
+
+	    var defaultMessage = plugins && plugins.ERROR_HANDLER && plugins.ERROR_HANDLER.defaultErrorMessage ? plugins.ERROR_HANDLER.defaultErrorMessage : 'An Error Occurred';
+
+	    var showError = errorHandler && errorHandler.errorOccurred;
+
+	    var message = errorHandler && errorHandler.error ? errorHandler.error : defaultMessage;
+
+	    var errorMessage = getMessage(message, showError, store);
+
+	    return errorMessage;
+	};
+
+	var handleButtonClick = exports.handleButtonClick = function handleButtonClick(store) {
+	    store.dispatch((0, _ErrorHandlerActions.dismissError)());
+	};
+
+	var getMessage = exports.getMessage = function getMessage(message, isShown, store) {
+
+	    var messageContainerProps = {
+	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.ERROR_HANDLER.CONTAINER, isShown ? 'shown' : null)
+	    };
+
+	    var messageProps = {
+	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.ERROR_HANDLER.MESSAGE)
+	    };
+
+	    var buttonProps = {
+	        onClick: handleButtonClick.bind(undefined, store)
+	    };
+
+	    return _react2.default.createElement(
+	        'div',
+	        messageContainerProps,
+	        _react2.default.createElement(
+	            'span',
+	            messageProps,
+	            ' ',
+	            message,
+	            ' '
+	        ),
+	        _react2.default.createElement(
+	            'button',
+	            buttonProps,
+	            'Close'
+	        )
+	    );
+	};
+
+	Message.propTypes = {
+	    errorHandler: _react.PropTypes.object,
+	    plugins: _react.PropTypes.object,
+	    store: _react.PropTypes.object
+	};
+
+	Message.defaultProps = {};
+
+	function mapStateToProps(state, props) {
+	    return {
+	        errorHandler: (0, _stateGetter.stateGetter)(state, props, 'errorhandler', 'errorState')
+	    };
+	}
+
+	exports.default = (0, _reactRedux.connect)(mapStateToProps)(Message);
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Message.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 259 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.dismissError = dismissError;
+
+	var _ActionTypes = __webpack_require__(224);
+
+	function dismissError(_ref) {
+	    var stateKey = _ref.stateKey;
+
+	    return { type: _ActionTypes.DISMISS_ERROR, stateKey: stateKey };
+	}
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "ErrorHandlerActions.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 260 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.getAction = exports.getToolbar = exports.getTotalSelection = undefined;
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(149);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRedux = __webpack_require__(206);
+
+	var _prefix = __webpack_require__(219);
+
+	var _stateGetter = __webpack_require__(231);
+
+	var _keyGenerator = __webpack_require__(222);
+
+	var _isPluginEnabled = __webpack_require__(235);
+
+	var _GridConstants = __webpack_require__(220);
+
+	var _ToolbarActions = __webpack_require__(261);
+
+	var _ModelActions = __webpack_require__(262);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var BulkActionToolbar = function (_Component) {
+	    _inherits(BulkActionToolbar, _Component);
+
+	    _createClass(BulkActionToolbar, [{
+	        key: 'render',
+	        value: function render() {
+	            var _props = this.props;
+	            var bulkActionState = _props.bulkActionState;
+	            var selectedRows = _props.selectedRows;
+	            var plugins = _props.plugins;
+
+
+	            var toolbar = (0, _isPluginEnabled.isPluginEnabled)(plugins, 'BULK_ACTIONS') && plugins.BULK_ACTIONS.actions && plugins.BULK_ACTIONS.actions.length > 0 ? getToolbar(plugins.BULK_ACTIONS.actions, bulkActionState, selectedRows) : _react2.default.createElement('div', null);
+
+	            return toolbar;
+	        }
+	    }, {
+	        key: 'componentDidUpdate',
+	        value: function componentDidUpdate() {
+	            var _props2 = this.props;
+	            var store = _props2.store;
+	            var stateKey = _props2.stateKey;
+	            var bulkActionState = _props2.bulkActionState;
+	            var selectedRows = _props2.selectedRows;
+
+	            var isRemoved = bulkActionState && bulkActionState.isRemoved;
+	            var totalCount = getTotalSelection(selectedRows);
+
+	            if (bulkActionState) {
+	                if (totalCount === 0 && !isRemoved) {
+	                    clearTimeout(this.removeTimeout);
+	                    this.removeTimeout = setTimeout(function () {
+	                        store.dispatch((0, _ToolbarActions.removeToolbar)({ state: true, stateKey: stateKey }));
+	                    }, 300);
+	                } else if (totalCount > 0 && isRemoved) {
+	                    store.dispatch((0, _ToolbarActions.removeToolbar)({ state: false, stateKey: stateKey }));
+	                }
+	            }
+	        }
+	    }]);
+
+	    function BulkActionToolbar() {
+	        _classCallCheck(this, BulkActionToolbar);
+
+	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(BulkActionToolbar).call(this));
+
+	        _this.removeTimeout = null;
+	        return _this;
+	    }
+
+	    _createClass(BulkActionToolbar, [{
+	        key: 'handleChange',
+	        value: function handleChange(reactEvent) {
+	            var _props3 = this.props;
+	            var stateKey = _props3.stateKey;
+	            var store = _props3.store;
+	            var dataSource = _props3.dataSource;
+
+
+	            if (reactEvent.target && reactEvent.target.checked) {
+	                store.dispatch((0, _ModelActions.selectAll)({ data: dataSource, stateKey: stateKey }));
+	            } else {
+	                store.dispatch((0, _ModelActions.deselectAll)({ stateKey: stateKey }));
+	            }
+	        }
+	    }]);
+
+	    return BulkActionToolbar;
+	}(_react.Component);
+
+	BulkActionToolbar.propTypes = {
+	    bulkActionState: _react.PropTypes.object,
+	    dataSource: _react.PropTypes.object,
+	    plugins: _react.PropTypes.object.isRequired,
+	    selectedRows: _react.PropTypes.object,
+	    selectionModel: _react.PropTypes.object.isRequired,
+	    stateKey: _react.PropTypes.string,
+	    store: _react.PropTypes.object.isRequired
+	};
+	var getTotalSelection = exports.getTotalSelection = function getTotalSelection(selectedRows) {
+	    var count = selectedRows && Object.keys(selectedRows).length ? Object.keys(selectedRows).filter(function (k) {
+	        return selectedRows[k];
+	    }).length : 0;
+
+	    return count;
+	};
+
+	var getToolbar = exports.getToolbar = function getToolbar(actions, bulkActionState, selectedRows) {
+	    var totalCount = getTotalSelection(selectedRows);
+
+	    var shownCls = totalCount > 0 ? _GridConstants.CLASS_NAMES.BULK_ACTIONS.SHOWN : _GridConstants.CLASS_NAMES.BULK_ACTIONS.HIDDEN;
+
+	    var removedCls = bulkActionState && bulkActionState.isRemoved ? 'removed' : null;
+
+	    var containerProps = {
+	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.BULK_ACTIONS.CONTAINER, shownCls, removedCls)
+	    };
+
+	    var spanProps = {
+	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.BULK_ACTIONS.DESCRIPTION),
+	        text: totalCount + ' Selected'
+	    };
+
+	    var buttons = actions.map(getAction);
+
+	    return _react2.default.createElement(
+	        'div',
+	        containerProps,
+	        _react2.default.createElement(
+	            'span',
+	            spanProps,
+	            spanProps.text
+	        ),
+	        buttons
+	    );
+	};
+
+	var getAction = exports.getAction = function getAction(action) {
+
+	    var buttonProps = {
+	        text: action.text,
+	        onClick: action.EVENT_HANDLER,
+	        key: (0, _keyGenerator.keyFromObject)(action)
+	    };
+
+	    return _react2.default.createElement(
+	        'button',
+	        buttonProps,
+	        buttonProps.text
+	    );
+	};
+
+	function mapStateToProps(state, props) {
+
+	    return {
+	        dataSource: (0, _stateGetter.stateGetter)(state, props, 'dataSource', props.stateKey),
+	        selectedRows: (0, _stateGetter.stateGetter)(state, props, 'selection', props.stateKey),
+	        bulkActionState: (0, _stateGetter.stateGetter)(state, props, 'bulkaction', props.stateKey)
+	    };
+	}
+
+	exports.default = (0, _reactRedux.connect)(mapStateToProps)(BulkActionToolbar);
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Toolbar.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 261 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.removeToolbar = removeToolbar;
+
+	var _ActionTypes = __webpack_require__(224);
+
+	function removeToolbar(_ref) {
+	    var state = _ref.state;
+	    var stateKey = _ref.stateKey;
+
+	    return { type: _ActionTypes.REMOVE_TOOLBAR, value: state, stateKey: stateKey };
+	}
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "ToolbarActions.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 262 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.selectAll = selectAll;
+	exports.deselectAll = deselectAll;
+	exports.setSelection = setSelection;
+
+	var _ActionTypes = __webpack_require__(224);
+
+	var _keyGenerator = __webpack_require__(222);
+
+	function selectAll(_ref) {
+	    var data = _ref.data;
+	    var stateKey = _ref.stateKey;
+
+	    var keys = data.currentRecords.map(function (row, i) {
+	        return (0, _keyGenerator.keyGenerator)('row', i);
+	    });
+
+	    var selection = keys.reduce(function (obj, k) {
+	        obj[k] = true;
+	        return obj;
+	    }, {});
+	    return { type: _ActionTypes.SELECT_ALL, selection: selection, stateKey: stateKey };
+	}
+
+	function deselectAll(_ref2) {
+	    var stateKey = _ref2.stateKey;
+
+	    return { type: _ActionTypes.DESELECT_ALL, stateKey: stateKey };
+	}
+
+	function setSelection(_ref3) {
+	    var id = _ref3.id;
+	    var _ref3$defaults = _ref3.defaults;
+	    var defaults = _ref3$defaults === undefined ? {} : _ref3$defaults;
+	    var _ref3$modes = _ref3.modes;
+	    var modes = _ref3$modes === undefined ? {} : _ref3$modes;
+	    var stateKey = _ref3.stateKey;
+
+
+	    var allowDeselect = defaults.allowDeselect;
+	    var clearSelections = defaults.mode === modes.checkboxSingle || defaults.mode === modes.single;
+
+	    if (!defaults.enabled) {
+	        console.warn('Selection model has been disabled');
+	        return { type: _ActionTypes.NO_EVENT };
+	    }
+
+	    if (defaults.mode === modes.single) {
+	        return { type: _ActionTypes.SET_SELECTION, id: id, clearSelections: clearSelections, allowDeselect: allowDeselect, stateKey: stateKey };
+	    } else if (defaults.mode === modes.multi) {
+	        return { type: _ActionTypes.SET_SELECTION, id: id, allowDeselect: allowDeselect, stateKey: stateKey };
+	    } else if (defaults.mode === modes.checkboxSingle || defaults.mode === modes.checkboxMulti) {
+	        return { type: _ActionTypes.SET_SELECTION, id: id, clearSelections: clearSelections, allowDeselect: allowDeselect, stateKey: stateKey };
+	    }
+	}
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "ModelActions.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 263 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.handleKeyUp = exports.setFilterValue = exports.getToolbar = exports.FilterToolbar = undefined;
+
+	var _react = __webpack_require__(149);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRedux = __webpack_require__(206);
+
+	var _Menu = __webpack_require__(264);
+
+	var _Menu2 = _interopRequireDefault(_Menu);
+
+	var _Input = __webpack_require__(269);
+
+	var _SearchButton = __webpack_require__(270);
+
+	var _ClearButton = __webpack_require__(271);
+
+	var _FilterButton = __webpack_require__(272);
+
+	var _prefix = __webpack_require__(219);
+
+	var _isPluginEnabled = __webpack_require__(235);
+
+	var _filterUtils = __webpack_require__(266);
+
+	var _filterUtils2 = _interopRequireDefault(_filterUtils);
+
+	var _stateGetter = __webpack_require__(231);
+
+	var _GridConstants = __webpack_require__(220);
+
+	var _FilterActions = __webpack_require__(267);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var FilterToolbar = exports.FilterToolbar = function FilterToolbar(_ref) {
+	    var columnManager = _ref.columnManager;
+	    var dataSource = _ref.dataSource;
+	    var defaultSortMethod = _ref.defaultSortMethod;
+	    var filter = _ref.filter;
+	    var placeHolderText = _ref.placeHolderText;
+	    var pager = _ref.pager;
+	    var pageSize = _ref.pageSize;
+	    var plugins = _ref.plugins;
+	    var stateKey = _ref.stateKey;
+	    var store = _ref.store;
+
+
+	    var customComponent = plugins && plugins.FILTER_CONTAINER && plugins.FILTER_CONTAINER.component ? plugins.FILTER_CONTAINER.component : null;
+
+	    if (customComponent) {
+	        return customComponent;
+	    }
+
+	    var toolbar = (0, _isPluginEnabled.isPluginEnabled)(plugins, 'FILTER_CONTAINER') ? getToolbar(columnManager, dataSource, defaultSortMethod, filter, placeHolderText, pager, pageSize, plugins, stateKey, store) : _react2.default.createElement('div', null);
+
+	    return toolbar;
+	};
+
+	FilterToolbar.propTypes = {
+	    columnManager: _react.PropTypes.object,
+	    dataSource: _react.PropTypes.object,
+	    defaultSortMethod: _react.PropTypes.string,
+	    filter: _react.PropTypes.object,
+	    pageSize: _react.PropTypes.number,
+	    pager: _react.PropTypes.object,
+	    placeHolderText: _react.PropTypes.string,
+	    plugins: _react.PropTypes.object,
+	    selectionModel: _react.PropTypes.object,
+	    store: _react.PropTypes.object.isRequired
+	};
+
+	FilterToolbar.defaultProps = {
+	    defaultSortMethod: _GridConstants.FILTER_METHODS.LOCAL,
+	    placeHolderText: 'Search'
+	};
+
+	var getToolbar = exports.getToolbar = function getToolbar(columnManager, dataSource, defaultSortMethod, filter, placeHolderText, pager, pageSize, plugins, stateKey, store) {
+
+	    var dataUri = columnManager.config.dataSource || '';
+
+	    var filterMenuShown = plugins && plugins.FILTER_CONTAINER && plugins.FILTER_CONTAINER.enableFilterMenu && filter && filter.filterMenuShown;
+
+	    var method = plugins && plugins.FILTER_CONTAINER && plugins.FILTER_CONTAINER.method ? plugins.FILTER_CONTAINER.method.toUpperCase() : defaultSortMethod;
+
+	    var inputValue = filter && filter.filterValue ? filter.filterValue : '';
+
+	    if (filter && filter.filterMenuValues && Object.keys(filter.filterMenuValues).length > 0) {
+	        inputValue = JSON.stringify(filter.filterMenuValues);
+	    }
+
+	    var applicableButton = inputValue && inputValue.length > 0 ? _react2.default.createElement(_ClearButton.ClearButton, { dataUri: dataUri, method: method, stateKey: stateKey, store: store }) : _react2.default.createElement(_SearchButton.SearchButton, null);
+
+	    var filterMenuButton = plugins.FILTER_CONTAINER.enableFilterMenu ? _react2.default.createElement(_FilterButton.FilterButton, { filter: filter, filterMenuShown: filterMenuShown, stateKey: stateKey, store: store }) : null;
+
+	    var filterMenu = filterMenuShown ? _react2.default.createElement(_Menu2.default, { store: store, stateKey: stateKey, plugins: plugins }) : null;
+
+	    return _react2.default.createElement(
+	        'div',
+	        { className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.FILTER_CONTAINER.CONTAINER) },
+	        _react2.default.createElement(_Input.Input, {
+	            dataSource: dataSource,
+	            method: method,
+	            placeHolderText: placeHolderText,
+	            inputValue: inputValue,
+	            plugins: plugins,
+	            pager: pager,
+	            pageSize: pageSize,
+	            stateKey: stateKey,
+	            store: store
+	        }),
+	        _react2.default.createElement(
+	            'div',
+	            { className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.FILTER_CONTAINER.BUTTON_CONTAINER)
+	            },
+	            applicableButton,
+	            filterMenuButton
+	        ),
+	        filterMenu
+	    );
+	};
+
+	var setFilterValue = exports.setFilterValue = function setFilterValue(store, reactEvent) {
+
+	    var value = reactEvent.target.value;
+
+	    store.dispatch((0, _FilterActions.setFilter)(value));
+	};
+
+	var handleKeyUp = exports.handleKeyUp = function handleKeyUp(value, method, dataSource, plugins, pager, pageSize, store, reactEvent) {
+
+	    var filterSource = plugins.FILTER_CONTAINER;
+
+	    var pageIndex = pager ? pager.pageIndex : 0;
+
+	    if (reactEvent.which !== _GridConstants.KEYBOARD_MAP.ENTER) {
+	        return false;
+	    }
+
+	    if (method === _GridConstants.FILTER_METHODS.LOCAL) {
+	        store.dispatch((0, _FilterActions.doLocalFilter)(_filterUtils2.default.byKeyword(value, dataSource)));
+	    } else if (method === _GridConstants.FILTER_METHODS.REMOTE) {
+	        store.dispatch((0, _FilterActions.doRemoteFilter)({
+	            keyword: value
+	        }, pageIndex, pageSize, filterSource));
+	    } else {
+	        console.warn('The filter method has not been created!');
+	    }
+	};
+
+	function mapStateToProps(state, props) {
+
+	    return {
+	        dataSource: (0, _stateGetter.stateGetter)(state, props, 'dataSource', props.stateKey),
+	        selectedRows: (0, _stateGetter.stateGetter)(state, props, 'selection', props.stateKey),
+	        filter: (0, _stateGetter.stateGetter)(state, props, 'filter', props.stateKey),
+	        pager: (0, _stateGetter.stateGetter)(state, props, 'pager', props.stateKey)
+	    };
+	}
+
+	exports.default = (0, _reactRedux.connect)(mapStateToProps)(FilterToolbar);
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Toolbar.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 264 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.FilterMenu = undefined;
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var _react = __webpack_require__(149);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRedux = __webpack_require__(206);
+
+	var _Button = __webpack_require__(265);
+
+	var _Input = __webpack_require__(268);
+
+	var _prefix = __webpack_require__(219);
+
+	var _stateGetter = __webpack_require__(231);
+
+	var _GridConstants = __webpack_require__(220);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var FilterMenu = exports.FilterMenu = function FilterMenu(_ref) {
+	    var buttonText = _ref.buttonText;
+	    var buttonTypes = _ref.buttonTypes;
+	    var dataSource = _ref.dataSource;
+	    var menuTitle = _ref.menuTitle;
+	    var filter = _ref.filter;
+	    var plugins = _ref.plugins;
+	    var pager = _ref.pager;
+	    var stateKey = _ref.stateKey;
+	    var store = _ref.store;
+
+
+	    var menuContainerProps = {
+	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.FILTER_CONTAINER.MENU.CONTAINER)
+	    };
+
+	    var menuTitleProps = {
+	        text: menuTitle,
+	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.FILTER_CONTAINER.MENU.TITLE)
+	    };
+
+	    var buttonContainerProps = {
+	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.FILTER_CONTAINER.MENU.BUTTON_CONTAINER)
+	    };
+
+	    var inputs = plugins.FILTER_CONTAINER.fields && plugins.FILTER_CONTAINER.fields.length > 0 ? plugins.FILTER_CONTAINER.fields.map(function (field) {
+	        return _react2.default.createElement(_Input.Input, { field: field, filter: filter, stateKey: stateKey, store: store });
+	    }) : null;
+
+	    var buttonProps = {
+	        buttonText: buttonText,
+	        buttonTypes: buttonTypes,
+	        dataSource: dataSource,
+	        filter: filter,
+	        plugins: plugins,
+	        pager: pager,
+	        store: store
+	    };
+
+	    return _react2.default.createElement(
+	        'div',
+	        menuContainerProps,
+	        _react2.default.createElement(
+	            'span',
+	            menuTitleProps,
+	            menuTitleProps.text
+	        ),
+	        _react2.default.createElement(
+	            'div',
+	            null,
+	            inputs
+	        ),
+	        _react2.default.createElement(
+	            'div',
+	            buttonContainerProps,
+	            _react2.default.createElement(_Button.Button, _extends({}, buttonProps, { stateKey: stateKey, type: buttonTypes.CANCEL })),
+	            _react2.default.createElement(_Button.Button, _extends({}, buttonProps, { stateKey: stateKey, type: buttonTypes.SUBMIT }))
+	        )
+	    );
+	};
+
+	FilterMenu.propTypes = {
+	    buttonText: _react.PropTypes.object,
+	    buttonTypes: _react.PropTypes.object,
+	    dataSource: _react.PropTypes.object,
+	    filter: _react.PropTypes.string,
+	    menuTitle: _react.PropTypes.string.isRequired,
+	    pager: _react.PropTypes.object,
+	    plugins: _react.PropTypes.object.isRequired,
+	    stateKey: _react.PropTypes.string,
+	    store: _react.PropTypes.object.isRequired
+	};
+
+	FilterMenu.defaultProps = {
+	    buttonTypes: {
+	        SUBMIT: 'SUBMIT',
+	        CANCEL: 'CANCEL'
+	    },
+	    buttonText: {
+	        SUBMIT: 'Submit',
+	        CANCEL: 'Cancel'
+	    },
+	    defaultSortMethod: _GridConstants.FILTER_METHODS.LOCAL,
+	    menuTitle: 'Advanced Filter Menu',
+	    placeHolderText: 'Search',
+	    plugins: _react2.default.PropTypes.object.isRequired,
+	    selectionModel: _react2.default.PropTypes.object.isRequired
+	};
+
+	function mapStateToProps(state, props) {
+
+	    return {
+	        dataSource: (0, _stateGetter.stateGetter)(state, props, 'dataSource', props.stateKey),
+	        selectedRows: (0, _stateGetter.stateGetter)(state, props, 'selection', props.stateKey),
+	        filter: (0, _stateGetter.stateGetter)(state, props, 'filter', props.stateKey),
+	        pager: (0, _stateGetter.stateGetter)(state, props, 'pager', props.stateKey)
+	    };
+	}
+
+	exports.default = (0, _reactRedux.connect)(mapStateToProps)(FilterMenu);
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Menu.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 265 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.handleButtonClick = exports.Button = undefined;
+
+	var _react = __webpack_require__(149);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _prefix = __webpack_require__(219);
+
+	var _filterUtils = __webpack_require__(266);
+
+	var _filterUtils2 = _interopRequireDefault(_filterUtils);
+
+	var _GridConstants = __webpack_require__(220);
+
+	var _FilterActions = __webpack_require__(267);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var Button = exports.Button = function Button(_ref) {
+	    var buttonText = _ref.buttonText;
+	    var buttonTypes = _ref.buttonTypes;
+	    var dataSource = _ref.dataSource;
+	    var filter = _ref.filter;
+	    var plugins = _ref.plugins;
+	    var pager = _ref.pager;
+	    var type = _ref.type;
+	    var stateKey = _ref.stateKey;
+	    var store = _ref.store;
+
+
+	    var buttonProps = {
+	        text: buttonText[type],
+	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.FILTER_CONTAINER.MENU.BUTTON, type === buttonTypes.CANCEL ? _GridConstants.CLASS_NAMES.SECONDARY_CLASS : ''),
+	        onClick: handleButtonClick.bind(undefined, buttonTypes, dataSource, filter, plugins, pager, type, stateKey, store)
+	    };
+
+	    return _react2.default.createElement(
+	        'button',
+	        buttonProps,
+	        buttonProps.text
+	    );
+	};
+
+	Button.propTypes = {
+	    buttonText: _react.PropTypes.string,
+	    buttonTypes: _react.PropTypes.object,
+	    dataSource: _react.PropTypes.object,
+	    filter: _react.PropTypes.object,
+	    pager: _react.PropTypes.object,
+	    plugins: _react.PropTypes.object,
+	    store: _react.PropTypes.object.isRequired,
+	    type: _react.PropTypes.object
+	};
+
+	Button.defaultProps = {};
+
+	var handleButtonClick = exports.handleButtonClick = function handleButtonClick(buttonTypes, dataSource, filter, plugins, pager, type, stateKey, store) {
+
+	    var method = plugins.FILTER_CONTAINER.method ? plugins.FILTER_CONTAINER.method.toUpperCase() : _GridConstants.FILTER_METHODS.LOCAL;
+	    var filterSource = plugins.FILTER_CONTAINER.filterSource;
+
+	    var pageSize = pager ? pager.pageSize : _GridConstants.DEFAULT_PAGE_SIZE;
+	    var pageIndex = 0;
+
+	    if (pager) {
+	        pageIndex = pager.pageIndex;
+	    }
+
+	    if (type === buttonTypes.CANCEL) {
+	        store.dispatch((0, _FilterActions.showFilterMenu)({ value: true, stateKey: stateKey }));
+	        store.dispatch((0, _FilterActions.clearFilterLocal)({ dataSource: dataSource, stateKey: stateKey }));
+	    } else if (type === buttonTypes.SUBMIT) {
+
+	        if (method === _GridConstants.FILTER_METHODS.LOCAL) {
+	            store.dispatch((0, _FilterActions.doLocalFilter)({
+	                data: _filterUtils2.default.byMenu(filter.filterMenuValues, dataSource),
+	                stateKey: stateKey
+	            }));
+	        } else if (method === _GridConstants.FILTER_METHODS.REMOTE) {
+	            store.dispatch((0, _FilterActions.doRemoteFilter)({
+	                filterParams: filter.filterMenuValues,
+	                pageIndex: pageIndex,
+	                pageSize: pageSize,
+	                dataSource: filterSource,
+	                stateKey: stateKey
+	            }));
+	        }
+	    }
+	};
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Button.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 266 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var FilterUtils = function () {
+	    function FilterUtils() {
+	        _classCallCheck(this, FilterUtils);
+	    }
+
+	    _createClass(FilterUtils, [{
+	        key: "byKeyword",
+	        value: function byKeyword(value, datasource) {
+	            return datasource.proxy.filter(function (obj) {
+
+	                var keys = Object.keys(obj);
+
+	                for (var i = 0; i < keys.length; i++) {
+	                    if (obj[keys[i]].toLowerCase().indexOf(value) !== -1) {
+	                        return true;
+	                    }
+	                }
+
+	                return false;
+	            });
+	        }
+	    }, {
+	        key: "byMenu",
+	        value: function byMenu(filterObj, datasource) {
+
+	            if (!filterObj) {
+	                return datasource.proxy;
+	            }
+
+	            return datasource.proxy.filter(function (obj) {
+
+	                var keys = Object.keys(obj);
+
+	                for (var i = 0; i < keys.length; i++) {
+
+	                    var key = keys[i].toLowerCase();
+	                    var value = filterObj[key] ? filterObj[key].toLowerCase() : null;
+
+	                    if (filterObj[key]) {
+	                        if (obj[keys[i]].toLowerCase().indexOf(value) === -1) {
+
+	                            return false;
+	                        }
+	                    }
+	                }
+
+	                return true;
+	            });
+	        }
+	    }]);
+
+	    return FilterUtils;
+	}();
+
+	exports.default = new FilterUtils();
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "filterUtils.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 267 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.setFilter = setFilter;
+	exports.doLocalFilter = doLocalFilter;
+	exports.doRemoteFilter = doRemoteFilter;
+	exports.setFilterMenuValues = setFilterMenuValues;
+	exports.clearFilterRemote = clearFilterRemote;
+	exports.clearFilterLocal = clearFilterLocal;
+	exports.showFilterMenu = showFilterMenu;
+
+	var _ActionTypes = __webpack_require__(224);
+
+	var _Request = __webpack_require__(228);
+
+	var _Request2 = _interopRequireDefault(_Request);
+
+	var _LoaderActions = __webpack_require__(226);
+
+	var _GridActions = __webpack_require__(225);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function setFilter(_ref) {
+	    var value = _ref.value;
+	    var stateKey = _ref.stateKey;
+
+
+	    var metaData = {
+	        filterMenuShown: false,
+	        filterMenuValues: {},
+	        filterValue: ''
+	    };
+
+	    if (value || value.length > 0) {
+	        return { type: _ActionTypes.SET_FILTER_VALUE, value: value, stateKey: stateKey };
+	    }
+
+	    return { type: _ActionTypes.SHOW_FILTER_MENU, metaData: metaData, stateKey: stateKey };
+	}
+
+	function doLocalFilter(_ref2) {
+	    var data = _ref2.data;
+	    var stateKey = _ref2.stateKey;
+
+	    return { type: _ActionTypes.FILTER_DATA, data: data, stateKey: stateKey };
+	}
+
+	function doRemoteFilter(_ref3) {
+	    var filterParams = _ref3.filterParams;
+	    var pageIndex = _ref3.pageIndex;
+	    var pageSize = _ref3.pageSize;
+	    var dataSource = _ref3.dataSource;
+	    var stateKey = _ref3.stateKey;
+
+
+	    return function (dispatch) {
+
+	        dispatch((0, _LoaderActions.setLoaderState)({ state: true, stateKey: stateKey }));
+
+	        return _Request2.default.api({
+	            route: dataSource,
+	            method: 'POST',
+	            data: {
+	                pageIndex: pageIndex,
+	                pageSize: pageSize,
+	                filterParams: filterParams
+	            }
+	        }).then(function (response) {
+
+	            if (response && response.data) {
+
+	                dispatch({
+	                    type: _ActionTypes.SET_DATA,
+	                    data: response.data,
+	                    total: response.total,
+	                    currentRecords: response.data,
+	                    success: true
+	                });
+	            } else {
+	                dispatch({
+	                    type: _ActionTypes.ERROR_OCCURRED,
+	                    error: 'Unable to Retrieve Grid Data',
+	                    errorOccurred: true
+	                });
+	            }
+
+	            dispatch((0, _LoaderActions.setLoaderState)({ state: false, stateKey: stateKey }));
+	        });
+	    };
+	}
+
+	function setFilterMenuValues(_ref4) {
+	    var filter = _ref4.filter;
+	    var stateKey = _ref4.stateKey;
+
+	    return { type: _ActionTypes.SET_FILTER_MENU_VALUES, filter: filter, stateKey: stateKey };
+	}
+
+	function clearFilterRemote(_ref5) {
+	    var dataSource = _ref5.dataSource;
+	    var stateKey = _ref5.stateKey;
+
+	    return (0, _GridActions.getAsyncData)({ dataSource: dataSource, stateKey: stateKey });
+	}
+
+	function clearFilterLocal(_ref6) {
+	    var stateKey = _ref6.stateKey;
+
+	    return { type: _ActionTypes.CLEAR_FILTER_LOCAL, stateKey: stateKey };
+	}
+
+	function showFilterMenu(_ref7) {
+	    var value = _ref7.value;
+	    var removeFilters = _ref7.removeFilters;
+	    var stateKey = _ref7.stateKey;
+
+	    var isShown = !value;
+
+	    var metaData = {
+	        filterMenuShown: isShown
+	    };
+
+	    if (removeFilters) {
+	        metaData.filterMenuValues = {};
+	    }
+
+	    return { type: _ActionTypes.SHOW_FILTER_MENU, metaData: metaData, stateKey: stateKey };
+	}
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "FilterActions.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 268 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.handleDynamicInputChange = exports.Input = undefined;
+
+	var _react = __webpack_require__(149);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _prefix = __webpack_require__(219);
+
+	var _GridConstants = __webpack_require__(220);
+
+	var _keyGenerator = __webpack_require__(222);
+
+	var _FilterActions = __webpack_require__(267);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+	var Input = exports.Input = function Input(_ref) {
+	    var filter = _ref.filter;
+	    var field = _ref.field;
+	    var stateKey = _ref.stateKey;
+	    var store = _ref.store;
+
+
+	    console.log(stateKey);
+
+	    var value = filter && filter.filterMenuValues && filter.filterMenuValues[field.name] ? filter.filterMenuValues[field.name] : null;
+
+	    var containerProps = {
+	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.FILTER_CONTAINER.MENU.FIELD.CONTAINER),
+	        key: (0, _keyGenerator.keyFromObject)(field, ['container'])
+	    };
+
+	    var inputProps = {
+	        type: field.type,
+	        key: (0, _keyGenerator.keyFromObject)(field),
+	        placeholder: field.placeholder,
+	        name: field.name,
+	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.FILTER_CONTAINER.MENU.FIELD.INPUT),
+	        onChange: handleDynamicInputChange.bind(undefined, filter, stateKey, store),
+	        value: value
+	    };
+
+	    var labelProps = {
+	        key: (0, _keyGenerator.keyFromObject)(inputProps),
+	        text: field.label,
+	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.FILTER_CONTAINER.MENU.FIELD.LABEL)
+	    };
+
+	    return _react2.default.createElement(
+	        'span',
+	        containerProps,
+	        _react2.default.createElement(
+	            'label',
+	            labelProps,
+	            labelProps.text
+	        ),
+	        _react2.default.createElement('input', inputProps)
+	    );
+	};
+
+	Input.propTypes = {
+	    field: _react.PropTypes.object,
+	    filter: _react.PropTypes.object,
+	    store: _react.PropTypes.object
+	};
+
+	Input.defaultProps = {};
+
+	var handleDynamicInputChange = exports.handleDynamicInputChange = function handleDynamicInputChange(filter, stateKey, store, reactEvent) {
+
+	    var name = reactEvent.target.name;
+	    var value = reactEvent.target.value;
+	    var existingFilter = filter && filter.filterMenuValues ? filter.filterMenuValues : {};
+	    var newFilterValues = Object.assign(existingFilter, _defineProperty({}, name, value));
+
+	    if (!name) {
+	        console.warn('All registered inputs require a name property for dynamic filtering!');
+	        return false;
+	    }
+
+	    store.dispatch((0, _FilterActions.setFilterMenuValues)({ filter: newFilterValues, stateKey: stateKey }));
+	};
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Input.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 269 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.setFilterValue = exports.handleKeyUp = exports.Input = undefined;
+
+	var _react = __webpack_require__(149);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _prefix = __webpack_require__(219);
+
+	var _GridConstants = __webpack_require__(220);
+
+	var _filterUtils = __webpack_require__(266);
+
+	var _filterUtils2 = _interopRequireDefault(_filterUtils);
+
+	var _FilterActions = __webpack_require__(267);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var Input = exports.Input = function Input(_ref) {
+	    var dataSource = _ref.dataSource;
+	    var method = _ref.method;
+	    var placeHolderText = _ref.placeHolderText;
+	    var inputValue = _ref.inputValue;
+	    var plugins = _ref.plugins;
+	    var pager = _ref.pager;
+	    var pageSize = _ref.pageSize;
+	    var store = _ref.store;
+
+
+	    var inputProps = {
+	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.FILTER_CONTAINER.INPUT),
+	        placeholder: placeHolderText,
+	        onChange: setFilterValue.bind(undefined, store),
+	        onKeyUp: handleKeyUp.bind(undefined, inputValue, method, dataSource, plugins, pager, pageSize, store),
+	        value: inputValue
+	    };
+
+	    return _react2.default.createElement('input', inputProps);
+	};
+
+	var handleKeyUp = exports.handleKeyUp = function handleKeyUp(value, method, dataSource, plugins, pager, pageSize, store, reactEvent) {
+
+	    var filterSource = plugins.FILTER_CONTAINER;
+
+	    var pageIndex = pager ? pager.pageIndex : 0;
+
+	    if (reactEvent.which !== _GridConstants.KEYBOARD_MAP.ENTER) {
+	        return false;
+	    }
+
+	    if (method === _GridConstants.FILTER_METHODS.LOCAL) {
+	        store.dispatch((0, _FilterActions.doLocalFilter)(_filterUtils2.default.byKeyword(value, dataSource)));
+	    } else if (method === _GridConstants.FILTER_METHODS.REMOTE) {
+	        store.dispatch((0, _FilterActions.doRemoteFilter)({
+	            keyword: value
+	        }, pageIndex, pageSize, filterSource));
+	    } else {
+	        console.warn('The filter method has not been created!');
+	    }
+	};
+
+	var setFilterValue = exports.setFilterValue = function setFilterValue(store, reactEvent) {
+
+	    var value = reactEvent.target.value;
+
+	    store.dispatch((0, _FilterActions.setFilter)(value));
+	};
+
+	Input.propTypes = {
+	    className: _react.PropTypes.string,
+	    placeholder: _react.PropTypes.string,
+	    value: _react.PropTypes.any
+	};
+
+	Input.defaultProps = {};
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Input.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 270 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.SearchButton = undefined;
+
+	var _react = __webpack_require__(149);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _prefix = __webpack_require__(219);
+
+	var _GridConstants = __webpack_require__(220);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var SearchButton = exports.SearchButton = function SearchButton() {
+
+	    var buttonProps = {
+	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.FILTER_CONTAINER.SEARCH_BUTTON)
+	    };
+
+	    return _react2.default.createElement('i', buttonProps);
+	};
+
+	SearchButton.propTypes = {};
+
+	SearchButton.defaultProps = {};
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "SearchButton.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 271 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.clearFilter = exports.ClearButton = undefined;
+
+	var _react = __webpack_require__(149);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _prefix = __webpack_require__(219);
+
+	var _GridConstants = __webpack_require__(220);
+
+	var _FilterActions = __webpack_require__(267);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var ClearButton = exports.ClearButton = function ClearButton(_ref) {
+	    var dataUri = _ref.dataUri;
+	    var method = _ref.method;
+	    var stateKey = _ref.stateKey;
+	    var store = _ref.store;
+
+
+	    var buttonProps = {
+	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.FILTER_CONTAINER.CLEAR_BUTTON),
+	        onClick: clearFilter.bind(undefined, dataUri, method, store)
+	    };
+
+	    return _react2.default.createElement('i', buttonProps);
+	};
+
+	var clearFilter = exports.clearFilter = function clearFilter(dataSource, method, stateKey, store) {
+
+	    if (method === _GridConstants.FILTER_METHODS.LOCAL) {
+	        store.dispatch((0, _FilterActions.clearFilterLocal)({ stateKey: stateKey }));
+	    } else if (method === _GridConstants.FILTER_METHODS.REMOTE) {
+	        store.dispatch((0, _FilterActions.clearFilterRemote)({ dataSource: dataSource, stateKey: stateKey }));
+	    }
+
+	    store.dispatch((0, _FilterActions.setFilter)({ filter: '', stateKey: stateKey }));
+	};
+
+	ClearButton.propTypes = {};
+
+	ClearButton.defaultProps = {};
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "ClearButton.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 272 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.handleFilterMenuButtonClick = exports.FilterButton = undefined;
+
+	var _react = __webpack_require__(149);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _prefix = __webpack_require__(219);
+
+	var _GridConstants = __webpack_require__(220);
+
+	var _FilterActions = __webpack_require__(267);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var FilterButton = exports.FilterButton = function FilterButton(_ref) {
+	    var filter = _ref.filter;
+	    var filterMenuShown = _ref.filterMenuShown;
+	    var store = _ref.store;
+	    var stateKey = _ref.stateKey;
+
+
+	    var buttonProps = {
+	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.FILTER_CONTAINER.MENU_BUTTON, filterMenuShown ? _GridConstants.CLASS_NAMES.ACTIVE_CLASS : ''),
+	        onClick: handleFilterMenuButtonClick.bind(undefined, filter, stateKey, store)
+	    };
+
+	    return _react2.default.createElement('i', buttonProps);
+	};
+
+	var handleFilterMenuButtonClick = exports.handleFilterMenuButtonClick = function handleFilterMenuButtonClick(filter, stateKey, store) {
+	    var shown = filter ? filter.filterMenuShown : false;
+	    store.dispatch((0, _FilterActions.showFilterMenu)({ value: shown, stateKey: stateKey }));
+	};
+
+	FilterButton.propTypes = {
+	    filter: _react.PropTypes.object,
+	    filterMenuShown: _react.PropTypes.bool,
+	    store: _react.PropTypes.object
+	};
+
+	FilterButton.defaultProps = {};
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "FilterButton.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 273 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.LoadingBar = undefined;
+
+	var _react = __webpack_require__(149);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _prefix = __webpack_require__(219);
+
+	var _isPluginEnabled = __webpack_require__(235);
+
+	var _GridConstants = __webpack_require__(220);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var LoadingBar = exports.LoadingBar = function LoadingBar(_ref) {
+	    var loadingState = _ref.loadingState;
+	    var plugins = _ref.plugins;
+
+
+	    var isLoading = false;
+
+	    if (loadingState && loadingState.isLoading) {
+	        isLoading = true;
+	    }
+
+	    var showLoader = (0, _isPluginEnabled.isPluginEnabled)(plugins, 'LOADER') && isLoading;
+
+	    var loadingBarProps = {
+	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.LOADING_BAR, showLoader ? 'active' : '')
+	    };
+
+	    return _react2.default.createElement('div', loadingBarProps);
+	};
+
+	LoadingBar.propTypes = {
+	    loadingState: _react.PropTypes.object,
+	    plugins: _react.PropTypes.object,
+	    store: _react.PropTypes.object
+	};
+
+	LoadingBar.defaultProps = {
+	    loadingState: {}
+	};
+
+	exports.default = LoadingBar;
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "LoadingBar.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 274 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
 
 	'use strict';
 
@@ -34610,17 +34394,2178 @@
 	    value: true
 	});
 
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(149);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _ActionColumn = __webpack_require__(275);
+
+	var _ActionColumn2 = _interopRequireDefault(_ActionColumn);
+
+	var _GridConstants = __webpack_require__(220);
+
+	var _keyGenerator = __webpack_require__(222);
+
+	var _getData = __webpack_require__(241);
+
+	var _GridActions = __webpack_require__(225);
+
+	var _sorter = __webpack_require__(281);
+
+	var _sorter2 = _interopRequireDefault(_sorter);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var ColumnManager = function () {
+	    function ColumnManager() {
+	        _classCallCheck(this, ColumnManager);
+	    }
+
+	    _createClass(ColumnManager, [{
+	        key: 'init',
+	        value: function init(_ref) {
+	            var plugins = _ref.plugins;
+	            var store = _ref.store;
+	            var events = _ref.events;
+	            var selModel = _ref.selModel;
+	            var editor = _ref.editor;
+	            var columns = _ref.columns;
+	            var dataSource = _ref.dataSource;
+
+
+	            var visibleColumns = columns.filter(function (col) {
+	                return !col.hidden;
+	            });
+
+	            var defaults = {
+	                defaultColumnWidth: 100 / visibleColumns.length + '%',
+	                dataSource: dataSource,
+	                minColumnWidth: 10,
+	                moveable: false,
+	                resizable: false,
+	                headerActionItemBuilder: null,
+	                sortable: {
+	                    enabled: true,
+	                    method: _GridConstants.SORT_METHODS.LOCAL,
+	                    sortingSource: plugins && plugins.COLUMN_MANAGER && plugins.COLUMN_MANAGER.sortable && plugins.COLUMN_MANAGER.sortable.sortingSource ? plugins.COLUMN_MANAGER.sortable.sortingSource : ''
+	                },
+
+	                /**
+	                    @private properties used by components
+	                        if properties are not available
+	                        i wouldn't remove these, but the
+	                        values can be flipped
+	                **/
+	                defaultResizable: false,
+	                defaultSortable: true
+	            };
+
+	            var config = plugins && plugins.COLUMN_MANAGER ? Object.assign(defaults, plugins.COLUMN_MANAGER) : defaults;
+
+	            this.plugins = plugins;
+	            this.store = store;
+	            this.sorter = _sorter2.default;
+	            this.events = events;
+	            this.selModel = selModel;
+	            this.editor = editor;
+	            this.columns = columns;
+	            this.config = config;
+	        }
+	    }, {
+	        key: 'doSort',
+	        value: function doSort(_ref2) {
+	            var method = _ref2.method;
+	            var column = _ref2.column;
+	            var direction = _ref2.direction;
+	            var dataSource = _ref2.dataSource;
+	            var pagerState = _ref2.pagerState;
+	            var stateKey = _ref2.stateKey;
+
+
+	            var propName = (0, _getData.nameFromDataIndex)(column);
+
+	            var sortParams = {
+	                sort: {
+	                    property: propName,
+	                    direction: direction
+	                }
+	            };
+
+	            var pageIndex = pagerState && pagerState.pageIndex ? pagerState.pageIndex : 0;
+
+	            var pageSize = pagerState && pagerState.pageSize ? pagerState.pageSize : _GridConstants.DEFAULT_PAGE_SIZE;
+
+	            if (method === _GridConstants.SORT_METHODS.LOCAL) {
+	                this.store.dispatch((0, _GridActions.doLocalSort)({
+	                    data: this.sorter.sortBy(column.name, direction, dataSource),
+	                    stateKey: stateKey
+	                }));
+	            } else {
+	                this.store.dispatch((0, _GridActions.doRemoteSort)({
+	                    dataSource: this.config.sortable.sortingSource,
+	                    pageIndex: pageIndex,
+	                    pageSize: pageSize,
+	                    sortParams: sortParams,
+	                    stateKey: stateKey
+	                }));
+	            }
+	        }
+	    }, {
+	        key: 'addActionColumn',
+	        value: function addActionColumn(_ref3) {
+	            var cells = _ref3.cells;
+	            var columns = _ref3.columns;
+	            var type = _ref3.type;
+	            var id = _ref3.id;
+	            var reducerKeys = _ref3.reducerKeys;
+	            var rowData = _ref3.rowData;
+	            var rowIndex = _ref3.rowIndex;
+	            var menuState = _ref3.menuState;
+	            var stateKey = _ref3.stateKey;
+	            var GRID_ACTIONS = this.plugins.GRID_ACTIONS;
+
+	            var cellsCopy = cells;
+	            var actionProps = {
+	                actions: GRID_ACTIONS,
+	                store: this.store,
+	                type: type,
+	                columns: this.columns,
+	                rowId: id,
+	                rowData: rowData,
+	                rowIndex: rowIndex,
+	                editor: this.editor,
+	                reducerKeys: reducerKeys,
+	                selModel: this.selModel,
+	                stateKey: stateKey,
+	                menuState: menuState,
+	                gridState: columns,
+	                headerActionItemBuilder: this.config.headerActionItemBuilder,
+	                key: (0, _keyGenerator.keyFromObject)(cells, ['row', 'actionhandler'])
+	            };
+
+	            if (GRID_ACTIONS) {
+	                cells.push(_react2.default.createElement(_ActionColumn2.default, actionProps));
+	            }
+
+	            return cellsCopy;
+	        }
+	    }]);
+
+	    return ColumnManager;
+	}();
+
+	exports.default = ColumnManager;
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "ColumnManager.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 275 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.handleActionClick = exports.handleHideMenu = exports.getColumn = exports.addKeysToActions = exports.getHeader = exports.enableActions = exports.ActionColumn = undefined;
+
+	var _react = __webpack_require__(149);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _Menu = __webpack_require__(276);
+
+	var _MenuActions = __webpack_require__(280);
+
+	var _prefix = __webpack_require__(219);
+
+	var _keyGenerator = __webpack_require__(222);
+
+	var _elementContains = __webpack_require__(244);
+
+	var _GridConstants = __webpack_require__(220);
+
+	var _GridActions = __webpack_require__(225);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var ActionColumn = exports.ActionColumn = function ActionColumn(_ref) {
+	    var actions = _ref.actions;
+	    var columns = _ref.columns;
+	    var editor = _ref.editor;
+	    var headerActionItemBuilder = _ref.headerActionItemBuilder;
+	    var iconCls = _ref.iconCls;
+	    var menuState = _ref.menuState;
+	    var rowId = _ref.rowId;
+	    var rowData = _ref.rowData;
+	    var store = _ref.store;
+	    var stateKey = _ref.stateKey;
+	    var type = _ref.type;
+	    var rowIndex = _ref.rowIndex;
+	    var reducerKeys = _ref.reducerKeys;
+
+
+	    var menuShown = menuState && menuState[rowId] ? menuState[rowId] : false;
+
+	    var containerProps = {
+	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.GRID_ACTIONS.CONTAINER, menuShown ? _GridConstants.CLASS_NAMES.GRID_ACTIONS.SELECTED_CLASS : ''),
+	        onClick: handleActionClick.bind(undefined, type, actions, rowId, stateKey, store, menuShown, reducerKeys)
+	    };
+
+	    actions = enableActions(menuShown, actions, columns, rowData);
+
+	    var className = menuShown ? (0, _prefix.prefix)(actions.iconCls || iconCls, 'active') : (0, _prefix.prefix)(actions.iconCls || iconCls);
+
+	    var iconProps = {
+	        className: className
+	    };
+
+	    return type === 'header' ? getHeader(columns, containerProps, iconProps, menuShown, columns, store, editor, reducerKeys, rowId, rowData, rowIndex, stateKey, headerActionItemBuilder) : getColumn(columns, containerProps, iconProps, menuShown, actions, store, editor, reducerKeys, rowId, rowData, rowIndex, stateKey);
+	};
+
+	ActionColumn.propTypes = {
+	    actions: _react.PropTypes.object,
+	    columns: _react.PropTypes.array,
+	    editor: _react.PropTypes.object,
+	    iconCls: _react.PropTypes.string,
+	    menuState: _react.PropTypes.object,
+	    rowId: _react.PropTypes.string,
+	    store: _react.PropTypes.object,
+	    type: _react.PropTypes.string
+	};
+
+	ActionColumn.defaultProps = {
+	    iconCls: 'action-icon'
+	};
+
+	var removeableEvent = void 0;
+
+	var enableActions = exports.enableActions = function enableActions(menuShown, actions, columns, rowData) {
+
+	    if (menuShown && actions && typeof actions.onMenuShow === 'function') {
+	        (function () {
+
+	            var disabled = actions.onMenuShow({
+	                columns: columns,
+	                rowData: rowData
+	            });
+
+	            if (Array.isArray(disabled)) {
+	                actions.menu.forEach(function (action) {
+	                    if (disabled.indexOf(action.key) !== -1) {
+	                        action.disabled = true;
+	                    }
+	                });
+	            }
+	        })();
+	    } else {
+	        actions.menu.forEach(function (action) {
+	            action.disabled = false;
+	        });
+	    }
+
+	    return actions;
+	};
+
+	var getHeader = exports.getHeader = function getHeader(cols, containerProps, iconProps, menuShown, columns, store, editor, reducerKeys, rowId, rowData, rowIndex, stateKey, headerActionItemBuilder) {
+
+	    var actions = void 0;
+
+	    if (!headerActionItemBuilder) {
+
+	        actions = columns.map(function (col) {
+
+	            var isChecked = col.hidden !== undefined ? !col.hidden : true;
+
+	            return {
+	                text: col.name,
+	                menuItemType: 'checkbox',
+	                checked: isChecked,
+	                onCheckboxChange: function onCheckboxChange() {},
+	                hideable: col.hideable,
+	                dismissOnClick: false,
+	                key: (0, _keyGenerator.keyFromObject)(col),
+	                EVENT_HANDLER: function EVENT_HANDLER() {
+	                    if (col.hideable === undefined || col.hideable) {
+	                        store.dispatch((0, _GridActions.setColumnVisibility)({
+	                            columns: columns,
+	                            column: col,
+	                            isHidden: col.hidden,
+	                            stateKey: stateKey
+	                        }));
+	                    }
+	                }
+	            };
+	        });
+	    } else {
+	        actions = columns.map(headerActionItemBuilder.bind(null, {
+	            store: store
+	        }));
+	    }
+
+	    var menuItems = {
+	        menu: actions
+	    };
+
+	    var menu = menuShown ? _react2.default.createElement(_Menu.Menu, { columns: cols,
+	        actions: menuItems,
+	        type: 'header',
+	        store: store,
+	        editor: editor,
+	        reducerKeys: reducerKeys,
+	        rowId: rowId,
+	        stateKey: stateKey }) : null;
+
+	    return _react2.default.createElement(
+	        'th',
+	        containerProps,
+	        _react2.default.createElement(
+	            'span',
+	            iconProps,
+	            menu
+	        )
+	    );
+	};
+
+	var addKeysToActions = exports.addKeysToActions = function addKeysToActions(action) {
+
+	    if (action && action.key) {
+	        return action;
+	    } else {
+	        action.key = (0, _keyGenerator.keyFromObject)(action);
+	        return action;
+	    }
+	};
+
+	var getColumn = exports.getColumn = function getColumn(cols, containerProps, iconProps, menuShown, actions, store, editor, reducerKeys, rowId, rowData, rowIndex, stateKey) {
+
+	    var menu = menuShown ? _react2.default.createElement(_Menu.Menu, {
+	        actions: addKeysToActions(actions),
+	        type: null,
+	        rowData: rowData,
+	        store: store,
+	        editor: editor,
+	        reducerKeys: reducerKeys,
+	        rowId: rowId,
+	        columns: cols,
+	        stateKey: stateKey,
+	        rowIndex: rowIndex }) : null;
+
+	    if (actions && actions.menu && actions.menu.length === 0) {
+	        iconProps.className += ' ' + (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.GRID_ACTIONS.NO_ACTIONS);
+	    }
+
+	    return _react2.default.createElement(
+	        'td',
+	        containerProps,
+	        _react2.default.createElement(
+	            'span',
+	            iconProps,
+	            menu
+	        )
+	    );
+	};
+
+	var handleHideMenu = exports.handleHideMenu = function handleHideMenu(stateKey, store, initialTarget, reducerKeys, e) {
+
+	    var occurredInHeader = (0, _elementContains.elementContains)(e.target, 'react-grid-header');
+
+	    var isHeaderMenu = occurredInHeader && e.target.classList.contains('react-grid-action-icon');
+
+	    var isHeaderAction = occurredInHeader && (0, _elementContains.elementContains)(e.target, 'react-grid-action-menu-container');
+
+	    var isRowAction = (0, _elementContains.elementContains)(e.target, 'react-grid-row') && e.target.classList.contains('react-grid-action-icon');
+
+	    var isSameNode = initialTarget === e.target && !(0, _elementContains.elementContains)(e.target, 'react-grid-action-menu-container');
+
+	    var isActionMenu = isSameNode && (0, _elementContains.elementContains)(e.target, 'react-grid-action-container');
+
+	    var menuKey = reducerKeys.menu || 'menu';
+	    var menu = store.getState()[menuKey];
+	    var menuState = menu ? menu.get(stateKey) : null;
+
+	    var headerMenuShown = menuState && menuState.get('header-row');
+
+	    var hide = function hide() {
+	        setTimeout(function () {
+	            store.dispatch((0, _MenuActions.hideMenu)({ stateKey: stateKey }));
+	        }, 0);
+	    };
+
+	    var actionDisabled = e.target && e.target.classList.contains((0, _prefix.prefix)(_GridConstants.CLASS_NAMES.GRID_ACTIONS.DISABLED));
+
+	    var removeEvent = function removeEvent() {
+	        document.body.removeEventListener('click', removeableEvent);
+	    };
+
+	    if (actionDisabled) {
+	        return false;
+	    }
+
+	    if (!isRowAction && !isSameNode && !occurredInHeader) {
+	        hide(e);
+	        removeEvent();
+	    } else if (isRowAction && isSameNode) {
+	        hide(e);
+	        removeEvent();
+	    } else if (isActionMenu) {
+	        hide(e);
+	        removeEvent();
+	    } else if (occurredInHeader && !isHeaderAction && !isHeaderMenu) {
+	        hide(e);
+	        removeEvent();
+	    }
+
+	    // if the header menu is shown
+	    // and were clicking on the action button
+	    // close the menu
+	    else if (headerMenuShown && isHeaderMenu) {
+	            hide(e);
+	            removeEvent();
+	        } else if (!isSameNode && !isHeaderAction) {
+	            removeEvent();
+	        }
+	};
+
+	var handleActionClick = exports.handleActionClick = function handleActionClick(type, actions, id, stateKey, store, menuShown, reducerKeys, reactEvent) {
+
+	    reactEvent.stopPropagation();
+	    store.dispatch((0, _MenuActions.showMenu)({ id: id, stateKey: stateKey }));
+
+	    if (!menuShown) {
+	        removeableEvent = handleHideMenu.bind(null, stateKey, store, reactEvent.target, reducerKeys);
+	        document.body.addEventListener('click', removeableEvent);
+	    }
+	};
+
+	exports.default = ActionColumn;
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "ActionColumn.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 276 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.getEditAction = exports.Menu = undefined;
+
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
+	var _react = __webpack_require__(149);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _Menu = __webpack_require__(277);
+
+	var _handleEditClick = __webpack_require__(243);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var Menu = exports.Menu = function Menu(_ref) {
+	    var actions = _ref.actions;
+	    var columns = _ref.columns;
+	    var type = _ref.type;
+	    var store = _ref.store;
+	    var editor = _ref.editor;
+	    var reducerKeys = _ref.reducerKeys;
+	    var rowId = _ref.rowId;
+	    var rowData = _ref.rowData;
+	    var rowIndex = _ref.rowIndex;
+	    var stateKey = _ref.stateKey;
+
+
+	    if (editor.config.enabled && type !== 'header') {
+	        actions.menu.unshift(getEditAction(editor, store, rowId, rowData, rowIndex, columns, stateKey));
+	    }
+
+	    var menuProps = _extends({}, actions, {
+	        metaData: {
+	            rowId: rowId,
+	            rowData: rowData,
+	            rowIndex: rowIndex
+	        },
+	        reducerKeys: reducerKeys,
+	        stateKey: stateKey,
+	        store: store
+	    });
+
+	    return _react2.default.createElement(_Menu.ConnectedMenu, menuProps);
+	};
+
+	var getEditAction = exports.getEditAction = function getEditAction(editor, store, rowId, rowData, rowIndex, columns, stateKey) {
+	    return {
+	        text: 'Edit',
+	        EVENT_HANDLER: _handleEditClick.handleEditClick.bind(undefined, editor, store, rowId, rowData, rowIndex, columns, stateKey),
+	        key: 'grid-edit-action'
+	    };
+	};
+
+	Menu.propTypes = {
+	    actions: _react.PropTypes.object,
+	    columns: _react.PropTypes.arrayOf(_react.PropTypes.object),
+	    editor: _react.PropTypes.object,
+	    reducerKeys: _react.PropTypes.object,
+	    rowData: _react.PropTypes.object,
+	    rowId: _react.PropTypes.string,
+	    rowIndex: _react.PropTypes.number,
+	    stateKey: _react.PropTypes.string,
+	    store: _react.PropTypes.object,
+	    type: _react.PropTypes.string
+	};
+
+	Menu.defaultProps = {};
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Menu.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 277 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.ConnectedMenu = exports.Menu = exports.getUniqueItems = undefined;
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(149);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRedux = __webpack_require__(206);
+
+	var _MenuItem = __webpack_require__(278);
+
+	var _keyGenerator = __webpack_require__(222);
+
+	var _prefix = __webpack_require__(219);
+
+	var _GridConstants = __webpack_require__(220);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var Menu = function (_Component) {
+	    _inherits(Menu, _Component);
+
+	    function Menu() {
+	        _classCallCheck(this, Menu);
+
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(Menu).apply(this, arguments));
+	    }
+
+	    _createClass(Menu, [{
+	        key: 'render',
+	        value: function render() {
+	            var menu = this.props.menu;
+
+
+	            var menuProps = {
+	                className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.GRID_ACTIONS.MENU.CONTAINER)
+	            };
+
+	            var items = getUniqueItems(menu);
+
+	            var menuItems = items && items.length > 0 ? items.map(this.getMenuItem.bind(this)) : null;
+
+	            return _react2.default.createElement(
+	                'ul',
+	                menuProps,
+	                menuItems
+	            );
+	        }
+	    }, {
+	        key: 'getMenuItem',
+	        value: function getMenuItem(item) {
+	            var _props = this.props;
+	            var metaData = _props.metaData;
+	            var stateKey = _props.stateKey;
+	            var store = _props.store;
+
+
+	            if (!item.$$typeof) {
+	                var menuItemProps = {
+	                    data: item,
+	                    disabled: item.disabled,
+	                    metaData: metaData,
+	                    type: item.type,
+	                    key: (0, _keyGenerator.keyFromObject)(item),
+	                    stateKey: stateKey,
+	                    store: store
+	                };
+
+	                return _react2.default.createElement(_MenuItem.MenuItem, menuItemProps);
+	            }
+	            return item;
+	        }
+	    }]);
+
+	    return Menu;
+	}(_react.Component);
+
+	Menu.propTypes = {
+	    menu: _react2.default.PropTypes.array,
+	    metaData: _react2.default.PropTypes.object,
+	    stateKey: _react2.default.PropTypes.string,
+	    store: _react2.default.PropTypes.object
+	};
+	Menu.defaultProps = {
+	    metaData: {}
+	};
+	var getUniqueItems = exports.getUniqueItems = function getUniqueItems(items) {
+	    var keys = items.map(function (obj) {
+	        return obj.key;
+	    });
+	    var unique = items.filter(function (ob, i) {
+	        return keys.indexOf(ob.key) === i;
+	    });
+	    return unique;
+	};
+
+	function mapStateToProps() {
+	    return {};
+	}
+
+	var ConnectedMenu = (0, _reactRedux.connect)(mapStateToProps)(Menu);
+
+	exports.Menu = Menu;
+	exports.ConnectedMenu = ConnectedMenu;
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Menu.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 278 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.ConnectedMenuItem = exports.MenuItem = undefined;
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(149);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _prefix = __webpack_require__(219);
+
+	var _emptyFn = __webpack_require__(279);
+
+	var _GridConstants = __webpack_require__(220);
+
+	var _MenuActions = __webpack_require__(280);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var MenuItem = function (_Component) {
+	    _inherits(MenuItem, _Component);
+
+	    function MenuItem() {
+	        _classCallCheck(this, MenuItem);
+
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(MenuItem).apply(this, arguments));
+	    }
+
+	    _createClass(MenuItem, [{
+	        key: 'render',
+	        value: function render() {
+	            var _this2 = this;
+
+	            var _props = this.props;
+	            var data = _props.data;
+	            var disabled = _props.disabled;
+	            var metaData = _props.metaData;
+	            var menuItemsTypes = _props.menuItemsTypes;
+	            var stateKey = _props.stateKey;
+
+
+	            var menuItemProps = {
+	                className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.GRID_ACTIONS.MENU.ITEM, data.disabled ? _GridConstants.CLASS_NAMES.GRID_ACTIONS.DISABLED : ''),
+	                disabled: data.disabled,
+	                onClick: function onClick(e) {
+	                    return _this2.handleMenuItemClick(data, disabled, metaData, stateKey, e);
+	                }
+	            };
+
+	            var checkboxComponent = data.menuItemType === menuItemsTypes.checkbox ? this.getCheckbox(data) : null;
+
+	            return _react2.default.createElement(
+	                'li',
+	                menuItemProps,
+	                checkboxComponent,
+	                data.text
+	            );
+	        }
+	    }, {
+	        key: 'handleMenuItemClick',
+	        value: function handleMenuItemClick(data, disabled, metaData, stateKey, reactEvent) {
+	            if (reactEvent && reactEvent.stopPropagation) {
+	                reactEvent.stopPropagation();
+	            }
+
+	            if (disabled) {
+	                return false;
+	            }
+
+	            var dismiss = data.dismissOnClick !== undefined ? data.dismissOnClick : true;
+
+	            var store = this.props.store;
+
+
+	            if (dismiss) {
+	                store.dispatch((0, _MenuActions.hideMenu)({ stateKey: stateKey }));
+	            }
+
+	            if (data.EVENT_HANDLER) {
+	                return data.EVENT_HANDLER({ data: data, metaData: metaData, reactEvent: reactEvent });
+	            }
+	        }
+	    }, {
+	        key: 'getCheckbox',
+	        value: function getCheckbox(data) {
+
+	            var readOnly = data.hideable !== undefined ? !data.hideable : false;
+
+	            var checkboxProps = {
+	                type: this.props.menuItemsTypes.checkbox,
+	                checked: data.checked,
+	                disabled: readOnly,
+	                onChange: data.onCheckboxChange || _emptyFn.emptyFn
+	            };
+
+	            return _react2.default.createElement('input', checkboxProps);
+	        }
+	    }]);
+
+	    return MenuItem;
+	}(_react.Component);
+
+	MenuItem.propTypes = {
+	    data: _react2.default.PropTypes.object,
+	    disabled: _react2.default.PropTypes.bool,
+	    menuItemsTypes: _react2.default.PropTypes.object,
+	    metaData: _react2.default.PropTypes.object,
+	    stateKey: _react2.default.PropTypes.string,
+	    store: _react2.default.PropTypes.object
+	};
+	MenuItem.defaultProps = {
+	    menuItemsTypes: {
+	        checkbox: 'checkbox'
+	    },
+	    metaData: {}
+	};
+
+
+	var ConnectedMenuItem = MenuItem;
+
+	exports.MenuItem = MenuItem;
+	exports.ConnectedMenuItem = ConnectedMenuItem;
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "MenuItem.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 279 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var emptyFn = exports.emptyFn = function emptyFn() {};
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "emptyFn.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 280 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.showMenu = showMenu;
+	exports.hideMenu = hideMenu;
+
+	var _ActionTypes = __webpack_require__(224);
+
+	function showMenu(_ref) {
+	    var id = _ref.id;
+	    var stateKey = _ref.stateKey;
+
+	    return { type: _ActionTypes.SHOW_MENU, id: id, stateKey: stateKey };
+	}
+
+	function hideMenu(_ref2) {
+	    var id = _ref2.id;
+	    var stateKey = _ref2.stateKey;
+
+	    return { type: _ActionTypes.HIDE_MENU, id: id, stateKey: stateKey };
+	}
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "MenuActions.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 281 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _GridConstants = __webpack_require__(220);
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var Sorter = function () {
+	    function Sorter() {
+	        _classCallCheck(this, Sorter);
+	    }
+
+	    _createClass(Sorter, [{
+	        key: 'sortBy',
+	        value: function sortBy(name, direction, datasource) {
+	            return datasource.data.sort(function (a, b) {
+
+	                if (a[name] < b[name] && direction) {
+	                    return direction === _GridConstants.SORT_DIRECTIONS.ASCEND ? 1 : -1;
+	                } else if (a[name] > b[name]) {
+	                    return direction === _GridConstants.SORT_DIRECTIONS.ASCEND ? -1 : 1;
+	                }
+	            });
+	        }
+	    }]);
+
+	    return Sorter;
+	}();
+
+	exports.default = new Sorter();
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "sorter.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 282 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(149);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _keyGenerator = __webpack_require__(222);
+
+	var _ModelActions = __webpack_require__(262);
+
+	var _CheckBox = __webpack_require__(283);
+
+	var _GridConstants = __webpack_require__(220);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var Model = function () {
+	    function Model() {
+	        _classCallCheck(this, Model);
+	    }
+
+	    _createClass(Model, [{
+	        key: 'init',
+	        value: function init(plugins, stateKey, store, events) {
+
+	            var eventTypes = {
+	                singleclick: 'singleclick',
+	                doubleclick: 'doubleclick'
+	            };
+
+	            var modes = _GridConstants.SELECTION_MODES;
+
+	            var defaults = {
+	                mode: modes.single,
+	                enabled: true,
+	                editEvent: 'none',
+	                allowDeselect: true,
+	                activeCls: 'active',
+	                editCls: 'edit',
+	                selectionEvent: eventTypes.singleclick,
+	                store: store
+	            };
+
+	            var config = plugins && plugins.SELECTION_MODEL ? Object.assign(defaults, plugins.SELECTION_MODEL) : defaults;
+
+	            this.defaults = config;
+	            this.eventTypes = eventTypes;
+	            this.modes = modes;
+	            this.store = config.store;
+	            this.stateKey = stateKey;
+	            this.events = events;
+	        }
+	    }, {
+	        key: 'handleSelectionEvent',
+	        value: function handleSelectionEvent(selectionEvent) {
+
+	            if (this.events.HANDLE_BEFORE_SELECTION) {
+	                this.events.HANDLE_BEFORE_SELECTION(selectionEvent);
+	            }
+
+	            if (this.events.HANDLE_BEFORE_BULKACTION_SHOW) {
+	                this.events.HANDLE_BEFORE_BULKACTION_SHOW(selectionEvent);
+	            }
+
+	            this.store.dispatch((0, _ModelActions.setSelection)({
+	                id: selectionEvent.id,
+	                defaults: this.defaults,
+	                modes: this.modes,
+	                stateKey: this.stateKey
+	            }));
+
+	            if (this.events.HANDLE_AFTER_SELECTION) {
+	                this.events.HANDLE_AFTER_SELECTION(selectionEvent);
+	            }
+
+	            if (this.events.HANDLE_AFTER_BULKACTION_SHOW) {
+	                this.events.HANDLE_AFTER_BULKACTION_SHOW(selectionEvent);
+	            }
+	        }
+	    }, {
+	        key: 'updateCells',
+	        value: function updateCells(cells, rowId, type, reducerKeys, stateKey) {
+
+	            var cellsUpdate = cells;
+
+	            var checkBoxProps = {
+	                key: (0, _keyGenerator.keyFromObject)(rowId, ['checkbox-']),
+	                rowId: rowId,
+	                type: type,
+	                reducerKeys: reducerKeys,
+	                stateKey: stateKey,
+	                store: this.store
+	            };
+
+	            if (this.defaults.mode === this.modes.checkboxSingle || this.defaults.mode === this.modes.checkboxMulti) {
+	                cellsUpdate.unshift(_react2.default.createElement(_CheckBox.ConnectedCheckBox, checkBoxProps));
+	            }
+
+	            return cellsUpdate;
+	        }
+	    }]);
+
+	    return Model;
+	}();
+
+	exports.default = Model;
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Model.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 283 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.ConnectedCheckBox = exports.getColumn = exports.getHeader = exports.handleChange = exports.CheckBox = undefined;
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var _react = __webpack_require__(149);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRedux = __webpack_require__(206);
+
+	var _prefix = __webpack_require__(219);
+
+	var _stateGetter = __webpack_require__(231);
+
+	var _GridConstants = __webpack_require__(220);
+
+	var _ModelActions = __webpack_require__(262);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var CheckBox = exports.CheckBox = function CheckBox(_ref) {
+	    var dataSource = _ref.dataSource;
+	    var rowId = _ref.rowId;
+	    var selectedRows = _ref.selectedRows;
+	    var store = _ref.store;
+	    var stateKey = _ref.stateKey;
+	    var type = _ref.type;
+
+
+	    var checkBoxContainerProps = {
+	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.SELECTION_MODEL.CHECKBOX_CONTAINER)
+	    };
+
+	    var checkBoxProps = {
+	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.SELECTION_MODEL.CHECKBOX),
+	        checked: selectedRows ? selectedRows[rowId] : false,
+	        type: 'checkbox',
+	        onChange: handleChange.bind(undefined, dataSource, store, type, stateKey)
+	    };
+
+	    return type === 'header' ? getHeader(checkBoxContainerProps, checkBoxProps) : getColumn(checkBoxContainerProps, checkBoxProps);
+	};
+
+	var handleChange = exports.handleChange = function handleChange(dataSource, store, type, stateKey, reactEvent) {
+	    var target = reactEvent.target;
+
+	    if (type === 'header') {
+	        if (target.checked) {
+	            store.dispatch((0, _ModelActions.selectAll)({ stateKey: stateKey, data: dataSource }));
+	        } else {
+	            store.dispatch((0, _ModelActions.deselectAll)({ stateKey: stateKey }));
+	        }
+	    }
+	};
+
+	var getHeader = exports.getHeader = function getHeader(checkBoxContainerProps, checkBoxProps) {
+
+	    return _react2.default.createElement(
+	        'th',
+	        checkBoxContainerProps,
+	        _react2.default.createElement('input', _extends({ type: 'checkbox' }, checkBoxProps))
+	    );
+	};
+
+	var getColumn = exports.getColumn = function getColumn(checkBoxContainerProps, checkBoxProps) {
+	    return _react2.default.createElement(
+	        'td',
+	        checkBoxContainerProps,
+	        _react2.default.createElement('input', _extends({ type: 'checkbox' }, checkBoxProps))
+	    );
+	};
+
+	CheckBox.propTypes = {
+	    dataSource: _react.PropTypes.object,
+	    rowId: _react.PropTypes.any,
+	    selectedRows: _react.PropTypes.object,
+	    store: _react.PropTypes.object,
+	    type: _react.PropTypes.string
+	};
+
+	CheckBox.defaultProps = {};
+
+	function mapStateToProps(state, props) {
+
+	    return {
+	        pager: (0, _stateGetter.stateGetter)(state, props, 'pager', props.stateKey),
+	        dataSource: (0, _stateGetter.stateGetter)(state, props, 'dataSource', props.stateKey),
+	        selectedRows: (0, _stateGetter.stateGetter)(state, props, 'selection', props.stateKey)
+	    };
+	}
+
+	var ConnectedCheckBox = (0, _reactRedux.connect)(mapStateToProps)(CheckBox);
+
+	exports.CheckBox = CheckBox;
+	exports.ConnectedCheckBox = ConnectedCheckBox;
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "CheckBox.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 284 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(149);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _Inline = __webpack_require__(285);
+
+	var _Inline2 = _interopRequireDefault(_Inline);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var Manager = function () {
+	    function Manager() {
+	        _classCallCheck(this, Manager);
+	    }
+
+	    _createClass(Manager, [{
+	        key: 'init',
+	        value: function init(plugins, stateKey, store) {
+
+	            var defaults = {
+	                type: 'inline',
+	                enabled: false,
+	                focusOnEdit: true
+	            };
+
+	            var editModes = {
+	                inline: 'inline'
+	            };
+
+	            var config = plugins && plugins.EDITOR ? Object.assign(defaults, plugins.EDITOR) : defaults;
+
+	            this.stateKey = stateKey;
+	            this.config = config;
+	            this.editModes = editModes;
+	            this.store = store;
+	        }
+	    }, {
+	        key: 'getComponent',
+	        value: function getComponent(plugins, reducerKeys, store, events, selectionModel, editor, columns) {
+
+	            var editorProps = {
+	                columns: columns,
+	                config: this.config,
+	                reducerKeys: reducerKeys,
+	                store: store,
+	                stateKey: this.stateKey,
+	                events: events
+	            };
+
+	            if (!this.config.enabled) {
+	                return null;
+	            } else if (this.config.type === this.editModes.inline) {
+	                return _react2.default.createElement(_Inline2.default, editorProps);
+	            } else {
+	                return null;
+	            }
+	        }
+	    }]);
+
+	    return Manager;
+	}();
+
+	exports.default = Manager;
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Manager.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 285 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.isEditorShown = exports.focusFirstEditor = exports.resetEditorPosition = exports.getRowFromInput = exports.Inline = undefined;
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(149);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRedux = __webpack_require__(206);
+
+	var _Button = __webpack_require__(286);
+
+	var _prefix = __webpack_require__(219);
+
+	var _stateGetter = __webpack_require__(231);
+
+	var _getEditorTop = __webpack_require__(287);
+
+	var _GridConstants = __webpack_require__(220);
+
+	var _EditorActions = __webpack_require__(227);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var Inline = exports.Inline = function (_Component) {
+	    _inherits(Inline, _Component);
+
+	    function Inline() {
+	        _classCallCheck(this, Inline);
+
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(Inline).apply(this, arguments));
+	    }
+
+	    _createClass(Inline, [{
+	        key: 'render',
+	        value: function render() {
+	            var _props = this.props;
+	            var BUTTON_TYPES = _props.BUTTON_TYPES;
+	            var editorState = _props.editorState;
+	            var events = _props.events;
+	            var stateKey = _props.stateKey;
+	            var store = _props.store;
+
+
+	            var top = -100;
+
+	            if (isEditorShown(editorState)) {
+	                top = editorState.row.top;
+	            }
+
+	            var inlineEditorProps = {
+	                className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.EDITOR.INLINE.CONTAINER, editorState && editorState.row ? _GridConstants.CLASS_NAMES.EDITOR.INLINE.SHOWN : _GridConstants.CLASS_NAMES.EDITOR.INLINE.HIDDEN),
+	                style: {
+	                    top: top + 'px'
+	                }
+	            };
+
+	            var buttonContainerProps = {
+	                className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.EDITOR.INLINE.BUTTON_CONTAINER)
+	            };
+
+	            return _react2.default.createElement(
+	                'div',
+	                inlineEditorProps,
+	                _react2.default.createElement(
+	                    'span',
+	                    buttonContainerProps,
+	                    _react2.default.createElement(_Button.Button, {
+	                        type: BUTTON_TYPES.SAVE,
+	                        editorState: editorState,
+	                        events: events,
+	                        stateKey: stateKey,
+	                        store: store }),
+	                    _react2.default.createElement(_Button.Button, {
+	                        type: BUTTON_TYPES.CANCEL,
+	                        editorState: editorState,
+	                        events: events,
+	                        stateKey: stateKey,
+	                        store: store
+	                    })
+	                )
+	            );
+	        }
+	    }, {
+	        key: 'componentDidUpdate',
+	        value: function componentDidUpdate() {
+	            /*
+	            * lifecycle event used to focus on first available input
+	            */
+
+	            var _props2 = this.props;
+	            var config = _props2.config;
+	            var editorState = _props2.editorState;
+	            var store = _props2.store;
+	            var stateKey = _props2.stateKey;
+
+
+	            resetEditorPosition(editorState, store, stateKey);
+
+	            if (!config.focusOnEdit) {
+	                return false;
+	            }
+
+	            if (isEditorShown(editorState) && this.editedRow !== editorState.row.rowIndex) {
+	                this.editedRow = editorState.row.rowIndex;
+	                focusFirstEditor();
+	            } else if (!isEditorShown(editorState)) {
+	                this.editedRow = null;
+	            }
+	        }
+	    }]);
+
+	    return Inline;
+	}(_react.Component);
+
+	var getRowFromInput = exports.getRowFromInput = function getRowFromInput(inputEl) {
+
+	    while (inputEl !== null && inputEl.classList) {
+	        if (inputEl.classList.contains('react-grid-row')) {
+	            return inputEl;
+	        }
+
+	        inputEl = inputEl.parentNode;
+	    }
+
+	    return null;
+	};
+
+	var resetEditorPosition = exports.resetEditorPosition = function resetEditorPosition(editorState, store, stateKey) {
+	    var input = document.querySelector('.react-grid-edit .react-grid-editor-wrapper input:enabled');
+
+	    if (input) {
+	        var row = getRowFromInput(input);
+
+	        if (row && editorState) {
+	            var top = (0, _getEditorTop.getEditorTop)(row);
+
+	            if (top !== editorState.row.top) {
+	                store.dispatch((0, _EditorActions.repositionEditor)({
+	                    stateKey: stateKey,
+	                    top: top
+	                }));
+	            }
+	        }
+	    }
+	};
+
+	var focusFirstEditor = exports.focusFirstEditor = function focusFirstEditor() {
+	    var input = document.querySelector('.react-grid-edit .react-grid-editor-wrapper input:enabled');
+
+	    if (input && input.focus) {
+	        input.focus();
+	    }
+	};
+
+	var isEditorShown = exports.isEditorShown = function isEditorShown(editorState) {
+	    return editorState && editorState.row;
+	};
+
+	Inline.propTypes = {
+	    BUTTON_TYPES: _react.PropTypes.object,
+	    columns: _react.PropTypes.array,
+	    config: _react.PropTypes.object.isRequired,
+	    editorState: _react.PropTypes.object,
+	    events: _react.PropTypes.object,
+	    reducerKeys: _react.PropTypes.object,
+	    stateKey: _react.PropTypes.string,
+	    store: _react.PropTypes.object
+	};
+
+	Inline.defaultProps = {
+	    BUTTON_TYPES: {
+	        CANCEL: 'CANCEL',
+	        SAVE: 'SAVE'
+	    }
+	};
+
+	function mapStateToProps(state, props) {
+	    return {
+	        errorHandler: (0, _stateGetter.stateGetter)(state, props, 'errorhandler', props.stateKey),
+	        editorState: (0, _stateGetter.stateGetter)(state, props, 'editor', props.stateKey)
+	    };
+	}
+
+	exports.default = (0, _reactRedux.connect)(mapStateToProps)(Inline);
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Inline.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 286 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.onButtonClick = exports.Button = undefined;
+
+	var _react = __webpack_require__(149);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _prefix = __webpack_require__(219);
+
+	var _GridConstants = __webpack_require__(220);
+
+	var _EditorActions = __webpack_require__(227);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var Button = exports.Button = function Button(_ref) {
+	    var BUTTON_TYPES = _ref.BUTTON_TYPES;
+	    var saveText = _ref.saveText;
+	    var cancelText = _ref.cancelText;
+	    var editorState = _ref.editorState;
+	    var events = _ref.events;
+	    var stateKey = _ref.stateKey;
+	    var store = _ref.store;
+	    var type = _ref.type;
+
+
+	    var text = type === BUTTON_TYPES.SAVE ? saveText : cancelText;
+
+	    var buttonProps = {
+	        onClick: onButtonClick.bind(undefined, BUTTON_TYPES, editorState, events, type, stateKey, store),
+	        className: type === BUTTON_TYPES.SAVE ? (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.EDITOR.INLINE.SAVE_BUTTON) : (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.EDITOR.INLINE.CANCEL_BUTTON)
+	    };
+
+	    if (type === BUTTON_TYPES.SAVE && editorState && editorState.row && !editorState.row.valid) {
+	        buttonProps.disabled = true;
+	    }
+
+	    return _react2.default.createElement(
+	        'button',
+	        buttonProps,
+	        text
+	    );
+	};
+
+	Button.propTypes = {
+	    BUTTON_TYPES: _react.PropTypes.object,
+	    cancelText: _react.PropTypes.string,
+	    events: _react.PropTypes.object,
+	    saveText: _react.PropTypes.string,
+	    store: _react.PropTypes.object,
+	    type: _react.PropTypes.string
+	};
+
+	Button.defaultProps = {
+	    BUTTON_TYPES: {
+	        CANCEL: 'CANCEL',
+	        SAVE: 'SAVE'
+	    },
+	    cancelText: 'Cancel',
+	    saveText: 'Save'
+	};
+
+	var onButtonClick = exports.onButtonClick = function onButtonClick(BUTTON_TYPES, editorState, events, type, stateKey, store) {
+
+	    if (type === BUTTON_TYPES.CANCEL) {
+	        store.dispatch((0, _EditorActions.dismissEditor)({ stateKey: stateKey }));
+	    } else if (type === BUTTON_TYPES.SAVE) {
+
+	        store.dispatch((0, _EditorActions.saveRow)({
+	            values: editorState.row.values,
+	            rowIndex: editorState.row.rowIndex,
+	            stateKey: stateKey
+	        }));
+
+	        if (events.HANDLE_AFTER_INLINE_EDITOR_SAVE) {
+	            var values = editorState.row.values;
+
+	            events.HANDLE_AFTER_INLINE_EDITOR_SAVE({
+	                values: values, editorState: editorState
+	            });
+	        }
+
+	        store.dispatch((0, _EditorActions.dismissEditor)({ stateKey: stateKey }));
+	    }
+	};
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Button.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 287 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	var OFFSET = exports.OFFSET = 7;
+
+	var getEditorTop = exports.getEditorTop = function getEditorTop(rowElement) {
+
+	    if (!rowElement) {
+	        return null;
+	    }
+
+	    return rowElement.offsetTop + rowElement.clientHeight + OFFSET;
+	};
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "getEditorTop.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 288 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.mapStateToProps = mapStateToProps;
+
+	var _stateGetter = __webpack_require__(231);
+
+	function mapStateToProps(state, props) {
+	    return {
+	        columnState: (0, _stateGetter.stateGetter)(state, props, 'grid', props.stateKey),
+	        gridData: (0, _stateGetter.stateGetter)(state, props, 'dataSource', props.stateKey),
+	        editorState: (0, _stateGetter.stateGetter)(state, props, 'editor', props.stateKey),
+	        pager: (0, _stateGetter.stateGetter)(state, props, 'pager', props.stateKey),
+	        selectedRows: (0, _stateGetter.stateGetter)(state, props, 'selection', props.stateKey),
+	        menuState: (0, _stateGetter.stateGetter)(state, props, 'menu', props.stateKey),
+	        loadingState: (0, _stateGetter.stateGetter)(state, props, 'loader', props.stateKey)
+	    };
+	}
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "mapStateToProps.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 289 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+
+	// load the styles
+	var content = __webpack_require__(290);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(297)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../node_modules/css-loader/index.js!./../../node_modules/stylus-loader/index.js!./main.styl", function() {
+				var newContent = require("!!./../../node_modules/css-loader/index.js!./../../node_modules/stylus-loader/index.js!./main.styl");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 290 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(291)();
+	// imports
+
+
+	// module
+	exports.push([module.id, "@font-face {\n  font-family: 'Open Sans';\n  src: url(" + __webpack_require__(292) + ") format('');\n  font-weight: normarl;\n  font-style: normal;\n}\n@font-face {\n  font-family: 'FontAwesome';\n  src: url(" + __webpack_require__(293) + ") format('');\n  src: url(" + __webpack_require__(294) + "?#iefix&v=3.0.1) format('embedded-opentype');\n  src: url(" + __webpack_require__(295) + ") format('woff');\n  src: url(" + __webpack_require__(296) + ") format('truetype');\n  font-weight: normarl;\n  font-style: normal;\n}\n.react-grid-page-buttons {\n  background-color: #2e7d32;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  border-radius: 3px;\n  border: none;\n  color: #fff;\n  cursor: pointer;\n  font-family: 'Open Sans', sans-serif;\n  opacity: 1;\n}\n.react-grid-page-buttons:focus {\n  outline: none;\n}\n.react-grid-page-buttons:active {\n  opacity: 1;\n  background-color: #52bf57;\n}\n.react-grid-page-buttons:hover {\n  opacity: 0.6;\n}\n.react-grid-page-buttons:disabled {\n  background-color: #fff;\n  color: #161616;\n  cursor: initial;\n}\n.react-grid-cell {\n  border-bottom: 1px solid #f7f7f7;\n  height: 20px;\n  font-family: 'Open Sans', sans-serif;\n  font-size: 13px;\n  padding: 4px 10px 4px 10px;\n  position: relative;\n  text-overflow: ellipsis;\n  overflow: hidden;\n}\n.react-grid-cell .react-grid-inactive {\n  pointer-events: none;\n}\n.react-grid-container {\n  box-shadow: 2px 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);\n  position: relative;\n}\n.react-grid-table {\n  -webkit-border-radius: 4px;\n  -moz-border-radius: 4px;\n  border-radius: 4px;\n  border-collapse: collapse;\n  font-size: 14px;\n  position: relative;\n  text-align: left;\n  table-layout: fixed;\n  white-space: nowrap;\n  width: 100%;\n}\n.react-grid-table.react-grid-header-fixed {\n  box-shadow: none;\n  z-index: 9;\n}\n.react-grid-table.react-grid-header-fixed.react-grid-header-stuck {\n  margin-left: auto;\n  margin-right: auto;\n  position: fixed;\n  top: 0;\n}\n.react-grid-table.react-grid-header-fixed.react-grid-header-stuck-bottom {\n  position: absolute;\n}\n.react-grid-table.react-grid-header-hidden thead,\n.react-grid-table.react-grid-header-hidden thead * {\n  border: 0;\n  height: 0;\n}\n.react-grid-table.react-grid-header-hidden thead th * {\n  border: 0;\n  display: none;\n  height: 0;\n}\n.react-grid-table-container {\n  background-color: #fff;\n  overflow: hidden;\n  overflow-y: auto;\n  overflow-x: hidden;\n  position: relative;\n}\n.react-grid-header {\n  background-color: #f7f7f7;\n  border-bottom: 1px solid #e9e9e9;\n  color: #3f3f3f;\n  font-family: 'Open Sans', sans-serif;\n  height: 24px;\n}\n.react-grid-header.react-grid-header-hidden {\n  visibility: hidden;\n}\n.react-grid-header.react-grid-header-hidden th {\n  border: none;\n  height: 0px;\n  padding-bottom: 0px;\n  padding-top: 0px;\n}\n.react-grid-header.react-grid-header-hidden th.react-grid-checkbox-container {\n  border: none;\n  height: 0;\n  margin: 0;\n}\n.react-grid-header th {\n  position: relative;\n  text-overflow: ellipsis;\n}\n.react-grid-header th.react-grid-checkbox-container {\n  border-bottom: 1px solid #e9e9e9;\n}\n.react-grid-header th .react-grid-column {\n  display: inline-block;\n  text-overflow: ellipsis;\n  overflow: hidden;\n  width: 80%;\n}\n.react-grid-header th.react-grid-sort-handle-visible .react-grid-sort-handle {\n  visibility: visible;\n}\n.react-grid-header th .react-grid-sort-handle {\n  float: left;\n  transition-duration: 150ms;\n  transition-property: opacity;\n  transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);\n  visibility: hidden;\n}\n.react-grid-header th .react-grid-sort-handle.react-grid-desc {\n  cursor: pointer;\n}\n.react-grid-header th .react-grid-sort-handle.react-grid-desc::before {\n  font-family: FontAwesome;\n  font-size: 12px;\n  font-weight: normal;\n  font-style: normal;\n  content: '\\F0D8';\n}\n.react-grid-header th .react-grid-sort-handle.react-grid-desc::before {\n  top: -1px;\n}\n.react-grid-header th .react-grid-sort-handle.react-grid-asc {\n  cursor: pointer;\n}\n.react-grid-header th .react-grid-sort-handle.react-grid-asc::before {\n  font-family: FontAwesome;\n  font-size: 12px;\n  font-weight: normal;\n  font-style: normal;\n  content: '\\F0D7';\n}\n.react-grid-header th .react-grid-sort-handle::before {\n  cursor: pointer;\n  position: relative;\n  right: 1px;\n}\n.react-grid-header th .react-grid-drag-handle::after {\n  border-right: 1px solid #f7f7f7;\n  content: ' ';\n  cursor: ew-resize;\n  position: absolute;\n  right: 0px;\n  top: 0px;\n  width: 10px;\n  height: 100%;\n  transition-duration: 150ms;\n  transition-property: border;\n  transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);\n}\n.react-grid-header th:hover .react-grid-drag-handle::after {\n  border-color: #e9e9e9;\n}\n.react-grid-header th:nth-last-child(1),\n.react-grid-header th:nth-last-child(2) {\n  overflow: initial;\n}\n.react-grid-header th:nth-last-child(1) .react-grid-drag-handle::after,\n.react-grid-header th:nth-last-child(2) .react-grid-drag-handle::after {\n  border: none;\n  cursor: auto;\n}\n.react-grid-action-menu-container {\n  background-color: #fff;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  border-radius: 3px;\n  box-shadow: 2px 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);\n  right: 6px;\n  list-style-type: none;\n  list-style-position: outside;\n  padding: 0px;\n  position: absolute;\n  top: 10px;\n  z-index: 11;\n}\n.react-grid-action-menu-item {\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  border-radius: 3px;\n  font-family: 'Open Sans', sans-serif;\n  font-size: 12px;\n  padding: 6px 30px 6px 6px;\n  line-height: 1.2;\n}\n.react-grid-action-menu-item:hover {\n  background-color: #f7f7f7;\n}\n.react-grid-row {\n  background-color: #fff;\n  cursor: pointer;\n  text-overflow: ellipsis;\n  transition-duration: 150ms;\n  transition-property: background-color;\n  transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);\n}\n.react-grid-row:hover {\n  background-color: #f5f5f5;\n}\n.react-grid-row.react-grid-empty-row {\n  text-align: center;\n  height: 80px;\n}\n.react-grid-row.react-grid-active {\n  background-color: #e9e9e9;\n}\n.react-grid-row.react-grid-edit {\n  color: #fff;\n  background-color: #b2b2b2;\n  box-shadow: 2px 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);\n}\n.react-grid-row.react-grid-edit .react-grid-action-menu-container {\n  color: initial;\n}\n.react-grid-row.react-grid-edit:hover {\n  background-color: #b2b2b2;\n}\n.react-grid-row.react-grid-edit td {\n  border-bottom: 2px solid transparent;\n}\n.react-grid-row.react-grid-edit td:focus {\n  border-bottom: 2px solid #2e7d32;\n  outline: none;\n}\n.react-grid-inline-editor {\n  opacity: 0;\n  position: absolute;\n  left: 0px;\n  transform: translateX(0px) translateY(0px);\n  text-align: center;\n  margin: 0px auto;\n  transition-duration: 150ms;\n  transition-property: transform opacity;\n  transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);\n  pointer-events: none;\n  right: 0px;\n}\n.react-grid-inline-editor .react-grid-button-container {\n  background-color: #b2b2b2;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  border-radius: 3px;\n  box-shadow: 2px 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);\n  display: inline-block;\n  margin-top: 5px;\n  padding: 5px;\n  pointer-events: all;\n}\n.react-grid-inline-editor .react-grid-button-container .react-grid-save-button {\n  background-color: #2e7d32;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  border-radius: 3px;\n  border: none;\n  color: #fff;\n  cursor: pointer;\n  font-family: 'Open Sans', sans-serif;\n  opacity: 1;\n}\n.react-grid-inline-editor .react-grid-button-container .react-grid-save-button:focus {\n  outline: none;\n}\n.react-grid-inline-editor .react-grid-button-container .react-grid-save-button:active {\n  opacity: 1;\n  background-color: #52bf57;\n}\n.react-grid-inline-editor .react-grid-button-container .react-grid-save-button:hover {\n  opacity: 0.6;\n}\n.react-grid-inline-editor .react-grid-button-container .react-grid-save-button:disabled {\n  background-color: #fff;\n  color: #161616;\n  cursor: initial;\n}\n.react-grid-inline-editor .react-grid-button-container .react-grid-cancel-button {\n  background-color: #f7f7f7;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  border-radius: 3px;\n  border: none;\n  color: #161616;\n  cursor: pointer;\n  font-family: 'Open Sans', sans-serif;\n  opacity: 1;\n}\n.react-grid-inline-editor .react-grid-button-container .react-grid-cancel-button:focus {\n  outline: none;\n}\n.react-grid-inline-editor .react-grid-button-container .react-grid-cancel-button:active {\n  opacity: 1;\n  background-color: #f9f9f9;\n}\n.react-grid-inline-editor .react-grid-button-container .react-grid-cancel-button:hover {\n  opacity: 0.6;\n}\n.react-grid-inline-editor .react-grid-button-container .react-grid-cancel-button:disabled {\n  background-color: #fff;\n  color: #161616;\n  cursor: initial;\n}\n.react-grid-inline-editor.react-grid-shown {\n  opacity: 1;\n  display: block;\n  transform: translateY(-7px);\n}\n.react-grid-inline-editor.react-grid-hidden {\n  top: -10000px;\n}\n.react-grid-error-container {\n  background-color: #f7f7f7;\n  bottom: 0px;\n  box-shadow: 2px 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);\n  color: #e9e9e9;\n  height: 100px;\n  left: 0px;\n  margin: auto;\n  position: absolute;\n  perspective: 1300px;\n  transform-style: preserve-3d;\n  transform: rotateX(-70deg);\n  transition-duration: 0.2s;\n  transition-property: transform;\n  transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);\n  opacity: 0;\n  right: 0px;\n  top: -10000px;\n  width: 50%;\n  z-index: 10;\n}\n.react-grid-error-container .react-grid-error-message {\n  color: #3f3f3f;\n  font-family: 'Open Sans', sans-serif;\n  height: 20px;\n  margin-top: -20px;\n  top: 50%;\n  left: 0;\n  right: 0;\n  position: absolute;\n}\n.react-grid-error-container button {\n  background-color: #2e7d32;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  border-radius: 3px;\n  border: none;\n  color: #fff;\n  cursor: pointer;\n  font-family: 'Open Sans', sans-serif;\n  opacity: 1;\n  position: absolute;\n  right: 10px;\n  bottom: 10px;\n}\n.react-grid-error-container button:focus {\n  outline: none;\n}\n.react-grid-error-container button:active {\n  opacity: 1;\n  background-color: #52bf57;\n}\n.react-grid-error-container button:hover {\n  opacity: 0.6;\n}\n.react-grid-error-container button:disabled {\n  background-color: #fff;\n  color: #161616;\n  cursor: initial;\n}\n.react-grid-error-container.react-grid-shown {\n  top: 0px;\n  transform: rotateX(0deg);\n  opacity: 1;\n}\nth.react-grid-action-container {\n  border-bottom: 1px solid #e9e9e9;\n}\n.react-grid-action-container {\n  cursor: pointer;\n  position: relative;\n  width: 5px;\n  border-bottom: 1px solid #f7f7f7;\n  height: 20px;\n  font-family: 'Open Sans', sans-serif;\n}\n.react-grid-action-container .react-grid-no-actions {\n  display: none;\n}\n.react-grid-action-container .react-grid-action-icon {\n  cursor: pointer;\n  cursor: pointer;\n  padding-left: 5px;\n  position: relative;\n}\n.react-grid-action-container .react-grid-action-icon::before {\n  font-family: FontAwesome;\n  font-size: 12px;\n  font-weight: normal;\n  font-style: normal;\n  content: '\\F142';\n}\n.react-grid-action-container .react-grid-action-icon::before {\n  cursor: pointer;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  border-radius: 3px;\n  position: absolute;\n  text-align: center;\n  top: 5px;\n  right: 5px;\n  width: 6px;\n}\n.react-grid-action-container.react-grid-action-menu-selected span::before {\n  background-color: #e9e9e9;\n}\n.react-grid-loading-bar {\n  display: none;\n  position: absolute;\n  height: 4px;\n  width: 100%;\n}\n.react-grid-loading-bar.react-grid-active {\n  display: block;\n}\n.react-grid-loading-bar::before {\n  display: block;\n  position: absolute;\n  content: \"\";\n  left: -200px;\n  width: 200px;\n  height: 4px;\n  background-color: #2e7d32;\n  animation: loading 2s linear infinite;\n}\n@-moz-keyframes loading {\n  from {\n    left: 0px;\n    width: 30%;\n  }\n  50% {\n    width: 30%;\n  }\n  70% {\n    width: 44%;\n  }\n  80% {\n    left: 55%;\n  }\n  95% {\n    left: 66%;\n  }\n  to {\n    left: 72%;\n  }\n}\n@-webkit-keyframes loading {\n  from {\n    left: 0px;\n    width: 30%;\n  }\n  50% {\n    width: 30%;\n  }\n  70% {\n    width: 44%;\n  }\n  80% {\n    left: 55%;\n  }\n  95% {\n    left: 66%;\n  }\n  to {\n    left: 72%;\n  }\n}\n@-o-keyframes loading {\n  from {\n    left: 0px;\n    width: 30%;\n  }\n  50% {\n    width: 30%;\n  }\n  70% {\n    width: 44%;\n  }\n  80% {\n    left: 55%;\n  }\n  95% {\n    left: 66%;\n  }\n  to {\n    left: 72%;\n  }\n}\n@keyframes loading {\n  from {\n    left: 0px;\n    width: 30%;\n  }\n  50% {\n    width: 30%;\n  }\n  70% {\n    width: 44%;\n  }\n  80% {\n    left: 55%;\n  }\n  95% {\n    left: 66%;\n  }\n  to {\n    left: 72%;\n  }\n}\n.react-grid-pager-toolbar {\n  background-color: #f7f7f7;\n  border-top: 1px solid #e9e9e9;\n  -webkit-border-radius: 0px 0px 3px 3px;\n  -moz-border-radius: 0px 0px 3px 3px;\n  border-radius: 0px 0px 3px 3px;\n  font-family: 'Open Sans', sans-serif;\n  font-size: 13px;\n  height: 24px;\n  text-indent: 10px;\n}\n.react-grid-pager-toolbar.react-grid-is-stuck {\n  bottom: 0;\n  position: fixed;\n}\n.react-grid-pager-toolbar.react-grid-is-stuck-bottom {\n  position: absolute;\n  width: 100%;\n}\n.react-grid-pager-toolbar span {\n  display: block;\n  float: right;\n  position: relative;\n  right: 5px;\n  top: 2px;\n}\n.react-grid-pager-toolbar span:first-child {\n  font-size: 14px;\n  font-family: 'Open Sans', sans-serif;\n  float: left;\n}\n.react-grid-pager-toolbar button {\n  margin: 0px 10px;\n}\n.react-grid-checkbox-container {\n  border-bottom: 1px solid #f7f7f7;\n  height: 20px;\n  font-family: 'Open Sans', sans-serif;\n  font-size: 13px;\n  padding: 4px 10px 4px 10px;\n  position: relative;\n  text-overflow: ellipsis;\n  overflow: hidden;\n  padding: 0px 10px;\n  width: 10px;\n}\n.react-grid-bulkaction-container {\n  background-color: #b2b2b2;\n  -webkit-border-radius: 3px 3px 0px 0px;\n  -moz-border-radius: 3px 3px 0px 0px;\n  border-radius: 3px 3px 0px 0px;\n  height: 28px;\n  transition-duration: 150ms;\n  transition-property: transform opacity top;\n  transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);\n  position: absolute;\n  text-align: left;\n  transform: translateX(0px) translateY(-7px);\n  top: -7px;\n  opacity: 0;\n  z-index: 12;\n  width: 100%;\n}\n.react-grid-bulkaction-container .react-grid-bulkaction-description {\n  display: inline-block;\n  font-family: 'Open Sans', sans-serif;\n  font-size: 13px;\n  overflow: hidden;\n  padding-left: 15px;\n  text-overflow: ellipsis;\n  min-width: 70px;\n  position: relative;\n  top: 3px;\n}\n.react-grid-bulkaction-container .react-grid-checkbox-container {\n  border-bottom: 1px solid transparent;\n}\n.react-grid-bulkaction-container button {\n  background-color: #2e7d32;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  border-radius: 3px;\n  border: none;\n  color: #fff;\n  cursor: pointer;\n  font-family: 'Open Sans', sans-serif;\n  opacity: 1;\n  margin: 5px 8px;\n  position: relative;\n  top: -1px;\n}\n.react-grid-bulkaction-container button:focus {\n  outline: none;\n}\n.react-grid-bulkaction-container button:active {\n  opacity: 1;\n  background-color: #52bf57;\n}\n.react-grid-bulkaction-container button:hover {\n  opacity: 0.6;\n}\n.react-grid-bulkaction-container button:disabled {\n  background-color: #fff;\n  color: #161616;\n  cursor: initial;\n}\n.react-grid-bulkaction-container.react-grid-removed {\n  top: -100px;\n}\n.react-grid-bulkaction-container.react-grid-shown {\n  top: 0px;\n  opacity: 1;\n  transform: translateY(0px);\n}\n.react-grid-filter-container {\n  background-color: #f7f7f7;\n  -webkit-border-radius: 3px 3px 0px 0px;\n  -moz-border-radius: 3px 3px 0px 0px;\n  border-radius: 3px 3px 0px 0px;\n  padding: 5px 0px;\n  position: relative;\n  text-align: center;\n  width: 100%;\n}\n.react-grid-filter-container .react-grid-filter-input {\n  border: 1px solid #e9e9e9;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  border-radius: 3px;\n  font-family: 'Open Sans', sans-serif;\n  font-size: 14px;\n  color: #b2b2b2;\n  display: inline-block;\n  padding: 0px;\n  text-indent: 5px;\n  transition-duration: 150ms;\n  transition-property: color;\n  transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);\n  width: 99%;\n}\n.react-grid-filter-container .react-grid-filter-input:focus {\n  color: #8e8e8e;\n  outline: none;\n}\n.react-grid-filter-container:hover .react-grid-filter-input {\n  color: #8e8e8e;\n}\n.react-grid-filter-container .react-grid-filter-button-container {\n  display: inline-block;\n  position: absolute;\n  right: 5px;\n}\n.react-grid-filter-container .react-grid-filter-button-container > i {\n  padding: 0px 3px 0px 0px;\n}\n.react-grid-filter-container .react-grid-filter-button-container > i::before {\n  color: #b2b2b2;\n  transition-duration: 150ms;\n  transition-property: color;\n  transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);\n}\n.react-grid-filter-container .react-grid-filter-button-container > i:hover::before {\n  color: #8e8e8e;\n}\n.react-grid-filter-container .react-grid-filter-button-container > i.react-grid-active::before {\n  color: #2e7d32;\n}\n.react-grid-filter-container .react-grid-filter-button-container .react-grid-filter-search-button {\n  cursor: pointer;\n}\n.react-grid-filter-container .react-grid-filter-button-container .react-grid-filter-search-button::before {\n  font-family: FontAwesome;\n  font-size: 12px;\n  font-weight: normal;\n  font-style: normal;\n  content: '\\F002';\n}\n.react-grid-filter-container .react-grid-filter-button-container .react-grid-filter-clear-button {\n  cursor: pointer;\n}\n.react-grid-filter-container .react-grid-filter-button-container .react-grid-filter-clear-button::before {\n  font-family: FontAwesome;\n  font-size: 12px;\n  font-weight: normal;\n  font-style: normal;\n  content: '\\F00D';\n}\n.react-grid-filter-container .react-grid-filter-button-container .react-grid-filter-menu-button {\n  cursor: pointer;\n}\n.react-grid-filter-container .react-grid-filter-button-container .react-grid-filter-menu-button::before {\n  font-family: FontAwesome;\n  font-size: 12px;\n  font-weight: normal;\n  font-style: normal;\n  content: '\\F0B0';\n}\n.react-grid-advanced-filter-menu-container {\n  background-color: #f7f7f7;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  border-radius: 3px;\n  box-shadow: 10px 15px 30px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);\n  font-family: 'Open Sans', sans-serif;\n  position: absolute;\n  right: 10px;\n  top: 24px;\n  width: 400px;\n  z-index: 13;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-title {\n  display: inline-block;\n  padding: 5px 10px;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-field-container {\n  display: block;\n  padding: 5px 0px;\n  text-align: left;\n  font-size: 13px;\n  margin: 0px auto;\n  width: 90%;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-field-container .react-grid-advanced-filter-menu-field-label {\n  display: inline-block;\n  padding: 5px 0px;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-field-container .react-grid-advanced-filter-menu-field-input {\n  border: 1px solid #e9e9e9;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  border-radius: 3px;\n  font-family: 'Open Sans', sans-serif;\n  font-size: 14px;\n  color: #b2b2b2;\n  display: inline-block;\n  padding: 0px;\n  text-indent: 5px;\n  transition-duration: 150ms;\n  transition-property: color;\n  transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);\n  width: 100%;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-field-container .react-grid-advanced-filter-menu-field-input:focus {\n  color: #8e8e8e;\n  outline: none;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container {\n  padding: 10px 10px;\n  margin: 0px auto;\n  width: 90%;\n  text-align: left;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container .react-grid-advanced-filter-menu-button {\n  background-color: #2e7d32;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  border-radius: 3px;\n  border: none;\n  color: #fff;\n  cursor: pointer;\n  font-family: 'Open Sans', sans-serif;\n  opacity: 1;\n  margin-right: 5px;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container .react-grid-advanced-filter-menu-button:focus {\n  outline: none;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container .react-grid-advanced-filter-menu-button:active {\n  opacity: 1;\n  background-color: #52bf57;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container .react-grid-advanced-filter-menu-button:hover {\n  opacity: 0.6;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container .react-grid-advanced-filter-menu-button:disabled {\n  background-color: #fff;\n  color: #161616;\n  cursor: initial;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container .react-grid-advanced-filter-menu-button.react-grid-secondary {\n  background-color: #fff;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  border-radius: 3px;\n  border: none;\n  color: #fff;\n  cursor: pointer;\n  font-family: 'Open Sans', sans-serif;\n  opacity: 1;\n  color: #161616;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container .react-grid-advanced-filter-menu-button.react-grid-secondary:focus {\n  outline: none;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container .react-grid-advanced-filter-menu-button.react-grid-secondary:active {\n  opacity: 1;\n  background-color: #fff;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container .react-grid-advanced-filter-menu-button.react-grid-secondary:hover {\n  opacity: 0.6;\n}\n.react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container .react-grid-advanced-filter-menu-button.react-grid-secondary:disabled {\n  background-color: #fff;\n  color: #161616;\n  cursor: initial;\n}\n", ""]);
+
+	// exports
+
+
+/***/ },
+/* 291 */
+/***/ function(module, exports) {
+
+	/*
+		MIT License http://www.opensource.org/licenses/mit-license.php
+		Author Tobias Koppers @sokra
+	*/
+	// css base code, injected by the css-loader
+	module.exports = function() {
+		var list = [];
+
+		// return the list of modules as css string
+		list.toString = function toString() {
+			var result = [];
+			for(var i = 0; i < this.length; i++) {
+				var item = this[i];
+				if(item[2]) {
+					result.push("@media " + item[2] + "{" + item[1] + "}");
+				} else {
+					result.push(item[1]);
+				}
+			}
+			return result.join("");
+		};
+
+		// import a list of modules into the list
+		list.i = function(modules, mediaQuery) {
+			if(typeof modules === "string")
+				modules = [[null, modules, ""]];
+			var alreadyImportedModules = {};
+			for(var i = 0; i < this.length; i++) {
+				var id = this[i][0];
+				if(typeof id === "number")
+					alreadyImportedModules[id] = true;
+			}
+			for(i = 0; i < modules.length; i++) {
+				var item = modules[i];
+				// skip already imported module
+				// this implementation is not 100% perfect for weird media query combinations
+				//  when a module is imported multiple times with different media queries.
+				//  I hope this will never occur (Hey this way we have smaller bundles)
+				if(typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
+					if(mediaQuery && !item[2]) {
+						item[2] = mediaQuery;
+					} else if(mediaQuery) {
+						item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
+					}
+					list.push(item);
+				}
+			}
+		};
+		return list;
+	};
+
+
+/***/ },
+/* 292 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__.p + "1bf71be111189e76987a4bb9b3115cb7.ttf";
+
+/***/ },
+/* 293 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__.p + "32400f4e08932a94d8bfd2422702c446.eot";
+
+/***/ },
+/* 294 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__.p + "32400f4e08932a94d8bfd2422702c446.eot";
+
+/***/ },
+/* 295 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__.p + "a35720c2fed2c7f043bc7e4ffb45e073.woff";
+
+/***/ },
+/* 296 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__.p + "a3de2170e4e9df77161ea5d3f31b2668.ttf";
+
+/***/ },
+/* 297 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/*
+		MIT License http://www.opensource.org/licenses/mit-license.php
+		Author Tobias Koppers @sokra
+	*/
+	var stylesInDom = {},
+		memoize = function(fn) {
+			var memo;
+			return function () {
+				if (typeof memo === "undefined") memo = fn.apply(this, arguments);
+				return memo;
+			};
+		},
+		isOldIE = memoize(function() {
+			return /msie [6-9]\b/.test(window.navigator.userAgent.toLowerCase());
+		}),
+		getHeadElement = memoize(function () {
+			return document.head || document.getElementsByTagName("head")[0];
+		}),
+		singletonElement = null,
+		singletonCounter = 0,
+		styleElementsInsertedAtTop = [];
+
+	module.exports = function(list, options) {
+		if(false) {
+			if(typeof document !== "object") throw new Error("The style-loader cannot be used in a non-browser environment");
+		}
+
+		options = options || {};
+		// Force single-tag solution on IE6-9, which has a hard limit on the # of <style>
+		// tags it will allow on a page
+		if (typeof options.singleton === "undefined") options.singleton = isOldIE();
+
+		// By default, add <style> tags to the bottom of <head>.
+		if (typeof options.insertAt === "undefined") options.insertAt = "bottom";
+
+		var styles = listToStyles(list);
+		addStylesToDom(styles, options);
+
+		return function update(newList) {
+			var mayRemove = [];
+			for(var i = 0; i < styles.length; i++) {
+				var item = styles[i];
+				var domStyle = stylesInDom[item.id];
+				domStyle.refs--;
+				mayRemove.push(domStyle);
+			}
+			if(newList) {
+				var newStyles = listToStyles(newList);
+				addStylesToDom(newStyles, options);
+			}
+			for(var i = 0; i < mayRemove.length; i++) {
+				var domStyle = mayRemove[i];
+				if(domStyle.refs === 0) {
+					for(var j = 0; j < domStyle.parts.length; j++)
+						domStyle.parts[j]();
+					delete stylesInDom[domStyle.id];
+				}
+			}
+		};
+	}
+
+	function addStylesToDom(styles, options) {
+		for(var i = 0; i < styles.length; i++) {
+			var item = styles[i];
+			var domStyle = stylesInDom[item.id];
+			if(domStyle) {
+				domStyle.refs++;
+				for(var j = 0; j < domStyle.parts.length; j++) {
+					domStyle.parts[j](item.parts[j]);
+				}
+				for(; j < item.parts.length; j++) {
+					domStyle.parts.push(addStyle(item.parts[j], options));
+				}
+			} else {
+				var parts = [];
+				for(var j = 0; j < item.parts.length; j++) {
+					parts.push(addStyle(item.parts[j], options));
+				}
+				stylesInDom[item.id] = {id: item.id, refs: 1, parts: parts};
+			}
+		}
+	}
+
+	function listToStyles(list) {
+		var styles = [];
+		var newStyles = {};
+		for(var i = 0; i < list.length; i++) {
+			var item = list[i];
+			var id = item[0];
+			var css = item[1];
+			var media = item[2];
+			var sourceMap = item[3];
+			var part = {css: css, media: media, sourceMap: sourceMap};
+			if(!newStyles[id])
+				styles.push(newStyles[id] = {id: id, parts: [part]});
+			else
+				newStyles[id].parts.push(part);
+		}
+		return styles;
+	}
+
+	function insertStyleElement(options, styleElement) {
+		var head = getHeadElement();
+		var lastStyleElementInsertedAtTop = styleElementsInsertedAtTop[styleElementsInsertedAtTop.length - 1];
+		if (options.insertAt === "top") {
+			if(!lastStyleElementInsertedAtTop) {
+				head.insertBefore(styleElement, head.firstChild);
+			} else if(lastStyleElementInsertedAtTop.nextSibling) {
+				head.insertBefore(styleElement, lastStyleElementInsertedAtTop.nextSibling);
+			} else {
+				head.appendChild(styleElement);
+			}
+			styleElementsInsertedAtTop.push(styleElement);
+		} else if (options.insertAt === "bottom") {
+			head.appendChild(styleElement);
+		} else {
+			throw new Error("Invalid value for parameter 'insertAt'. Must be 'top' or 'bottom'.");
+		}
+	}
+
+	function removeStyleElement(styleElement) {
+		styleElement.parentNode.removeChild(styleElement);
+		var idx = styleElementsInsertedAtTop.indexOf(styleElement);
+		if(idx >= 0) {
+			styleElementsInsertedAtTop.splice(idx, 1);
+		}
+	}
+
+	function createStyleElement(options) {
+		var styleElement = document.createElement("style");
+		styleElement.type = "text/css";
+		insertStyleElement(options, styleElement);
+		return styleElement;
+	}
+
+	function createLinkElement(options) {
+		var linkElement = document.createElement("link");
+		linkElement.rel = "stylesheet";
+		insertStyleElement(options, linkElement);
+		return linkElement;
+	}
+
+	function addStyle(obj, options) {
+		var styleElement, update, remove;
+
+		if (options.singleton) {
+			var styleIndex = singletonCounter++;
+			styleElement = singletonElement || (singletonElement = createStyleElement(options));
+			update = applyToSingletonTag.bind(null, styleElement, styleIndex, false);
+			remove = applyToSingletonTag.bind(null, styleElement, styleIndex, true);
+		} else if(obj.sourceMap &&
+			typeof URL === "function" &&
+			typeof URL.createObjectURL === "function" &&
+			typeof URL.revokeObjectURL === "function" &&
+			typeof Blob === "function" &&
+			typeof btoa === "function") {
+			styleElement = createLinkElement(options);
+			update = updateLink.bind(null, styleElement);
+			remove = function() {
+				removeStyleElement(styleElement);
+				if(styleElement.href)
+					URL.revokeObjectURL(styleElement.href);
+			};
+		} else {
+			styleElement = createStyleElement(options);
+			update = applyToTag.bind(null, styleElement);
+			remove = function() {
+				removeStyleElement(styleElement);
+			};
+		}
+
+		update(obj);
+
+		return function updateStyle(newObj) {
+			if(newObj) {
+				if(newObj.css === obj.css && newObj.media === obj.media && newObj.sourceMap === obj.sourceMap)
+					return;
+				update(obj = newObj);
+			} else {
+				remove();
+			}
+		};
+	}
+
+	var replaceText = (function () {
+		var textStore = [];
+
+		return function (index, replacement) {
+			textStore[index] = replacement;
+			return textStore.filter(Boolean).join('\n');
+		};
+	})();
+
+	function applyToSingletonTag(styleElement, index, remove, obj) {
+		var css = remove ? "" : obj.css;
+
+		if (styleElement.styleSheet) {
+			styleElement.styleSheet.cssText = replaceText(index, css);
+		} else {
+			var cssNode = document.createTextNode(css);
+			var childNodes = styleElement.childNodes;
+			if (childNodes[index]) styleElement.removeChild(childNodes[index]);
+			if (childNodes.length) {
+				styleElement.insertBefore(cssNode, childNodes[index]);
+			} else {
+				styleElement.appendChild(cssNode);
+			}
+		}
+	}
+
+	function applyToTag(styleElement, obj) {
+		var css = obj.css;
+		var media = obj.media;
+
+		if(media) {
+			styleElement.setAttribute("media", media)
+		}
+
+		if(styleElement.styleSheet) {
+			styleElement.styleSheet.cssText = css;
+		} else {
+			while(styleElement.firstChild) {
+				styleElement.removeChild(styleElement.firstChild);
+			}
+			styleElement.appendChild(document.createTextNode(css));
+		}
+	}
+
+	function updateLink(linkElement, obj) {
+		var css = obj.css;
+		var sourceMap = obj.sourceMap;
+
+		if(sourceMap) {
+			// http://stackoverflow.com/a/26603875
+			css += "\n/*# sourceMappingURL=data:application/json;base64," + btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))) + " */";
+		}
+
+		var blob = new Blob([css], { type: "text/css" });
+
+		var oldSrc = linkElement.href;
+
+		linkElement.href = URL.createObjectURL(blob);
+
+		if(oldSrc)
+			URL.revokeObjectURL(oldSrc);
+	}
+
+
+/***/ },
+/* 298 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.Store = undefined;
+
+	var _configureStore = __webpack_require__(299);
+
+	var _configureStore2 = _interopRequireDefault(_configureStore);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var store = (0, _configureStore2.default)();
+
+	exports.Store = store;
+	exports.default = store;
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "store.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 299 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.default = configureStore;
+
+	var _redux = __webpack_require__(192);
+
+	var _reducers = __webpack_require__(300);
+
+	var _reducers2 = _interopRequireDefault(_reducers);
+
+	var _reduxDiffLogger = __webpack_require__(311);
+
+	var _reduxDiffLogger2 = _interopRequireDefault(_reduxDiffLogger);
+
+	var _reduxThunk = __webpack_require__(313);
+
+	var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function configureStore(initialState) {
+	    var createStoreWithMiddleware = (0, _redux.applyMiddleware)(_reduxThunk2.default, _reduxDiffLogger2.default)(_redux.createStore);
+	    var store = createStoreWithMiddleware(_reducers2.default, initialState);
+
+	    if (false) {
+	        module.hot.accept('../reducers', function () {
+	            var nextReducer = require('../reducers');
+	            store.replaceReducer(nextReducer);
+	        });
+	    }
+
+	    return store;
+	}
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "configureStore.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 300 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.Reducers = exports.rootReducer = undefined;
+
+	var _redux = __webpack_require__(192);
+
+	var _grid = __webpack_require__(301);
+
+	var _grid2 = _interopRequireDefault(_grid);
+
+	var _datasource = __webpack_require__(302);
+
+	var _datasource2 = _interopRequireDefault(_datasource);
+
+	var _editor = __webpack_require__(303);
+
+	var _editor2 = _interopRequireDefault(_editor);
+
+	var _menu = __webpack_require__(304);
+
+	var _menu2 = _interopRequireDefault(_menu);
+
+	var _pager = __webpack_require__(305);
+
+	var _pager2 = _interopRequireDefault(_pager);
+
+	var _loader = __webpack_require__(306);
+
+	var _loader2 = _interopRequireDefault(_loader);
+
+	var _bulkaction = __webpack_require__(307);
+
+	var _bulkaction2 = _interopRequireDefault(_bulkaction);
+
+	var _filter = __webpack_require__(308);
+
+	var _filter2 = _interopRequireDefault(_filter);
+
+	var _selection = __webpack_require__(309);
+
+	var _selection2 = _interopRequireDefault(_selection);
+
+	var _errorhandler = __webpack_require__(310);
+
+	var _errorhandler2 = _interopRequireDefault(_errorhandler);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var rootReducer = exports.rootReducer = (0, _redux.combineReducers)({
+	    bulkaction: _bulkaction2.default,
+	    dataSource: _datasource2.default,
+	    editor: _editor2.default,
+	    errorhandler: _errorhandler2.default,
+	    grid: _grid2.default,
+	    menu: _menu2.default,
+	    pager: _pager2.default,
+	    loader: _loader2.default,
+	    filter: _filter2.default,
+	    selection: _selection2.default
+	});
+
+	var Reducers = exports.Reducers = {
+	    BulkActions: _bulkaction2.default,
+	    DataSource: _datasource2.default,
+	    Editor: _editor2.default,
+	    ErrorHandler: _errorhandler2.default,
+	    Filter: _filter2.default,
+	    Grid: _grid2.default,
+	    Loader: _loader2.default,
+	    Menu: _menu2.default,
+	    Pager: _pager2.default,
+	    Selection: _selection2.default
+	};
+
+	exports.default = rootReducer;
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "index.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 301 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.default = gridState;
+
+	var _immutable = __webpack_require__(247);
+
+	var _ActionTypes = __webpack_require__(224);
+
+	var _lastUpdate = __webpack_require__(251);
+
+	var initialState = (0, _immutable.fromJS)({ lastUpdate: (0, _lastUpdate.generateLastUpdate)() });
+
+	function gridState() {
+	    var state = arguments.length <= 0 || arguments[0] === undefined ? initialState : arguments[0];
+	    var action = arguments[1];
+
+
+	    switch (action.type) {
+
+	        case _ActionTypes.SET_COLUMNS:
+	            return state.setIn([action.stateKey], (0, _immutable.fromJS)({
+	                columns: action.columns,
+	                lastUpdate: (0, _lastUpdate.generateLastUpdate)()
+	            }));
+
+	        case _ActionTypes.SET_SORT_DIRECTION:
+	            return state.setIn([action.stateKey], (0, _immutable.fromJS)({
+	                columns: action.columns,
+	                lastUpdate: (0, _lastUpdate.generateLastUpdate)()
+	            }));
+
+	        case _ActionTypes.RESIZE_COLUMNS:
+	            return state.setIn([action.stateKey], (0, _immutable.fromJS)({
+	                columns: action.columns,
+	                lastUpdate: (0, _lastUpdate.generateLastUpdate)()
+	            }));
+
+	        default:
+
+	            return state;
+	    }
+	}
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "grid.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 302 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
 	exports.default = dataSource;
 
-	var _immutable = __webpack_require__(276);
+	var _immutable = __webpack_require__(247);
 
-	var _ActionTypes = __webpack_require__(209);
+	var _ActionTypes = __webpack_require__(224);
 
-	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+	var _lastUpdate = __webpack_require__(251);
 
-	var initialState = (0, _immutable.fromJS)({});
+	var initialState = (0, _immutable.fromJS)({ lastUpdate: (0, _lastUpdate.generateLastUpdate)() });
 
 	function dataSource() {
 	    var state = arguments.length <= 0 || arguments[0] === undefined ? initialState : arguments[0];
@@ -34629,96 +36574,95 @@
 	    switch (action.type) {
 
 	        case _ActionTypes.SET_DATA:
-	            return state.setIn([action.stateKey], {
+	            return state.setIn([action.stateKey], (0, _immutable.fromJS)({
 	                data: action.data,
 	                proxy: action.data,
 	                total: action.total || action.data.length,
-	                currentRecords: action.currentRecords || action.data
-	            });
+	                currentRecords: action.currentRecords || action.data,
+	                lastUpdate: (0, _lastUpdate.generateLastUpdate)()
+	            }));
 
 	        case _ActionTypes.DISMISS_EDITOR:
+	            var previousProxy = state.getIn([action.stateKey, 'proxy']);
+	            var previousTotal = state.getIn([action.stateKey, 'total']);
+
 	            if (state.get(action.stateKey)) {
-	                return state.updateIn([action.stateKey], function (values) {
-	                    return {
-	                        data: values.proxy,
-	                        proxy: values.proxy,
-	                        currentRecords: values.proxy,
-	                        total: values.total,
-	                        isEditing: false
-	                    };
-	                });
+	                return state.mergeIn([action.stateKey], (0, _immutable.fromJS)({
+	                    data: previousProxy,
+	                    proxy: previousProxy,
+	                    currentRecords: previousProxy,
+	                    total: previousTotal,
+	                    isEditing: false,
+	                    lastUpdate: (0, _lastUpdate.generateLastUpdate)()
+	                }));
 	            }
 
 	            return state;
 
 	        case _ActionTypes.REMOVE_ROW:
-	            var remainingRows = [].concat(_toConsumableArray(state.get(action.stateKey).data));
-	            remainingRows.splice(action.rowIndex || 0, 1);
+	            var remainingRows = state.getIn([action.stateKey, 'data']).remove(action.rowIndex || 0, 1);
 
-	            return state.updateIn([action.stateKey], function (values) {
-	                return {
-	                    data: remainingRows,
-	                    proxy: remainingRows,
-	                    total: values.total,
-	                    currentRecords: values.currentRecords
-	                };
-	            });
+	            return state.mergeIn([action.stateKey], (0, _immutable.fromJS)({
+	                data: remainingRows,
+	                proxy: remainingRows,
+	                currentRecords: remainingRows,
+	                lastUpdate: (0, _lastUpdate.generateLastUpdate)()
+	            }));
 
 	        case _ActionTypes.ADD_NEW_ROW:
 
-	            var existingData = state.get(action.stateKey);
+	            var existingState = state.get(action.stateKey);
+	            var isEditing = existingState && existingState.get('isEditing');
+	            var data = existingState && existingState.get('data');
 
-	            if (existingData && existingData.isEditing) {
+	            if (existingState && isEditing) {
 	                return state;
 	            }
 
-	            var rowModel = existingData && existingData.data && existingData.data.length > 0 && existingData.data[0] ? existingData.data[0] : {};
+	            var newRow = data && data.size > 0 && data.get(0) ? data.get(0).map(function (k, v) {
+	                return v = '';
+	            }) : (0, _immutable.fromJS)({});
 
-	            var newRow = {};
-
-	            Object.keys(rowModel).forEach(function (k) {
-	                return newRow[k] = '';
-	            });
-
-	            return state.updateIn([action.stateKey], function (values) {
-	                return _extends({}, values, {
-	                    data: [newRow].concat(_toConsumableArray(values.data)),
-	                    proxy: values.data,
-	                    isEditing: true
-	                });
-	            });
+	            return state.mergeIn([action.stateKey], (0, _immutable.fromJS)({
+	                data: data.unshift(newRow),
+	                proxy: data,
+	                isEditing: true,
+	                lastUpdate: (0, _lastUpdate.generateLastUpdate)()
+	            }));
 
 	        case _ActionTypes.SAVE_ROW:
-	            var gridData = state.get(action.stateKey).data;
-	            gridData[action.rowIndex] = action.values;
+	            var gridData = state.getIn([action.stateKey, 'data']).set(action.rowIndex, (0, _immutable.fromJS)(action.values));
 
-	            return state.updateIn([action.stateKey], function (values) {
-	                return {
-	                    data: gridData,
-	                    proxy: gridData,
-	                    total: values.total,
-	                    currentRecords: gridData
-	                };
-	            });
+	            return state.mergeIn([action.stateKey], (0, _immutable.fromJS)({
+	                data: gridData,
+	                proxy: gridData,
+	                currentRecords: gridData,
+	                lastUpdate: (0, _lastUpdate.generateLastUpdate)()
+	            }));
 
 	        case _ActionTypes.SORT_DATA:
 	            return state.mergeIn([action.stateKey], {
-	                data: action.data
+	                data: action.data,
+	                lastUpdate: (0, _lastUpdate.generateLastUpdate)()
 	            });
 
 	        case _ActionTypes.CLEAR_FILTER_LOCAL:
 
-	            var existing = state.get(action.stateKey);
-	            var recs = existing.proxy || existing.currentRecords;
+	            var proxy = state.getIn([action.stateKey, 'proxy']);
+	            var prevData = state.getIn([action.stateKey, 'data']);
+	            var recs = proxy || prevData;
 
 	            return state.mergeIn([action.stateKey], {
 	                data: recs,
-	                proxy: recs
+	                proxy: recs,
+	                currentRecords: recs,
+	                lastUpdate: (0, _lastUpdate.generateLastUpdate)()
 	            });
 
 	        case _ActionTypes.FILTER_DATA:
 	            return state.mergeIn([action.stateKey], {
-	                data: action.data
+	                data: action.data,
+	                lastUpdate: (0, _lastUpdate.generateLastUpdate)()
 	            });
 
 	        default:
@@ -34727,13 +36671,13 @@
 	    }
 	}
 
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "datasource.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "datasource.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 278 */
+/* 303 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
 
 	'use strict';
 
@@ -34746,14 +36690,16 @@
 
 	exports.default = editor;
 
-	var _immutable = __webpack_require__(276);
+	var _immutable = __webpack_require__(247);
 
-	var _ActionTypes = __webpack_require__(209);
+	var _ActionTypes = __webpack_require__(224);
 
-	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+	var _getData = __webpack_require__(241);
+
+	var _lastUpdate = __webpack_require__(251);
 
 	var initialState = (0, _immutable.fromJS)({
-	    editorState: _immutable.fromJS.Map
+	    lastUpdate: (0, _lastUpdate.generateLastUpdate)()
 	});
 
 	var isCellValid = exports.isCellValid = function isCellValid(_ref, value) {
@@ -34770,7 +36716,7 @@
 	    for (var i = 0; i < columns.length; i++) {
 
 	        var col = columns[i];
-	        var val = isCellValid(col, rowValues[col.dataIndex]);
+	        var val = isCellValid(col, (0, _getData.getData)(rowValues, columns, i));
 
 	        if (!val) {
 	            return false;
@@ -34784,70 +36730,94 @@
 	    var state = arguments.length <= 0 || arguments[0] === undefined ? initialState : arguments[0];
 	    var action = arguments[1];
 
+	    var _ret = function () {
 
-	    switch (action.type) {
+	        switch (action.type) {
 
-	        case _ActionTypes.EDIT_ROW:
+	            case _ActionTypes.EDIT_ROW:
 
-	            var isValid = isRowValid(action.columns, action.values);
+	                var isValid = isRowValid(action.columns, action.values);
 
-	            return state.setIn([action.stateKey], {
-	                row: {
-	                    key: action.rowId,
-	                    values: action.values,
-	                    rowIndex: action.rowIndex,
-	                    top: action.top,
-	                    valid: isValid,
-	                    isCreate: action.isCreate || false
-	                }
-	            });
+	                return {
+	                    v: state.setIn([action.stateKey], (0, _immutable.fromJS)({
+	                        row: {
+	                            key: action.rowId,
+	                            values: action.values,
+	                            rowIndex: action.rowIndex,
+	                            top: action.top,
+	                            valid: isValid,
+	                            isCreate: action.isCreate || false
+	                        },
+	                        lastUpdate: (0, _lastUpdate.generateLastUpdate)()
+	                    }))
+	                };
 
-	        case _ActionTypes.ROW_VALUE_CHANGE:
-	            var columns = action.columns;
-	            var value = action.value;
-	            var stateKey = action.stateKey;
+	            case _ActionTypes.ROW_VALUE_CHANGE:
+	                var column = action.column;
+	                var columns = action.columns;
+	                var value = action.value;
+	                var stateKey = action.stateKey;
 
-	            var previous = state.get(stateKey);
+	                var previousValues = state.getIn([stateKey, 'row', 'values']).toJS();
 
-	            var rowValues = Object.assign({}, previous.row.values, _defineProperty({}, action.columnName, value));
+	                var rowValues = (0, _getData.setDataAtDataIndex)(previousValues, column.dataIndex, value);
 
-	            columns.forEach(function (col) {
-	                if (col.defaultValue !== undefined && rowValues[col.dataIndex] === undefined) {
-	                    rowValues[col.dataIndex] = col.defaultValue;
-	                }
-	            });
+	                columns.forEach(function (col, i) {
+	                    var val = (0, _getData.getData)(rowValues, columns, i);
+	                    if (col.defaultValue !== undefined && val === undefined || val === null) {
+	                        (0, _getData.setDataAtDataIndex)(rowValues, col.dataIndex, col.defaultValue);
+	                    }
+	                });
 
-	            var valid = isRowValid(columns, rowValues);
+	                var valid = isRowValid(columns, rowValues);
 
-	            return state.setIn([action.stateKey], {
-	                row: {
-	                    key: previous.row.key,
+	                state = state.mergeIn([action.stateKey, 'row'], {
 	                    values: rowValues,
-	                    rowIndex: previous.row.rowIndex,
-	                    previousValues: previous.row.values,
-	                    top: previous.row.top,
-	                    isCreate: previous.row.isCreate || false,
+	                    previousValues: state.getIn([stateKey, 'row', 'values']),
 	                    valid: valid
-	                }
-	            });
+	                });
 
-	        case _ActionTypes.REMOVE_ROW:
-	        case _ActionTypes.DISMISS_EDITOR:
-	        case _ActionTypes.CANCEL_ROW:
-	            return state.setIn([action.stateKey], {});
+	                return {
+	                    v: state.setIn([action.stateKey, 'lastUpdate'], (0, _lastUpdate.generateLastUpdate)())
+	                };
 
-	        default:
-	            return state;
-	    }
+	            case _ActionTypes.REPOSITION_EDITOR:
+
+	                var row = state.mergeIn([action.stateKey, 'row'], {
+	                    top: action.top
+	                }).getIn([action.stateKey, 'row']);
+
+	                return {
+	                    v: state.mergeIn([action.stateKey], (0, _immutable.fromJS)({
+	                        row: row,
+	                        lastUpdate: (0, _lastUpdate.generateLastUpdate)()
+	                    }))
+	                };
+
+	            case _ActionTypes.REMOVE_ROW:
+	            case _ActionTypes.DISMISS_EDITOR:
+	            case _ActionTypes.CANCEL_ROW:
+	                return {
+	                    v: state.setIn([action.stateKey], (0, _immutable.fromJS)({ lastUpdate: (0, _lastUpdate.generateLastUpdate)() }))
+	                };
+
+	            default:
+	                return {
+	                    v: state
+	                };
+	        }
+	    }();
+
+	    if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
 	}
 
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "editor.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "editor.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 279 */
+/* 304 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
 
 	'use strict';
 
@@ -34856,15 +36826,19 @@
 	});
 	exports.default = menu;
 
-	var _immutable = __webpack_require__(276);
+	var _immutable = __webpack_require__(247);
 
-	var _ActionTypes = __webpack_require__(209);
+	var _ActionTypes = __webpack_require__(224);
+
+	var _lastUpdate = __webpack_require__(251);
 
 	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-	var initialState = (0, _immutable.fromJS)({});
+	var initialState = (0, _immutable.fromJS)({ lastUpdate: (0, _lastUpdate.generateLastUpdate)() });
 
 	function menu() {
+	    var _fromJS;
+
 	    var state = arguments.length <= 0 || arguments[0] === undefined ? initialState : arguments[0];
 	    var action = arguments[1];
 
@@ -34872,27 +36846,29 @@
 	    switch (action.type) {
 
 	        case _ActionTypes.SHOW_MENU:
-	            return state.setIn([action.stateKey], _defineProperty({}, action.id, true));
+	            return state.setIn([action.stateKey], (0, _immutable.fromJS)((_fromJS = {}, _defineProperty(_fromJS, action.id, true), _defineProperty(_fromJS, 'lastUpdate', (0, _lastUpdate.generateLastUpdate)()), _fromJS)));
 
 	        case _ActionTypes.HIDE_MENU:
 	            if (action.id) {
-	                return state.setIn([action.stateKey], _defineProperty({}, action.id, false));
-	            } else {
-	                return state.setIn([action.stateKey], {});
+	                var _fromJS2;
+
+	                return state.setIn([action.stateKey], (0, _immutable.fromJS)((_fromJS2 = {}, _defineProperty(_fromJS2, action.id, false), _defineProperty(_fromJS2, 'lastUpdate', (0, _lastUpdate.generateLastUpdate)()), _fromJS2)));
 	            }
+
+	            return state.setIn([action.stateKey], (0, _immutable.fromJS)({ lastUpdate: (0, _lastUpdate.generateLastUpdate)() }));
 
 	        default:
 	            return state;
 	    }
 	}
 
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "menu.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "menu.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 280 */
+/* 305 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
 
 	'use strict';
 
@@ -34901,12 +36877,14 @@
 	});
 	exports.default = pager;
 
-	var _immutable = __webpack_require__(276);
+	var _immutable = __webpack_require__(247);
 
-	var _ActionTypes = __webpack_require__(209);
+	var _ActionTypes = __webpack_require__(224);
+
+	var _lastUpdate = __webpack_require__(251);
 
 	var initialState = (0, _immutable.fromJS)({
-	    pagerState: _immutable.fromJS.Map
+	    lastUpdate: (0, _lastUpdate.generateLastUpdate)()
 	});
 
 	function pager() {
@@ -34917,13 +36895,15 @@
 	    switch (action.type) {
 
 	        case _ActionTypes.PAGE_LOCAL:
-	            return state.setIn([action.stateKey], {
-	                pageIndex: action.pageIndex
+	            return state.mergeIn([action.stateKey], {
+	                pageIndex: action.pageIndex,
+	                lastUpdate: (0, _lastUpdate.generateLastUpdate)()
 	            });
 
 	        case _ActionTypes.PAGE_REMOTE:
-	            return state.setIn([action.stateKey], {
-	                pageIndex: action.pageIndex
+	            return state.mergeIn([action.stateKey], {
+	                pageIndex: action.pageIndex,
+	                lastUpdate: (0, _lastUpdate.generateLastUpdate)()
 	            });
 
 	        default:
@@ -34931,13 +36911,13 @@
 	    }
 	}
 
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "pager.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "pager.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 281 */
+/* 306 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
 
 	'use strict';
 
@@ -34946,12 +36926,14 @@
 	});
 	exports.default = loader;
 
-	var _immutable = __webpack_require__(276);
+	var _immutable = __webpack_require__(247);
 
-	var _ActionTypes = __webpack_require__(209);
+	var _ActionTypes = __webpack_require__(224);
+
+	var _lastUpdate = __webpack_require__(251);
 
 	var initialState = (0, _immutable.fromJS)({
-	    loaderState: _immutable.fromJS.Map
+	    lastUpdate: (0, _lastUpdate.generateLastUpdate)()
 	});
 
 	function loader() {
@@ -34962,20 +36944,23 @@
 	    switch (action.type) {
 
 	        case _ActionTypes.SET_LOADING_STATE:
-	            return state.setIn([action.stateKey], action.state);
+	            return state.mergeIn([action.stateKey], {
+	                isLoading: action.state,
+	                lastUpdate: (0, _lastUpdate.generateLastUpdate)()
+	            });
 
 	        default:
 	            return state;
 	    }
 	}
 
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "loader.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "loader.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 282 */
+/* 307 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
 
 	'use strict';
 
@@ -34984,11 +36969,13 @@
 	});
 	exports.default = bulkaction;
 
-	var _immutable = __webpack_require__(276);
+	var _immutable = __webpack_require__(247);
 
-	var _ActionTypes = __webpack_require__(209);
+	var _ActionTypes = __webpack_require__(224);
 
-	var initialState = (0, _immutable.fromJS)({});
+	var _lastUpdate = __webpack_require__(251);
+
+	var initialState = (0, _immutable.fromJS)({ lastUpdate: (0, _lastUpdate.generateLastUpdate)() });
 
 	function bulkaction() {
 	    var state = arguments.length <= 0 || arguments[0] === undefined ? initialState : arguments[0];
@@ -34998,22 +36985,23 @@
 	    switch (action.type) {
 
 	        case _ActionTypes.REMOVE_TOOLBAR:
-	            return state.setIn([action.stateKey], {
-	                isRemoved: action.value
-	            });
+	            return state.setIn([action.stateKey], (0, _immutable.fromJS)({
+	                isRemoved: action.value,
+	                lastUpdate: (0, _lastUpdate.generateLastUpdate)()
+	            }));
 
 	        default:
 	            return state;
 	    }
 	}
 
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "bulkaction.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "bulkaction.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 283 */
+/* 308 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
 
 	'use strict';
 
@@ -35022,13 +37010,13 @@
 	});
 	exports.default = filter;
 
-	var _immutable = __webpack_require__(276);
+	var _immutable = __webpack_require__(247);
 
-	var _ActionTypes = __webpack_require__(209);
+	var _ActionTypes = __webpack_require__(224);
 
-	var initialState = (0, _immutable.fromJS)({
-	    filterState: _immutable.fromJS.Map
-	});
+	var _lastUpdate = __webpack_require__(251);
+
+	var initialState = (0, _immutable.fromJS)({ lastUpdate: (0, _lastUpdate.generateLastUpdate)() });
 
 	function filter() {
 	    var state = arguments.length <= 0 || arguments[0] === undefined ? initialState : arguments[0];
@@ -35039,49 +37027,62 @@
 
 	        case _ActionTypes.SET_FILTER_VALUE:
 	            return state.mergeIn([action.stateKey], {
-	                filterValue: action.value
+	                filterValue: action.value,
+	                lastUpdate: (0, _lastUpdate.generateLastUpdate)()
 	            });
 
 	        case _ActionTypes.SET_FILTER_MENU_VALUES:
+
+	            var newValues = state.mergeIn([action.stateKey, 'filterMenuValues'], action.filter).getIn([action.stateKey, 'filterMenuValues']);
+
 	            return state.mergeIn([action.stateKey], {
-	                filterMenuValues: Object.assign(state.get(action.stateKey).filterMenuValues || {}, action.filter),
-	                filterMenuShown: true
+	                filterMenuValues: newValues,
+	                filterMenuShown: true,
+	                lastUpdate: (0, _lastUpdate.generateLastUpdate)()
 	            });
 
 	        case _ActionTypes.SHOW_FILTER_MENU:
-	            return state.setIn([action.stateKey], {
-	                filterMenuShown: action.metaData.filterMenuShown
-	            });
+	            return state.setIn([action.stateKey], (0, _immutable.fromJS)({
+	                filterMenuShown: action.metaData.filterMenuShown,
+	                lastUpdate: (0, _lastUpdate.generateLastUpdate)()
+	            }));
 
 	        default:
 	            return state;
 	    }
 	}
 
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "filter.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "filter.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 284 */
+/* 309 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
 
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 	exports.default = selection;
 
-	var _immutable = __webpack_require__(276);
+	var _immutable = __webpack_require__(247);
 
-	var _ActionTypes = __webpack_require__(209);
+	var _ActionTypes = __webpack_require__(224);
+
+	var _lastUpdate = __webpack_require__(251);
 
 	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-	var initialState = (0, _immutable.fromJS)({});
+	var initialState = (0, _immutable.fromJS)({ lastUpdate: (0, _lastUpdate.generateLastUpdate)() });
 
 	function selection() {
+	    var _fromJS2;
+
 	    var state = arguments.length <= 0 || arguments[0] === undefined ? initialState : arguments[0];
 	    var action = arguments[1];
 
@@ -35089,35 +37090,39 @@
 	    switch (action.type) {
 
 	        case _ActionTypes.SELECT_ALL:
-	            return state.setIn([action.stateKey], action.selection);
+	            return state.setIn([action.stateKey], (0, _immutable.fromJS)(_extends({}, action.selection, {
+	                lastUpdate: (0, _lastUpdate.generateLastUpdate)()
+	            })));
 
 	        case _ActionTypes.DESELECT_ALL:
-
-	            return state.setIn([action.stateKey], {});
+	            return state.setIn([action.stateKey], (0, _immutable.fromJS)({
+	                lastUpdate: (0, _lastUpdate.generateLastUpdate)()
+	            }));
 
 	        case _ActionTypes.SET_SELECTION:
-
-	            var currentValue = state.get(action.stateKey) ? state.get(action.stateKey)[action.id] : false;
+	            var currentValue = state.getIn([action.stateKey, action.id]);
 
 	            if (action.clearSelections || !state.get(action.stateKey)) {
-	                return state.setIn([action.stateKey], _defineProperty({}, action.id, currentValue && action.allowDeselect ? false : true));
+	                var _fromJS;
+
+	                return state.setIn([action.stateKey], (0, _immutable.fromJS)((_fromJS = {}, _defineProperty(_fromJS, action.id, action.allowDeselect ? !currentValue : true), _defineProperty(_fromJS, 'lastUpdate', (0, _lastUpdate.generateLastUpdate)()), _fromJS)));
 	            }
 
-	            // enable multiselect
-	            return state.setIn([action.stateKey], _defineProperty({}, action.id, currentValue && action.allowDeselect ? false : true));
+	            // multiselect
+	            return state.mergeIn([action.stateKey], (0, _immutable.fromJS)((_fromJS2 = {}, _defineProperty(_fromJS2, action.id, action.allowDeselect ? !currentValue : true), _defineProperty(_fromJS2, 'lastUpdate', (0, _lastUpdate.generateLastUpdate)()), _fromJS2)));
 
 	        default:
 	            return state;
 	    }
 	}
 
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "selection.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "selection.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 285 */
+/* 310 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
 
 	'use strict';
 
@@ -35126,13 +37131,13 @@
 	});
 	exports.default = errorhandler;
 
-	var _immutable = __webpack_require__(276);
+	var _immutable = __webpack_require__(247);
 
-	var _ActionTypes = __webpack_require__(209);
+	var _ActionTypes = __webpack_require__(224);
 
-	var initialState = (0, _immutable.fromJS)({
-	    errorState: _immutable.fromJS.Map
-	});
+	var _lastUpdate = __webpack_require__(251);
+
+	var initialState = (0, _immutable.fromJS)({ lastUpdate: (0, _lastUpdate.generateLastUpdate)() });
 
 	function errorhandler() {
 	    var state = arguments.length <= 0 || arguments[0] === undefined ? initialState : arguments[0];
@@ -35142,26 +37147,28 @@
 	    switch (action.type) {
 
 	        case _ActionTypes.ERROR_OCCURRED:
-	            return state.set('errorState', {
+	            return state.set(action.stateKey, (0, _immutable.fromJS)({
 	                error: action.error,
-	                errorOccurred: true
-	            });
+	                errorOccurred: true,
+	                lastUpdate: (0, _lastUpdate.generateLastUpdate)()
+	            }));
 
 	        case _ActionTypes.DISMISS_ERROR:
-	            return state.set('errorState', {
+	            return state.set(action.stateKey, (0, _immutable.fromJS)({
 	                error: '',
-	                errorOccurred: false
-	            });
+	                errorOccurred: false,
+	                lastUpdate: (0, _lastUpdate.generateLastUpdate)()
+	            }));
 
 	        default:
 	            return state;
 	    }
 	}
 
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "errorhandler.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "errorhandler.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 286 */
+/* 311 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// https://github.com/flitbit/diff#differences
@@ -35173,7 +37180,7 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	var _deepDiff = __webpack_require__(287);
+	var _deepDiff = __webpack_require__(312);
 
 	var _deepDiff2 = _interopRequireDefault(_deepDiff);
 
@@ -35267,7 +37274,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 287 */
+/* 312 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(global) {/*!
@@ -35696,7 +37703,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 288 */
+/* 313 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -35724,10 +37731,10 @@
 	exports['default'] = thunk;
 
 /***/ },
-/* 289 */
+/* 314 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
 
 	'use strict';
 
@@ -35736,43 +37743,43 @@
 	});
 	exports.Actions = undefined;
 
-	var _ToolbarActions = __webpack_require__(236);
+	var _ToolbarActions = __webpack_require__(261);
 
 	var BulkActions = _interopRequireWildcard(_ToolbarActions);
 
-	var _ColumnManager = __webpack_require__(208);
+	var _ColumnManager = __webpack_require__(223);
 
 	var ColumnManagerActions = _interopRequireWildcard(_ColumnManager);
 
-	var _EditorActions = __webpack_require__(212);
+	var _EditorActions = __webpack_require__(227);
 
 	var EditorActions = _interopRequireWildcard(_EditorActions);
 
-	var _ErrorHandlerActions = __webpack_require__(234);
+	var _ErrorHandlerActions = __webpack_require__(259);
 
 	var ErrorHandlerActions = _interopRequireWildcard(_ErrorHandlerActions);
 
-	var _FilterActions = __webpack_require__(242);
+	var _FilterActions = __webpack_require__(267);
 
 	var FilterActions = _interopRequireWildcard(_FilterActions);
 
-	var _GridActions = __webpack_require__(210);
+	var _GridActions = __webpack_require__(225);
 
 	var GridActions = _interopRequireWildcard(_GridActions);
 
-	var _LoaderActions = __webpack_require__(211);
+	var _LoaderActions = __webpack_require__(226);
 
 	var LoaderActions = _interopRequireWildcard(_LoaderActions);
 
-	var _MenuActions = __webpack_require__(255);
+	var _MenuActions = __webpack_require__(280);
 
 	var MenuActions = _interopRequireWildcard(_MenuActions);
 
-	var _PagerActions = __webpack_require__(231);
+	var _PagerActions = __webpack_require__(256);
 
 	var PagerActions = _interopRequireWildcard(_PagerActions);
 
-	var _ModelActions = __webpack_require__(237);
+	var _ModelActions = __webpack_require__(262);
 
 	var SelectionActions = _interopRequireWildcard(_ModelActions);
 
@@ -35791,10 +37798,12 @@
 	    SelectionActions: SelectionActions
 	};
 
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "index.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+	exports.default = Actions;
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "index.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 290 */
+/* 315 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -36443,7 +38452,7 @@
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "demodata.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 291 */
+/* 316 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -36461,7 +38470,7 @@
 
 	var _reactReduxGrid = __webpack_require__(191);
 
-	var _demodata = __webpack_require__(290);
+	var _demodata = __webpack_require__(315);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -36497,7 +38506,7 @@
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Complex.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 292 */
+/* 317 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -36517,7 +38526,7 @@
 
 	var _reactReduxGrid = __webpack_require__(191);
 
-	var _demodata = __webpack_require__(290);
+	var _demodata = __webpack_require__(315);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -36543,7 +38552,7 @@
 	        height: '',
 	        events: _demodata.events,
 	        store: store,
-	        stateKey: 'complex'
+	        stateKey: 'sticky'
 	    };
 
 	    return _react2.default.createElement(_reactReduxGrid.Grid, stickyData);
@@ -36563,16 +38572,103 @@
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Sticky.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 293 */
+/* 318 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.ColRenderer = undefined;
+
+	var _react = __webpack_require__(149);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactReduxGrid = __webpack_require__(191);
+
+	var _demodata = __webpack_require__(315);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var ColRenderer = exports.ColRenderer = function ColRenderer(_ref) {
+	    var store = _ref.store;
+
+
+	    var cols = [{
+	        name: 'Phone',
+	        dataIndex: 'phone number',
+	        renderer: function renderer(ob) {
+
+	            var imgProps = {
+	                src: '//icons.iconarchive.com/icons/icons8/windows-8/512/Mobile-Phone-icon.png',
+	                style: {
+	                    height: '20px'
+	                }
+	            };
+
+	            var spanProps = {
+	                style: {
+	                    position: 'relative',
+	                    top: '-5px',
+	                    left: '10px'
+	                }
+	            };
+
+	            return _react2.default.createElement(
+	                'span',
+	                null,
+	                _react2.default.createElement('img', imgProps),
+	                _react2.default.createElement(
+	                    'span',
+	                    spanProps,
+	                    ob.row['Phone Number']
+	                )
+	            );
+	        }
+	    }];
+
+	    var colData = {
+	        columns: cols,
+	        data: _demodata.data,
+	        pageSize: _demodata.pageSize,
+	        plugins: {},
+	        events: _demodata.events,
+	        dataSource: _demodata.dataSource,
+	        store: store,
+	        stateKey: 'colRenderer'
+	    };
+
+	    return _react2.default.createElement(_reactReduxGrid.Grid, colData);
+	};
+
+	var object = _react.PropTypes.object;
+
+
+	ColRenderer.propTypes = {
+	    store: object.isRequired
+	};
+
+	ColRenderer.defaultProps = {};
+
+	exports.default = ColRenderer;
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "ColRenderer.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 319 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(294);
+	var content = __webpack_require__(320);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(271)(content, {});
+	var update = __webpack_require__(322)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -36589,10 +38685,10 @@
 	}
 
 /***/ },
-/* 294 */
+/* 320 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(265)();
+	exports = module.exports = __webpack_require__(321)();
 	// imports
 
 
@@ -36603,7 +38699,315 @@
 
 
 /***/ },
-/* 295 */
+/* 321 */
+/***/ function(module, exports) {
+
+	/*
+		MIT License http://www.opensource.org/licenses/mit-license.php
+		Author Tobias Koppers @sokra
+	*/
+	// css base code, injected by the css-loader
+	module.exports = function() {
+		var list = [];
+
+		// return the list of modules as css string
+		list.toString = function toString() {
+			var result = [];
+			for(var i = 0; i < this.length; i++) {
+				var item = this[i];
+				if(item[2]) {
+					result.push("@media " + item[2] + "{" + item[1] + "}");
+				} else {
+					result.push(item[1]);
+				}
+			}
+			return result.join("");
+		};
+
+		// import a list of modules into the list
+		list.i = function(modules, mediaQuery) {
+			if(typeof modules === "string")
+				modules = [[null, modules, ""]];
+			var alreadyImportedModules = {};
+			for(var i = 0; i < this.length; i++) {
+				var id = this[i][0];
+				if(typeof id === "number")
+					alreadyImportedModules[id] = true;
+			}
+			for(i = 0; i < modules.length; i++) {
+				var item = modules[i];
+				// skip already imported module
+				// this implementation is not 100% perfect for weird media query combinations
+				//  when a module is imported multiple times with different media queries.
+				//  I hope this will never occur (Hey this way we have smaller bundles)
+				if(typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
+					if(mediaQuery && !item[2]) {
+						item[2] = mediaQuery;
+					} else if(mediaQuery) {
+						item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
+					}
+					list.push(item);
+				}
+			}
+		};
+		return list;
+	};
+
+
+/***/ },
+/* 322 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/*
+		MIT License http://www.opensource.org/licenses/mit-license.php
+		Author Tobias Koppers @sokra
+	*/
+	var stylesInDom = {},
+		memoize = function(fn) {
+			var memo;
+			return function () {
+				if (typeof memo === "undefined") memo = fn.apply(this, arguments);
+				return memo;
+			};
+		},
+		isOldIE = memoize(function() {
+			return /msie [6-9]\b/.test(window.navigator.userAgent.toLowerCase());
+		}),
+		getHeadElement = memoize(function () {
+			return document.head || document.getElementsByTagName("head")[0];
+		}),
+		singletonElement = null,
+		singletonCounter = 0,
+		styleElementsInsertedAtTop = [];
+
+	module.exports = function(list, options) {
+		if(false) {
+			if(typeof document !== "object") throw new Error("The style-loader cannot be used in a non-browser environment");
+		}
+
+		options = options || {};
+		// Force single-tag solution on IE6-9, which has a hard limit on the # of <style>
+		// tags it will allow on a page
+		if (typeof options.singleton === "undefined") options.singleton = isOldIE();
+
+		// By default, add <style> tags to the bottom of <head>.
+		if (typeof options.insertAt === "undefined") options.insertAt = "bottom";
+
+		var styles = listToStyles(list);
+		addStylesToDom(styles, options);
+
+		return function update(newList) {
+			var mayRemove = [];
+			for(var i = 0; i < styles.length; i++) {
+				var item = styles[i];
+				var domStyle = stylesInDom[item.id];
+				domStyle.refs--;
+				mayRemove.push(domStyle);
+			}
+			if(newList) {
+				var newStyles = listToStyles(newList);
+				addStylesToDom(newStyles, options);
+			}
+			for(var i = 0; i < mayRemove.length; i++) {
+				var domStyle = mayRemove[i];
+				if(domStyle.refs === 0) {
+					for(var j = 0; j < domStyle.parts.length; j++)
+						domStyle.parts[j]();
+					delete stylesInDom[domStyle.id];
+				}
+			}
+		};
+	}
+
+	function addStylesToDom(styles, options) {
+		for(var i = 0; i < styles.length; i++) {
+			var item = styles[i];
+			var domStyle = stylesInDom[item.id];
+			if(domStyle) {
+				domStyle.refs++;
+				for(var j = 0; j < domStyle.parts.length; j++) {
+					domStyle.parts[j](item.parts[j]);
+				}
+				for(; j < item.parts.length; j++) {
+					domStyle.parts.push(addStyle(item.parts[j], options));
+				}
+			} else {
+				var parts = [];
+				for(var j = 0; j < item.parts.length; j++) {
+					parts.push(addStyle(item.parts[j], options));
+				}
+				stylesInDom[item.id] = {id: item.id, refs: 1, parts: parts};
+			}
+		}
+	}
+
+	function listToStyles(list) {
+		var styles = [];
+		var newStyles = {};
+		for(var i = 0; i < list.length; i++) {
+			var item = list[i];
+			var id = item[0];
+			var css = item[1];
+			var media = item[2];
+			var sourceMap = item[3];
+			var part = {css: css, media: media, sourceMap: sourceMap};
+			if(!newStyles[id])
+				styles.push(newStyles[id] = {id: id, parts: [part]});
+			else
+				newStyles[id].parts.push(part);
+		}
+		return styles;
+	}
+
+	function insertStyleElement(options, styleElement) {
+		var head = getHeadElement();
+		var lastStyleElementInsertedAtTop = styleElementsInsertedAtTop[styleElementsInsertedAtTop.length - 1];
+		if (options.insertAt === "top") {
+			if(!lastStyleElementInsertedAtTop) {
+				head.insertBefore(styleElement, head.firstChild);
+			} else if(lastStyleElementInsertedAtTop.nextSibling) {
+				head.insertBefore(styleElement, lastStyleElementInsertedAtTop.nextSibling);
+			} else {
+				head.appendChild(styleElement);
+			}
+			styleElementsInsertedAtTop.push(styleElement);
+		} else if (options.insertAt === "bottom") {
+			head.appendChild(styleElement);
+		} else {
+			throw new Error("Invalid value for parameter 'insertAt'. Must be 'top' or 'bottom'.");
+		}
+	}
+
+	function removeStyleElement(styleElement) {
+		styleElement.parentNode.removeChild(styleElement);
+		var idx = styleElementsInsertedAtTop.indexOf(styleElement);
+		if(idx >= 0) {
+			styleElementsInsertedAtTop.splice(idx, 1);
+		}
+	}
+
+	function createStyleElement(options) {
+		var styleElement = document.createElement("style");
+		styleElement.type = "text/css";
+		insertStyleElement(options, styleElement);
+		return styleElement;
+	}
+
+	function createLinkElement(options) {
+		var linkElement = document.createElement("link");
+		linkElement.rel = "stylesheet";
+		insertStyleElement(options, linkElement);
+		return linkElement;
+	}
+
+	function addStyle(obj, options) {
+		var styleElement, update, remove;
+
+		if (options.singleton) {
+			var styleIndex = singletonCounter++;
+			styleElement = singletonElement || (singletonElement = createStyleElement(options));
+			update = applyToSingletonTag.bind(null, styleElement, styleIndex, false);
+			remove = applyToSingletonTag.bind(null, styleElement, styleIndex, true);
+		} else if(obj.sourceMap &&
+			typeof URL === "function" &&
+			typeof URL.createObjectURL === "function" &&
+			typeof URL.revokeObjectURL === "function" &&
+			typeof Blob === "function" &&
+			typeof btoa === "function") {
+			styleElement = createLinkElement(options);
+			update = updateLink.bind(null, styleElement);
+			remove = function() {
+				removeStyleElement(styleElement);
+				if(styleElement.href)
+					URL.revokeObjectURL(styleElement.href);
+			};
+		} else {
+			styleElement = createStyleElement(options);
+			update = applyToTag.bind(null, styleElement);
+			remove = function() {
+				removeStyleElement(styleElement);
+			};
+		}
+
+		update(obj);
+
+		return function updateStyle(newObj) {
+			if(newObj) {
+				if(newObj.css === obj.css && newObj.media === obj.media && newObj.sourceMap === obj.sourceMap)
+					return;
+				update(obj = newObj);
+			} else {
+				remove();
+			}
+		};
+	}
+
+	var replaceText = (function () {
+		var textStore = [];
+
+		return function (index, replacement) {
+			textStore[index] = replacement;
+			return textStore.filter(Boolean).join('\n');
+		};
+	})();
+
+	function applyToSingletonTag(styleElement, index, remove, obj) {
+		var css = remove ? "" : obj.css;
+
+		if (styleElement.styleSheet) {
+			styleElement.styleSheet.cssText = replaceText(index, css);
+		} else {
+			var cssNode = document.createTextNode(css);
+			var childNodes = styleElement.childNodes;
+			if (childNodes[index]) styleElement.removeChild(childNodes[index]);
+			if (childNodes.length) {
+				styleElement.insertBefore(cssNode, childNodes[index]);
+			} else {
+				styleElement.appendChild(cssNode);
+			}
+		}
+	}
+
+	function applyToTag(styleElement, obj) {
+		var css = obj.css;
+		var media = obj.media;
+
+		if(media) {
+			styleElement.setAttribute("media", media)
+		}
+
+		if(styleElement.styleSheet) {
+			styleElement.styleSheet.cssText = css;
+		} else {
+			while(styleElement.firstChild) {
+				styleElement.removeChild(styleElement.firstChild);
+			}
+			styleElement.appendChild(document.createTextNode(css));
+		}
+	}
+
+	function updateLink(linkElement, obj) {
+		var css = obj.css;
+		var sourceMap = obj.sourceMap;
+
+		if(sourceMap) {
+			// http://stackoverflow.com/a/26603875
+			css += "\n/*# sourceMappingURL=data:application/json;base64," + btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))) + " */";
+		}
+
+		var blob = new Blob([css], { type: "text/css" });
+
+		var oldSrc = linkElement.href;
+
+		linkElement.href = URL.createObjectURL(blob);
+
+		if(oldSrc)
+			URL.revokeObjectURL(oldSrc);
+	}
+
+
+/***/ },
+/* 323 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -36615,7 +39019,7 @@
 	});
 	exports.Store = undefined;
 
-	var _configureStore = __webpack_require__(296);
+	var _configureStore = __webpack_require__(324);
 
 	var _configureStore2 = _interopRequireDefault(_configureStore);
 
@@ -36629,7 +39033,7 @@
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "index.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 296 */
+/* 324 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -36643,15 +39047,15 @@
 
 	var _redux = __webpack_require__(169);
 
-	var _reducers = __webpack_require__(297);
+	var _reducers = __webpack_require__(325);
 
 	var _reducers2 = _interopRequireDefault(_reducers);
 
-	var _reduxDiffLogger = __webpack_require__(299);
+	var _reduxDiffLogger = __webpack_require__(328);
 
 	var _reduxDiffLogger2 = _interopRequireDefault(_reduxDiffLogger);
 
-	var _reduxThunk = __webpack_require__(300);
+	var _reduxThunk = __webpack_require__(330);
 
 	var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
 
@@ -36674,7 +39078,7 @@
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "configureStore.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 297 */
+/* 325 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -36692,22 +39096,34 @@
 
 	var _reactReduxGrid = __webpack_require__(191);
 
-	var _app = __webpack_require__(298);
+	var _app = __webpack_require__(326);
 
 	var _app2 = _interopRequireDefault(_app);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+	var gridReducers = {
+	    dataSource: _reactReduxGrid.Reducers.DataSource,
+	    editor: _reactReduxGrid.Reducers.Editor,
+	    errorHandler: _reactReduxGrid.Reducers.ErrorHandler,
+	    filter: _reactReduxGrid.Reducers.Filter,
+	    grid: _reactReduxGrid.Reducers.grid,
+	    loader: _reactReduxGrid.Reducers.Loader,
+	    menu: _reactReduxGrid.Reducers.Menu,
+	    pager: _reactReduxGrid.Reducers.Pager,
+	    selection: _reactReduxGrid.Reducers.Selection
+	};
+
 	var rootReducer = exports.rootReducer = (0, _redux.combineReducers)(_extends({
 	    app: _app2.default
-	}, _reactReduxGrid.Reducers));
+	}, gridReducers));
 
 	exports.default = rootReducer;
 
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "index.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 298 */
+/* 326 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -36719,7 +39135,7 @@
 	});
 	exports.default = gridState;
 
-	var _immutable = __webpack_require__(276);
+	var _immutable = __webpack_require__(327);
 
 	var _actionTypes = __webpack_require__(188);
 
@@ -36747,6 +39163,11 @@
 	                grid: 'sticky'
 	            });
 
+	        case _actionTypes.LOAD_COL_RENDERER:
+	            return state.merge({
+	                grid: 'colRenderer'
+	            });
+
 	        default:
 	            return state;
 	    }
@@ -36755,7 +39176,4991 @@
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "app.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 299 */
+/* 327 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 *  Copyright (c) 2014-2015, Facebook, Inc.
+	 *  All rights reserved.
+	 *
+	 *  This source code is licensed under the BSD-style license found in the
+	 *  LICENSE file in the root directory of this source tree. An additional grant
+	 *  of patent rights can be found in the PATENTS file in the same directory.
+	 */
+
+	(function (global, factory) {
+	   true ? module.exports = factory() :
+	  typeof define === 'function' && define.amd ? define(factory) :
+	  (global.Immutable = factory());
+	}(this, function () { 'use strict';var SLICE$0 = Array.prototype.slice;
+
+	  function createClass(ctor, superClass) {
+	    if (superClass) {
+	      ctor.prototype = Object.create(superClass.prototype);
+	    }
+	    ctor.prototype.constructor = ctor;
+	  }
+
+	  function Iterable(value) {
+	      return isIterable(value) ? value : Seq(value);
+	    }
+
+
+	  createClass(KeyedIterable, Iterable);
+	    function KeyedIterable(value) {
+	      return isKeyed(value) ? value : KeyedSeq(value);
+	    }
+
+
+	  createClass(IndexedIterable, Iterable);
+	    function IndexedIterable(value) {
+	      return isIndexed(value) ? value : IndexedSeq(value);
+	    }
+
+
+	  createClass(SetIterable, Iterable);
+	    function SetIterable(value) {
+	      return isIterable(value) && !isAssociative(value) ? value : SetSeq(value);
+	    }
+
+
+
+	  function isIterable(maybeIterable) {
+	    return !!(maybeIterable && maybeIterable[IS_ITERABLE_SENTINEL]);
+	  }
+
+	  function isKeyed(maybeKeyed) {
+	    return !!(maybeKeyed && maybeKeyed[IS_KEYED_SENTINEL]);
+	  }
+
+	  function isIndexed(maybeIndexed) {
+	    return !!(maybeIndexed && maybeIndexed[IS_INDEXED_SENTINEL]);
+	  }
+
+	  function isAssociative(maybeAssociative) {
+	    return isKeyed(maybeAssociative) || isIndexed(maybeAssociative);
+	  }
+
+	  function isOrdered(maybeOrdered) {
+	    return !!(maybeOrdered && maybeOrdered[IS_ORDERED_SENTINEL]);
+	  }
+
+	  Iterable.isIterable = isIterable;
+	  Iterable.isKeyed = isKeyed;
+	  Iterable.isIndexed = isIndexed;
+	  Iterable.isAssociative = isAssociative;
+	  Iterable.isOrdered = isOrdered;
+
+	  Iterable.Keyed = KeyedIterable;
+	  Iterable.Indexed = IndexedIterable;
+	  Iterable.Set = SetIterable;
+
+
+	  var IS_ITERABLE_SENTINEL = '@@__IMMUTABLE_ITERABLE__@@';
+	  var IS_KEYED_SENTINEL = '@@__IMMUTABLE_KEYED__@@';
+	  var IS_INDEXED_SENTINEL = '@@__IMMUTABLE_INDEXED__@@';
+	  var IS_ORDERED_SENTINEL = '@@__IMMUTABLE_ORDERED__@@';
+
+	  // Used for setting prototype methods that IE8 chokes on.
+	  var DELETE = 'delete';
+
+	  // Constants describing the size of trie nodes.
+	  var SHIFT = 5; // Resulted in best performance after ______?
+	  var SIZE = 1 << SHIFT;
+	  var MASK = SIZE - 1;
+
+	  // A consistent shared value representing "not set" which equals nothing other
+	  // than itself, and nothing that could be provided externally.
+	  var NOT_SET = {};
+
+	  // Boolean references, Rough equivalent of `bool &`.
+	  var CHANGE_LENGTH = { value: false };
+	  var DID_ALTER = { value: false };
+
+	  function MakeRef(ref) {
+	    ref.value = false;
+	    return ref;
+	  }
+
+	  function SetRef(ref) {
+	    ref && (ref.value = true);
+	  }
+
+	  // A function which returns a value representing an "owner" for transient writes
+	  // to tries. The return value will only ever equal itself, and will not equal
+	  // the return of any subsequent call of this function.
+	  function OwnerID() {}
+
+	  // http://jsperf.com/copy-array-inline
+	  function arrCopy(arr, offset) {
+	    offset = offset || 0;
+	    var len = Math.max(0, arr.length - offset);
+	    var newArr = new Array(len);
+	    for (var ii = 0; ii < len; ii++) {
+	      newArr[ii] = arr[ii + offset];
+	    }
+	    return newArr;
+	  }
+
+	  function ensureSize(iter) {
+	    if (iter.size === undefined) {
+	      iter.size = iter.__iterate(returnTrue);
+	    }
+	    return iter.size;
+	  }
+
+	  function wrapIndex(iter, index) {
+	    // This implements "is array index" which the ECMAString spec defines as:
+	    //
+	    //     A String property name P is an array index if and only if
+	    //     ToString(ToUint32(P)) is equal to P and ToUint32(P) is not equal
+	    //     to 2^32−1.
+	    //
+	    // http://www.ecma-international.org/ecma-262/6.0/#sec-array-exotic-objects
+	    if (typeof index !== 'number') {
+	      var uint32Index = index >>> 0; // N >>> 0 is shorthand for ToUint32
+	      if ('' + uint32Index !== index || uint32Index === 4294967295) {
+	        return NaN;
+	      }
+	      index = uint32Index;
+	    }
+	    return index < 0 ? ensureSize(iter) + index : index;
+	  }
+
+	  function returnTrue() {
+	    return true;
+	  }
+
+	  function wholeSlice(begin, end, size) {
+	    return (begin === 0 || (size !== undefined && begin <= -size)) &&
+	      (end === undefined || (size !== undefined && end >= size));
+	  }
+
+	  function resolveBegin(begin, size) {
+	    return resolveIndex(begin, size, 0);
+	  }
+
+	  function resolveEnd(end, size) {
+	    return resolveIndex(end, size, size);
+	  }
+
+	  function resolveIndex(index, size, defaultIndex) {
+	    return index === undefined ?
+	      defaultIndex :
+	      index < 0 ?
+	        Math.max(0, size + index) :
+	        size === undefined ?
+	          index :
+	          Math.min(size, index);
+	  }
+
+	  /* global Symbol */
+
+	  var ITERATE_KEYS = 0;
+	  var ITERATE_VALUES = 1;
+	  var ITERATE_ENTRIES = 2;
+
+	  var REAL_ITERATOR_SYMBOL = typeof Symbol === 'function' && Symbol.iterator;
+	  var FAUX_ITERATOR_SYMBOL = '@@iterator';
+
+	  var ITERATOR_SYMBOL = REAL_ITERATOR_SYMBOL || FAUX_ITERATOR_SYMBOL;
+
+
+	  function Iterator(next) {
+	      this.next = next;
+	    }
+
+	    Iterator.prototype.toString = function() {
+	      return '[Iterator]';
+	    };
+
+
+	  Iterator.KEYS = ITERATE_KEYS;
+	  Iterator.VALUES = ITERATE_VALUES;
+	  Iterator.ENTRIES = ITERATE_ENTRIES;
+
+	  Iterator.prototype.inspect =
+	  Iterator.prototype.toSource = function () { return this.toString(); }
+	  Iterator.prototype[ITERATOR_SYMBOL] = function () {
+	    return this;
+	  };
+
+
+	  function iteratorValue(type, k, v, iteratorResult) {
+	    var value = type === 0 ? k : type === 1 ? v : [k, v];
+	    iteratorResult ? (iteratorResult.value = value) : (iteratorResult = {
+	      value: value, done: false
+	    });
+	    return iteratorResult;
+	  }
+
+	  function iteratorDone() {
+	    return { value: undefined, done: true };
+	  }
+
+	  function hasIterator(maybeIterable) {
+	    return !!getIteratorFn(maybeIterable);
+	  }
+
+	  function isIterator(maybeIterator) {
+	    return maybeIterator && typeof maybeIterator.next === 'function';
+	  }
+
+	  function getIterator(iterable) {
+	    var iteratorFn = getIteratorFn(iterable);
+	    return iteratorFn && iteratorFn.call(iterable);
+	  }
+
+	  function getIteratorFn(iterable) {
+	    var iteratorFn = iterable && (
+	      (REAL_ITERATOR_SYMBOL && iterable[REAL_ITERATOR_SYMBOL]) ||
+	      iterable[FAUX_ITERATOR_SYMBOL]
+	    );
+	    if (typeof iteratorFn === 'function') {
+	      return iteratorFn;
+	    }
+	  }
+
+	  function isArrayLike(value) {
+	    return value && typeof value.length === 'number';
+	  }
+
+	  createClass(Seq, Iterable);
+	    function Seq(value) {
+	      return value === null || value === undefined ? emptySequence() :
+	        isIterable(value) ? value.toSeq() : seqFromValue(value);
+	    }
+
+	    Seq.of = function(/*...values*/) {
+	      return Seq(arguments);
+	    };
+
+	    Seq.prototype.toSeq = function() {
+	      return this;
+	    };
+
+	    Seq.prototype.toString = function() {
+	      return this.__toString('Seq {', '}');
+	    };
+
+	    Seq.prototype.cacheResult = function() {
+	      if (!this._cache && this.__iterateUncached) {
+	        this._cache = this.entrySeq().toArray();
+	        this.size = this._cache.length;
+	      }
+	      return this;
+	    };
+
+	    // abstract __iterateUncached(fn, reverse)
+
+	    Seq.prototype.__iterate = function(fn, reverse) {
+	      return seqIterate(this, fn, reverse, true);
+	    };
+
+	    // abstract __iteratorUncached(type, reverse)
+
+	    Seq.prototype.__iterator = function(type, reverse) {
+	      return seqIterator(this, type, reverse, true);
+	    };
+
+
+
+	  createClass(KeyedSeq, Seq);
+	    function KeyedSeq(value) {
+	      return value === null || value === undefined ?
+	        emptySequence().toKeyedSeq() :
+	        isIterable(value) ?
+	          (isKeyed(value) ? value.toSeq() : value.fromEntrySeq()) :
+	          keyedSeqFromValue(value);
+	    }
+
+	    KeyedSeq.prototype.toKeyedSeq = function() {
+	      return this;
+	    };
+
+
+
+	  createClass(IndexedSeq, Seq);
+	    function IndexedSeq(value) {
+	      return value === null || value === undefined ? emptySequence() :
+	        !isIterable(value) ? indexedSeqFromValue(value) :
+	        isKeyed(value) ? value.entrySeq() : value.toIndexedSeq();
+	    }
+
+	    IndexedSeq.of = function(/*...values*/) {
+	      return IndexedSeq(arguments);
+	    };
+
+	    IndexedSeq.prototype.toIndexedSeq = function() {
+	      return this;
+	    };
+
+	    IndexedSeq.prototype.toString = function() {
+	      return this.__toString('Seq [', ']');
+	    };
+
+	    IndexedSeq.prototype.__iterate = function(fn, reverse) {
+	      return seqIterate(this, fn, reverse, false);
+	    };
+
+	    IndexedSeq.prototype.__iterator = function(type, reverse) {
+	      return seqIterator(this, type, reverse, false);
+	    };
+
+
+
+	  createClass(SetSeq, Seq);
+	    function SetSeq(value) {
+	      return (
+	        value === null || value === undefined ? emptySequence() :
+	        !isIterable(value) ? indexedSeqFromValue(value) :
+	        isKeyed(value) ? value.entrySeq() : value
+	      ).toSetSeq();
+	    }
+
+	    SetSeq.of = function(/*...values*/) {
+	      return SetSeq(arguments);
+	    };
+
+	    SetSeq.prototype.toSetSeq = function() {
+	      return this;
+	    };
+
+
+
+	  Seq.isSeq = isSeq;
+	  Seq.Keyed = KeyedSeq;
+	  Seq.Set = SetSeq;
+	  Seq.Indexed = IndexedSeq;
+
+	  var IS_SEQ_SENTINEL = '@@__IMMUTABLE_SEQ__@@';
+
+	  Seq.prototype[IS_SEQ_SENTINEL] = true;
+
+
+
+	  createClass(ArraySeq, IndexedSeq);
+	    function ArraySeq(array) {
+	      this._array = array;
+	      this.size = array.length;
+	    }
+
+	    ArraySeq.prototype.get = function(index, notSetValue) {
+	      return this.has(index) ? this._array[wrapIndex(this, index)] : notSetValue;
+	    };
+
+	    ArraySeq.prototype.__iterate = function(fn, reverse) {
+	      var array = this._array;
+	      var maxIndex = array.length - 1;
+	      for (var ii = 0; ii <= maxIndex; ii++) {
+	        if (fn(array[reverse ? maxIndex - ii : ii], ii, this) === false) {
+	          return ii + 1;
+	        }
+	      }
+	      return ii;
+	    };
+
+	    ArraySeq.prototype.__iterator = function(type, reverse) {
+	      var array = this._array;
+	      var maxIndex = array.length - 1;
+	      var ii = 0;
+	      return new Iterator(function() 
+	        {return ii > maxIndex ?
+	          iteratorDone() :
+	          iteratorValue(type, ii, array[reverse ? maxIndex - ii++ : ii++])}
+	      );
+	    };
+
+
+
+	  createClass(ObjectSeq, KeyedSeq);
+	    function ObjectSeq(object) {
+	      var keys = Object.keys(object);
+	      this._object = object;
+	      this._keys = keys;
+	      this.size = keys.length;
+	    }
+
+	    ObjectSeq.prototype.get = function(key, notSetValue) {
+	      if (notSetValue !== undefined && !this.has(key)) {
+	        return notSetValue;
+	      }
+	      return this._object[key];
+	    };
+
+	    ObjectSeq.prototype.has = function(key) {
+	      return this._object.hasOwnProperty(key);
+	    };
+
+	    ObjectSeq.prototype.__iterate = function(fn, reverse) {
+	      var object = this._object;
+	      var keys = this._keys;
+	      var maxIndex = keys.length - 1;
+	      for (var ii = 0; ii <= maxIndex; ii++) {
+	        var key = keys[reverse ? maxIndex - ii : ii];
+	        if (fn(object[key], key, this) === false) {
+	          return ii + 1;
+	        }
+	      }
+	      return ii;
+	    };
+
+	    ObjectSeq.prototype.__iterator = function(type, reverse) {
+	      var object = this._object;
+	      var keys = this._keys;
+	      var maxIndex = keys.length - 1;
+	      var ii = 0;
+	      return new Iterator(function()  {
+	        var key = keys[reverse ? maxIndex - ii : ii];
+	        return ii++ > maxIndex ?
+	          iteratorDone() :
+	          iteratorValue(type, key, object[key]);
+	      });
+	    };
+
+	  ObjectSeq.prototype[IS_ORDERED_SENTINEL] = true;
+
+
+	  createClass(IterableSeq, IndexedSeq);
+	    function IterableSeq(iterable) {
+	      this._iterable = iterable;
+	      this.size = iterable.length || iterable.size;
+	    }
+
+	    IterableSeq.prototype.__iterateUncached = function(fn, reverse) {
+	      if (reverse) {
+	        return this.cacheResult().__iterate(fn, reverse);
+	      }
+	      var iterable = this._iterable;
+	      var iterator = getIterator(iterable);
+	      var iterations = 0;
+	      if (isIterator(iterator)) {
+	        var step;
+	        while (!(step = iterator.next()).done) {
+	          if (fn(step.value, iterations++, this) === false) {
+	            break;
+	          }
+	        }
+	      }
+	      return iterations;
+	    };
+
+	    IterableSeq.prototype.__iteratorUncached = function(type, reverse) {
+	      if (reverse) {
+	        return this.cacheResult().__iterator(type, reverse);
+	      }
+	      var iterable = this._iterable;
+	      var iterator = getIterator(iterable);
+	      if (!isIterator(iterator)) {
+	        return new Iterator(iteratorDone);
+	      }
+	      var iterations = 0;
+	      return new Iterator(function()  {
+	        var step = iterator.next();
+	        return step.done ? step : iteratorValue(type, iterations++, step.value);
+	      });
+	    };
+
+
+
+	  createClass(IteratorSeq, IndexedSeq);
+	    function IteratorSeq(iterator) {
+	      this._iterator = iterator;
+	      this._iteratorCache = [];
+	    }
+
+	    IteratorSeq.prototype.__iterateUncached = function(fn, reverse) {
+	      if (reverse) {
+	        return this.cacheResult().__iterate(fn, reverse);
+	      }
+	      var iterator = this._iterator;
+	      var cache = this._iteratorCache;
+	      var iterations = 0;
+	      while (iterations < cache.length) {
+	        if (fn(cache[iterations], iterations++, this) === false) {
+	          return iterations;
+	        }
+	      }
+	      var step;
+	      while (!(step = iterator.next()).done) {
+	        var val = step.value;
+	        cache[iterations] = val;
+	        if (fn(val, iterations++, this) === false) {
+	          break;
+	        }
+	      }
+	      return iterations;
+	    };
+
+	    IteratorSeq.prototype.__iteratorUncached = function(type, reverse) {
+	      if (reverse) {
+	        return this.cacheResult().__iterator(type, reverse);
+	      }
+	      var iterator = this._iterator;
+	      var cache = this._iteratorCache;
+	      var iterations = 0;
+	      return new Iterator(function()  {
+	        if (iterations >= cache.length) {
+	          var step = iterator.next();
+	          if (step.done) {
+	            return step;
+	          }
+	          cache[iterations] = step.value;
+	        }
+	        return iteratorValue(type, iterations, cache[iterations++]);
+	      });
+	    };
+
+
+
+
+	  // # pragma Helper functions
+
+	  function isSeq(maybeSeq) {
+	    return !!(maybeSeq && maybeSeq[IS_SEQ_SENTINEL]);
+	  }
+
+	  var EMPTY_SEQ;
+
+	  function emptySequence() {
+	    return EMPTY_SEQ || (EMPTY_SEQ = new ArraySeq([]));
+	  }
+
+	  function keyedSeqFromValue(value) {
+	    var seq =
+	      Array.isArray(value) ? new ArraySeq(value).fromEntrySeq() :
+	      isIterator(value) ? new IteratorSeq(value).fromEntrySeq() :
+	      hasIterator(value) ? new IterableSeq(value).fromEntrySeq() :
+	      typeof value === 'object' ? new ObjectSeq(value) :
+	      undefined;
+	    if (!seq) {
+	      throw new TypeError(
+	        'Expected Array or iterable object of [k, v] entries, '+
+	        'or keyed object: ' + value
+	      );
+	    }
+	    return seq;
+	  }
+
+	  function indexedSeqFromValue(value) {
+	    var seq = maybeIndexedSeqFromValue(value);
+	    if (!seq) {
+	      throw new TypeError(
+	        'Expected Array or iterable object of values: ' + value
+	      );
+	    }
+	    return seq;
+	  }
+
+	  function seqFromValue(value) {
+	    var seq = maybeIndexedSeqFromValue(value) ||
+	      (typeof value === 'object' && new ObjectSeq(value));
+	    if (!seq) {
+	      throw new TypeError(
+	        'Expected Array or iterable object of values, or keyed object: ' + value
+	      );
+	    }
+	    return seq;
+	  }
+
+	  function maybeIndexedSeqFromValue(value) {
+	    return (
+	      isArrayLike(value) ? new ArraySeq(value) :
+	      isIterator(value) ? new IteratorSeq(value) :
+	      hasIterator(value) ? new IterableSeq(value) :
+	      undefined
+	    );
+	  }
+
+	  function seqIterate(seq, fn, reverse, useKeys) {
+	    var cache = seq._cache;
+	    if (cache) {
+	      var maxIndex = cache.length - 1;
+	      for (var ii = 0; ii <= maxIndex; ii++) {
+	        var entry = cache[reverse ? maxIndex - ii : ii];
+	        if (fn(entry[1], useKeys ? entry[0] : ii, seq) === false) {
+	          return ii + 1;
+	        }
+	      }
+	      return ii;
+	    }
+	    return seq.__iterateUncached(fn, reverse);
+	  }
+
+	  function seqIterator(seq, type, reverse, useKeys) {
+	    var cache = seq._cache;
+	    if (cache) {
+	      var maxIndex = cache.length - 1;
+	      var ii = 0;
+	      return new Iterator(function()  {
+	        var entry = cache[reverse ? maxIndex - ii : ii];
+	        return ii++ > maxIndex ?
+	          iteratorDone() :
+	          iteratorValue(type, useKeys ? entry[0] : ii - 1, entry[1]);
+	      });
+	    }
+	    return seq.__iteratorUncached(type, reverse);
+	  }
+
+	  function fromJS(json, converter) {
+	    return converter ?
+	      fromJSWith(converter, json, '', {'': json}) :
+	      fromJSDefault(json);
+	  }
+
+	  function fromJSWith(converter, json, key, parentJSON) {
+	    if (Array.isArray(json)) {
+	      return converter.call(parentJSON, key, IndexedSeq(json).map(function(v, k)  {return fromJSWith(converter, v, k, json)}));
+	    }
+	    if (isPlainObj(json)) {
+	      return converter.call(parentJSON, key, KeyedSeq(json).map(function(v, k)  {return fromJSWith(converter, v, k, json)}));
+	    }
+	    return json;
+	  }
+
+	  function fromJSDefault(json) {
+	    if (Array.isArray(json)) {
+	      return IndexedSeq(json).map(fromJSDefault).toList();
+	    }
+	    if (isPlainObj(json)) {
+	      return KeyedSeq(json).map(fromJSDefault).toMap();
+	    }
+	    return json;
+	  }
+
+	  function isPlainObj(value) {
+	    return value && (value.constructor === Object || value.constructor === undefined);
+	  }
+
+	  /**
+	   * An extension of the "same-value" algorithm as [described for use by ES6 Map
+	   * and Set](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map#Key_equality)
+	   *
+	   * NaN is considered the same as NaN, however -0 and 0 are considered the same
+	   * value, which is different from the algorithm described by
+	   * [`Object.is`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is).
+	   *
+	   * This is extended further to allow Objects to describe the values they
+	   * represent, by way of `valueOf` or `equals` (and `hashCode`).
+	   *
+	   * Note: because of this extension, the key equality of Immutable.Map and the
+	   * value equality of Immutable.Set will differ from ES6 Map and Set.
+	   *
+	   * ### Defining custom values
+	   *
+	   * The easiest way to describe the value an object represents is by implementing
+	   * `valueOf`. For example, `Date` represents a value by returning a unix
+	   * timestamp for `valueOf`:
+	   *
+	   *     var date1 = new Date(1234567890000); // Fri Feb 13 2009 ...
+	   *     var date2 = new Date(1234567890000);
+	   *     date1.valueOf(); // 1234567890000
+	   *     assert( date1 !== date2 );
+	   *     assert( Immutable.is( date1, date2 ) );
+	   *
+	   * Note: overriding `valueOf` may have other implications if you use this object
+	   * where JavaScript expects a primitive, such as implicit string coercion.
+	   *
+	   * For more complex types, especially collections, implementing `valueOf` may
+	   * not be performant. An alternative is to implement `equals` and `hashCode`.
+	   *
+	   * `equals` takes another object, presumably of similar type, and returns true
+	   * if the it is equal. Equality is symmetrical, so the same result should be
+	   * returned if this and the argument are flipped.
+	   *
+	   *     assert( a.equals(b) === b.equals(a) );
+	   *
+	   * `hashCode` returns a 32bit integer number representing the object which will
+	   * be used to determine how to store the value object in a Map or Set. You must
+	   * provide both or neither methods, one must not exist without the other.
+	   *
+	   * Also, an important relationship between these methods must be upheld: if two
+	   * values are equal, they *must* return the same hashCode. If the values are not
+	   * equal, they might have the same hashCode; this is called a hash collision,
+	   * and while undesirable for performance reasons, it is acceptable.
+	   *
+	   *     if (a.equals(b)) {
+	   *       assert( a.hashCode() === b.hashCode() );
+	   *     }
+	   *
+	   * All Immutable collections implement `equals` and `hashCode`.
+	   *
+	   */
+	  function is(valueA, valueB) {
+	    if (valueA === valueB || (valueA !== valueA && valueB !== valueB)) {
+	      return true;
+	    }
+	    if (!valueA || !valueB) {
+	      return false;
+	    }
+	    if (typeof valueA.valueOf === 'function' &&
+	        typeof valueB.valueOf === 'function') {
+	      valueA = valueA.valueOf();
+	      valueB = valueB.valueOf();
+	      if (valueA === valueB || (valueA !== valueA && valueB !== valueB)) {
+	        return true;
+	      }
+	      if (!valueA || !valueB) {
+	        return false;
+	      }
+	    }
+	    if (typeof valueA.equals === 'function' &&
+	        typeof valueB.equals === 'function' &&
+	        valueA.equals(valueB)) {
+	      return true;
+	    }
+	    return false;
+	  }
+
+	  function deepEqual(a, b) {
+	    if (a === b) {
+	      return true;
+	    }
+
+	    if (
+	      !isIterable(b) ||
+	      a.size !== undefined && b.size !== undefined && a.size !== b.size ||
+	      a.__hash !== undefined && b.__hash !== undefined && a.__hash !== b.__hash ||
+	      isKeyed(a) !== isKeyed(b) ||
+	      isIndexed(a) !== isIndexed(b) ||
+	      isOrdered(a) !== isOrdered(b)
+	    ) {
+	      return false;
+	    }
+
+	    if (a.size === 0 && b.size === 0) {
+	      return true;
+	    }
+
+	    var notAssociative = !isAssociative(a);
+
+	    if (isOrdered(a)) {
+	      var entries = a.entries();
+	      return b.every(function(v, k)  {
+	        var entry = entries.next().value;
+	        return entry && is(entry[1], v) && (notAssociative || is(entry[0], k));
+	      }) && entries.next().done;
+	    }
+
+	    var flipped = false;
+
+	    if (a.size === undefined) {
+	      if (b.size === undefined) {
+	        if (typeof a.cacheResult === 'function') {
+	          a.cacheResult();
+	        }
+	      } else {
+	        flipped = true;
+	        var _ = a;
+	        a = b;
+	        b = _;
+	      }
+	    }
+
+	    var allEqual = true;
+	    var bSize = b.__iterate(function(v, k)  {
+	      if (notAssociative ? !a.has(v) :
+	          flipped ? !is(v, a.get(k, NOT_SET)) : !is(a.get(k, NOT_SET), v)) {
+	        allEqual = false;
+	        return false;
+	      }
+	    });
+
+	    return allEqual && a.size === bSize;
+	  }
+
+	  createClass(Repeat, IndexedSeq);
+
+	    function Repeat(value, times) {
+	      if (!(this instanceof Repeat)) {
+	        return new Repeat(value, times);
+	      }
+	      this._value = value;
+	      this.size = times === undefined ? Infinity : Math.max(0, times);
+	      if (this.size === 0) {
+	        if (EMPTY_REPEAT) {
+	          return EMPTY_REPEAT;
+	        }
+	        EMPTY_REPEAT = this;
+	      }
+	    }
+
+	    Repeat.prototype.toString = function() {
+	      if (this.size === 0) {
+	        return 'Repeat []';
+	      }
+	      return 'Repeat [ ' + this._value + ' ' + this.size + ' times ]';
+	    };
+
+	    Repeat.prototype.get = function(index, notSetValue) {
+	      return this.has(index) ? this._value : notSetValue;
+	    };
+
+	    Repeat.prototype.includes = function(searchValue) {
+	      return is(this._value, searchValue);
+	    };
+
+	    Repeat.prototype.slice = function(begin, end) {
+	      var size = this.size;
+	      return wholeSlice(begin, end, size) ? this :
+	        new Repeat(this._value, resolveEnd(end, size) - resolveBegin(begin, size));
+	    };
+
+	    Repeat.prototype.reverse = function() {
+	      return this;
+	    };
+
+	    Repeat.prototype.indexOf = function(searchValue) {
+	      if (is(this._value, searchValue)) {
+	        return 0;
+	      }
+	      return -1;
+	    };
+
+	    Repeat.prototype.lastIndexOf = function(searchValue) {
+	      if (is(this._value, searchValue)) {
+	        return this.size;
+	      }
+	      return -1;
+	    };
+
+	    Repeat.prototype.__iterate = function(fn, reverse) {
+	      for (var ii = 0; ii < this.size; ii++) {
+	        if (fn(this._value, ii, this) === false) {
+	          return ii + 1;
+	        }
+	      }
+	      return ii;
+	    };
+
+	    Repeat.prototype.__iterator = function(type, reverse) {var this$0 = this;
+	      var ii = 0;
+	      return new Iterator(function() 
+	        {return ii < this$0.size ? iteratorValue(type, ii++, this$0._value) : iteratorDone()}
+	      );
+	    };
+
+	    Repeat.prototype.equals = function(other) {
+	      return other instanceof Repeat ?
+	        is(this._value, other._value) :
+	        deepEqual(other);
+	    };
+
+
+	  var EMPTY_REPEAT;
+
+	  function invariant(condition, error) {
+	    if (!condition) throw new Error(error);
+	  }
+
+	  createClass(Range, IndexedSeq);
+
+	    function Range(start, end, step) {
+	      if (!(this instanceof Range)) {
+	        return new Range(start, end, step);
+	      }
+	      invariant(step !== 0, 'Cannot step a Range by 0');
+	      start = start || 0;
+	      if (end === undefined) {
+	        end = Infinity;
+	      }
+	      step = step === undefined ? 1 : Math.abs(step);
+	      if (end < start) {
+	        step = -step;
+	      }
+	      this._start = start;
+	      this._end = end;
+	      this._step = step;
+	      this.size = Math.max(0, Math.ceil((end - start) / step - 1) + 1);
+	      if (this.size === 0) {
+	        if (EMPTY_RANGE) {
+	          return EMPTY_RANGE;
+	        }
+	        EMPTY_RANGE = this;
+	      }
+	    }
+
+	    Range.prototype.toString = function() {
+	      if (this.size === 0) {
+	        return 'Range []';
+	      }
+	      return 'Range [ ' +
+	        this._start + '...' + this._end +
+	        (this._step !== 1 ? ' by ' + this._step : '') +
+	      ' ]';
+	    };
+
+	    Range.prototype.get = function(index, notSetValue) {
+	      return this.has(index) ?
+	        this._start + wrapIndex(this, index) * this._step :
+	        notSetValue;
+	    };
+
+	    Range.prototype.includes = function(searchValue) {
+	      var possibleIndex = (searchValue - this._start) / this._step;
+	      return possibleIndex >= 0 &&
+	        possibleIndex < this.size &&
+	        possibleIndex === Math.floor(possibleIndex);
+	    };
+
+	    Range.prototype.slice = function(begin, end) {
+	      if (wholeSlice(begin, end, this.size)) {
+	        return this;
+	      }
+	      begin = resolveBegin(begin, this.size);
+	      end = resolveEnd(end, this.size);
+	      if (end <= begin) {
+	        return new Range(0, 0);
+	      }
+	      return new Range(this.get(begin, this._end), this.get(end, this._end), this._step);
+	    };
+
+	    Range.prototype.indexOf = function(searchValue) {
+	      var offsetValue = searchValue - this._start;
+	      if (offsetValue % this._step === 0) {
+	        var index = offsetValue / this._step;
+	        if (index >= 0 && index < this.size) {
+	          return index
+	        }
+	      }
+	      return -1;
+	    };
+
+	    Range.prototype.lastIndexOf = function(searchValue) {
+	      return this.indexOf(searchValue);
+	    };
+
+	    Range.prototype.__iterate = function(fn, reverse) {
+	      var maxIndex = this.size - 1;
+	      var step = this._step;
+	      var value = reverse ? this._start + maxIndex * step : this._start;
+	      for (var ii = 0; ii <= maxIndex; ii++) {
+	        if (fn(value, ii, this) === false) {
+	          return ii + 1;
+	        }
+	        value += reverse ? -step : step;
+	      }
+	      return ii;
+	    };
+
+	    Range.prototype.__iterator = function(type, reverse) {
+	      var maxIndex = this.size - 1;
+	      var step = this._step;
+	      var value = reverse ? this._start + maxIndex * step : this._start;
+	      var ii = 0;
+	      return new Iterator(function()  {
+	        var v = value;
+	        value += reverse ? -step : step;
+	        return ii > maxIndex ? iteratorDone() : iteratorValue(type, ii++, v);
+	      });
+	    };
+
+	    Range.prototype.equals = function(other) {
+	      return other instanceof Range ?
+	        this._start === other._start &&
+	        this._end === other._end &&
+	        this._step === other._step :
+	        deepEqual(this, other);
+	    };
+
+
+	  var EMPTY_RANGE;
+
+	  createClass(Collection, Iterable);
+	    function Collection() {
+	      throw TypeError('Abstract');
+	    }
+
+
+	  createClass(KeyedCollection, Collection);function KeyedCollection() {}
+
+	  createClass(IndexedCollection, Collection);function IndexedCollection() {}
+
+	  createClass(SetCollection, Collection);function SetCollection() {}
+
+
+	  Collection.Keyed = KeyedCollection;
+	  Collection.Indexed = IndexedCollection;
+	  Collection.Set = SetCollection;
+
+	  var imul =
+	    typeof Math.imul === 'function' && Math.imul(0xffffffff, 2) === -2 ?
+	    Math.imul :
+	    function imul(a, b) {
+	      a = a | 0; // int
+	      b = b | 0; // int
+	      var c = a & 0xffff;
+	      var d = b & 0xffff;
+	      // Shift by 0 fixes the sign on the high part.
+	      return (c * d) + ((((a >>> 16) * d + c * (b >>> 16)) << 16) >>> 0) | 0; // int
+	    };
+
+	  // v8 has an optimization for storing 31-bit signed numbers.
+	  // Values which have either 00 or 11 as the high order bits qualify.
+	  // This function drops the highest order bit in a signed number, maintaining
+	  // the sign bit.
+	  function smi(i32) {
+	    return ((i32 >>> 1) & 0x40000000) | (i32 & 0xBFFFFFFF);
+	  }
+
+	  function hash(o) {
+	    if (o === false || o === null || o === undefined) {
+	      return 0;
+	    }
+	    if (typeof o.valueOf === 'function') {
+	      o = o.valueOf();
+	      if (o === false || o === null || o === undefined) {
+	        return 0;
+	      }
+	    }
+	    if (o === true) {
+	      return 1;
+	    }
+	    var type = typeof o;
+	    if (type === 'number') {
+	      if (o !== o || o === Infinity) {
+	        return 0;
+	      }
+	      var h = o | 0;
+	      if (h !== o) {
+	        h ^= o * 0xFFFFFFFF;
+	      }
+	      while (o > 0xFFFFFFFF) {
+	        o /= 0xFFFFFFFF;
+	        h ^= o;
+	      }
+	      return smi(h);
+	    }
+	    if (type === 'string') {
+	      return o.length > STRING_HASH_CACHE_MIN_STRLEN ? cachedHashString(o) : hashString(o);
+	    }
+	    if (typeof o.hashCode === 'function') {
+	      return o.hashCode();
+	    }
+	    if (type === 'object') {
+	      return hashJSObj(o);
+	    }
+	    if (typeof o.toString === 'function') {
+	      return hashString(o.toString());
+	    }
+	    throw new Error('Value type ' + type + ' cannot be hashed.');
+	  }
+
+	  function cachedHashString(string) {
+	    var hash = stringHashCache[string];
+	    if (hash === undefined) {
+	      hash = hashString(string);
+	      if (STRING_HASH_CACHE_SIZE === STRING_HASH_CACHE_MAX_SIZE) {
+	        STRING_HASH_CACHE_SIZE = 0;
+	        stringHashCache = {};
+	      }
+	      STRING_HASH_CACHE_SIZE++;
+	      stringHashCache[string] = hash;
+	    }
+	    return hash;
+	  }
+
+	  // http://jsperf.com/hashing-strings
+	  function hashString(string) {
+	    // This is the hash from JVM
+	    // The hash code for a string is computed as
+	    // s[0] * 31 ^ (n - 1) + s[1] * 31 ^ (n - 2) + ... + s[n - 1],
+	    // where s[i] is the ith character of the string and n is the length of
+	    // the string. We "mod" the result to make it between 0 (inclusive) and 2^31
+	    // (exclusive) by dropping high bits.
+	    var hash = 0;
+	    for (var ii = 0; ii < string.length; ii++) {
+	      hash = 31 * hash + string.charCodeAt(ii) | 0;
+	    }
+	    return smi(hash);
+	  }
+
+	  function hashJSObj(obj) {
+	    var hash;
+	    if (usingWeakMap) {
+	      hash = weakMap.get(obj);
+	      if (hash !== undefined) {
+	        return hash;
+	      }
+	    }
+
+	    hash = obj[UID_HASH_KEY];
+	    if (hash !== undefined) {
+	      return hash;
+	    }
+
+	    if (!canDefineProperty) {
+	      hash = obj.propertyIsEnumerable && obj.propertyIsEnumerable[UID_HASH_KEY];
+	      if (hash !== undefined) {
+	        return hash;
+	      }
+
+	      hash = getIENodeHash(obj);
+	      if (hash !== undefined) {
+	        return hash;
+	      }
+	    }
+
+	    hash = ++objHashUID;
+	    if (objHashUID & 0x40000000) {
+	      objHashUID = 0;
+	    }
+
+	    if (usingWeakMap) {
+	      weakMap.set(obj, hash);
+	    } else if (isExtensible !== undefined && isExtensible(obj) === false) {
+	      throw new Error('Non-extensible objects are not allowed as keys.');
+	    } else if (canDefineProperty) {
+	      Object.defineProperty(obj, UID_HASH_KEY, {
+	        'enumerable': false,
+	        'configurable': false,
+	        'writable': false,
+	        'value': hash
+	      });
+	    } else if (obj.propertyIsEnumerable !== undefined &&
+	               obj.propertyIsEnumerable === obj.constructor.prototype.propertyIsEnumerable) {
+	      // Since we can't define a non-enumerable property on the object
+	      // we'll hijack one of the less-used non-enumerable properties to
+	      // save our hash on it. Since this is a function it will not show up in
+	      // `JSON.stringify` which is what we want.
+	      obj.propertyIsEnumerable = function() {
+	        return this.constructor.prototype.propertyIsEnumerable.apply(this, arguments);
+	      };
+	      obj.propertyIsEnumerable[UID_HASH_KEY] = hash;
+	    } else if (obj.nodeType !== undefined) {
+	      // At this point we couldn't get the IE `uniqueID` to use as a hash
+	      // and we couldn't use a non-enumerable property to exploit the
+	      // dontEnum bug so we simply add the `UID_HASH_KEY` on the node
+	      // itself.
+	      obj[UID_HASH_KEY] = hash;
+	    } else {
+	      throw new Error('Unable to set a non-enumerable property on object.');
+	    }
+
+	    return hash;
+	  }
+
+	  // Get references to ES5 object methods.
+	  var isExtensible = Object.isExtensible;
+
+	  // True if Object.defineProperty works as expected. IE8 fails this test.
+	  var canDefineProperty = (function() {
+	    try {
+	      Object.defineProperty({}, '@', {});
+	      return true;
+	    } catch (e) {
+	      return false;
+	    }
+	  }());
+
+	  // IE has a `uniqueID` property on DOM nodes. We can construct the hash from it
+	  // and avoid memory leaks from the IE cloneNode bug.
+	  function getIENodeHash(node) {
+	    if (node && node.nodeType > 0) {
+	      switch (node.nodeType) {
+	        case 1: // Element
+	          return node.uniqueID;
+	        case 9: // Document
+	          return node.documentElement && node.documentElement.uniqueID;
+	      }
+	    }
+	  }
+
+	  // If possible, use a WeakMap.
+	  var usingWeakMap = typeof WeakMap === 'function';
+	  var weakMap;
+	  if (usingWeakMap) {
+	    weakMap = new WeakMap();
+	  }
+
+	  var objHashUID = 0;
+
+	  var UID_HASH_KEY = '__immutablehash__';
+	  if (typeof Symbol === 'function') {
+	    UID_HASH_KEY = Symbol(UID_HASH_KEY);
+	  }
+
+	  var STRING_HASH_CACHE_MIN_STRLEN = 16;
+	  var STRING_HASH_CACHE_MAX_SIZE = 255;
+	  var STRING_HASH_CACHE_SIZE = 0;
+	  var stringHashCache = {};
+
+	  function assertNotInfinite(size) {
+	    invariant(
+	      size !== Infinity,
+	      'Cannot perform this action with an infinite size.'
+	    );
+	  }
+
+	  createClass(Map, KeyedCollection);
+
+	    // @pragma Construction
+
+	    function Map(value) {
+	      return value === null || value === undefined ? emptyMap() :
+	        isMap(value) && !isOrdered(value) ? value :
+	        emptyMap().withMutations(function(map ) {
+	          var iter = KeyedIterable(value);
+	          assertNotInfinite(iter.size);
+	          iter.forEach(function(v, k)  {return map.set(k, v)});
+	        });
+	    }
+
+	    Map.of = function() {var keyValues = SLICE$0.call(arguments, 0);
+	      return emptyMap().withMutations(function(map ) {
+	        for (var i = 0; i < keyValues.length; i += 2) {
+	          if (i + 1 >= keyValues.length) {
+	            throw new Error('Missing value for key: ' + keyValues[i]);
+	          }
+	          map.set(keyValues[i], keyValues[i + 1]);
+	        }
+	      });
+	    };
+
+	    Map.prototype.toString = function() {
+	      return this.__toString('Map {', '}');
+	    };
+
+	    // @pragma Access
+
+	    Map.prototype.get = function(k, notSetValue) {
+	      return this._root ?
+	        this._root.get(0, undefined, k, notSetValue) :
+	        notSetValue;
+	    };
+
+	    // @pragma Modification
+
+	    Map.prototype.set = function(k, v) {
+	      return updateMap(this, k, v);
+	    };
+
+	    Map.prototype.setIn = function(keyPath, v) {
+	      return this.updateIn(keyPath, NOT_SET, function()  {return v});
+	    };
+
+	    Map.prototype.remove = function(k) {
+	      return updateMap(this, k, NOT_SET);
+	    };
+
+	    Map.prototype.deleteIn = function(keyPath) {
+	      return this.updateIn(keyPath, function()  {return NOT_SET});
+	    };
+
+	    Map.prototype.update = function(k, notSetValue, updater) {
+	      return arguments.length === 1 ?
+	        k(this) :
+	        this.updateIn([k], notSetValue, updater);
+	    };
+
+	    Map.prototype.updateIn = function(keyPath, notSetValue, updater) {
+	      if (!updater) {
+	        updater = notSetValue;
+	        notSetValue = undefined;
+	      }
+	      var updatedValue = updateInDeepMap(
+	        this,
+	        forceIterator(keyPath),
+	        notSetValue,
+	        updater
+	      );
+	      return updatedValue === NOT_SET ? undefined : updatedValue;
+	    };
+
+	    Map.prototype.clear = function() {
+	      if (this.size === 0) {
+	        return this;
+	      }
+	      if (this.__ownerID) {
+	        this.size = 0;
+	        this._root = null;
+	        this.__hash = undefined;
+	        this.__altered = true;
+	        return this;
+	      }
+	      return emptyMap();
+	    };
+
+	    // @pragma Composition
+
+	    Map.prototype.merge = function(/*...iters*/) {
+	      return mergeIntoMapWith(this, undefined, arguments);
+	    };
+
+	    Map.prototype.mergeWith = function(merger) {var iters = SLICE$0.call(arguments, 1);
+	      return mergeIntoMapWith(this, merger, iters);
+	    };
+
+	    Map.prototype.mergeIn = function(keyPath) {var iters = SLICE$0.call(arguments, 1);
+	      return this.updateIn(
+	        keyPath,
+	        emptyMap(),
+	        function(m ) {return typeof m.merge === 'function' ?
+	          m.merge.apply(m, iters) :
+	          iters[iters.length - 1]}
+	      );
+	    };
+
+	    Map.prototype.mergeDeep = function(/*...iters*/) {
+	      return mergeIntoMapWith(this, deepMerger, arguments);
+	    };
+
+	    Map.prototype.mergeDeepWith = function(merger) {var iters = SLICE$0.call(arguments, 1);
+	      return mergeIntoMapWith(this, deepMergerWith(merger), iters);
+	    };
+
+	    Map.prototype.mergeDeepIn = function(keyPath) {var iters = SLICE$0.call(arguments, 1);
+	      return this.updateIn(
+	        keyPath,
+	        emptyMap(),
+	        function(m ) {return typeof m.mergeDeep === 'function' ?
+	          m.mergeDeep.apply(m, iters) :
+	          iters[iters.length - 1]}
+	      );
+	    };
+
+	    Map.prototype.sort = function(comparator) {
+	      // Late binding
+	      return OrderedMap(sortFactory(this, comparator));
+	    };
+
+	    Map.prototype.sortBy = function(mapper, comparator) {
+	      // Late binding
+	      return OrderedMap(sortFactory(this, comparator, mapper));
+	    };
+
+	    // @pragma Mutability
+
+	    Map.prototype.withMutations = function(fn) {
+	      var mutable = this.asMutable();
+	      fn(mutable);
+	      return mutable.wasAltered() ? mutable.__ensureOwner(this.__ownerID) : this;
+	    };
+
+	    Map.prototype.asMutable = function() {
+	      return this.__ownerID ? this : this.__ensureOwner(new OwnerID());
+	    };
+
+	    Map.prototype.asImmutable = function() {
+	      return this.__ensureOwner();
+	    };
+
+	    Map.prototype.wasAltered = function() {
+	      return this.__altered;
+	    };
+
+	    Map.prototype.__iterator = function(type, reverse) {
+	      return new MapIterator(this, type, reverse);
+	    };
+
+	    Map.prototype.__iterate = function(fn, reverse) {var this$0 = this;
+	      var iterations = 0;
+	      this._root && this._root.iterate(function(entry ) {
+	        iterations++;
+	        return fn(entry[1], entry[0], this$0);
+	      }, reverse);
+	      return iterations;
+	    };
+
+	    Map.prototype.__ensureOwner = function(ownerID) {
+	      if (ownerID === this.__ownerID) {
+	        return this;
+	      }
+	      if (!ownerID) {
+	        this.__ownerID = ownerID;
+	        this.__altered = false;
+	        return this;
+	      }
+	      return makeMap(this.size, this._root, ownerID, this.__hash);
+	    };
+
+
+	  function isMap(maybeMap) {
+	    return !!(maybeMap && maybeMap[IS_MAP_SENTINEL]);
+	  }
+
+	  Map.isMap = isMap;
+
+	  var IS_MAP_SENTINEL = '@@__IMMUTABLE_MAP__@@';
+
+	  var MapPrototype = Map.prototype;
+	  MapPrototype[IS_MAP_SENTINEL] = true;
+	  MapPrototype[DELETE] = MapPrototype.remove;
+	  MapPrototype.removeIn = MapPrototype.deleteIn;
+
+
+	  // #pragma Trie Nodes
+
+
+
+	    function ArrayMapNode(ownerID, entries) {
+	      this.ownerID = ownerID;
+	      this.entries = entries;
+	    }
+
+	    ArrayMapNode.prototype.get = function(shift, keyHash, key, notSetValue) {
+	      var entries = this.entries;
+	      for (var ii = 0, len = entries.length; ii < len; ii++) {
+	        if (is(key, entries[ii][0])) {
+	          return entries[ii][1];
+	        }
+	      }
+	      return notSetValue;
+	    };
+
+	    ArrayMapNode.prototype.update = function(ownerID, shift, keyHash, key, value, didChangeSize, didAlter) {
+	      var removed = value === NOT_SET;
+
+	      var entries = this.entries;
+	      var idx = 0;
+	      for (var len = entries.length; idx < len; idx++) {
+	        if (is(key, entries[idx][0])) {
+	          break;
+	        }
+	      }
+	      var exists = idx < len;
+
+	      if (exists ? entries[idx][1] === value : removed) {
+	        return this;
+	      }
+
+	      SetRef(didAlter);
+	      (removed || !exists) && SetRef(didChangeSize);
+
+	      if (removed && entries.length === 1) {
+	        return; // undefined
+	      }
+
+	      if (!exists && !removed && entries.length >= MAX_ARRAY_MAP_SIZE) {
+	        return createNodes(ownerID, entries, key, value);
+	      }
+
+	      var isEditable = ownerID && ownerID === this.ownerID;
+	      var newEntries = isEditable ? entries : arrCopy(entries);
+
+	      if (exists) {
+	        if (removed) {
+	          idx === len - 1 ? newEntries.pop() : (newEntries[idx] = newEntries.pop());
+	        } else {
+	          newEntries[idx] = [key, value];
+	        }
+	      } else {
+	        newEntries.push([key, value]);
+	      }
+
+	      if (isEditable) {
+	        this.entries = newEntries;
+	        return this;
+	      }
+
+	      return new ArrayMapNode(ownerID, newEntries);
+	    };
+
+
+
+
+	    function BitmapIndexedNode(ownerID, bitmap, nodes) {
+	      this.ownerID = ownerID;
+	      this.bitmap = bitmap;
+	      this.nodes = nodes;
+	    }
+
+	    BitmapIndexedNode.prototype.get = function(shift, keyHash, key, notSetValue) {
+	      if (keyHash === undefined) {
+	        keyHash = hash(key);
+	      }
+	      var bit = (1 << ((shift === 0 ? keyHash : keyHash >>> shift) & MASK));
+	      var bitmap = this.bitmap;
+	      return (bitmap & bit) === 0 ? notSetValue :
+	        this.nodes[popCount(bitmap & (bit - 1))].get(shift + SHIFT, keyHash, key, notSetValue);
+	    };
+
+	    BitmapIndexedNode.prototype.update = function(ownerID, shift, keyHash, key, value, didChangeSize, didAlter) {
+	      if (keyHash === undefined) {
+	        keyHash = hash(key);
+	      }
+	      var keyHashFrag = (shift === 0 ? keyHash : keyHash >>> shift) & MASK;
+	      var bit = 1 << keyHashFrag;
+	      var bitmap = this.bitmap;
+	      var exists = (bitmap & bit) !== 0;
+
+	      if (!exists && value === NOT_SET) {
+	        return this;
+	      }
+
+	      var idx = popCount(bitmap & (bit - 1));
+	      var nodes = this.nodes;
+	      var node = exists ? nodes[idx] : undefined;
+	      var newNode = updateNode(node, ownerID, shift + SHIFT, keyHash, key, value, didChangeSize, didAlter);
+
+	      if (newNode === node) {
+	        return this;
+	      }
+
+	      if (!exists && newNode && nodes.length >= MAX_BITMAP_INDEXED_SIZE) {
+	        return expandNodes(ownerID, nodes, bitmap, keyHashFrag, newNode);
+	      }
+
+	      if (exists && !newNode && nodes.length === 2 && isLeafNode(nodes[idx ^ 1])) {
+	        return nodes[idx ^ 1];
+	      }
+
+	      if (exists && newNode && nodes.length === 1 && isLeafNode(newNode)) {
+	        return newNode;
+	      }
+
+	      var isEditable = ownerID && ownerID === this.ownerID;
+	      var newBitmap = exists ? newNode ? bitmap : bitmap ^ bit : bitmap | bit;
+	      var newNodes = exists ? newNode ?
+	        setIn(nodes, idx, newNode, isEditable) :
+	        spliceOut(nodes, idx, isEditable) :
+	        spliceIn(nodes, idx, newNode, isEditable);
+
+	      if (isEditable) {
+	        this.bitmap = newBitmap;
+	        this.nodes = newNodes;
+	        return this;
+	      }
+
+	      return new BitmapIndexedNode(ownerID, newBitmap, newNodes);
+	    };
+
+
+
+
+	    function HashArrayMapNode(ownerID, count, nodes) {
+	      this.ownerID = ownerID;
+	      this.count = count;
+	      this.nodes = nodes;
+	    }
+
+	    HashArrayMapNode.prototype.get = function(shift, keyHash, key, notSetValue) {
+	      if (keyHash === undefined) {
+	        keyHash = hash(key);
+	      }
+	      var idx = (shift === 0 ? keyHash : keyHash >>> shift) & MASK;
+	      var node = this.nodes[idx];
+	      return node ? node.get(shift + SHIFT, keyHash, key, notSetValue) : notSetValue;
+	    };
+
+	    HashArrayMapNode.prototype.update = function(ownerID, shift, keyHash, key, value, didChangeSize, didAlter) {
+	      if (keyHash === undefined) {
+	        keyHash = hash(key);
+	      }
+	      var idx = (shift === 0 ? keyHash : keyHash >>> shift) & MASK;
+	      var removed = value === NOT_SET;
+	      var nodes = this.nodes;
+	      var node = nodes[idx];
+
+	      if (removed && !node) {
+	        return this;
+	      }
+
+	      var newNode = updateNode(node, ownerID, shift + SHIFT, keyHash, key, value, didChangeSize, didAlter);
+	      if (newNode === node) {
+	        return this;
+	      }
+
+	      var newCount = this.count;
+	      if (!node) {
+	        newCount++;
+	      } else if (!newNode) {
+	        newCount--;
+	        if (newCount < MIN_HASH_ARRAY_MAP_SIZE) {
+	          return packNodes(ownerID, nodes, newCount, idx);
+	        }
+	      }
+
+	      var isEditable = ownerID && ownerID === this.ownerID;
+	      var newNodes = setIn(nodes, idx, newNode, isEditable);
+
+	      if (isEditable) {
+	        this.count = newCount;
+	        this.nodes = newNodes;
+	        return this;
+	      }
+
+	      return new HashArrayMapNode(ownerID, newCount, newNodes);
+	    };
+
+
+
+
+	    function HashCollisionNode(ownerID, keyHash, entries) {
+	      this.ownerID = ownerID;
+	      this.keyHash = keyHash;
+	      this.entries = entries;
+	    }
+
+	    HashCollisionNode.prototype.get = function(shift, keyHash, key, notSetValue) {
+	      var entries = this.entries;
+	      for (var ii = 0, len = entries.length; ii < len; ii++) {
+	        if (is(key, entries[ii][0])) {
+	          return entries[ii][1];
+	        }
+	      }
+	      return notSetValue;
+	    };
+
+	    HashCollisionNode.prototype.update = function(ownerID, shift, keyHash, key, value, didChangeSize, didAlter) {
+	      if (keyHash === undefined) {
+	        keyHash = hash(key);
+	      }
+
+	      var removed = value === NOT_SET;
+
+	      if (keyHash !== this.keyHash) {
+	        if (removed) {
+	          return this;
+	        }
+	        SetRef(didAlter);
+	        SetRef(didChangeSize);
+	        return mergeIntoNode(this, ownerID, shift, keyHash, [key, value]);
+	      }
+
+	      var entries = this.entries;
+	      var idx = 0;
+	      for (var len = entries.length; idx < len; idx++) {
+	        if (is(key, entries[idx][0])) {
+	          break;
+	        }
+	      }
+	      var exists = idx < len;
+
+	      if (exists ? entries[idx][1] === value : removed) {
+	        return this;
+	      }
+
+	      SetRef(didAlter);
+	      (removed || !exists) && SetRef(didChangeSize);
+
+	      if (removed && len === 2) {
+	        return new ValueNode(ownerID, this.keyHash, entries[idx ^ 1]);
+	      }
+
+	      var isEditable = ownerID && ownerID === this.ownerID;
+	      var newEntries = isEditable ? entries : arrCopy(entries);
+
+	      if (exists) {
+	        if (removed) {
+	          idx === len - 1 ? newEntries.pop() : (newEntries[idx] = newEntries.pop());
+	        } else {
+	          newEntries[idx] = [key, value];
+	        }
+	      } else {
+	        newEntries.push([key, value]);
+	      }
+
+	      if (isEditable) {
+	        this.entries = newEntries;
+	        return this;
+	      }
+
+	      return new HashCollisionNode(ownerID, this.keyHash, newEntries);
+	    };
+
+
+
+
+	    function ValueNode(ownerID, keyHash, entry) {
+	      this.ownerID = ownerID;
+	      this.keyHash = keyHash;
+	      this.entry = entry;
+	    }
+
+	    ValueNode.prototype.get = function(shift, keyHash, key, notSetValue) {
+	      return is(key, this.entry[0]) ? this.entry[1] : notSetValue;
+	    };
+
+	    ValueNode.prototype.update = function(ownerID, shift, keyHash, key, value, didChangeSize, didAlter) {
+	      var removed = value === NOT_SET;
+	      var keyMatch = is(key, this.entry[0]);
+	      if (keyMatch ? value === this.entry[1] : removed) {
+	        return this;
+	      }
+
+	      SetRef(didAlter);
+
+	      if (removed) {
+	        SetRef(didChangeSize);
+	        return; // undefined
+	      }
+
+	      if (keyMatch) {
+	        if (ownerID && ownerID === this.ownerID) {
+	          this.entry[1] = value;
+	          return this;
+	        }
+	        return new ValueNode(ownerID, this.keyHash, [key, value]);
+	      }
+
+	      SetRef(didChangeSize);
+	      return mergeIntoNode(this, ownerID, shift, hash(key), [key, value]);
+	    };
+
+
+
+	  // #pragma Iterators
+
+	  ArrayMapNode.prototype.iterate =
+	  HashCollisionNode.prototype.iterate = function (fn, reverse) {
+	    var entries = this.entries;
+	    for (var ii = 0, maxIndex = entries.length - 1; ii <= maxIndex; ii++) {
+	      if (fn(entries[reverse ? maxIndex - ii : ii]) === false) {
+	        return false;
+	      }
+	    }
+	  }
+
+	  BitmapIndexedNode.prototype.iterate =
+	  HashArrayMapNode.prototype.iterate = function (fn, reverse) {
+	    var nodes = this.nodes;
+	    for (var ii = 0, maxIndex = nodes.length - 1; ii <= maxIndex; ii++) {
+	      var node = nodes[reverse ? maxIndex - ii : ii];
+	      if (node && node.iterate(fn, reverse) === false) {
+	        return false;
+	      }
+	    }
+	  }
+
+	  ValueNode.prototype.iterate = function (fn, reverse) {
+	    return fn(this.entry);
+	  }
+
+	  createClass(MapIterator, Iterator);
+
+	    function MapIterator(map, type, reverse) {
+	      this._type = type;
+	      this._reverse = reverse;
+	      this._stack = map._root && mapIteratorFrame(map._root);
+	    }
+
+	    MapIterator.prototype.next = function() {
+	      var type = this._type;
+	      var stack = this._stack;
+	      while (stack) {
+	        var node = stack.node;
+	        var index = stack.index++;
+	        var maxIndex;
+	        if (node.entry) {
+	          if (index === 0) {
+	            return mapIteratorValue(type, node.entry);
+	          }
+	        } else if (node.entries) {
+	          maxIndex = node.entries.length - 1;
+	          if (index <= maxIndex) {
+	            return mapIteratorValue(type, node.entries[this._reverse ? maxIndex - index : index]);
+	          }
+	        } else {
+	          maxIndex = node.nodes.length - 1;
+	          if (index <= maxIndex) {
+	            var subNode = node.nodes[this._reverse ? maxIndex - index : index];
+	            if (subNode) {
+	              if (subNode.entry) {
+	                return mapIteratorValue(type, subNode.entry);
+	              }
+	              stack = this._stack = mapIteratorFrame(subNode, stack);
+	            }
+	            continue;
+	          }
+	        }
+	        stack = this._stack = this._stack.__prev;
+	      }
+	      return iteratorDone();
+	    };
+
+
+	  function mapIteratorValue(type, entry) {
+	    return iteratorValue(type, entry[0], entry[1]);
+	  }
+
+	  function mapIteratorFrame(node, prev) {
+	    return {
+	      node: node,
+	      index: 0,
+	      __prev: prev
+	    };
+	  }
+
+	  function makeMap(size, root, ownerID, hash) {
+	    var map = Object.create(MapPrototype);
+	    map.size = size;
+	    map._root = root;
+	    map.__ownerID = ownerID;
+	    map.__hash = hash;
+	    map.__altered = false;
+	    return map;
+	  }
+
+	  var EMPTY_MAP;
+	  function emptyMap() {
+	    return EMPTY_MAP || (EMPTY_MAP = makeMap(0));
+	  }
+
+	  function updateMap(map, k, v) {
+	    var newRoot;
+	    var newSize;
+	    if (!map._root) {
+	      if (v === NOT_SET) {
+	        return map;
+	      }
+	      newSize = 1;
+	      newRoot = new ArrayMapNode(map.__ownerID, [[k, v]]);
+	    } else {
+	      var didChangeSize = MakeRef(CHANGE_LENGTH);
+	      var didAlter = MakeRef(DID_ALTER);
+	      newRoot = updateNode(map._root, map.__ownerID, 0, undefined, k, v, didChangeSize, didAlter);
+	      if (!didAlter.value) {
+	        return map;
+	      }
+	      newSize = map.size + (didChangeSize.value ? v === NOT_SET ? -1 : 1 : 0);
+	    }
+	    if (map.__ownerID) {
+	      map.size = newSize;
+	      map._root = newRoot;
+	      map.__hash = undefined;
+	      map.__altered = true;
+	      return map;
+	    }
+	    return newRoot ? makeMap(newSize, newRoot) : emptyMap();
+	  }
+
+	  function updateNode(node, ownerID, shift, keyHash, key, value, didChangeSize, didAlter) {
+	    if (!node) {
+	      if (value === NOT_SET) {
+	        return node;
+	      }
+	      SetRef(didAlter);
+	      SetRef(didChangeSize);
+	      return new ValueNode(ownerID, keyHash, [key, value]);
+	    }
+	    return node.update(ownerID, shift, keyHash, key, value, didChangeSize, didAlter);
+	  }
+
+	  function isLeafNode(node) {
+	    return node.constructor === ValueNode || node.constructor === HashCollisionNode;
+	  }
+
+	  function mergeIntoNode(node, ownerID, shift, keyHash, entry) {
+	    if (node.keyHash === keyHash) {
+	      return new HashCollisionNode(ownerID, keyHash, [node.entry, entry]);
+	    }
+
+	    var idx1 = (shift === 0 ? node.keyHash : node.keyHash >>> shift) & MASK;
+	    var idx2 = (shift === 0 ? keyHash : keyHash >>> shift) & MASK;
+
+	    var newNode;
+	    var nodes = idx1 === idx2 ?
+	      [mergeIntoNode(node, ownerID, shift + SHIFT, keyHash, entry)] :
+	      ((newNode = new ValueNode(ownerID, keyHash, entry)), idx1 < idx2 ? [node, newNode] : [newNode, node]);
+
+	    return new BitmapIndexedNode(ownerID, (1 << idx1) | (1 << idx2), nodes);
+	  }
+
+	  function createNodes(ownerID, entries, key, value) {
+	    if (!ownerID) {
+	      ownerID = new OwnerID();
+	    }
+	    var node = new ValueNode(ownerID, hash(key), [key, value]);
+	    for (var ii = 0; ii < entries.length; ii++) {
+	      var entry = entries[ii];
+	      node = node.update(ownerID, 0, undefined, entry[0], entry[1]);
+	    }
+	    return node;
+	  }
+
+	  function packNodes(ownerID, nodes, count, excluding) {
+	    var bitmap = 0;
+	    var packedII = 0;
+	    var packedNodes = new Array(count);
+	    for (var ii = 0, bit = 1, len = nodes.length; ii < len; ii++, bit <<= 1) {
+	      var node = nodes[ii];
+	      if (node !== undefined && ii !== excluding) {
+	        bitmap |= bit;
+	        packedNodes[packedII++] = node;
+	      }
+	    }
+	    return new BitmapIndexedNode(ownerID, bitmap, packedNodes);
+	  }
+
+	  function expandNodes(ownerID, nodes, bitmap, including, node) {
+	    var count = 0;
+	    var expandedNodes = new Array(SIZE);
+	    for (var ii = 0; bitmap !== 0; ii++, bitmap >>>= 1) {
+	      expandedNodes[ii] = bitmap & 1 ? nodes[count++] : undefined;
+	    }
+	    expandedNodes[including] = node;
+	    return new HashArrayMapNode(ownerID, count + 1, expandedNodes);
+	  }
+
+	  function mergeIntoMapWith(map, merger, iterables) {
+	    var iters = [];
+	    for (var ii = 0; ii < iterables.length; ii++) {
+	      var value = iterables[ii];
+	      var iter = KeyedIterable(value);
+	      if (!isIterable(value)) {
+	        iter = iter.map(function(v ) {return fromJS(v)});
+	      }
+	      iters.push(iter);
+	    }
+	    return mergeIntoCollectionWith(map, merger, iters);
+	  }
+
+	  function deepMerger(existing, value, key) {
+	    return existing && existing.mergeDeep && isIterable(value) ?
+	      existing.mergeDeep(value) :
+	      is(existing, value) ? existing : value;
+	  }
+
+	  function deepMergerWith(merger) {
+	    return function(existing, value, key)  {
+	      if (existing && existing.mergeDeepWith && isIterable(value)) {
+	        return existing.mergeDeepWith(merger, value);
+	      }
+	      var nextValue = merger(existing, value, key);
+	      return is(existing, nextValue) ? existing : nextValue;
+	    };
+	  }
+
+	  function mergeIntoCollectionWith(collection, merger, iters) {
+	    iters = iters.filter(function(x ) {return x.size !== 0});
+	    if (iters.length === 0) {
+	      return collection;
+	    }
+	    if (collection.size === 0 && !collection.__ownerID && iters.length === 1) {
+	      return collection.constructor(iters[0]);
+	    }
+	    return collection.withMutations(function(collection ) {
+	      var mergeIntoMap = merger ?
+	        function(value, key)  {
+	          collection.update(key, NOT_SET, function(existing )
+	            {return existing === NOT_SET ? value : merger(existing, value, key)}
+	          );
+	        } :
+	        function(value, key)  {
+	          collection.set(key, value);
+	        }
+	      for (var ii = 0; ii < iters.length; ii++) {
+	        iters[ii].forEach(mergeIntoMap);
+	      }
+	    });
+	  }
+
+	  function updateInDeepMap(existing, keyPathIter, notSetValue, updater) {
+	    var isNotSet = existing === NOT_SET;
+	    var step = keyPathIter.next();
+	    if (step.done) {
+	      var existingValue = isNotSet ? notSetValue : existing;
+	      var newValue = updater(existingValue);
+	      return newValue === existingValue ? existing : newValue;
+	    }
+	    invariant(
+	      isNotSet || (existing && existing.set),
+	      'invalid keyPath'
+	    );
+	    var key = step.value;
+	    var nextExisting = isNotSet ? NOT_SET : existing.get(key, NOT_SET);
+	    var nextUpdated = updateInDeepMap(
+	      nextExisting,
+	      keyPathIter,
+	      notSetValue,
+	      updater
+	    );
+	    return nextUpdated === nextExisting ? existing :
+	      nextUpdated === NOT_SET ? existing.remove(key) :
+	      (isNotSet ? emptyMap() : existing).set(key, nextUpdated);
+	  }
+
+	  function popCount(x) {
+	    x = x - ((x >> 1) & 0x55555555);
+	    x = (x & 0x33333333) + ((x >> 2) & 0x33333333);
+	    x = (x + (x >> 4)) & 0x0f0f0f0f;
+	    x = x + (x >> 8);
+	    x = x + (x >> 16);
+	    return x & 0x7f;
+	  }
+
+	  function setIn(array, idx, val, canEdit) {
+	    var newArray = canEdit ? array : arrCopy(array);
+	    newArray[idx] = val;
+	    return newArray;
+	  }
+
+	  function spliceIn(array, idx, val, canEdit) {
+	    var newLen = array.length + 1;
+	    if (canEdit && idx + 1 === newLen) {
+	      array[idx] = val;
+	      return array;
+	    }
+	    var newArray = new Array(newLen);
+	    var after = 0;
+	    for (var ii = 0; ii < newLen; ii++) {
+	      if (ii === idx) {
+	        newArray[ii] = val;
+	        after = -1;
+	      } else {
+	        newArray[ii] = array[ii + after];
+	      }
+	    }
+	    return newArray;
+	  }
+
+	  function spliceOut(array, idx, canEdit) {
+	    var newLen = array.length - 1;
+	    if (canEdit && idx === newLen) {
+	      array.pop();
+	      return array;
+	    }
+	    var newArray = new Array(newLen);
+	    var after = 0;
+	    for (var ii = 0; ii < newLen; ii++) {
+	      if (ii === idx) {
+	        after = 1;
+	      }
+	      newArray[ii] = array[ii + after];
+	    }
+	    return newArray;
+	  }
+
+	  var MAX_ARRAY_MAP_SIZE = SIZE / 4;
+	  var MAX_BITMAP_INDEXED_SIZE = SIZE / 2;
+	  var MIN_HASH_ARRAY_MAP_SIZE = SIZE / 4;
+
+	  createClass(List, IndexedCollection);
+
+	    // @pragma Construction
+
+	    function List(value) {
+	      var empty = emptyList();
+	      if (value === null || value === undefined) {
+	        return empty;
+	      }
+	      if (isList(value)) {
+	        return value;
+	      }
+	      var iter = IndexedIterable(value);
+	      var size = iter.size;
+	      if (size === 0) {
+	        return empty;
+	      }
+	      assertNotInfinite(size);
+	      if (size > 0 && size < SIZE) {
+	        return makeList(0, size, SHIFT, null, new VNode(iter.toArray()));
+	      }
+	      return empty.withMutations(function(list ) {
+	        list.setSize(size);
+	        iter.forEach(function(v, i)  {return list.set(i, v)});
+	      });
+	    }
+
+	    List.of = function(/*...values*/) {
+	      return this(arguments);
+	    };
+
+	    List.prototype.toString = function() {
+	      return this.__toString('List [', ']');
+	    };
+
+	    // @pragma Access
+
+	    List.prototype.get = function(index, notSetValue) {
+	      index = wrapIndex(this, index);
+	      if (index >= 0 && index < this.size) {
+	        index += this._origin;
+	        var node = listNodeFor(this, index);
+	        return node && node.array[index & MASK];
+	      }
+	      return notSetValue;
+	    };
+
+	    // @pragma Modification
+
+	    List.prototype.set = function(index, value) {
+	      return updateList(this, index, value);
+	    };
+
+	    List.prototype.remove = function(index) {
+	      return !this.has(index) ? this :
+	        index === 0 ? this.shift() :
+	        index === this.size - 1 ? this.pop() :
+	        this.splice(index, 1);
+	    };
+
+	    List.prototype.insert = function(index, value) {
+	      return this.splice(index, 0, value);
+	    };
+
+	    List.prototype.clear = function() {
+	      if (this.size === 0) {
+	        return this;
+	      }
+	      if (this.__ownerID) {
+	        this.size = this._origin = this._capacity = 0;
+	        this._level = SHIFT;
+	        this._root = this._tail = null;
+	        this.__hash = undefined;
+	        this.__altered = true;
+	        return this;
+	      }
+	      return emptyList();
+	    };
+
+	    List.prototype.push = function(/*...values*/) {
+	      var values = arguments;
+	      var oldSize = this.size;
+	      return this.withMutations(function(list ) {
+	        setListBounds(list, 0, oldSize + values.length);
+	        for (var ii = 0; ii < values.length; ii++) {
+	          list.set(oldSize + ii, values[ii]);
+	        }
+	      });
+	    };
+
+	    List.prototype.pop = function() {
+	      return setListBounds(this, 0, -1);
+	    };
+
+	    List.prototype.unshift = function(/*...values*/) {
+	      var values = arguments;
+	      return this.withMutations(function(list ) {
+	        setListBounds(list, -values.length);
+	        for (var ii = 0; ii < values.length; ii++) {
+	          list.set(ii, values[ii]);
+	        }
+	      });
+	    };
+
+	    List.prototype.shift = function() {
+	      return setListBounds(this, 1);
+	    };
+
+	    // @pragma Composition
+
+	    List.prototype.merge = function(/*...iters*/) {
+	      return mergeIntoListWith(this, undefined, arguments);
+	    };
+
+	    List.prototype.mergeWith = function(merger) {var iters = SLICE$0.call(arguments, 1);
+	      return mergeIntoListWith(this, merger, iters);
+	    };
+
+	    List.prototype.mergeDeep = function(/*...iters*/) {
+	      return mergeIntoListWith(this, deepMerger, arguments);
+	    };
+
+	    List.prototype.mergeDeepWith = function(merger) {var iters = SLICE$0.call(arguments, 1);
+	      return mergeIntoListWith(this, deepMergerWith(merger), iters);
+	    };
+
+	    List.prototype.setSize = function(size) {
+	      return setListBounds(this, 0, size);
+	    };
+
+	    // @pragma Iteration
+
+	    List.prototype.slice = function(begin, end) {
+	      var size = this.size;
+	      if (wholeSlice(begin, end, size)) {
+	        return this;
+	      }
+	      return setListBounds(
+	        this,
+	        resolveBegin(begin, size),
+	        resolveEnd(end, size)
+	      );
+	    };
+
+	    List.prototype.__iterator = function(type, reverse) {
+	      var index = 0;
+	      var values = iterateList(this, reverse);
+	      return new Iterator(function()  {
+	        var value = values();
+	        return value === DONE ?
+	          iteratorDone() :
+	          iteratorValue(type, index++, value);
+	      });
+	    };
+
+	    List.prototype.__iterate = function(fn, reverse) {
+	      var index = 0;
+	      var values = iterateList(this, reverse);
+	      var value;
+	      while ((value = values()) !== DONE) {
+	        if (fn(value, index++, this) === false) {
+	          break;
+	        }
+	      }
+	      return index;
+	    };
+
+	    List.prototype.__ensureOwner = function(ownerID) {
+	      if (ownerID === this.__ownerID) {
+	        return this;
+	      }
+	      if (!ownerID) {
+	        this.__ownerID = ownerID;
+	        return this;
+	      }
+	      return makeList(this._origin, this._capacity, this._level, this._root, this._tail, ownerID, this.__hash);
+	    };
+
+
+	  function isList(maybeList) {
+	    return !!(maybeList && maybeList[IS_LIST_SENTINEL]);
+	  }
+
+	  List.isList = isList;
+
+	  var IS_LIST_SENTINEL = '@@__IMMUTABLE_LIST__@@';
+
+	  var ListPrototype = List.prototype;
+	  ListPrototype[IS_LIST_SENTINEL] = true;
+	  ListPrototype[DELETE] = ListPrototype.remove;
+	  ListPrototype.setIn = MapPrototype.setIn;
+	  ListPrototype.deleteIn =
+	  ListPrototype.removeIn = MapPrototype.removeIn;
+	  ListPrototype.update = MapPrototype.update;
+	  ListPrototype.updateIn = MapPrototype.updateIn;
+	  ListPrototype.mergeIn = MapPrototype.mergeIn;
+	  ListPrototype.mergeDeepIn = MapPrototype.mergeDeepIn;
+	  ListPrototype.withMutations = MapPrototype.withMutations;
+	  ListPrototype.asMutable = MapPrototype.asMutable;
+	  ListPrototype.asImmutable = MapPrototype.asImmutable;
+	  ListPrototype.wasAltered = MapPrototype.wasAltered;
+
+
+
+	    function VNode(array, ownerID) {
+	      this.array = array;
+	      this.ownerID = ownerID;
+	    }
+
+	    // TODO: seems like these methods are very similar
+
+	    VNode.prototype.removeBefore = function(ownerID, level, index) {
+	      if (index === level ? 1 << level : 0 || this.array.length === 0) {
+	        return this;
+	      }
+	      var originIndex = (index >>> level) & MASK;
+	      if (originIndex >= this.array.length) {
+	        return new VNode([], ownerID);
+	      }
+	      var removingFirst = originIndex === 0;
+	      var newChild;
+	      if (level > 0) {
+	        var oldChild = this.array[originIndex];
+	        newChild = oldChild && oldChild.removeBefore(ownerID, level - SHIFT, index);
+	        if (newChild === oldChild && removingFirst) {
+	          return this;
+	        }
+	      }
+	      if (removingFirst && !newChild) {
+	        return this;
+	      }
+	      var editable = editableVNode(this, ownerID);
+	      if (!removingFirst) {
+	        for (var ii = 0; ii < originIndex; ii++) {
+	          editable.array[ii] = undefined;
+	        }
+	      }
+	      if (newChild) {
+	        editable.array[originIndex] = newChild;
+	      }
+	      return editable;
+	    };
+
+	    VNode.prototype.removeAfter = function(ownerID, level, index) {
+	      if (index === (level ? 1 << level : 0) || this.array.length === 0) {
+	        return this;
+	      }
+	      var sizeIndex = ((index - 1) >>> level) & MASK;
+	      if (sizeIndex >= this.array.length) {
+	        return this;
+	      }
+
+	      var newChild;
+	      if (level > 0) {
+	        var oldChild = this.array[sizeIndex];
+	        newChild = oldChild && oldChild.removeAfter(ownerID, level - SHIFT, index);
+	        if (newChild === oldChild && sizeIndex === this.array.length - 1) {
+	          return this;
+	        }
+	      }
+
+	      var editable = editableVNode(this, ownerID);
+	      editable.array.splice(sizeIndex + 1);
+	      if (newChild) {
+	        editable.array[sizeIndex] = newChild;
+	      }
+	      return editable;
+	    };
+
+
+
+	  var DONE = {};
+
+	  function iterateList(list, reverse) {
+	    var left = list._origin;
+	    var right = list._capacity;
+	    var tailPos = getTailOffset(right);
+	    var tail = list._tail;
+
+	    return iterateNodeOrLeaf(list._root, list._level, 0);
+
+	    function iterateNodeOrLeaf(node, level, offset) {
+	      return level === 0 ?
+	        iterateLeaf(node, offset) :
+	        iterateNode(node, level, offset);
+	    }
+
+	    function iterateLeaf(node, offset) {
+	      var array = offset === tailPos ? tail && tail.array : node && node.array;
+	      var from = offset > left ? 0 : left - offset;
+	      var to = right - offset;
+	      if (to > SIZE) {
+	        to = SIZE;
+	      }
+	      return function()  {
+	        if (from === to) {
+	          return DONE;
+	        }
+	        var idx = reverse ? --to : from++;
+	        return array && array[idx];
+	      };
+	    }
+
+	    function iterateNode(node, level, offset) {
+	      var values;
+	      var array = node && node.array;
+	      var from = offset > left ? 0 : (left - offset) >> level;
+	      var to = ((right - offset) >> level) + 1;
+	      if (to > SIZE) {
+	        to = SIZE;
+	      }
+	      return function()  {
+	        do {
+	          if (values) {
+	            var value = values();
+	            if (value !== DONE) {
+	              return value;
+	            }
+	            values = null;
+	          }
+	          if (from === to) {
+	            return DONE;
+	          }
+	          var idx = reverse ? --to : from++;
+	          values = iterateNodeOrLeaf(
+	            array && array[idx], level - SHIFT, offset + (idx << level)
+	          );
+	        } while (true);
+	      };
+	    }
+	  }
+
+	  function makeList(origin, capacity, level, root, tail, ownerID, hash) {
+	    var list = Object.create(ListPrototype);
+	    list.size = capacity - origin;
+	    list._origin = origin;
+	    list._capacity = capacity;
+	    list._level = level;
+	    list._root = root;
+	    list._tail = tail;
+	    list.__ownerID = ownerID;
+	    list.__hash = hash;
+	    list.__altered = false;
+	    return list;
+	  }
+
+	  var EMPTY_LIST;
+	  function emptyList() {
+	    return EMPTY_LIST || (EMPTY_LIST = makeList(0, 0, SHIFT));
+	  }
+
+	  function updateList(list, index, value) {
+	    index = wrapIndex(list, index);
+
+	    if (index !== index) {
+	      return list;
+	    }
+
+	    if (index >= list.size || index < 0) {
+	      return list.withMutations(function(list ) {
+	        index < 0 ?
+	          setListBounds(list, index).set(0, value) :
+	          setListBounds(list, 0, index + 1).set(index, value)
+	      });
+	    }
+
+	    index += list._origin;
+
+	    var newTail = list._tail;
+	    var newRoot = list._root;
+	    var didAlter = MakeRef(DID_ALTER);
+	    if (index >= getTailOffset(list._capacity)) {
+	      newTail = updateVNode(newTail, list.__ownerID, 0, index, value, didAlter);
+	    } else {
+	      newRoot = updateVNode(newRoot, list.__ownerID, list._level, index, value, didAlter);
+	    }
+
+	    if (!didAlter.value) {
+	      return list;
+	    }
+
+	    if (list.__ownerID) {
+	      list._root = newRoot;
+	      list._tail = newTail;
+	      list.__hash = undefined;
+	      list.__altered = true;
+	      return list;
+	    }
+	    return makeList(list._origin, list._capacity, list._level, newRoot, newTail);
+	  }
+
+	  function updateVNode(node, ownerID, level, index, value, didAlter) {
+	    var idx = (index >>> level) & MASK;
+	    var nodeHas = node && idx < node.array.length;
+	    if (!nodeHas && value === undefined) {
+	      return node;
+	    }
+
+	    var newNode;
+
+	    if (level > 0) {
+	      var lowerNode = node && node.array[idx];
+	      var newLowerNode = updateVNode(lowerNode, ownerID, level - SHIFT, index, value, didAlter);
+	      if (newLowerNode === lowerNode) {
+	        return node;
+	      }
+	      newNode = editableVNode(node, ownerID);
+	      newNode.array[idx] = newLowerNode;
+	      return newNode;
+	    }
+
+	    if (nodeHas && node.array[idx] === value) {
+	      return node;
+	    }
+
+	    SetRef(didAlter);
+
+	    newNode = editableVNode(node, ownerID);
+	    if (value === undefined && idx === newNode.array.length - 1) {
+	      newNode.array.pop();
+	    } else {
+	      newNode.array[idx] = value;
+	    }
+	    return newNode;
+	  }
+
+	  function editableVNode(node, ownerID) {
+	    if (ownerID && node && ownerID === node.ownerID) {
+	      return node;
+	    }
+	    return new VNode(node ? node.array.slice() : [], ownerID);
+	  }
+
+	  function listNodeFor(list, rawIndex) {
+	    if (rawIndex >= getTailOffset(list._capacity)) {
+	      return list._tail;
+	    }
+	    if (rawIndex < 1 << (list._level + SHIFT)) {
+	      var node = list._root;
+	      var level = list._level;
+	      while (node && level > 0) {
+	        node = node.array[(rawIndex >>> level) & MASK];
+	        level -= SHIFT;
+	      }
+	      return node;
+	    }
+	  }
+
+	  function setListBounds(list, begin, end) {
+	    // Sanitize begin & end using this shorthand for ToInt32(argument)
+	    // http://www.ecma-international.org/ecma-262/6.0/#sec-toint32
+	    if (begin !== undefined) {
+	      begin = begin | 0;
+	    }
+	    if (end !== undefined) {
+	      end = end | 0;
+	    }
+	    var owner = list.__ownerID || new OwnerID();
+	    var oldOrigin = list._origin;
+	    var oldCapacity = list._capacity;
+	    var newOrigin = oldOrigin + begin;
+	    var newCapacity = end === undefined ? oldCapacity : end < 0 ? oldCapacity + end : oldOrigin + end;
+	    if (newOrigin === oldOrigin && newCapacity === oldCapacity) {
+	      return list;
+	    }
+
+	    // If it's going to end after it starts, it's empty.
+	    if (newOrigin >= newCapacity) {
+	      return list.clear();
+	    }
+
+	    var newLevel = list._level;
+	    var newRoot = list._root;
+
+	    // New origin might need creating a higher root.
+	    var offsetShift = 0;
+	    while (newOrigin + offsetShift < 0) {
+	      newRoot = new VNode(newRoot && newRoot.array.length ? [undefined, newRoot] : [], owner);
+	      newLevel += SHIFT;
+	      offsetShift += 1 << newLevel;
+	    }
+	    if (offsetShift) {
+	      newOrigin += offsetShift;
+	      oldOrigin += offsetShift;
+	      newCapacity += offsetShift;
+	      oldCapacity += offsetShift;
+	    }
+
+	    var oldTailOffset = getTailOffset(oldCapacity);
+	    var newTailOffset = getTailOffset(newCapacity);
+
+	    // New size might need creating a higher root.
+	    while (newTailOffset >= 1 << (newLevel + SHIFT)) {
+	      newRoot = new VNode(newRoot && newRoot.array.length ? [newRoot] : [], owner);
+	      newLevel += SHIFT;
+	    }
+
+	    // Locate or create the new tail.
+	    var oldTail = list._tail;
+	    var newTail = newTailOffset < oldTailOffset ?
+	      listNodeFor(list, newCapacity - 1) :
+	      newTailOffset > oldTailOffset ? new VNode([], owner) : oldTail;
+
+	    // Merge Tail into tree.
+	    if (oldTail && newTailOffset > oldTailOffset && newOrigin < oldCapacity && oldTail.array.length) {
+	      newRoot = editableVNode(newRoot, owner);
+	      var node = newRoot;
+	      for (var level = newLevel; level > SHIFT; level -= SHIFT) {
+	        var idx = (oldTailOffset >>> level) & MASK;
+	        node = node.array[idx] = editableVNode(node.array[idx], owner);
+	      }
+	      node.array[(oldTailOffset >>> SHIFT) & MASK] = oldTail;
+	    }
+
+	    // If the size has been reduced, there's a chance the tail needs to be trimmed.
+	    if (newCapacity < oldCapacity) {
+	      newTail = newTail && newTail.removeAfter(owner, 0, newCapacity);
+	    }
+
+	    // If the new origin is within the tail, then we do not need a root.
+	    if (newOrigin >= newTailOffset) {
+	      newOrigin -= newTailOffset;
+	      newCapacity -= newTailOffset;
+	      newLevel = SHIFT;
+	      newRoot = null;
+	      newTail = newTail && newTail.removeBefore(owner, 0, newOrigin);
+
+	    // Otherwise, if the root has been trimmed, garbage collect.
+	    } else if (newOrigin > oldOrigin || newTailOffset < oldTailOffset) {
+	      offsetShift = 0;
+
+	      // Identify the new top root node of the subtree of the old root.
+	      while (newRoot) {
+	        var beginIndex = (newOrigin >>> newLevel) & MASK;
+	        if (beginIndex !== (newTailOffset >>> newLevel) & MASK) {
+	          break;
+	        }
+	        if (beginIndex) {
+	          offsetShift += (1 << newLevel) * beginIndex;
+	        }
+	        newLevel -= SHIFT;
+	        newRoot = newRoot.array[beginIndex];
+	      }
+
+	      // Trim the new sides of the new root.
+	      if (newRoot && newOrigin > oldOrigin) {
+	        newRoot = newRoot.removeBefore(owner, newLevel, newOrigin - offsetShift);
+	      }
+	      if (newRoot && newTailOffset < oldTailOffset) {
+	        newRoot = newRoot.removeAfter(owner, newLevel, newTailOffset - offsetShift);
+	      }
+	      if (offsetShift) {
+	        newOrigin -= offsetShift;
+	        newCapacity -= offsetShift;
+	      }
+	    }
+
+	    if (list.__ownerID) {
+	      list.size = newCapacity - newOrigin;
+	      list._origin = newOrigin;
+	      list._capacity = newCapacity;
+	      list._level = newLevel;
+	      list._root = newRoot;
+	      list._tail = newTail;
+	      list.__hash = undefined;
+	      list.__altered = true;
+	      return list;
+	    }
+	    return makeList(newOrigin, newCapacity, newLevel, newRoot, newTail);
+	  }
+
+	  function mergeIntoListWith(list, merger, iterables) {
+	    var iters = [];
+	    var maxSize = 0;
+	    for (var ii = 0; ii < iterables.length; ii++) {
+	      var value = iterables[ii];
+	      var iter = IndexedIterable(value);
+	      if (iter.size > maxSize) {
+	        maxSize = iter.size;
+	      }
+	      if (!isIterable(value)) {
+	        iter = iter.map(function(v ) {return fromJS(v)});
+	      }
+	      iters.push(iter);
+	    }
+	    if (maxSize > list.size) {
+	      list = list.setSize(maxSize);
+	    }
+	    return mergeIntoCollectionWith(list, merger, iters);
+	  }
+
+	  function getTailOffset(size) {
+	    return size < SIZE ? 0 : (((size - 1) >>> SHIFT) << SHIFT);
+	  }
+
+	  createClass(OrderedMap, Map);
+
+	    // @pragma Construction
+
+	    function OrderedMap(value) {
+	      return value === null || value === undefined ? emptyOrderedMap() :
+	        isOrderedMap(value) ? value :
+	        emptyOrderedMap().withMutations(function(map ) {
+	          var iter = KeyedIterable(value);
+	          assertNotInfinite(iter.size);
+	          iter.forEach(function(v, k)  {return map.set(k, v)});
+	        });
+	    }
+
+	    OrderedMap.of = function(/*...values*/) {
+	      return this(arguments);
+	    };
+
+	    OrderedMap.prototype.toString = function() {
+	      return this.__toString('OrderedMap {', '}');
+	    };
+
+	    // @pragma Access
+
+	    OrderedMap.prototype.get = function(k, notSetValue) {
+	      var index = this._map.get(k);
+	      return index !== undefined ? this._list.get(index)[1] : notSetValue;
+	    };
+
+	    // @pragma Modification
+
+	    OrderedMap.prototype.clear = function() {
+	      if (this.size === 0) {
+	        return this;
+	      }
+	      if (this.__ownerID) {
+	        this.size = 0;
+	        this._map.clear();
+	        this._list.clear();
+	        return this;
+	      }
+	      return emptyOrderedMap();
+	    };
+
+	    OrderedMap.prototype.set = function(k, v) {
+	      return updateOrderedMap(this, k, v);
+	    };
+
+	    OrderedMap.prototype.remove = function(k) {
+	      return updateOrderedMap(this, k, NOT_SET);
+	    };
+
+	    OrderedMap.prototype.wasAltered = function() {
+	      return this._map.wasAltered() || this._list.wasAltered();
+	    };
+
+	    OrderedMap.prototype.__iterate = function(fn, reverse) {var this$0 = this;
+	      return this._list.__iterate(
+	        function(entry ) {return entry && fn(entry[1], entry[0], this$0)},
+	        reverse
+	      );
+	    };
+
+	    OrderedMap.prototype.__iterator = function(type, reverse) {
+	      return this._list.fromEntrySeq().__iterator(type, reverse);
+	    };
+
+	    OrderedMap.prototype.__ensureOwner = function(ownerID) {
+	      if (ownerID === this.__ownerID) {
+	        return this;
+	      }
+	      var newMap = this._map.__ensureOwner(ownerID);
+	      var newList = this._list.__ensureOwner(ownerID);
+	      if (!ownerID) {
+	        this.__ownerID = ownerID;
+	        this._map = newMap;
+	        this._list = newList;
+	        return this;
+	      }
+	      return makeOrderedMap(newMap, newList, ownerID, this.__hash);
+	    };
+
+
+	  function isOrderedMap(maybeOrderedMap) {
+	    return isMap(maybeOrderedMap) && isOrdered(maybeOrderedMap);
+	  }
+
+	  OrderedMap.isOrderedMap = isOrderedMap;
+
+	  OrderedMap.prototype[IS_ORDERED_SENTINEL] = true;
+	  OrderedMap.prototype[DELETE] = OrderedMap.prototype.remove;
+
+
+
+	  function makeOrderedMap(map, list, ownerID, hash) {
+	    var omap = Object.create(OrderedMap.prototype);
+	    omap.size = map ? map.size : 0;
+	    omap._map = map;
+	    omap._list = list;
+	    omap.__ownerID = ownerID;
+	    omap.__hash = hash;
+	    return omap;
+	  }
+
+	  var EMPTY_ORDERED_MAP;
+	  function emptyOrderedMap() {
+	    return EMPTY_ORDERED_MAP || (EMPTY_ORDERED_MAP = makeOrderedMap(emptyMap(), emptyList()));
+	  }
+
+	  function updateOrderedMap(omap, k, v) {
+	    var map = omap._map;
+	    var list = omap._list;
+	    var i = map.get(k);
+	    var has = i !== undefined;
+	    var newMap;
+	    var newList;
+	    if (v === NOT_SET) { // removed
+	      if (!has) {
+	        return omap;
+	      }
+	      if (list.size >= SIZE && list.size >= map.size * 2) {
+	        newList = list.filter(function(entry, idx)  {return entry !== undefined && i !== idx});
+	        newMap = newList.toKeyedSeq().map(function(entry ) {return entry[0]}).flip().toMap();
+	        if (omap.__ownerID) {
+	          newMap.__ownerID = newList.__ownerID = omap.__ownerID;
+	        }
+	      } else {
+	        newMap = map.remove(k);
+	        newList = i === list.size - 1 ? list.pop() : list.set(i, undefined);
+	      }
+	    } else {
+	      if (has) {
+	        if (v === list.get(i)[1]) {
+	          return omap;
+	        }
+	        newMap = map;
+	        newList = list.set(i, [k, v]);
+	      } else {
+	        newMap = map.set(k, list.size);
+	        newList = list.set(list.size, [k, v]);
+	      }
+	    }
+	    if (omap.__ownerID) {
+	      omap.size = newMap.size;
+	      omap._map = newMap;
+	      omap._list = newList;
+	      omap.__hash = undefined;
+	      return omap;
+	    }
+	    return makeOrderedMap(newMap, newList);
+	  }
+
+	  createClass(ToKeyedSequence, KeyedSeq);
+	    function ToKeyedSequence(indexed, useKeys) {
+	      this._iter = indexed;
+	      this._useKeys = useKeys;
+	      this.size = indexed.size;
+	    }
+
+	    ToKeyedSequence.prototype.get = function(key, notSetValue) {
+	      return this._iter.get(key, notSetValue);
+	    };
+
+	    ToKeyedSequence.prototype.has = function(key) {
+	      return this._iter.has(key);
+	    };
+
+	    ToKeyedSequence.prototype.valueSeq = function() {
+	      return this._iter.valueSeq();
+	    };
+
+	    ToKeyedSequence.prototype.reverse = function() {var this$0 = this;
+	      var reversedSequence = reverseFactory(this, true);
+	      if (!this._useKeys) {
+	        reversedSequence.valueSeq = function()  {return this$0._iter.toSeq().reverse()};
+	      }
+	      return reversedSequence;
+	    };
+
+	    ToKeyedSequence.prototype.map = function(mapper, context) {var this$0 = this;
+	      var mappedSequence = mapFactory(this, mapper, context);
+	      if (!this._useKeys) {
+	        mappedSequence.valueSeq = function()  {return this$0._iter.toSeq().map(mapper, context)};
+	      }
+	      return mappedSequence;
+	    };
+
+	    ToKeyedSequence.prototype.__iterate = function(fn, reverse) {var this$0 = this;
+	      var ii;
+	      return this._iter.__iterate(
+	        this._useKeys ?
+	          function(v, k)  {return fn(v, k, this$0)} :
+	          ((ii = reverse ? resolveSize(this) : 0),
+	            function(v ) {return fn(v, reverse ? --ii : ii++, this$0)}),
+	        reverse
+	      );
+	    };
+
+	    ToKeyedSequence.prototype.__iterator = function(type, reverse) {
+	      if (this._useKeys) {
+	        return this._iter.__iterator(type, reverse);
+	      }
+	      var iterator = this._iter.__iterator(ITERATE_VALUES, reverse);
+	      var ii = reverse ? resolveSize(this) : 0;
+	      return new Iterator(function()  {
+	        var step = iterator.next();
+	        return step.done ? step :
+	          iteratorValue(type, reverse ? --ii : ii++, step.value, step);
+	      });
+	    };
+
+	  ToKeyedSequence.prototype[IS_ORDERED_SENTINEL] = true;
+
+
+	  createClass(ToIndexedSequence, IndexedSeq);
+	    function ToIndexedSequence(iter) {
+	      this._iter = iter;
+	      this.size = iter.size;
+	    }
+
+	    ToIndexedSequence.prototype.includes = function(value) {
+	      return this._iter.includes(value);
+	    };
+
+	    ToIndexedSequence.prototype.__iterate = function(fn, reverse) {var this$0 = this;
+	      var iterations = 0;
+	      return this._iter.__iterate(function(v ) {return fn(v, iterations++, this$0)}, reverse);
+	    };
+
+	    ToIndexedSequence.prototype.__iterator = function(type, reverse) {
+	      var iterator = this._iter.__iterator(ITERATE_VALUES, reverse);
+	      var iterations = 0;
+	      return new Iterator(function()  {
+	        var step = iterator.next();
+	        return step.done ? step :
+	          iteratorValue(type, iterations++, step.value, step)
+	      });
+	    };
+
+
+
+	  createClass(ToSetSequence, SetSeq);
+	    function ToSetSequence(iter) {
+	      this._iter = iter;
+	      this.size = iter.size;
+	    }
+
+	    ToSetSequence.prototype.has = function(key) {
+	      return this._iter.includes(key);
+	    };
+
+	    ToSetSequence.prototype.__iterate = function(fn, reverse) {var this$0 = this;
+	      return this._iter.__iterate(function(v ) {return fn(v, v, this$0)}, reverse);
+	    };
+
+	    ToSetSequence.prototype.__iterator = function(type, reverse) {
+	      var iterator = this._iter.__iterator(ITERATE_VALUES, reverse);
+	      return new Iterator(function()  {
+	        var step = iterator.next();
+	        return step.done ? step :
+	          iteratorValue(type, step.value, step.value, step);
+	      });
+	    };
+
+
+
+	  createClass(FromEntriesSequence, KeyedSeq);
+	    function FromEntriesSequence(entries) {
+	      this._iter = entries;
+	      this.size = entries.size;
+	    }
+
+	    FromEntriesSequence.prototype.entrySeq = function() {
+	      return this._iter.toSeq();
+	    };
+
+	    FromEntriesSequence.prototype.__iterate = function(fn, reverse) {var this$0 = this;
+	      return this._iter.__iterate(function(entry ) {
+	        // Check if entry exists first so array access doesn't throw for holes
+	        // in the parent iteration.
+	        if (entry) {
+	          validateEntry(entry);
+	          var indexedIterable = isIterable(entry);
+	          return fn(
+	            indexedIterable ? entry.get(1) : entry[1],
+	            indexedIterable ? entry.get(0) : entry[0],
+	            this$0
+	          );
+	        }
+	      }, reverse);
+	    };
+
+	    FromEntriesSequence.prototype.__iterator = function(type, reverse) {
+	      var iterator = this._iter.__iterator(ITERATE_VALUES, reverse);
+	      return new Iterator(function()  {
+	        while (true) {
+	          var step = iterator.next();
+	          if (step.done) {
+	            return step;
+	          }
+	          var entry = step.value;
+	          // Check if entry exists first so array access doesn't throw for holes
+	          // in the parent iteration.
+	          if (entry) {
+	            validateEntry(entry);
+	            var indexedIterable = isIterable(entry);
+	            return iteratorValue(
+	              type,
+	              indexedIterable ? entry.get(0) : entry[0],
+	              indexedIterable ? entry.get(1) : entry[1],
+	              step
+	            );
+	          }
+	        }
+	      });
+	    };
+
+
+	  ToIndexedSequence.prototype.cacheResult =
+	  ToKeyedSequence.prototype.cacheResult =
+	  ToSetSequence.prototype.cacheResult =
+	  FromEntriesSequence.prototype.cacheResult =
+	    cacheResultThrough;
+
+
+	  function flipFactory(iterable) {
+	    var flipSequence = makeSequence(iterable);
+	    flipSequence._iter = iterable;
+	    flipSequence.size = iterable.size;
+	    flipSequence.flip = function()  {return iterable};
+	    flipSequence.reverse = function () {
+	      var reversedSequence = iterable.reverse.apply(this); // super.reverse()
+	      reversedSequence.flip = function()  {return iterable.reverse()};
+	      return reversedSequence;
+	    };
+	    flipSequence.has = function(key ) {return iterable.includes(key)};
+	    flipSequence.includes = function(key ) {return iterable.has(key)};
+	    flipSequence.cacheResult = cacheResultThrough;
+	    flipSequence.__iterateUncached = function (fn, reverse) {var this$0 = this;
+	      return iterable.__iterate(function(v, k)  {return fn(k, v, this$0) !== false}, reverse);
+	    }
+	    flipSequence.__iteratorUncached = function(type, reverse) {
+	      if (type === ITERATE_ENTRIES) {
+	        var iterator = iterable.__iterator(type, reverse);
+	        return new Iterator(function()  {
+	          var step = iterator.next();
+	          if (!step.done) {
+	            var k = step.value[0];
+	            step.value[0] = step.value[1];
+	            step.value[1] = k;
+	          }
+	          return step;
+	        });
+	      }
+	      return iterable.__iterator(
+	        type === ITERATE_VALUES ? ITERATE_KEYS : ITERATE_VALUES,
+	        reverse
+	      );
+	    }
+	    return flipSequence;
+	  }
+
+
+	  function mapFactory(iterable, mapper, context) {
+	    var mappedSequence = makeSequence(iterable);
+	    mappedSequence.size = iterable.size;
+	    mappedSequence.has = function(key ) {return iterable.has(key)};
+	    mappedSequence.get = function(key, notSetValue)  {
+	      var v = iterable.get(key, NOT_SET);
+	      return v === NOT_SET ?
+	        notSetValue :
+	        mapper.call(context, v, key, iterable);
+	    };
+	    mappedSequence.__iterateUncached = function (fn, reverse) {var this$0 = this;
+	      return iterable.__iterate(
+	        function(v, k, c)  {return fn(mapper.call(context, v, k, c), k, this$0) !== false},
+	        reverse
+	      );
+	    }
+	    mappedSequence.__iteratorUncached = function (type, reverse) {
+	      var iterator = iterable.__iterator(ITERATE_ENTRIES, reverse);
+	      return new Iterator(function()  {
+	        var step = iterator.next();
+	        if (step.done) {
+	          return step;
+	        }
+	        var entry = step.value;
+	        var key = entry[0];
+	        return iteratorValue(
+	          type,
+	          key,
+	          mapper.call(context, entry[1], key, iterable),
+	          step
+	        );
+	      });
+	    }
+	    return mappedSequence;
+	  }
+
+
+	  function reverseFactory(iterable, useKeys) {
+	    var reversedSequence = makeSequence(iterable);
+	    reversedSequence._iter = iterable;
+	    reversedSequence.size = iterable.size;
+	    reversedSequence.reverse = function()  {return iterable};
+	    if (iterable.flip) {
+	      reversedSequence.flip = function () {
+	        var flipSequence = flipFactory(iterable);
+	        flipSequence.reverse = function()  {return iterable.flip()};
+	        return flipSequence;
+	      };
+	    }
+	    reversedSequence.get = function(key, notSetValue) 
+	      {return iterable.get(useKeys ? key : -1 - key, notSetValue)};
+	    reversedSequence.has = function(key )
+	      {return iterable.has(useKeys ? key : -1 - key)};
+	    reversedSequence.includes = function(value ) {return iterable.includes(value)};
+	    reversedSequence.cacheResult = cacheResultThrough;
+	    reversedSequence.__iterate = function (fn, reverse) {var this$0 = this;
+	      return iterable.__iterate(function(v, k)  {return fn(v, k, this$0)}, !reverse);
+	    };
+	    reversedSequence.__iterator =
+	      function(type, reverse)  {return iterable.__iterator(type, !reverse)};
+	    return reversedSequence;
+	  }
+
+
+	  function filterFactory(iterable, predicate, context, useKeys) {
+	    var filterSequence = makeSequence(iterable);
+	    if (useKeys) {
+	      filterSequence.has = function(key ) {
+	        var v = iterable.get(key, NOT_SET);
+	        return v !== NOT_SET && !!predicate.call(context, v, key, iterable);
+	      };
+	      filterSequence.get = function(key, notSetValue)  {
+	        var v = iterable.get(key, NOT_SET);
+	        return v !== NOT_SET && predicate.call(context, v, key, iterable) ?
+	          v : notSetValue;
+	      };
+	    }
+	    filterSequence.__iterateUncached = function (fn, reverse) {var this$0 = this;
+	      var iterations = 0;
+	      iterable.__iterate(function(v, k, c)  {
+	        if (predicate.call(context, v, k, c)) {
+	          iterations++;
+	          return fn(v, useKeys ? k : iterations - 1, this$0);
+	        }
+	      }, reverse);
+	      return iterations;
+	    };
+	    filterSequence.__iteratorUncached = function (type, reverse) {
+	      var iterator = iterable.__iterator(ITERATE_ENTRIES, reverse);
+	      var iterations = 0;
+	      return new Iterator(function()  {
+	        while (true) {
+	          var step = iterator.next();
+	          if (step.done) {
+	            return step;
+	          }
+	          var entry = step.value;
+	          var key = entry[0];
+	          var value = entry[1];
+	          if (predicate.call(context, value, key, iterable)) {
+	            return iteratorValue(type, useKeys ? key : iterations++, value, step);
+	          }
+	        }
+	      });
+	    }
+	    return filterSequence;
+	  }
+
+
+	  function countByFactory(iterable, grouper, context) {
+	    var groups = Map().asMutable();
+	    iterable.__iterate(function(v, k)  {
+	      groups.update(
+	        grouper.call(context, v, k, iterable),
+	        0,
+	        function(a ) {return a + 1}
+	      );
+	    });
+	    return groups.asImmutable();
+	  }
+
+
+	  function groupByFactory(iterable, grouper, context) {
+	    var isKeyedIter = isKeyed(iterable);
+	    var groups = (isOrdered(iterable) ? OrderedMap() : Map()).asMutable();
+	    iterable.__iterate(function(v, k)  {
+	      groups.update(
+	        grouper.call(context, v, k, iterable),
+	        function(a ) {return (a = a || [], a.push(isKeyedIter ? [k, v] : v), a)}
+	      );
+	    });
+	    var coerce = iterableClass(iterable);
+	    return groups.map(function(arr ) {return reify(iterable, coerce(arr))});
+	  }
+
+
+	  function sliceFactory(iterable, begin, end, useKeys) {
+	    var originalSize = iterable.size;
+
+	    // Sanitize begin & end using this shorthand for ToInt32(argument)
+	    // http://www.ecma-international.org/ecma-262/6.0/#sec-toint32
+	    if (begin !== undefined) {
+	      begin = begin | 0;
+	    }
+	    if (end !== undefined) {
+	      if (end === Infinity) {
+	        end = originalSize;
+	      } else {
+	        end = end | 0;
+	      }
+	    }
+
+	    if (wholeSlice(begin, end, originalSize)) {
+	      return iterable;
+	    }
+
+	    var resolvedBegin = resolveBegin(begin, originalSize);
+	    var resolvedEnd = resolveEnd(end, originalSize);
+
+	    // begin or end will be NaN if they were provided as negative numbers and
+	    // this iterable's size is unknown. In that case, cache first so there is
+	    // a known size and these do not resolve to NaN.
+	    if (resolvedBegin !== resolvedBegin || resolvedEnd !== resolvedEnd) {
+	      return sliceFactory(iterable.toSeq().cacheResult(), begin, end, useKeys);
+	    }
+
+	    // Note: resolvedEnd is undefined when the original sequence's length is
+	    // unknown and this slice did not supply an end and should contain all
+	    // elements after resolvedBegin.
+	    // In that case, resolvedSize will be NaN and sliceSize will remain undefined.
+	    var resolvedSize = resolvedEnd - resolvedBegin;
+	    var sliceSize;
+	    if (resolvedSize === resolvedSize) {
+	      sliceSize = resolvedSize < 0 ? 0 : resolvedSize;
+	    }
+
+	    var sliceSeq = makeSequence(iterable);
+
+	    // If iterable.size is undefined, the size of the realized sliceSeq is
+	    // unknown at this point unless the number of items to slice is 0
+	    sliceSeq.size = sliceSize === 0 ? sliceSize : iterable.size && sliceSize || undefined;
+
+	    if (!useKeys && isSeq(iterable) && sliceSize >= 0) {
+	      sliceSeq.get = function (index, notSetValue) {
+	        index = wrapIndex(this, index);
+	        return index >= 0 && index < sliceSize ?
+	          iterable.get(index + resolvedBegin, notSetValue) :
+	          notSetValue;
+	      }
+	    }
+
+	    sliceSeq.__iterateUncached = function(fn, reverse) {var this$0 = this;
+	      if (sliceSize === 0) {
+	        return 0;
+	      }
+	      if (reverse) {
+	        return this.cacheResult().__iterate(fn, reverse);
+	      }
+	      var skipped = 0;
+	      var isSkipping = true;
+	      var iterations = 0;
+	      iterable.__iterate(function(v, k)  {
+	        if (!(isSkipping && (isSkipping = skipped++ < resolvedBegin))) {
+	          iterations++;
+	          return fn(v, useKeys ? k : iterations - 1, this$0) !== false &&
+	                 iterations !== sliceSize;
+	        }
+	      });
+	      return iterations;
+	    };
+
+	    sliceSeq.__iteratorUncached = function(type, reverse) {
+	      if (sliceSize !== 0 && reverse) {
+	        return this.cacheResult().__iterator(type, reverse);
+	      }
+	      // Don't bother instantiating parent iterator if taking 0.
+	      var iterator = sliceSize !== 0 && iterable.__iterator(type, reverse);
+	      var skipped = 0;
+	      var iterations = 0;
+	      return new Iterator(function()  {
+	        while (skipped++ < resolvedBegin) {
+	          iterator.next();
+	        }
+	        if (++iterations > sliceSize) {
+	          return iteratorDone();
+	        }
+	        var step = iterator.next();
+	        if (useKeys || type === ITERATE_VALUES) {
+	          return step;
+	        } else if (type === ITERATE_KEYS) {
+	          return iteratorValue(type, iterations - 1, undefined, step);
+	        } else {
+	          return iteratorValue(type, iterations - 1, step.value[1], step);
+	        }
+	      });
+	    }
+
+	    return sliceSeq;
+	  }
+
+
+	  function takeWhileFactory(iterable, predicate, context) {
+	    var takeSequence = makeSequence(iterable);
+	    takeSequence.__iterateUncached = function(fn, reverse) {var this$0 = this;
+	      if (reverse) {
+	        return this.cacheResult().__iterate(fn, reverse);
+	      }
+	      var iterations = 0;
+	      iterable.__iterate(function(v, k, c) 
+	        {return predicate.call(context, v, k, c) && ++iterations && fn(v, k, this$0)}
+	      );
+	      return iterations;
+	    };
+	    takeSequence.__iteratorUncached = function(type, reverse) {var this$0 = this;
+	      if (reverse) {
+	        return this.cacheResult().__iterator(type, reverse);
+	      }
+	      var iterator = iterable.__iterator(ITERATE_ENTRIES, reverse);
+	      var iterating = true;
+	      return new Iterator(function()  {
+	        if (!iterating) {
+	          return iteratorDone();
+	        }
+	        var step = iterator.next();
+	        if (step.done) {
+	          return step;
+	        }
+	        var entry = step.value;
+	        var k = entry[0];
+	        var v = entry[1];
+	        if (!predicate.call(context, v, k, this$0)) {
+	          iterating = false;
+	          return iteratorDone();
+	        }
+	        return type === ITERATE_ENTRIES ? step :
+	          iteratorValue(type, k, v, step);
+	      });
+	    };
+	    return takeSequence;
+	  }
+
+
+	  function skipWhileFactory(iterable, predicate, context, useKeys) {
+	    var skipSequence = makeSequence(iterable);
+	    skipSequence.__iterateUncached = function (fn, reverse) {var this$0 = this;
+	      if (reverse) {
+	        return this.cacheResult().__iterate(fn, reverse);
+	      }
+	      var isSkipping = true;
+	      var iterations = 0;
+	      iterable.__iterate(function(v, k, c)  {
+	        if (!(isSkipping && (isSkipping = predicate.call(context, v, k, c)))) {
+	          iterations++;
+	          return fn(v, useKeys ? k : iterations - 1, this$0);
+	        }
+	      });
+	      return iterations;
+	    };
+	    skipSequence.__iteratorUncached = function(type, reverse) {var this$0 = this;
+	      if (reverse) {
+	        return this.cacheResult().__iterator(type, reverse);
+	      }
+	      var iterator = iterable.__iterator(ITERATE_ENTRIES, reverse);
+	      var skipping = true;
+	      var iterations = 0;
+	      return new Iterator(function()  {
+	        var step, k, v;
+	        do {
+	          step = iterator.next();
+	          if (step.done) {
+	            if (useKeys || type === ITERATE_VALUES) {
+	              return step;
+	            } else if (type === ITERATE_KEYS) {
+	              return iteratorValue(type, iterations++, undefined, step);
+	            } else {
+	              return iteratorValue(type, iterations++, step.value[1], step);
+	            }
+	          }
+	          var entry = step.value;
+	          k = entry[0];
+	          v = entry[1];
+	          skipping && (skipping = predicate.call(context, v, k, this$0));
+	        } while (skipping);
+	        return type === ITERATE_ENTRIES ? step :
+	          iteratorValue(type, k, v, step);
+	      });
+	    };
+	    return skipSequence;
+	  }
+
+
+	  function concatFactory(iterable, values) {
+	    var isKeyedIterable = isKeyed(iterable);
+	    var iters = [iterable].concat(values).map(function(v ) {
+	      if (!isIterable(v)) {
+	        v = isKeyedIterable ?
+	          keyedSeqFromValue(v) :
+	          indexedSeqFromValue(Array.isArray(v) ? v : [v]);
+	      } else if (isKeyedIterable) {
+	        v = KeyedIterable(v);
+	      }
+	      return v;
+	    }).filter(function(v ) {return v.size !== 0});
+
+	    if (iters.length === 0) {
+	      return iterable;
+	    }
+
+	    if (iters.length === 1) {
+	      var singleton = iters[0];
+	      if (singleton === iterable ||
+	          isKeyedIterable && isKeyed(singleton) ||
+	          isIndexed(iterable) && isIndexed(singleton)) {
+	        return singleton;
+	      }
+	    }
+
+	    var concatSeq = new ArraySeq(iters);
+	    if (isKeyedIterable) {
+	      concatSeq = concatSeq.toKeyedSeq();
+	    } else if (!isIndexed(iterable)) {
+	      concatSeq = concatSeq.toSetSeq();
+	    }
+	    concatSeq = concatSeq.flatten(true);
+	    concatSeq.size = iters.reduce(
+	      function(sum, seq)  {
+	        if (sum !== undefined) {
+	          var size = seq.size;
+	          if (size !== undefined) {
+	            return sum + size;
+	          }
+	        }
+	      },
+	      0
+	    );
+	    return concatSeq;
+	  }
+
+
+	  function flattenFactory(iterable, depth, useKeys) {
+	    var flatSequence = makeSequence(iterable);
+	    flatSequence.__iterateUncached = function(fn, reverse) {
+	      var iterations = 0;
+	      var stopped = false;
+	      function flatDeep(iter, currentDepth) {var this$0 = this;
+	        iter.__iterate(function(v, k)  {
+	          if ((!depth || currentDepth < depth) && isIterable(v)) {
+	            flatDeep(v, currentDepth + 1);
+	          } else if (fn(v, useKeys ? k : iterations++, this$0) === false) {
+	            stopped = true;
+	          }
+	          return !stopped;
+	        }, reverse);
+	      }
+	      flatDeep(iterable, 0);
+	      return iterations;
+	    }
+	    flatSequence.__iteratorUncached = function(type, reverse) {
+	      var iterator = iterable.__iterator(type, reverse);
+	      var stack = [];
+	      var iterations = 0;
+	      return new Iterator(function()  {
+	        while (iterator) {
+	          var step = iterator.next();
+	          if (step.done !== false) {
+	            iterator = stack.pop();
+	            continue;
+	          }
+	          var v = step.value;
+	          if (type === ITERATE_ENTRIES) {
+	            v = v[1];
+	          }
+	          if ((!depth || stack.length < depth) && isIterable(v)) {
+	            stack.push(iterator);
+	            iterator = v.__iterator(type, reverse);
+	          } else {
+	            return useKeys ? step : iteratorValue(type, iterations++, v, step);
+	          }
+	        }
+	        return iteratorDone();
+	      });
+	    }
+	    return flatSequence;
+	  }
+
+
+	  function flatMapFactory(iterable, mapper, context) {
+	    var coerce = iterableClass(iterable);
+	    return iterable.toSeq().map(
+	      function(v, k)  {return coerce(mapper.call(context, v, k, iterable))}
+	    ).flatten(true);
+	  }
+
+
+	  function interposeFactory(iterable, separator) {
+	    var interposedSequence = makeSequence(iterable);
+	    interposedSequence.size = iterable.size && iterable.size * 2 -1;
+	    interposedSequence.__iterateUncached = function(fn, reverse) {var this$0 = this;
+	      var iterations = 0;
+	      iterable.__iterate(function(v, k) 
+	        {return (!iterations || fn(separator, iterations++, this$0) !== false) &&
+	        fn(v, iterations++, this$0) !== false},
+	        reverse
+	      );
+	      return iterations;
+	    };
+	    interposedSequence.__iteratorUncached = function(type, reverse) {
+	      var iterator = iterable.__iterator(ITERATE_VALUES, reverse);
+	      var iterations = 0;
+	      var step;
+	      return new Iterator(function()  {
+	        if (!step || iterations % 2) {
+	          step = iterator.next();
+	          if (step.done) {
+	            return step;
+	          }
+	        }
+	        return iterations % 2 ?
+	          iteratorValue(type, iterations++, separator) :
+	          iteratorValue(type, iterations++, step.value, step);
+	      });
+	    };
+	    return interposedSequence;
+	  }
+
+
+	  function sortFactory(iterable, comparator, mapper) {
+	    if (!comparator) {
+	      comparator = defaultComparator;
+	    }
+	    var isKeyedIterable = isKeyed(iterable);
+	    var index = 0;
+	    var entries = iterable.toSeq().map(
+	      function(v, k)  {return [k, v, index++, mapper ? mapper(v, k, iterable) : v]}
+	    ).toArray();
+	    entries.sort(function(a, b)  {return comparator(a[3], b[3]) || a[2] - b[2]}).forEach(
+	      isKeyedIterable ?
+	      function(v, i)  { entries[i].length = 2; } :
+	      function(v, i)  { entries[i] = v[1]; }
+	    );
+	    return isKeyedIterable ? KeyedSeq(entries) :
+	      isIndexed(iterable) ? IndexedSeq(entries) :
+	      SetSeq(entries);
+	  }
+
+
+	  function maxFactory(iterable, comparator, mapper) {
+	    if (!comparator) {
+	      comparator = defaultComparator;
+	    }
+	    if (mapper) {
+	      var entry = iterable.toSeq()
+	        .map(function(v, k)  {return [v, mapper(v, k, iterable)]})
+	        .reduce(function(a, b)  {return maxCompare(comparator, a[1], b[1]) ? b : a});
+	      return entry && entry[0];
+	    } else {
+	      return iterable.reduce(function(a, b)  {return maxCompare(comparator, a, b) ? b : a});
+	    }
+	  }
+
+	  function maxCompare(comparator, a, b) {
+	    var comp = comparator(b, a);
+	    // b is considered the new max if the comparator declares them equal, but
+	    // they are not equal and b is in fact a nullish value.
+	    return (comp === 0 && b !== a && (b === undefined || b === null || b !== b)) || comp > 0;
+	  }
+
+
+	  function zipWithFactory(keyIter, zipper, iters) {
+	    var zipSequence = makeSequence(keyIter);
+	    zipSequence.size = new ArraySeq(iters).map(function(i ) {return i.size}).min();
+	    // Note: this a generic base implementation of __iterate in terms of
+	    // __iterator which may be more generically useful in the future.
+	    zipSequence.__iterate = function(fn, reverse) {
+	      /* generic:
+	      var iterator = this.__iterator(ITERATE_ENTRIES, reverse);
+	      var step;
+	      var iterations = 0;
+	      while (!(step = iterator.next()).done) {
+	        iterations++;
+	        if (fn(step.value[1], step.value[0], this) === false) {
+	          break;
+	        }
+	      }
+	      return iterations;
+	      */
+	      // indexed:
+	      var iterator = this.__iterator(ITERATE_VALUES, reverse);
+	      var step;
+	      var iterations = 0;
+	      while (!(step = iterator.next()).done) {
+	        if (fn(step.value, iterations++, this) === false) {
+	          break;
+	        }
+	      }
+	      return iterations;
+	    };
+	    zipSequence.__iteratorUncached = function(type, reverse) {
+	      var iterators = iters.map(function(i )
+	        {return (i = Iterable(i), getIterator(reverse ? i.reverse() : i))}
+	      );
+	      var iterations = 0;
+	      var isDone = false;
+	      return new Iterator(function()  {
+	        var steps;
+	        if (!isDone) {
+	          steps = iterators.map(function(i ) {return i.next()});
+	          isDone = steps.some(function(s ) {return s.done});
+	        }
+	        if (isDone) {
+	          return iteratorDone();
+	        }
+	        return iteratorValue(
+	          type,
+	          iterations++,
+	          zipper.apply(null, steps.map(function(s ) {return s.value}))
+	        );
+	      });
+	    };
+	    return zipSequence
+	  }
+
+
+	  // #pragma Helper Functions
+
+	  function reify(iter, seq) {
+	    return isSeq(iter) ? seq : iter.constructor(seq);
+	  }
+
+	  function validateEntry(entry) {
+	    if (entry !== Object(entry)) {
+	      throw new TypeError('Expected [K, V] tuple: ' + entry);
+	    }
+	  }
+
+	  function resolveSize(iter) {
+	    assertNotInfinite(iter.size);
+	    return ensureSize(iter);
+	  }
+
+	  function iterableClass(iterable) {
+	    return isKeyed(iterable) ? KeyedIterable :
+	      isIndexed(iterable) ? IndexedIterable :
+	      SetIterable;
+	  }
+
+	  function makeSequence(iterable) {
+	    return Object.create(
+	      (
+	        isKeyed(iterable) ? KeyedSeq :
+	        isIndexed(iterable) ? IndexedSeq :
+	        SetSeq
+	      ).prototype
+	    );
+	  }
+
+	  function cacheResultThrough() {
+	    if (this._iter.cacheResult) {
+	      this._iter.cacheResult();
+	      this.size = this._iter.size;
+	      return this;
+	    } else {
+	      return Seq.prototype.cacheResult.call(this);
+	    }
+	  }
+
+	  function defaultComparator(a, b) {
+	    return a > b ? 1 : a < b ? -1 : 0;
+	  }
+
+	  function forceIterator(keyPath) {
+	    var iter = getIterator(keyPath);
+	    if (!iter) {
+	      // Array might not be iterable in this environment, so we need a fallback
+	      // to our wrapped type.
+	      if (!isArrayLike(keyPath)) {
+	        throw new TypeError('Expected iterable or array-like: ' + keyPath);
+	      }
+	      iter = getIterator(Iterable(keyPath));
+	    }
+	    return iter;
+	  }
+
+	  createClass(Record, KeyedCollection);
+
+	    function Record(defaultValues, name) {
+	      var hasInitialized;
+
+	      var RecordType = function Record(values) {
+	        if (values instanceof RecordType) {
+	          return values;
+	        }
+	        if (!(this instanceof RecordType)) {
+	          return new RecordType(values);
+	        }
+	        if (!hasInitialized) {
+	          hasInitialized = true;
+	          var keys = Object.keys(defaultValues);
+	          setProps(RecordTypePrototype, keys);
+	          RecordTypePrototype.size = keys.length;
+	          RecordTypePrototype._name = name;
+	          RecordTypePrototype._keys = keys;
+	          RecordTypePrototype._defaultValues = defaultValues;
+	        }
+	        this._map = Map(values);
+	      };
+
+	      var RecordTypePrototype = RecordType.prototype = Object.create(RecordPrototype);
+	      RecordTypePrototype.constructor = RecordType;
+
+	      return RecordType;
+	    }
+
+	    Record.prototype.toString = function() {
+	      return this.__toString(recordName(this) + ' {', '}');
+	    };
+
+	    // @pragma Access
+
+	    Record.prototype.has = function(k) {
+	      return this._defaultValues.hasOwnProperty(k);
+	    };
+
+	    Record.prototype.get = function(k, notSetValue) {
+	      if (!this.has(k)) {
+	        return notSetValue;
+	      }
+	      var defaultVal = this._defaultValues[k];
+	      return this._map ? this._map.get(k, defaultVal) : defaultVal;
+	    };
+
+	    // @pragma Modification
+
+	    Record.prototype.clear = function() {
+	      if (this.__ownerID) {
+	        this._map && this._map.clear();
+	        return this;
+	      }
+	      var RecordType = this.constructor;
+	      return RecordType._empty || (RecordType._empty = makeRecord(this, emptyMap()));
+	    };
+
+	    Record.prototype.set = function(k, v) {
+	      if (!this.has(k)) {
+	        throw new Error('Cannot set unknown key "' + k + '" on ' + recordName(this));
+	      }
+	      if (this._map && !this._map.has(k)) {
+	        var defaultVal = this._defaultValues[k];
+	        if (v === defaultVal) {
+	          return this;
+	        }
+	      }
+	      var newMap = this._map && this._map.set(k, v);
+	      if (this.__ownerID || newMap === this._map) {
+	        return this;
+	      }
+	      return makeRecord(this, newMap);
+	    };
+
+	    Record.prototype.remove = function(k) {
+	      if (!this.has(k)) {
+	        return this;
+	      }
+	      var newMap = this._map && this._map.remove(k);
+	      if (this.__ownerID || newMap === this._map) {
+	        return this;
+	      }
+	      return makeRecord(this, newMap);
+	    };
+
+	    Record.prototype.wasAltered = function() {
+	      return this._map.wasAltered();
+	    };
+
+	    Record.prototype.__iterator = function(type, reverse) {var this$0 = this;
+	      return KeyedIterable(this._defaultValues).map(function(_, k)  {return this$0.get(k)}).__iterator(type, reverse);
+	    };
+
+	    Record.prototype.__iterate = function(fn, reverse) {var this$0 = this;
+	      return KeyedIterable(this._defaultValues).map(function(_, k)  {return this$0.get(k)}).__iterate(fn, reverse);
+	    };
+
+	    Record.prototype.__ensureOwner = function(ownerID) {
+	      if (ownerID === this.__ownerID) {
+	        return this;
+	      }
+	      var newMap = this._map && this._map.__ensureOwner(ownerID);
+	      if (!ownerID) {
+	        this.__ownerID = ownerID;
+	        this._map = newMap;
+	        return this;
+	      }
+	      return makeRecord(this, newMap, ownerID);
+	    };
+
+
+	  var RecordPrototype = Record.prototype;
+	  RecordPrototype[DELETE] = RecordPrototype.remove;
+	  RecordPrototype.deleteIn =
+	  RecordPrototype.removeIn = MapPrototype.removeIn;
+	  RecordPrototype.merge = MapPrototype.merge;
+	  RecordPrototype.mergeWith = MapPrototype.mergeWith;
+	  RecordPrototype.mergeIn = MapPrototype.mergeIn;
+	  RecordPrototype.mergeDeep = MapPrototype.mergeDeep;
+	  RecordPrototype.mergeDeepWith = MapPrototype.mergeDeepWith;
+	  RecordPrototype.mergeDeepIn = MapPrototype.mergeDeepIn;
+	  RecordPrototype.setIn = MapPrototype.setIn;
+	  RecordPrototype.update = MapPrototype.update;
+	  RecordPrototype.updateIn = MapPrototype.updateIn;
+	  RecordPrototype.withMutations = MapPrototype.withMutations;
+	  RecordPrototype.asMutable = MapPrototype.asMutable;
+	  RecordPrototype.asImmutable = MapPrototype.asImmutable;
+
+
+	  function makeRecord(likeRecord, map, ownerID) {
+	    var record = Object.create(Object.getPrototypeOf(likeRecord));
+	    record._map = map;
+	    record.__ownerID = ownerID;
+	    return record;
+	  }
+
+	  function recordName(record) {
+	    return record._name || record.constructor.name || 'Record';
+	  }
+
+	  function setProps(prototype, names) {
+	    try {
+	      names.forEach(setProp.bind(undefined, prototype));
+	    } catch (error) {
+	      // Object.defineProperty failed. Probably IE8.
+	    }
+	  }
+
+	  function setProp(prototype, name) {
+	    Object.defineProperty(prototype, name, {
+	      get: function() {
+	        return this.get(name);
+	      },
+	      set: function(value) {
+	        invariant(this.__ownerID, 'Cannot set on an immutable record.');
+	        this.set(name, value);
+	      }
+	    });
+	  }
+
+	  createClass(Set, SetCollection);
+
+	    // @pragma Construction
+
+	    function Set(value) {
+	      return value === null || value === undefined ? emptySet() :
+	        isSet(value) && !isOrdered(value) ? value :
+	        emptySet().withMutations(function(set ) {
+	          var iter = SetIterable(value);
+	          assertNotInfinite(iter.size);
+	          iter.forEach(function(v ) {return set.add(v)});
+	        });
+	    }
+
+	    Set.of = function(/*...values*/) {
+	      return this(arguments);
+	    };
+
+	    Set.fromKeys = function(value) {
+	      return this(KeyedIterable(value).keySeq());
+	    };
+
+	    Set.prototype.toString = function() {
+	      return this.__toString('Set {', '}');
+	    };
+
+	    // @pragma Access
+
+	    Set.prototype.has = function(value) {
+	      return this._map.has(value);
+	    };
+
+	    // @pragma Modification
+
+	    Set.prototype.add = function(value) {
+	      return updateSet(this, this._map.set(value, true));
+	    };
+
+	    Set.prototype.remove = function(value) {
+	      return updateSet(this, this._map.remove(value));
+	    };
+
+	    Set.prototype.clear = function() {
+	      return updateSet(this, this._map.clear());
+	    };
+
+	    // @pragma Composition
+
+	    Set.prototype.union = function() {var iters = SLICE$0.call(arguments, 0);
+	      iters = iters.filter(function(x ) {return x.size !== 0});
+	      if (iters.length === 0) {
+	        return this;
+	      }
+	      if (this.size === 0 && !this.__ownerID && iters.length === 1) {
+	        return this.constructor(iters[0]);
+	      }
+	      return this.withMutations(function(set ) {
+	        for (var ii = 0; ii < iters.length; ii++) {
+	          SetIterable(iters[ii]).forEach(function(value ) {return set.add(value)});
+	        }
+	      });
+	    };
+
+	    Set.prototype.intersect = function() {var iters = SLICE$0.call(arguments, 0);
+	      if (iters.length === 0) {
+	        return this;
+	      }
+	      iters = iters.map(function(iter ) {return SetIterable(iter)});
+	      var originalSet = this;
+	      return this.withMutations(function(set ) {
+	        originalSet.forEach(function(value ) {
+	          if (!iters.every(function(iter ) {return iter.includes(value)})) {
+	            set.remove(value);
+	          }
+	        });
+	      });
+	    };
+
+	    Set.prototype.subtract = function() {var iters = SLICE$0.call(arguments, 0);
+	      if (iters.length === 0) {
+	        return this;
+	      }
+	      iters = iters.map(function(iter ) {return SetIterable(iter)});
+	      var originalSet = this;
+	      return this.withMutations(function(set ) {
+	        originalSet.forEach(function(value ) {
+	          if (iters.some(function(iter ) {return iter.includes(value)})) {
+	            set.remove(value);
+	          }
+	        });
+	      });
+	    };
+
+	    Set.prototype.merge = function() {
+	      return this.union.apply(this, arguments);
+	    };
+
+	    Set.prototype.mergeWith = function(merger) {var iters = SLICE$0.call(arguments, 1);
+	      return this.union.apply(this, iters);
+	    };
+
+	    Set.prototype.sort = function(comparator) {
+	      // Late binding
+	      return OrderedSet(sortFactory(this, comparator));
+	    };
+
+	    Set.prototype.sortBy = function(mapper, comparator) {
+	      // Late binding
+	      return OrderedSet(sortFactory(this, comparator, mapper));
+	    };
+
+	    Set.prototype.wasAltered = function() {
+	      return this._map.wasAltered();
+	    };
+
+	    Set.prototype.__iterate = function(fn, reverse) {var this$0 = this;
+	      return this._map.__iterate(function(_, k)  {return fn(k, k, this$0)}, reverse);
+	    };
+
+	    Set.prototype.__iterator = function(type, reverse) {
+	      return this._map.map(function(_, k)  {return k}).__iterator(type, reverse);
+	    };
+
+	    Set.prototype.__ensureOwner = function(ownerID) {
+	      if (ownerID === this.__ownerID) {
+	        return this;
+	      }
+	      var newMap = this._map.__ensureOwner(ownerID);
+	      if (!ownerID) {
+	        this.__ownerID = ownerID;
+	        this._map = newMap;
+	        return this;
+	      }
+	      return this.__make(newMap, ownerID);
+	    };
+
+
+	  function isSet(maybeSet) {
+	    return !!(maybeSet && maybeSet[IS_SET_SENTINEL]);
+	  }
+
+	  Set.isSet = isSet;
+
+	  var IS_SET_SENTINEL = '@@__IMMUTABLE_SET__@@';
+
+	  var SetPrototype = Set.prototype;
+	  SetPrototype[IS_SET_SENTINEL] = true;
+	  SetPrototype[DELETE] = SetPrototype.remove;
+	  SetPrototype.mergeDeep = SetPrototype.merge;
+	  SetPrototype.mergeDeepWith = SetPrototype.mergeWith;
+	  SetPrototype.withMutations = MapPrototype.withMutations;
+	  SetPrototype.asMutable = MapPrototype.asMutable;
+	  SetPrototype.asImmutable = MapPrototype.asImmutable;
+
+	  SetPrototype.__empty = emptySet;
+	  SetPrototype.__make = makeSet;
+
+	  function updateSet(set, newMap) {
+	    if (set.__ownerID) {
+	      set.size = newMap.size;
+	      set._map = newMap;
+	      return set;
+	    }
+	    return newMap === set._map ? set :
+	      newMap.size === 0 ? set.__empty() :
+	      set.__make(newMap);
+	  }
+
+	  function makeSet(map, ownerID) {
+	    var set = Object.create(SetPrototype);
+	    set.size = map ? map.size : 0;
+	    set._map = map;
+	    set.__ownerID = ownerID;
+	    return set;
+	  }
+
+	  var EMPTY_SET;
+	  function emptySet() {
+	    return EMPTY_SET || (EMPTY_SET = makeSet(emptyMap()));
+	  }
+
+	  createClass(OrderedSet, Set);
+
+	    // @pragma Construction
+
+	    function OrderedSet(value) {
+	      return value === null || value === undefined ? emptyOrderedSet() :
+	        isOrderedSet(value) ? value :
+	        emptyOrderedSet().withMutations(function(set ) {
+	          var iter = SetIterable(value);
+	          assertNotInfinite(iter.size);
+	          iter.forEach(function(v ) {return set.add(v)});
+	        });
+	    }
+
+	    OrderedSet.of = function(/*...values*/) {
+	      return this(arguments);
+	    };
+
+	    OrderedSet.fromKeys = function(value) {
+	      return this(KeyedIterable(value).keySeq());
+	    };
+
+	    OrderedSet.prototype.toString = function() {
+	      return this.__toString('OrderedSet {', '}');
+	    };
+
+
+	  function isOrderedSet(maybeOrderedSet) {
+	    return isSet(maybeOrderedSet) && isOrdered(maybeOrderedSet);
+	  }
+
+	  OrderedSet.isOrderedSet = isOrderedSet;
+
+	  var OrderedSetPrototype = OrderedSet.prototype;
+	  OrderedSetPrototype[IS_ORDERED_SENTINEL] = true;
+
+	  OrderedSetPrototype.__empty = emptyOrderedSet;
+	  OrderedSetPrototype.__make = makeOrderedSet;
+
+	  function makeOrderedSet(map, ownerID) {
+	    var set = Object.create(OrderedSetPrototype);
+	    set.size = map ? map.size : 0;
+	    set._map = map;
+	    set.__ownerID = ownerID;
+	    return set;
+	  }
+
+	  var EMPTY_ORDERED_SET;
+	  function emptyOrderedSet() {
+	    return EMPTY_ORDERED_SET || (EMPTY_ORDERED_SET = makeOrderedSet(emptyOrderedMap()));
+	  }
+
+	  createClass(Stack, IndexedCollection);
+
+	    // @pragma Construction
+
+	    function Stack(value) {
+	      return value === null || value === undefined ? emptyStack() :
+	        isStack(value) ? value :
+	        emptyStack().unshiftAll(value);
+	    }
+
+	    Stack.of = function(/*...values*/) {
+	      return this(arguments);
+	    };
+
+	    Stack.prototype.toString = function() {
+	      return this.__toString('Stack [', ']');
+	    };
+
+	    // @pragma Access
+
+	    Stack.prototype.get = function(index, notSetValue) {
+	      var head = this._head;
+	      index = wrapIndex(this, index);
+	      while (head && index--) {
+	        head = head.next;
+	      }
+	      return head ? head.value : notSetValue;
+	    };
+
+	    Stack.prototype.peek = function() {
+	      return this._head && this._head.value;
+	    };
+
+	    // @pragma Modification
+
+	    Stack.prototype.push = function(/*...values*/) {
+	      if (arguments.length === 0) {
+	        return this;
+	      }
+	      var newSize = this.size + arguments.length;
+	      var head = this._head;
+	      for (var ii = arguments.length - 1; ii >= 0; ii--) {
+	        head = {
+	          value: arguments[ii],
+	          next: head
+	        };
+	      }
+	      if (this.__ownerID) {
+	        this.size = newSize;
+	        this._head = head;
+	        this.__hash = undefined;
+	        this.__altered = true;
+	        return this;
+	      }
+	      return makeStack(newSize, head);
+	    };
+
+	    Stack.prototype.pushAll = function(iter) {
+	      iter = IndexedIterable(iter);
+	      if (iter.size === 0) {
+	        return this;
+	      }
+	      assertNotInfinite(iter.size);
+	      var newSize = this.size;
+	      var head = this._head;
+	      iter.reverse().forEach(function(value ) {
+	        newSize++;
+	        head = {
+	          value: value,
+	          next: head
+	        };
+	      });
+	      if (this.__ownerID) {
+	        this.size = newSize;
+	        this._head = head;
+	        this.__hash = undefined;
+	        this.__altered = true;
+	        return this;
+	      }
+	      return makeStack(newSize, head);
+	    };
+
+	    Stack.prototype.pop = function() {
+	      return this.slice(1);
+	    };
+
+	    Stack.prototype.unshift = function(/*...values*/) {
+	      return this.push.apply(this, arguments);
+	    };
+
+	    Stack.prototype.unshiftAll = function(iter) {
+	      return this.pushAll(iter);
+	    };
+
+	    Stack.prototype.shift = function() {
+	      return this.pop.apply(this, arguments);
+	    };
+
+	    Stack.prototype.clear = function() {
+	      if (this.size === 0) {
+	        return this;
+	      }
+	      if (this.__ownerID) {
+	        this.size = 0;
+	        this._head = undefined;
+	        this.__hash = undefined;
+	        this.__altered = true;
+	        return this;
+	      }
+	      return emptyStack();
+	    };
+
+	    Stack.prototype.slice = function(begin, end) {
+	      if (wholeSlice(begin, end, this.size)) {
+	        return this;
+	      }
+	      var resolvedBegin = resolveBegin(begin, this.size);
+	      var resolvedEnd = resolveEnd(end, this.size);
+	      if (resolvedEnd !== this.size) {
+	        // super.slice(begin, end);
+	        return IndexedCollection.prototype.slice.call(this, begin, end);
+	      }
+	      var newSize = this.size - resolvedBegin;
+	      var head = this._head;
+	      while (resolvedBegin--) {
+	        head = head.next;
+	      }
+	      if (this.__ownerID) {
+	        this.size = newSize;
+	        this._head = head;
+	        this.__hash = undefined;
+	        this.__altered = true;
+	        return this;
+	      }
+	      return makeStack(newSize, head);
+	    };
+
+	    // @pragma Mutability
+
+	    Stack.prototype.__ensureOwner = function(ownerID) {
+	      if (ownerID === this.__ownerID) {
+	        return this;
+	      }
+	      if (!ownerID) {
+	        this.__ownerID = ownerID;
+	        this.__altered = false;
+	        return this;
+	      }
+	      return makeStack(this.size, this._head, ownerID, this.__hash);
+	    };
+
+	    // @pragma Iteration
+
+	    Stack.prototype.__iterate = function(fn, reverse) {
+	      if (reverse) {
+	        return this.reverse().__iterate(fn);
+	      }
+	      var iterations = 0;
+	      var node = this._head;
+	      while (node) {
+	        if (fn(node.value, iterations++, this) === false) {
+	          break;
+	        }
+	        node = node.next;
+	      }
+	      return iterations;
+	    };
+
+	    Stack.prototype.__iterator = function(type, reverse) {
+	      if (reverse) {
+	        return this.reverse().__iterator(type);
+	      }
+	      var iterations = 0;
+	      var node = this._head;
+	      return new Iterator(function()  {
+	        if (node) {
+	          var value = node.value;
+	          node = node.next;
+	          return iteratorValue(type, iterations++, value);
+	        }
+	        return iteratorDone();
+	      });
+	    };
+
+
+	  function isStack(maybeStack) {
+	    return !!(maybeStack && maybeStack[IS_STACK_SENTINEL]);
+	  }
+
+	  Stack.isStack = isStack;
+
+	  var IS_STACK_SENTINEL = '@@__IMMUTABLE_STACK__@@';
+
+	  var StackPrototype = Stack.prototype;
+	  StackPrototype[IS_STACK_SENTINEL] = true;
+	  StackPrototype.withMutations = MapPrototype.withMutations;
+	  StackPrototype.asMutable = MapPrototype.asMutable;
+	  StackPrototype.asImmutable = MapPrototype.asImmutable;
+	  StackPrototype.wasAltered = MapPrototype.wasAltered;
+
+
+	  function makeStack(size, head, ownerID, hash) {
+	    var map = Object.create(StackPrototype);
+	    map.size = size;
+	    map._head = head;
+	    map.__ownerID = ownerID;
+	    map.__hash = hash;
+	    map.__altered = false;
+	    return map;
+	  }
+
+	  var EMPTY_STACK;
+	  function emptyStack() {
+	    return EMPTY_STACK || (EMPTY_STACK = makeStack(0));
+	  }
+
+	  /**
+	   * Contributes additional methods to a constructor
+	   */
+	  function mixin(ctor, methods) {
+	    var keyCopier = function(key ) { ctor.prototype[key] = methods[key]; };
+	    Object.keys(methods).forEach(keyCopier);
+	    Object.getOwnPropertySymbols &&
+	      Object.getOwnPropertySymbols(methods).forEach(keyCopier);
+	    return ctor;
+	  }
+
+	  Iterable.Iterator = Iterator;
+
+	  mixin(Iterable, {
+
+	    // ### Conversion to other types
+
+	    toArray: function() {
+	      assertNotInfinite(this.size);
+	      var array = new Array(this.size || 0);
+	      this.valueSeq().__iterate(function(v, i)  { array[i] = v; });
+	      return array;
+	    },
+
+	    toIndexedSeq: function() {
+	      return new ToIndexedSequence(this);
+	    },
+
+	    toJS: function() {
+	      return this.toSeq().map(
+	        function(value ) {return value && typeof value.toJS === 'function' ? value.toJS() : value}
+	      ).__toJS();
+	    },
+
+	    toJSON: function() {
+	      return this.toSeq().map(
+	        function(value ) {return value && typeof value.toJSON === 'function' ? value.toJSON() : value}
+	      ).__toJS();
+	    },
+
+	    toKeyedSeq: function() {
+	      return new ToKeyedSequence(this, true);
+	    },
+
+	    toMap: function() {
+	      // Use Late Binding here to solve the circular dependency.
+	      return Map(this.toKeyedSeq());
+	    },
+
+	    toObject: function() {
+	      assertNotInfinite(this.size);
+	      var object = {};
+	      this.__iterate(function(v, k)  { object[k] = v; });
+	      return object;
+	    },
+
+	    toOrderedMap: function() {
+	      // Use Late Binding here to solve the circular dependency.
+	      return OrderedMap(this.toKeyedSeq());
+	    },
+
+	    toOrderedSet: function() {
+	      // Use Late Binding here to solve the circular dependency.
+	      return OrderedSet(isKeyed(this) ? this.valueSeq() : this);
+	    },
+
+	    toSet: function() {
+	      // Use Late Binding here to solve the circular dependency.
+	      return Set(isKeyed(this) ? this.valueSeq() : this);
+	    },
+
+	    toSetSeq: function() {
+	      return new ToSetSequence(this);
+	    },
+
+	    toSeq: function() {
+	      return isIndexed(this) ? this.toIndexedSeq() :
+	        isKeyed(this) ? this.toKeyedSeq() :
+	        this.toSetSeq();
+	    },
+
+	    toStack: function() {
+	      // Use Late Binding here to solve the circular dependency.
+	      return Stack(isKeyed(this) ? this.valueSeq() : this);
+	    },
+
+	    toList: function() {
+	      // Use Late Binding here to solve the circular dependency.
+	      return List(isKeyed(this) ? this.valueSeq() : this);
+	    },
+
+
+	    // ### Common JavaScript methods and properties
+
+	    toString: function() {
+	      return '[Iterable]';
+	    },
+
+	    __toString: function(head, tail) {
+	      if (this.size === 0) {
+	        return head + tail;
+	      }
+	      return head + ' ' + this.toSeq().map(this.__toStringMapper).join(', ') + ' ' + tail;
+	    },
+
+
+	    // ### ES6 Collection methods (ES6 Array and Map)
+
+	    concat: function() {var values = SLICE$0.call(arguments, 0);
+	      return reify(this, concatFactory(this, values));
+	    },
+
+	    includes: function(searchValue) {
+	      return this.some(function(value ) {return is(value, searchValue)});
+	    },
+
+	    entries: function() {
+	      return this.__iterator(ITERATE_ENTRIES);
+	    },
+
+	    every: function(predicate, context) {
+	      assertNotInfinite(this.size);
+	      var returnValue = true;
+	      this.__iterate(function(v, k, c)  {
+	        if (!predicate.call(context, v, k, c)) {
+	          returnValue = false;
+	          return false;
+	        }
+	      });
+	      return returnValue;
+	    },
+
+	    filter: function(predicate, context) {
+	      return reify(this, filterFactory(this, predicate, context, true));
+	    },
+
+	    find: function(predicate, context, notSetValue) {
+	      var entry = this.findEntry(predicate, context);
+	      return entry ? entry[1] : notSetValue;
+	    },
+
+	    forEach: function(sideEffect, context) {
+	      assertNotInfinite(this.size);
+	      return this.__iterate(context ? sideEffect.bind(context) : sideEffect);
+	    },
+
+	    join: function(separator) {
+	      assertNotInfinite(this.size);
+	      separator = separator !== undefined ? '' + separator : ',';
+	      var joined = '';
+	      var isFirst = true;
+	      this.__iterate(function(v ) {
+	        isFirst ? (isFirst = false) : (joined += separator);
+	        joined += v !== null && v !== undefined ? v.toString() : '';
+	      });
+	      return joined;
+	    },
+
+	    keys: function() {
+	      return this.__iterator(ITERATE_KEYS);
+	    },
+
+	    map: function(mapper, context) {
+	      return reify(this, mapFactory(this, mapper, context));
+	    },
+
+	    reduce: function(reducer, initialReduction, context) {
+	      assertNotInfinite(this.size);
+	      var reduction;
+	      var useFirst;
+	      if (arguments.length < 2) {
+	        useFirst = true;
+	      } else {
+	        reduction = initialReduction;
+	      }
+	      this.__iterate(function(v, k, c)  {
+	        if (useFirst) {
+	          useFirst = false;
+	          reduction = v;
+	        } else {
+	          reduction = reducer.call(context, reduction, v, k, c);
+	        }
+	      });
+	      return reduction;
+	    },
+
+	    reduceRight: function(reducer, initialReduction, context) {
+	      var reversed = this.toKeyedSeq().reverse();
+	      return reversed.reduce.apply(reversed, arguments);
+	    },
+
+	    reverse: function() {
+	      return reify(this, reverseFactory(this, true));
+	    },
+
+	    slice: function(begin, end) {
+	      return reify(this, sliceFactory(this, begin, end, true));
+	    },
+
+	    some: function(predicate, context) {
+	      return !this.every(not(predicate), context);
+	    },
+
+	    sort: function(comparator) {
+	      return reify(this, sortFactory(this, comparator));
+	    },
+
+	    values: function() {
+	      return this.__iterator(ITERATE_VALUES);
+	    },
+
+
+	    // ### More sequential methods
+
+	    butLast: function() {
+	      return this.slice(0, -1);
+	    },
+
+	    isEmpty: function() {
+	      return this.size !== undefined ? this.size === 0 : !this.some(function()  {return true});
+	    },
+
+	    count: function(predicate, context) {
+	      return ensureSize(
+	        predicate ? this.toSeq().filter(predicate, context) : this
+	      );
+	    },
+
+	    countBy: function(grouper, context) {
+	      return countByFactory(this, grouper, context);
+	    },
+
+	    equals: function(other) {
+	      return deepEqual(this, other);
+	    },
+
+	    entrySeq: function() {
+	      var iterable = this;
+	      if (iterable._cache) {
+	        // We cache as an entries array, so we can just return the cache!
+	        return new ArraySeq(iterable._cache);
+	      }
+	      var entriesSequence = iterable.toSeq().map(entryMapper).toIndexedSeq();
+	      entriesSequence.fromEntrySeq = function()  {return iterable.toSeq()};
+	      return entriesSequence;
+	    },
+
+	    filterNot: function(predicate, context) {
+	      return this.filter(not(predicate), context);
+	    },
+
+	    findEntry: function(predicate, context, notSetValue) {
+	      var found = notSetValue;
+	      this.__iterate(function(v, k, c)  {
+	        if (predicate.call(context, v, k, c)) {
+	          found = [k, v];
+	          return false;
+	        }
+	      });
+	      return found;
+	    },
+
+	    findKey: function(predicate, context) {
+	      var entry = this.findEntry(predicate, context);
+	      return entry && entry[0];
+	    },
+
+	    findLast: function(predicate, context, notSetValue) {
+	      return this.toKeyedSeq().reverse().find(predicate, context, notSetValue);
+	    },
+
+	    findLastEntry: function(predicate, context, notSetValue) {
+	      return this.toKeyedSeq().reverse().findEntry(predicate, context, notSetValue);
+	    },
+
+	    findLastKey: function(predicate, context) {
+	      return this.toKeyedSeq().reverse().findKey(predicate, context);
+	    },
+
+	    first: function() {
+	      return this.find(returnTrue);
+	    },
+
+	    flatMap: function(mapper, context) {
+	      return reify(this, flatMapFactory(this, mapper, context));
+	    },
+
+	    flatten: function(depth) {
+	      return reify(this, flattenFactory(this, depth, true));
+	    },
+
+	    fromEntrySeq: function() {
+	      return new FromEntriesSequence(this);
+	    },
+
+	    get: function(searchKey, notSetValue) {
+	      return this.find(function(_, key)  {return is(key, searchKey)}, undefined, notSetValue);
+	    },
+
+	    getIn: function(searchKeyPath, notSetValue) {
+	      var nested = this;
+	      // Note: in an ES6 environment, we would prefer:
+	      // for (var key of searchKeyPath) {
+	      var iter = forceIterator(searchKeyPath);
+	      var step;
+	      while (!(step = iter.next()).done) {
+	        var key = step.value;
+	        nested = nested && nested.get ? nested.get(key, NOT_SET) : NOT_SET;
+	        if (nested === NOT_SET) {
+	          return notSetValue;
+	        }
+	      }
+	      return nested;
+	    },
+
+	    groupBy: function(grouper, context) {
+	      return groupByFactory(this, grouper, context);
+	    },
+
+	    has: function(searchKey) {
+	      return this.get(searchKey, NOT_SET) !== NOT_SET;
+	    },
+
+	    hasIn: function(searchKeyPath) {
+	      return this.getIn(searchKeyPath, NOT_SET) !== NOT_SET;
+	    },
+
+	    isSubset: function(iter) {
+	      iter = typeof iter.includes === 'function' ? iter : Iterable(iter);
+	      return this.every(function(value ) {return iter.includes(value)});
+	    },
+
+	    isSuperset: function(iter) {
+	      iter = typeof iter.isSubset === 'function' ? iter : Iterable(iter);
+	      return iter.isSubset(this);
+	    },
+
+	    keyOf: function(searchValue) {
+	      return this.findKey(function(value ) {return is(value, searchValue)});
+	    },
+
+	    keySeq: function() {
+	      return this.toSeq().map(keyMapper).toIndexedSeq();
+	    },
+
+	    last: function() {
+	      return this.toSeq().reverse().first();
+	    },
+
+	    lastKeyOf: function(searchValue) {
+	      return this.toKeyedSeq().reverse().keyOf(searchValue);
+	    },
+
+	    max: function(comparator) {
+	      return maxFactory(this, comparator);
+	    },
+
+	    maxBy: function(mapper, comparator) {
+	      return maxFactory(this, comparator, mapper);
+	    },
+
+	    min: function(comparator) {
+	      return maxFactory(this, comparator ? neg(comparator) : defaultNegComparator);
+	    },
+
+	    minBy: function(mapper, comparator) {
+	      return maxFactory(this, comparator ? neg(comparator) : defaultNegComparator, mapper);
+	    },
+
+	    rest: function() {
+	      return this.slice(1);
+	    },
+
+	    skip: function(amount) {
+	      return this.slice(Math.max(0, amount));
+	    },
+
+	    skipLast: function(amount) {
+	      return reify(this, this.toSeq().reverse().skip(amount).reverse());
+	    },
+
+	    skipWhile: function(predicate, context) {
+	      return reify(this, skipWhileFactory(this, predicate, context, true));
+	    },
+
+	    skipUntil: function(predicate, context) {
+	      return this.skipWhile(not(predicate), context);
+	    },
+
+	    sortBy: function(mapper, comparator) {
+	      return reify(this, sortFactory(this, comparator, mapper));
+	    },
+
+	    take: function(amount) {
+	      return this.slice(0, Math.max(0, amount));
+	    },
+
+	    takeLast: function(amount) {
+	      return reify(this, this.toSeq().reverse().take(amount).reverse());
+	    },
+
+	    takeWhile: function(predicate, context) {
+	      return reify(this, takeWhileFactory(this, predicate, context));
+	    },
+
+	    takeUntil: function(predicate, context) {
+	      return this.takeWhile(not(predicate), context);
+	    },
+
+	    valueSeq: function() {
+	      return this.toIndexedSeq();
+	    },
+
+
+	    // ### Hashable Object
+
+	    hashCode: function() {
+	      return this.__hash || (this.__hash = hashIterable(this));
+	    }
+
+
+	    // ### Internal
+
+	    // abstract __iterate(fn, reverse)
+
+	    // abstract __iterator(type, reverse)
+	  });
+
+	  // var IS_ITERABLE_SENTINEL = '@@__IMMUTABLE_ITERABLE__@@';
+	  // var IS_KEYED_SENTINEL = '@@__IMMUTABLE_KEYED__@@';
+	  // var IS_INDEXED_SENTINEL = '@@__IMMUTABLE_INDEXED__@@';
+	  // var IS_ORDERED_SENTINEL = '@@__IMMUTABLE_ORDERED__@@';
+
+	  var IterablePrototype = Iterable.prototype;
+	  IterablePrototype[IS_ITERABLE_SENTINEL] = true;
+	  IterablePrototype[ITERATOR_SYMBOL] = IterablePrototype.values;
+	  IterablePrototype.__toJS = IterablePrototype.toArray;
+	  IterablePrototype.__toStringMapper = quoteString;
+	  IterablePrototype.inspect =
+	  IterablePrototype.toSource = function() { return this.toString(); };
+	  IterablePrototype.chain = IterablePrototype.flatMap;
+	  IterablePrototype.contains = IterablePrototype.includes;
+
+	  mixin(KeyedIterable, {
+
+	    // ### More sequential methods
+
+	    flip: function() {
+	      return reify(this, flipFactory(this));
+	    },
+
+	    mapEntries: function(mapper, context) {var this$0 = this;
+	      var iterations = 0;
+	      return reify(this,
+	        this.toSeq().map(
+	          function(v, k)  {return mapper.call(context, [k, v], iterations++, this$0)}
+	        ).fromEntrySeq()
+	      );
+	    },
+
+	    mapKeys: function(mapper, context) {var this$0 = this;
+	      return reify(this,
+	        this.toSeq().flip().map(
+	          function(k, v)  {return mapper.call(context, k, v, this$0)}
+	        ).flip()
+	      );
+	    }
+
+	  });
+
+	  var KeyedIterablePrototype = KeyedIterable.prototype;
+	  KeyedIterablePrototype[IS_KEYED_SENTINEL] = true;
+	  KeyedIterablePrototype[ITERATOR_SYMBOL] = IterablePrototype.entries;
+	  KeyedIterablePrototype.__toJS = IterablePrototype.toObject;
+	  KeyedIterablePrototype.__toStringMapper = function(v, k)  {return JSON.stringify(k) + ': ' + quoteString(v)};
+
+
+
+	  mixin(IndexedIterable, {
+
+	    // ### Conversion to other types
+
+	    toKeyedSeq: function() {
+	      return new ToKeyedSequence(this, false);
+	    },
+
+
+	    // ### ES6 Collection methods (ES6 Array and Map)
+
+	    filter: function(predicate, context) {
+	      return reify(this, filterFactory(this, predicate, context, false));
+	    },
+
+	    findIndex: function(predicate, context) {
+	      var entry = this.findEntry(predicate, context);
+	      return entry ? entry[0] : -1;
+	    },
+
+	    indexOf: function(searchValue) {
+	      var key = this.keyOf(searchValue);
+	      return key === undefined ? -1 : key;
+	    },
+
+	    lastIndexOf: function(searchValue) {
+	      var key = this.lastKeyOf(searchValue);
+	      return key === undefined ? -1 : key;
+	    },
+
+	    reverse: function() {
+	      return reify(this, reverseFactory(this, false));
+	    },
+
+	    slice: function(begin, end) {
+	      return reify(this, sliceFactory(this, begin, end, false));
+	    },
+
+	    splice: function(index, removeNum /*, ...values*/) {
+	      var numArgs = arguments.length;
+	      removeNum = Math.max(removeNum | 0, 0);
+	      if (numArgs === 0 || (numArgs === 2 && !removeNum)) {
+	        return this;
+	      }
+	      // If index is negative, it should resolve relative to the size of the
+	      // collection. However size may be expensive to compute if not cached, so
+	      // only call count() if the number is in fact negative.
+	      index = resolveBegin(index, index < 0 ? this.count() : this.size);
+	      var spliced = this.slice(0, index);
+	      return reify(
+	        this,
+	        numArgs === 1 ?
+	          spliced :
+	          spliced.concat(arrCopy(arguments, 2), this.slice(index + removeNum))
+	      );
+	    },
+
+
+	    // ### More collection methods
+
+	    findLastIndex: function(predicate, context) {
+	      var entry = this.findLastEntry(predicate, context);
+	      return entry ? entry[0] : -1;
+	    },
+
+	    first: function() {
+	      return this.get(0);
+	    },
+
+	    flatten: function(depth) {
+	      return reify(this, flattenFactory(this, depth, false));
+	    },
+
+	    get: function(index, notSetValue) {
+	      index = wrapIndex(this, index);
+	      return (index < 0 || (this.size === Infinity ||
+	          (this.size !== undefined && index > this.size))) ?
+	        notSetValue :
+	        this.find(function(_, key)  {return key === index}, undefined, notSetValue);
+	    },
+
+	    has: function(index) {
+	      index = wrapIndex(this, index);
+	      return index >= 0 && (this.size !== undefined ?
+	        this.size === Infinity || index < this.size :
+	        this.indexOf(index) !== -1
+	      );
+	    },
+
+	    interpose: function(separator) {
+	      return reify(this, interposeFactory(this, separator));
+	    },
+
+	    interleave: function(/*...iterables*/) {
+	      var iterables = [this].concat(arrCopy(arguments));
+	      var zipped = zipWithFactory(this.toSeq(), IndexedSeq.of, iterables);
+	      var interleaved = zipped.flatten(true);
+	      if (zipped.size) {
+	        interleaved.size = zipped.size * iterables.length;
+	      }
+	      return reify(this, interleaved);
+	    },
+
+	    keySeq: function() {
+	      return Range(0, this.size);
+	    },
+
+	    last: function() {
+	      return this.get(-1);
+	    },
+
+	    skipWhile: function(predicate, context) {
+	      return reify(this, skipWhileFactory(this, predicate, context, false));
+	    },
+
+	    zip: function(/*, ...iterables */) {
+	      var iterables = [this].concat(arrCopy(arguments));
+	      return reify(this, zipWithFactory(this, defaultZipper, iterables));
+	    },
+
+	    zipWith: function(zipper/*, ...iterables */) {
+	      var iterables = arrCopy(arguments);
+	      iterables[0] = this;
+	      return reify(this, zipWithFactory(this, zipper, iterables));
+	    }
+
+	  });
+
+	  IndexedIterable.prototype[IS_INDEXED_SENTINEL] = true;
+	  IndexedIterable.prototype[IS_ORDERED_SENTINEL] = true;
+
+
+
+	  mixin(SetIterable, {
+
+	    // ### ES6 Collection methods (ES6 Array and Map)
+
+	    get: function(value, notSetValue) {
+	      return this.has(value) ? value : notSetValue;
+	    },
+
+	    includes: function(value) {
+	      return this.has(value);
+	    },
+
+
+	    // ### More sequential methods
+
+	    keySeq: function() {
+	      return this.valueSeq();
+	    }
+
+	  });
+
+	  SetIterable.prototype.has = IterablePrototype.includes;
+	  SetIterable.prototype.contains = SetIterable.prototype.includes;
+
+
+	  // Mixin subclasses
+
+	  mixin(KeyedSeq, KeyedIterable.prototype);
+	  mixin(IndexedSeq, IndexedIterable.prototype);
+	  mixin(SetSeq, SetIterable.prototype);
+
+	  mixin(KeyedCollection, KeyedIterable.prototype);
+	  mixin(IndexedCollection, IndexedIterable.prototype);
+	  mixin(SetCollection, SetIterable.prototype);
+
+
+	  // #pragma Helper functions
+
+	  function keyMapper(v, k) {
+	    return k;
+	  }
+
+	  function entryMapper(v, k) {
+	    return [k, v];
+	  }
+
+	  function not(predicate) {
+	    return function() {
+	      return !predicate.apply(this, arguments);
+	    }
+	  }
+
+	  function neg(predicate) {
+	    return function() {
+	      return -predicate.apply(this, arguments);
+	    }
+	  }
+
+	  function quoteString(value) {
+	    return typeof value === 'string' ? JSON.stringify(value) : String(value);
+	  }
+
+	  function defaultZipper() {
+	    return arrCopy(arguments);
+	  }
+
+	  function defaultNegComparator(a, b) {
+	    return a < b ? 1 : a > b ? -1 : 0;
+	  }
+
+	  function hashIterable(iterable) {
+	    if (iterable.size === Infinity) {
+	      return 0;
+	    }
+	    var ordered = isOrdered(iterable);
+	    var keyed = isKeyed(iterable);
+	    var h = ordered ? 1 : 0;
+	    var size = iterable.__iterate(
+	      keyed ?
+	        ordered ?
+	          function(v, k)  { h = 31 * h + hashMerge(hash(v), hash(k)) | 0; } :
+	          function(v, k)  { h = h + hashMerge(hash(v), hash(k)) | 0; } :
+	        ordered ?
+	          function(v ) { h = 31 * h + hash(v) | 0; } :
+	          function(v ) { h = h + hash(v) | 0; }
+	    );
+	    return murmurHashOfSize(size, h);
+	  }
+
+	  function murmurHashOfSize(size, h) {
+	    h = imul(h, 0xCC9E2D51);
+	    h = imul(h << 15 | h >>> -15, 0x1B873593);
+	    h = imul(h << 13 | h >>> -13, 5);
+	    h = (h + 0xE6546B64 | 0) ^ size;
+	    h = imul(h ^ h >>> 16, 0x85EBCA6B);
+	    h = imul(h ^ h >>> 13, 0xC2B2AE35);
+	    h = smi(h ^ h >>> 16);
+	    return h;
+	  }
+
+	  function hashMerge(a, b) {
+	    return a ^ b + 0x9E3779B9 + (a << 6) + (a >> 2) | 0; // int
+	  }
+
+	  var Immutable = {
+
+	    Iterable: Iterable,
+
+	    Seq: Seq,
+	    Collection: Collection,
+	    Map: Map,
+	    OrderedMap: OrderedMap,
+	    List: List,
+	    Stack: Stack,
+	    Set: Set,
+	    OrderedSet: OrderedSet,
+
+	    Record: Record,
+	    Range: Range,
+	    Repeat: Repeat,
+
+	    is: is,
+	    fromJS: fromJS
+
+	  };
+
+	  return Immutable;
+
+	}));
+
+/***/ },
+/* 328 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// https://github.com/flitbit/diff#differences
@@ -36767,7 +44172,7 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	var _deepDiff = __webpack_require__(287);
+	var _deepDiff = __webpack_require__(329);
 
 	var _deepDiff2 = _interopRequireDefault(_deepDiff);
 
@@ -36851,7 +44256,436 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 300 */
+/* 329 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(global) {/*!
+	 * deep-diff.
+	 * Licensed under the MIT License.
+	 */
+	;(function(root, factory) {
+	  'use strict';
+	  if (true) {
+	    // AMD. Register as an anonymous module.
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function() {
+	      return factory();
+	    }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	  } else if (typeof exports === 'object') {
+	    // Node. Does not work with strict CommonJS, but
+	    // only CommonJS-like environments that support module.exports,
+	    // like Node.
+	    module.exports = factory();
+	  } else {
+	    // Browser globals (root is window)
+	    root.DeepDiff = factory();
+	  }
+	}(this, function(undefined) {
+	  'use strict';
+
+	  var $scope, conflict, conflictResolution = [];
+	  if (typeof global === 'object' && global) {
+	    $scope = global;
+	  } else if (typeof window !== 'undefined') {
+	    $scope = window;
+	  } else {
+	    $scope = {};
+	  }
+	  conflict = $scope.DeepDiff;
+	  if (conflict) {
+	    conflictResolution.push(
+	      function() {
+	        if ('undefined' !== typeof conflict && $scope.DeepDiff === accumulateDiff) {
+	          $scope.DeepDiff = conflict;
+	          conflict = undefined;
+	        }
+	      });
+	  }
+
+	  // nodejs compatible on server side and in the browser.
+	  function inherits(ctor, superCtor) {
+	    ctor.super_ = superCtor;
+	    ctor.prototype = Object.create(superCtor.prototype, {
+	      constructor: {
+	        value: ctor,
+	        enumerable: false,
+	        writable: true,
+	        configurable: true
+	      }
+	    });
+	  }
+
+	  function Diff(kind, path) {
+	    Object.defineProperty(this, 'kind', {
+	      value: kind,
+	      enumerable: true
+	    });
+	    if (path && path.length) {
+	      Object.defineProperty(this, 'path', {
+	        value: path,
+	        enumerable: true
+	      });
+	    }
+	  }
+
+	  function DiffEdit(path, origin, value) {
+	    DiffEdit.super_.call(this, 'E', path);
+	    Object.defineProperty(this, 'lhs', {
+	      value: origin,
+	      enumerable: true
+	    });
+	    Object.defineProperty(this, 'rhs', {
+	      value: value,
+	      enumerable: true
+	    });
+	  }
+	  inherits(DiffEdit, Diff);
+
+	  function DiffNew(path, value) {
+	    DiffNew.super_.call(this, 'N', path);
+	    Object.defineProperty(this, 'rhs', {
+	      value: value,
+	      enumerable: true
+	    });
+	  }
+	  inherits(DiffNew, Diff);
+
+	  function DiffDeleted(path, value) {
+	    DiffDeleted.super_.call(this, 'D', path);
+	    Object.defineProperty(this, 'lhs', {
+	      value: value,
+	      enumerable: true
+	    });
+	  }
+	  inherits(DiffDeleted, Diff);
+
+	  function DiffArray(path, index, item) {
+	    DiffArray.super_.call(this, 'A', path);
+	    Object.defineProperty(this, 'index', {
+	      value: index,
+	      enumerable: true
+	    });
+	    Object.defineProperty(this, 'item', {
+	      value: item,
+	      enumerable: true
+	    });
+	  }
+	  inherits(DiffArray, Diff);
+
+	  function arrayRemove(arr, from, to) {
+	    var rest = arr.slice((to || from) + 1 || arr.length);
+	    arr.length = from < 0 ? arr.length + from : from;
+	    arr.push.apply(arr, rest);
+	    return arr;
+	  }
+
+	  function realTypeOf(subject) {
+	    var type = typeof subject;
+	    if (type !== 'object') {
+	      return type;
+	    }
+
+	    if (subject === Math) {
+	      return 'math';
+	    } else if (subject === null) {
+	      return 'null';
+	    } else if (Array.isArray(subject)) {
+	      return 'array';
+	    } else if (Object.prototype.toString.call(subject) === '[object Date]') {
+	      return 'date';
+	    } else if (typeof subject.toString !== 'undefined' && /^\/.*\//.test(subject.toString())) {
+	      return 'regexp';
+	    }
+	    return 'object';
+	  }
+
+	  function deepDiff(lhs, rhs, changes, prefilter, path, key, stack) {
+	    path = path || [];
+	    var currentPath = path.slice(0);
+	    if (typeof key !== 'undefined') {
+	      if (prefilter) {
+	        if (typeof(prefilter) === 'function' && prefilter(currentPath, key)) { return; }
+	        else if (typeof(prefilter) === 'object') {
+	          if (prefilter.prefilter && prefilter.prefilter(currentPath, key)) { return; }
+	          if (prefilter.normalize) {
+	            var alt = prefilter.normalize(currentPath, key, lhs, rhs);
+	            if (alt) {
+	              lhs = alt[0];
+	              rhs = alt[1];
+	            }
+	          }
+	        }
+	      }
+	      currentPath.push(key);
+	    }
+
+	    // Use string comparison for regexes
+	    if (realTypeOf(lhs) === 'regexp' && realTypeOf(rhs) === 'regexp') {
+	      lhs = lhs.toString();
+	      rhs = rhs.toString();
+	    }
+
+	    var ltype = typeof lhs;
+	    var rtype = typeof rhs;
+	    if (ltype === 'undefined') {
+	      if (rtype !== 'undefined') {
+	        changes(new DiffNew(currentPath, rhs));
+	      }
+	    } else if (rtype === 'undefined') {
+	      changes(new DiffDeleted(currentPath, lhs));
+	    } else if (realTypeOf(lhs) !== realTypeOf(rhs)) {
+	      changes(new DiffEdit(currentPath, lhs, rhs));
+	    } else if (Object.prototype.toString.call(lhs) === '[object Date]' && Object.prototype.toString.call(rhs) === '[object Date]' && ((lhs - rhs) !== 0)) {
+	      changes(new DiffEdit(currentPath, lhs, rhs));
+	    } else if (ltype === 'object' && lhs !== null && rhs !== null) {
+	      stack = stack || [];
+	      if (stack.indexOf(lhs) < 0) {
+	        stack.push(lhs);
+	        if (Array.isArray(lhs)) {
+	          var i, len = lhs.length;
+	          for (i = 0; i < lhs.length; i++) {
+	            if (i >= rhs.length) {
+	              changes(new DiffArray(currentPath, i, new DiffDeleted(undefined, lhs[i])));
+	            } else {
+	              deepDiff(lhs[i], rhs[i], changes, prefilter, currentPath, i, stack);
+	            }
+	          }
+	          while (i < rhs.length) {
+	            changes(new DiffArray(currentPath, i, new DiffNew(undefined, rhs[i++])));
+	          }
+	        } else {
+	          var akeys = Object.keys(lhs);
+	          var pkeys = Object.keys(rhs);
+	          akeys.forEach(function(k, i) {
+	            var other = pkeys.indexOf(k);
+	            if (other >= 0) {
+	              deepDiff(lhs[k], rhs[k], changes, prefilter, currentPath, k, stack);
+	              pkeys = arrayRemove(pkeys, other);
+	            } else {
+	              deepDiff(lhs[k], undefined, changes, prefilter, currentPath, k, stack);
+	            }
+	          });
+	          pkeys.forEach(function(k) {
+	            deepDiff(undefined, rhs[k], changes, prefilter, currentPath, k, stack);
+	          });
+	        }
+	        stack.length = stack.length - 1;
+	      }
+	    } else if (lhs !== rhs) {
+	      if (!(ltype === 'number' && isNaN(lhs) && isNaN(rhs))) {
+	        changes(new DiffEdit(currentPath, lhs, rhs));
+	      }
+	    }
+	  }
+
+	  function accumulateDiff(lhs, rhs, prefilter, accum) {
+	    accum = accum || [];
+	    deepDiff(lhs, rhs,
+	      function(diff) {
+	        if (diff) {
+	          accum.push(diff);
+	        }
+	      },
+	      prefilter);
+	    return (accum.length) ? accum : undefined;
+	  }
+
+	  function applyArrayChange(arr, index, change) {
+	    if (change.path && change.path.length) {
+	      var it = arr[index],
+	          i, u = change.path.length - 1;
+	      for (i = 0; i < u; i++) {
+	        it = it[change.path[i]];
+	      }
+	      switch (change.kind) {
+	        case 'A':
+	          applyArrayChange(it[change.path[i]], change.index, change.item);
+	          break;
+	        case 'D':
+	          delete it[change.path[i]];
+	          break;
+	        case 'E':
+	        case 'N':
+	          it[change.path[i]] = change.rhs;
+	          break;
+	      }
+	    } else {
+	      switch (change.kind) {
+	        case 'A':
+	          applyArrayChange(arr[index], change.index, change.item);
+	          break;
+	        case 'D':
+	          arr = arrayRemove(arr, index);
+	          break;
+	        case 'E':
+	        case 'N':
+	          arr[index] = change.rhs;
+	          break;
+	      }
+	    }
+	    return arr;
+	  }
+
+	  function applyChange(target, source, change) {
+	    if (target && source && change && change.kind) {
+	      var it = target,
+	          i = -1,
+	          last = change.path ? change.path.length - 1 : 0;
+	      while (++i < last) {
+	        if (typeof it[change.path[i]] === 'undefined') {
+	          it[change.path[i]] = (typeof change.path[i] === 'number') ? [] : {};
+	        }
+	        it = it[change.path[i]];
+	      }
+	      switch (change.kind) {
+	        case 'A':
+	          applyArrayChange(change.path ? it[change.path[i]] : it, change.index, change.item);
+	          break;
+	        case 'D':
+	          delete it[change.path[i]];
+	          break;
+	        case 'E':
+	        case 'N':
+	          it[change.path[i]] = change.rhs;
+	          break;
+	      }
+	    }
+	  }
+
+	  function revertArrayChange(arr, index, change) {
+	    if (change.path && change.path.length) {
+	      // the structure of the object at the index has changed...
+	      var it = arr[index],
+	          i, u = change.path.length - 1;
+	      for (i = 0; i < u; i++) {
+	        it = it[change.path[i]];
+	      }
+	      switch (change.kind) {
+	        case 'A':
+	          revertArrayChange(it[change.path[i]], change.index, change.item);
+	          break;
+	        case 'D':
+	          it[change.path[i]] = change.lhs;
+	          break;
+	        case 'E':
+	          it[change.path[i]] = change.lhs;
+	          break;
+	        case 'N':
+	          delete it[change.path[i]];
+	          break;
+	      }
+	    } else {
+	      // the array item is different...
+	      switch (change.kind) {
+	        case 'A':
+	          revertArrayChange(arr[index], change.index, change.item);
+	          break;
+	        case 'D':
+	          arr[index] = change.lhs;
+	          break;
+	        case 'E':
+	          arr[index] = change.lhs;
+	          break;
+	        case 'N':
+	          arr = arrayRemove(arr, index);
+	          break;
+	      }
+	    }
+	    return arr;
+	  }
+
+	  function revertChange(target, source, change) {
+	    if (target && source && change && change.kind) {
+	      var it = target,
+	          i, u;
+	      u = change.path.length - 1;
+	      for (i = 0; i < u; i++) {
+	        if (typeof it[change.path[i]] === 'undefined') {
+	          it[change.path[i]] = {};
+	        }
+	        it = it[change.path[i]];
+	      }
+	      switch (change.kind) {
+	        case 'A':
+	          // Array was modified...
+	          // it will be an array...
+	          revertArrayChange(it[change.path[i]], change.index, change.item);
+	          break;
+	        case 'D':
+	          // Item was deleted...
+	          it[change.path[i]] = change.lhs;
+	          break;
+	        case 'E':
+	          // Item was edited...
+	          it[change.path[i]] = change.lhs;
+	          break;
+	        case 'N':
+	          // Item is new...
+	          delete it[change.path[i]];
+	          break;
+	      }
+	    }
+	  }
+
+	  function applyDiff(target, source, filter) {
+	    if (target && source) {
+	      var onChange = function(change) {
+	        if (!filter || filter(target, source, change)) {
+	          applyChange(target, source, change);
+	        }
+	      };
+	      deepDiff(target, source, onChange);
+	    }
+	  }
+
+	  Object.defineProperties(accumulateDiff, {
+
+	    diff: {
+	      value: accumulateDiff,
+	      enumerable: true
+	    },
+	    observableDiff: {
+	      value: deepDiff,
+	      enumerable: true
+	    },
+	    applyDiff: {
+	      value: applyDiff,
+	      enumerable: true
+	    },
+	    applyChange: {
+	      value: applyChange,
+	      enumerable: true
+	    },
+	    revertChange: {
+	      value: revertChange,
+	      enumerable: true
+	    },
+	    isConflict: {
+	      value: function() {
+	        return 'undefined' !== typeof conflict;
+	      },
+	      enumerable: true
+	    },
+	    noConflict: {
+	      value: function() {
+	        if (conflictResolution) {
+	          conflictResolution.forEach(function(it) {
+	            it();
+	          });
+	          conflictResolution = null;
+	        }
+	        return accumulateDiff;
+	      },
+	      enumerable: true
+	    }
+	  });
+
+	  return accumulateDiff;
+	}));
+
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
+
+/***/ },
+/* 330 */
 /***/ function(module, exports) {
 
 	'use strict';

@@ -3,7 +3,8 @@ import { fromJS } from 'immutable';
 import {
     LOAD_SIMPLE,
     LOAD_COMPLEX,
-    LOAD_STICKY
+    LOAD_STICKY,
+    LOAD_COL_RENDERER
 } from '../../constants/actionTypes';
 
 const initialState = fromJS({});
@@ -25,6 +26,11 @@ export default function gridState(state = initialState, action) {
     case LOAD_STICKY:
         return state.merge({
             grid: 'sticky'
+        });
+
+    case LOAD_COL_RENDERER:
+        return state.merge({
+            grid: 'colRenderer'
         });
 
     default:

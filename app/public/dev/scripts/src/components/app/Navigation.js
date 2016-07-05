@@ -4,7 +4,8 @@ import { PREFIX } from './../../constants';
 import {
     loadSimple,
     loadComplex,
-    loadSticky
+    loadSticky,
+    loadColRenderer
 } from './../../actions';
 
 export const Navigation = (
@@ -31,12 +32,19 @@ export const Navigation = (
         children: 'Sticky'
     };
 
+    const colRendererProps = {
+        className: `${PREFIX}nav-link`,
+        onClick: handleLinkClick.bind(null, store),
+        children: 'Column Renderer'
+    };
+
     return (
         <div { ...{ className } }>
             <ul>
                 <li><a { ...simpleProps } /></li>
                 <li><a { ...complexProps } /></li>
                 <li><a { ...stickyProps } /></li>
+                <li><a { ...colRendererProps } /></li>
             </ul>
         </div>
         );
@@ -58,6 +66,9 @@ export const handleLinkClick = (store, e) => {
     case 'Sticky':
         func = loadSticky;
         break;
+    case 'Column Renderer':
+        func = loadColRenderer;
+        break;
 
     default:
         func = () => ({
@@ -68,7 +79,7 @@ export const handleLinkClick = (store, e) => {
     history.pushState(
         {},
         type,
-        `${location.protocol}//${location.host}/#${type.toLowerCase()}`
+        `${location.protocol}//${location.host}/#${type.replace(/\s/g, '').toLowerCase()}`
     );
 
     store.dispatch(

@@ -25,6 +25,10 @@ export const App = (
         grid = DEFAULT;
     }
 
+    if (grid === 'columnrenderer') {
+        grid = 'colRenderer';
+    }
+
     return (
         <div>
             <h1 { ...titleProps }>

@@ -30,7 +30,7 @@ export const Sticky = ({ store }) => {
         height: '',
         events,
         store,
-        stateKey: 'complex'
+        stateKey: 'sticky'
     };
 
     return (

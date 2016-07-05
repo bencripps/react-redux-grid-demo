@@ -1,7 +1,8 @@
 import {
     LOAD_SIMPLE,
     LOAD_COMPLEX,
-    LOAD_STICKY
+    LOAD_STICKY,
+    LOAD_COL_RENDERER
 } from './../constants/actionTypes';
 
 export const loadSimple = () => {
@@ -19,5 +20,11 @@ export const loadComplex = () => {
 export const loadSticky = () => {
     return {
         type: LOAD_STICKY
+    };
+};
+
+export const loadColRenderer = () => {
+    return {
+        type: LOAD_COL_RENDERER
     };
 };
