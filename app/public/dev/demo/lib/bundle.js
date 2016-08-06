@@ -24611,7 +24611,7 @@
 	        value: function componentDidUpdate() {
 
 	            if (!this.updateFunc) {
-	                this.updateFunc = (0, _throttle.debounce)(this.getScrollWidth, 1000, true);
+	                this.updateFunc = (0, _throttle.debounce)(this.getScrollWidth, 200);
 	            }
 
 	            this.updateFunc();
@@ -24746,7 +24746,7 @@
 
 	            var offset = fixed.offsetWidth - hidden.offsetWidth;
 
-	            if (offset && offset !== headerOffset) {
+	            if (offset !== undefined && offset !== headerOffset) {
 	                this.setState({
 	                    headerOffset: offset
 	                });

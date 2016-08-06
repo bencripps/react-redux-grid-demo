@@ -2,7 +2,7 @@
 * @Author: ben_cripps
 * @Date:   2015-05-18 19:34:42
 * @Last Modified by:   ben_cripps
-* @Last Modified time: 2016-05-31 20:40:16
+* @Last Modified time: 2016-08-07 07:54:07
 */
 
 'use strict';
@@ -27,7 +27,6 @@ module.exports = class App {
             .set('port', process.env.PORT || 3000)
             .set('views', path.join(__dirname, '/../views'))
             .set('view engine', 'jade')
-            .use(favicon('favicon.ico'))
             .use(express.static('app/public'))
             .use(bodyParser.json())
             .use(bodyParser.urlencoded({extended: true}));
