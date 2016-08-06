@@ -42,32 +42,6 @@ export const plugins = {
             sortingSource: '/getFakedPagedData'
         }
     },
-    FILTER_CONTAINER: {
-        enabled: true,
-        method: 'local',
-        filterSource: '/getFakedPagedData',
-        enableFilterMenu: true,
-        fields: [
-            {
-                name: 'name',
-                label: 'Name',
-                placeholder: 'Name',
-                type: 'text'
-            },
-            {
-                name: 'address',
-                label: 'Address',
-                placeholder: 'Address',
-                type: 'number'
-            },
-            {
-                name: 'date',
-                label: 'Date',
-                placeholder: 'Date',
-                type: 'date'
-            }
-        ]
-    },
     EDITOR: {
         type: 'inline',
         enabled: true
@@ -102,17 +76,6 @@ export const plugins = {
             },
             {
                 text: 'Add',
-                EVENT_HANDLER: () => {
-
-                }
-            }
-        ]
-    },
-    GRID_ACTIONS: {
-        iconCls: 'action-icon',
-        menu: [
-            {
-                text: 'Delete',
                 EVENT_HANDLER: () => {
 
                 }

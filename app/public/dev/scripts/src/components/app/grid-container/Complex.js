@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import { Grid } from 'react-redux-grid';
+import { Grid, Actions } from 'react-redux-grid';
 
 import {
     columns,
@@ -12,15 +12,41 @@ import {
 
 export const Complex = ({ store }) => {
 
+    const stateKey = 'complex';
+
     const complexData = {
         columns,
         data,
         pageSize,
-        plugins,
+        plugins: {
+            ...plugins,
+            GRID_ACTIONS: {
+                iconCls: 'action-icon',
+                menu: [
+                    {
+                        text: 'Delete',
+                        EVENT_HANDLER: ({ metaData }) => {
+                            const index = metaData.rowIndex;
+                            const newData = store.getState()
+                                .dataSource
+                                .getIn([stateKey, 'data'])
+                                .delete(index);
+
+                            store.dispatch(
+                                Actions.GridActions.setData({
+                                    stateKey,
+                                    data: newData
+                                })
+                            );
+                        }
+                    }
+                ]
+            }
+        },
         events,
         dataSource,
         store,
-        stateKey: 'complex'
+        stateKey
     };
 
     return (

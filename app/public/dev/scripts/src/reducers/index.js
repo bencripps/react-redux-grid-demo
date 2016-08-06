@@ -8,7 +8,7 @@ const gridReducers = {
     editor: Reducers.Editor,
     errorHandler: Reducers.ErrorHandler,
     filter: Reducers.Filter,
-    grid: Reducers.grid,
+    grid: Reducers.Grid,
     loader: Reducers.Loader,
     menu: Reducers.Menu,
     pager: Reducers.Pager,
