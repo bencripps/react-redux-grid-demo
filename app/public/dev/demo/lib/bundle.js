@@ -36733,7 +36733,35 @@
 	    var stateKey = 'complex';
 
 	    var complexData = {
-	        columns: _demodata.columns,
+	        columns: [{
+	            name: 'Name',
+	            width: '10%',
+	            className: 'additional-class',
+	            dataIndex: 'Name',
+	            sortable: true,
+	            HANDLE_CLICK: function HANDLE_CLICK() {
+	                console.log('Header Click');
+	            }
+	        }, {
+	            name: 'Phone Number',
+	            width: '20%',
+	            dataIndex: 'Phone Number',
+	            sortable: true,
+	            className: 'additional-class'
+	        }, {
+	            name: 'Email',
+	            width: '25%',
+	            dataIndex: 'Email',
+	            sortable: true,
+	            className: 'additional-class',
+	            defaultSortDirection: 'descend'
+	        }, {
+	            name: 'Address',
+	            dataIndex: 'Address',
+	            sortable: true,
+	            width: '35%',
+	            className: 'additional-class'
+	        }],
 	        data: _demodata.data,
 	        pageSize: _demodata.pageSize,
 	        plugins: _extends({}, _demodata.plugins, {
@@ -36744,12 +36772,11 @@
 	                    EVENT_HANDLER: function EVENT_HANDLER(_ref2) {
 	                        var metaData = _ref2.metaData;
 
-	                        var index = metaData.rowIndex;
-	                        var newData = store.getState().dataSource.getIn([stateKey, 'data']).delete(index);
+	                        var rowIndex = metaData.rowIndex;
 
-	                        store.dispatch(_reactReduxGrid.Actions.GridActions.setData({
+	                        store.dispatch(_reactReduxGrid.Actions.EditorActions.removeRow({
 	                            stateKey: stateKey,
-	                            data: newData
+	                            rowIndex: rowIndex
 	                        }));
 	                    }
 	                }]

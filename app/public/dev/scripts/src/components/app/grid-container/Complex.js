@@ -15,7 +15,38 @@ export const Complex = ({ store }) => {
     const stateKey = 'complex';
 
     const complexData = {
-        columns,
+        columns: [
+            {
+                name: 'Name',
+                width: '10%',
+                className: 'additional-class',
+                dataIndex: 'Name',
+                sortable: true,
+                HANDLE_CLICK: () => { console.log('Header Click'); }
+            },
+            {
+                name: 'Phone Number',
+                width: '20%',
+                dataIndex: 'Phone Number',
+                sortable: true,
+                className: 'additional-class'
+            },
+            {
+                name: 'Email',
+                width: '25%',
+                dataIndex: 'Email',
+                sortable: true,
+                className: 'additional-class',
+                defaultSortDirection: 'descend'
+            },
+            {
+                name: 'Address',
+                dataIndex: 'Address',
+                sortable: true,
+                width: '35%',
+                className: 'additional-class'
+            }
+        ],
         data,
         pageSize,
         plugins: {
@@ -26,16 +57,12 @@ export const Complex = ({ store }) => {
                     {
                         text: 'Delete',
                         EVENT_HANDLER: ({ metaData }) => {
-                            const index = metaData.rowIndex;
-                            const newData = store.getState()
-                                .dataSource
-                                .getIn([stateKey, 'data'])
-                                .delete(index);
+                            const rowIndex = metaData.rowIndex;
 
                             store.dispatch(
-                                Actions.GridActions.setData({
+                                Actions.EditorActions.removeRow({
                                     stateKey,
-                                    data: newData
+                                    rowIndex
                                 })
                             );
                         }
