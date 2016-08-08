@@ -7,7 +7,7 @@ module.exports = [
             'react-hot',
             'babel-loader?presets[]=react,presets[]=es2015,presets[]=stage-0'
         ],
-        exclude: /[\\\/]node_modules[\\\/](?!react-redux-grid)/
+        exclude: /[\\\/]node_modules[\\\/]/
     },
     {
         test: /\.styl$/,
