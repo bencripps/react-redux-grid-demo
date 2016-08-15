@@ -1,6 +1,6 @@
 'use strict';
 
-const data = require('../config/fakedata');
+const dataObj = require('../config/fakedata');
 
 module.exports = class Functions {
     constructor() {
@@ -14,20 +14,27 @@ module.exports = class Functions {
     getFakeData(vars, req, res) {
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.json({
-            data: data.slice(0, 20),
-            total: data.length
+            data: dataObj.data.slice(0, 20),
+            total: dataObj.data.length
         });
         // res.json({
         //     data: data
         // });
     }
 
+     getTreeData(vars, req, res) {
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.json({
+            data: dataObj.treeData
+        });
+    }
+
     getFakeDataPaged(vars, req, res) {
         const json = JSON.parse(Object.keys(req.body)[0]);
         const pageIndex = json.pageIndex;
         const pageSize = json.pageSize;
-        const total = data.length;
-        const pages = data.slice(pageIndex * pageSize, (pageIndex + 1) * pageSize);
+        const total = dataObj.data.length;
+        const pages = dataObj.data.slice(pageIndex * pageSize, (pageIndex + 1) * pageSize);
 
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.json({
