@@ -2,7 +2,8 @@ import {
     LOAD_SIMPLE,
     LOAD_COMPLEX,
     LOAD_STICKY,
-    LOAD_COL_RENDERER
+    LOAD_COL_RENDERER,
+    LOAD_TREE
 } from './../constants/actionTypes';
 
 export const loadSimple = () => {
@@ -22,6 +23,13 @@ export const loadSticky = () => {
         type: LOAD_STICKY
     };
 };
+
+export const loadTree = () => {
+    return {
+        type: LOAD_TREE
+    };
+};
+
 
 export const loadColRenderer = () => {
     return {

@@ -5,7 +5,8 @@ import {
     loadSimple,
     loadComplex,
     loadSticky,
-    loadColRenderer
+    loadColRenderer,
+    loadTree
 } from './../../actions';
 
 export const Navigation = (
@@ -38,11 +39,19 @@ export const Navigation = (
         children: 'Column Renderer'
     };
 
+
+    const treeProps = {
+        className: `${PREFIX}nav-link`,
+        onClick: handleLinkClick.bind(null, store),
+        children: 'Tree'
+    };
+
     return (
         <div { ...{ className } }>
             <ul>
                 <li><a { ...simpleProps } /></li>
                 <li><a { ...complexProps } /></li>
+                <li><a { ...treeProps } /></li>
                 <li><a { ...stickyProps } /></li>
                 <li><a { ...colRendererProps } /></li>
             </ul>
@@ -68,6 +77,9 @@ export const handleLinkClick = (store, e) => {
         break;
     case 'Column Renderer':
         func = loadColRenderer;
+        break;
+    case 'Tree':
+        func = loadTree;
         break;
 
     default:

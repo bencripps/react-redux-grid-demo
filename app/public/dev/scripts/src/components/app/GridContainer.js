@@ -5,6 +5,7 @@ import Simple from './grid-container/Simple';
 import Complex from './grid-container/Complex';
 import Sticky from './grid-container/Sticky';
 import ColRenderer from './grid-container/ColRenderer';
+import Tree from './grid-container/Tree';
 
 export const Navigation = (
   { grid, store }
@@ -43,6 +44,12 @@ const getGrid = (type, store) => {
     else if (type === 'sticky') {
         return (
             <Sticky { ...{ store } } />
+            );
+    }
+
+    else if (type === 'tree') {
+        return (
+            <Tree { ...{ store } } />
             );
     }
 

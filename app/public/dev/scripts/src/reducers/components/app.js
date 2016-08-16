@@ -4,7 +4,8 @@ import {
     LOAD_SIMPLE,
     LOAD_COMPLEX,
     LOAD_STICKY,
-    LOAD_COL_RENDERER
+    LOAD_COL_RENDERER,
+    LOAD_TREE
 } from '../../constants/actionTypes';
 
 const initialState = fromJS({});
@@ -31,6 +32,10 @@ export default function gridState(state = initialState, action) {
     case LOAD_COL_RENDERER:
         return state.merge({
             grid: 'colRenderer'
+        });
+    case LOAD_TREE:
+        return state.merge({
+            grid: 'tree'
         });
 
     default:
