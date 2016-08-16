@@ -691,6 +691,7 @@ const treeData = {
                         Gender: 'Male',
                         Address: '21112 Park',
                         'Phone Number': '31-(678)495-4134',
+                        leaf: false
                     }
                 ]
             }
