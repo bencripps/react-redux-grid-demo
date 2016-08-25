@@ -18776,7 +18776,7 @@
 
 	var _App2 = _interopRequireDefault(_App);
 
-	var _store = __webpack_require__(296);
+	var _store = __webpack_require__(299);
 
 	var _store2 = _interopRequireDefault(_store);
 
@@ -21331,7 +21331,7 @@
 
 	var _GridContainer2 = _interopRequireDefault(_GridContainer);
 
-	__webpack_require__(292);
+	__webpack_require__(295);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -21650,19 +21650,19 @@
 
 	var _Simple2 = _interopRequireDefault(_Simple);
 
-	var _Complex = __webpack_require__(288);
+	var _Complex = __webpack_require__(291);
 
 	var _Complex2 = _interopRequireDefault(_Complex);
 
-	var _Sticky = __webpack_require__(289);
+	var _Sticky = __webpack_require__(292);
 
 	var _Sticky2 = _interopRequireDefault(_Sticky);
 
-	var _ColRenderer = __webpack_require__(290);
+	var _ColRenderer = __webpack_require__(293);
 
 	var _ColRenderer2 = _interopRequireDefault(_ColRenderer);
 
-	var _Tree = __webpack_require__(291);
+	var _Tree = __webpack_require__(294);
 
 	var _Tree2 = _interopRequireDefault(_Tree);
 
@@ -21732,7 +21732,7 @@
 
 	var _reactReduxGrid = __webpack_require__(192);
 
-	var _demodata = __webpack_require__(287);
+	var _demodata = __webpack_require__(290);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -21777,13 +21777,13 @@
 
 	var _Grid = __webpack_require__(193);
 
-	var _store = __webpack_require__(269);
+	var _store = __webpack_require__(272);
 
 	var _store2 = _interopRequireDefault(_store);
 
-	var _reducers = __webpack_require__(271);
+	var _reducers = __webpack_require__(274);
 
-	var _actions = __webpack_require__(286);
+	var _actions = __webpack_require__(289);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -21850,11 +21850,11 @@
 
 	var _ColumnManager2 = _interopRequireDefault(_ColumnManager);
 
-	var _Model = __webpack_require__(262);
+	var _Model = __webpack_require__(263);
 
 	var _Model2 = _interopRequireDefault(_Model);
 
-	var _Manager = __webpack_require__(264);
+	var _Manager = __webpack_require__(265);
 
 	var _Manager2 = _interopRequireDefault(_Manager);
 
@@ -21864,11 +21864,17 @@
 
 	var _GridActions = __webpack_require__(213);
 
-	var _mapStateToProps = __webpack_require__(268);
+	var _mapStateToProps = __webpack_require__(269);
 
 	var _shouldComponentUpdate = __webpack_require__(235);
 
 	var _isPluginEnabled = __webpack_require__(223);
+
+	var _getColumnsFromStorage = __webpack_require__(270);
+
+	var _LocalStorageManager = __webpack_require__(271);
+
+	var _LocalStorageManager2 = _interopRequireDefault(_LocalStorageManager);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -21882,7 +21888,7 @@
 
 	var _css = document.createElement('style');
 
-	_css.innerHTML = '.react-grid-page-buttons {   background-color: #2e7d32;   border-radius: 3px;   border: none;   color: #fff;   cursor: pointer;   font-family: \'Open Sans\', sans-serif;   opacity: 1; } .react-grid-page-buttons:focus {   outline: none; } .react-grid-page-buttons:active {   opacity: 1;   background-color: #52bf57; } .react-grid-page-buttons:hover {   opacity: 0.6; } .react-grid-page-buttons:disabled {   background-color: #fff;   color: #161616;   cursor: initial; } .react-grid-cell {   border-bottom: 1px solid #f7f7f7;   font-family: \'Open Sans\', sans-serif;   font-size: 13px;   height: 20px;   overflow: hidden;   padding: 4px 10px 4px 10px;   position: relative;   text-overflow: ellipsis; } .react-grid-cell.react-grid-edit {   overflow: visible; } .react-grid-cell .react-grid-inactive {   pointer-events: none; } .react-grid-container {   box-shadow: 2px 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);   position: relative; } .react-grid-table {   border-radius: 4px;   border-collapse: collapse;   font-size: 14px;   position: relative;   text-align: left;   table-layout: fixed;   white-space: nowrap;   width: 100%; } .react-grid-table.react-grid-header-fixed {   box-shadow: none;   z-index: 9; } .react-grid-table.react-grid-header-fixed.react-grid-header-stuck {   margin-left: auto;   margin-right: auto;   position: fixed;   top: 0; } .react-grid-table.react-grid-header-fixed.react-grid-header-stuck-bottom {   position: absolute; } .react-grid-table.react-grid-header-hidden thead, .react-grid-table.react-grid-header-hidden thead * {   border: 0;   height: 0; } .react-grid-table.react-grid-header-hidden thead th * {   border: 0;   display: none;   height: 0; } .react-grid-table-container {   background-color: #fff;   overflow: hidden;   overflow-y: auto;   overflow-x: hidden;   position: relative; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-0 {   margin-left: -8px;   cursor: pointer; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-0::before {   font-family: FontAwesome;   font-size: 12px;   font-weight: normal;   font-style: normal;   content: \'\\F078\'; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-0::before {   font-size: 8px;   position: relative;   left: -5px;   top: -1px; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-0.react-grid-node-unexpanded {   cursor: pointer; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-0.react-grid-node-unexpanded::before {   font-family: FontAwesome;   font-size: 12px;   font-weight: normal;   font-style: normal;   content: \'\\F054\'; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-0.react-grid-node-unexpanded::before {   font-size: 8px;   position: relative;   left: -4px;   margin-right: 2px;   top: -1px; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-0:not(.react-grid-expand) {   visibility: hidden; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-1 {   margin-left: 0px;   cursor: pointer; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-1::before {   font-family: FontAwesome;   font-size: 12px;   font-weight: normal;   font-style: normal;   content: \'\\F078\'; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-1::before {   font-size: 8px;   position: relative;   left: -5px;   top: -1px; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-1.react-grid-node-unexpanded {   cursor: pointer; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-1.react-grid-node-unexpanded::before {   font-family: FontAwesome;   font-size: 12px;   font-weight: normal;   font-style: normal;   content: \'\\F054\'; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-1.react-grid-node-unexpanded::before {   font-size: 8px;   position: relative;   left: -4px;   margin-right: 2px;   top: -1px; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-1:not(.react-grid-expand) {   visibility: hidden; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-2 {   margin-left: 8px;   cursor: pointer; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-2::before {   font-family: FontAwesome;   font-size: 12px;   font-weight: normal;   font-style: normal;   content: \'\\F078\'; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-2::before {   font-size: 8px;   position: relative;   left: -5px;   top: -1px; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-2.react-grid-node-unexpanded {   cursor: pointer; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-2.react-grid-node-unexpanded::before {   font-family: FontAwesome;   font-size: 12px;   font-weight: normal;   font-style: normal;   content: \'\\F054\'; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-2.react-grid-node-unexpanded::before {   font-size: 8px;   position: relative;   left: -4px;   margin-right: 2px;   top: -1px; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-2:not(.react-grid-expand) {   visibility: hidden; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-3 {   margin-left: 16px;   cursor: pointer; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-3::before {   font-family: FontAwesome;   font-size: 12px;   font-weight: normal;   font-style: normal;   content: \'\\F078\'; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-3::before {   font-size: 8px;   position: relative;   left: -5px;   top: -1px; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-3.react-grid-node-unexpanded {   cursor: pointer; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-3.react-grid-node-unexpanded::before {   font-family: FontAwesome;   font-size: 12px;   font-weight: normal;   font-style: normal;   content: \'\\F054\'; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-3.react-grid-node-unexpanded::before {   font-size: 8px;   position: relative;   left: -4px;   margin-right: 2px;   top: -1px; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-3:not(.react-grid-expand) {   visibility: hidden; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-4 {   margin-left: 24px;   cursor: pointer; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-4::before {   font-family: FontAwesome;   font-size: 12px;   font-weight: normal;   font-style: normal;   content: \'\\F078\'; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-4::before {   font-size: 8px;   position: relative;   left: -5px;   top: -1px; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-4.react-grid-node-unexpanded {   cursor: pointer; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-4.react-grid-node-unexpanded::before {   font-family: FontAwesome;   font-size: 12px;   font-weight: normal;   font-style: normal;   content: \'\\F054\'; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-4.react-grid-node-unexpanded::before {   font-size: 8px;   position: relative;   left: -4px;   margin-right: 2px;   top: -1px; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-4:not(.react-grid-expand) {   visibility: hidden; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-5 {   margin-left: 32px;   cursor: pointer; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-5::before {   font-family: FontAwesome;   font-size: 12px;   font-weight: normal;   font-style: normal;   content: \'\\F078\'; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-5::before {   font-size: 8px;   position: relative;   left: -5px;   top: -1px; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-5.react-grid-node-unexpanded {   cursor: pointer; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-5.react-grid-node-unexpanded::before {   font-family: FontAwesome;   font-size: 12px;   font-weight: normal;   font-style: normal;   content: \'\\F054\'; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-5.react-grid-node-unexpanded::before {   font-size: 8px;   position: relative;   left: -4px;   margin-right: 2px;   top: -1px; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-5:not(.react-grid-expand) {   visibility: hidden; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-6 {   margin-left: 40px;   cursor: pointer; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-6::before {   font-family: FontAwesome;   font-size: 12px;   font-weight: normal;   font-style: normal;   content: \'\\F078\'; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-6::before {   font-size: 8px;   position: relative;   left: -5px;   top: -1px; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-6.react-grid-node-unexpanded {   cursor: pointer; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-6.react-grid-node-unexpanded::before {   font-family: FontAwesome;   font-size: 12px;   font-weight: normal;   font-style: normal;   content: \'\\F054\'; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-6.react-grid-node-unexpanded::before {   font-size: 8px;   position: relative;   left: -4px;   margin-right: 2px;   top: -1px; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-6:not(.react-grid-expand) {   visibility: hidden; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-7 {   margin-left: 48px;   cursor: pointer; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-7::before {   font-family: FontAwesome;   font-size: 12px;   font-weight: normal;   font-style: normal;   content: \'\\F078\'; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-7::before {   font-size: 8px;   position: relative;   left: -5px;   top: -1px; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-7.react-grid-node-unexpanded {   cursor: pointer; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-7.react-grid-node-unexpanded::before {   font-family: FontAwesome;   font-size: 12px;   font-weight: normal;   font-style: normal;   content: \'\\F054\'; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-7.react-grid-node-unexpanded::before {   font-size: 8px;   position: relative;   left: -4px;   margin-right: 2px;   top: -1px; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-7:not(.react-grid-expand) {   visibility: hidden; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-8 {   margin-left: 56px;   cursor: pointer; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-8::before {   font-family: FontAwesome;   font-size: 12px;   font-weight: normal;   font-style: normal;   content: \'\\F078\'; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-8::before {   font-size: 8px;   position: relative;   left: -5px;   top: -1px; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-8.react-grid-node-unexpanded {   cursor: pointer; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-8.react-grid-node-unexpanded::before {   font-family: FontAwesome;   font-size: 12px;   font-weight: normal;   font-style: normal;   content: \'\\F054\'; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-8.react-grid-node-unexpanded::before {   font-size: 8px;   position: relative;   left: -4px;   margin-right: 2px;   top: -1px; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-8:not(.react-grid-expand) {   visibility: hidden; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-9 {   margin-left: 64px;   cursor: pointer; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-9::before {   font-family: FontAwesome;   font-size: 12px;   font-weight: normal;   font-style: normal;   content: \'\\F078\'; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-9::before {   font-size: 8px;   position: relative;   left: -5px;   top: -1px; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-9.react-grid-node-unexpanded {   cursor: pointer; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-9.react-grid-node-unexpanded::before {   font-family: FontAwesome;   font-size: 12px;   font-weight: normal;   font-style: normal;   content: \'\\F054\'; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-9.react-grid-node-unexpanded::before {   font-size: 8px;   position: relative;   left: -4px;   margin-right: 2px;   top: -1px; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-9:not(.react-grid-expand) {   visibility: hidden; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-10 {   margin-left: 72px;   cursor: pointer; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-10::before {   font-family: FontAwesome;   font-size: 12px;   font-weight: normal;   font-style: normal;   content: \'\\F078\'; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-10::before {   font-size: 8px;   position: relative;   left: -5px;   top: -1px; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-10.react-grid-node-unexpanded {   cursor: pointer; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-10.react-grid-node-unexpanded::before {   font-family: FontAwesome;   font-size: 12px;   font-weight: normal;   font-style: normal;   content: \'\\F054\'; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-10.react-grid-node-unexpanded::before {   font-size: 8px;   position: relative;   left: -4px;   margin-right: 2px;   top: -1px; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-10:not(.react-grid-expand) {   visibility: hidden; } .react-grid-header-fixed-container.react-grid-hidden {   opacity: 0; } .react-grid-header {   background-color: #f7f7f7;   border-bottom: 1px solid #e9e9e9;   color: #3f3f3f;   font-family: \'Open Sans\', sans-serif;   height: 24px; } .react-grid-header.react-grid-header-hidden {   visibility: hidden; } .react-grid-header.react-grid-header-hidden th {   border: none;   height: 0px;   padding-bottom: 0px;   padding-top: 0px; } .react-grid-header.react-grid-header-hidden th.react-grid-checkbox-container {   border: none;   height: 0;   margin: 0; } .react-grid-header th {   position: relative;   text-overflow: ellipsis; } .react-grid-header th.react-grid-checkbox-container {   border-bottom: 1px solid #e9e9e9; } .react-grid-header th .react-grid-column {   display: inline-block;   text-overflow: ellipsis;   overflow: hidden;   width: 80%; } .react-grid-header th.react-grid-sort-handle-visible .react-grid-sort-handle {   visibility: visible; } .react-grid-header th .react-grid-sort-handle {   float: left;   -webkit-transition-duration: 150ms;           transition-duration: 150ms;   -webkit-transition-property: opacity;   transition-property: opacity;   -webkit-transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);           transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);   visibility: hidden; } .react-grid-header th .react-grid-sort-handle.react-grid-desc {   cursor: pointer; } .react-grid-header th .react-grid-sort-handle.react-grid-desc::before {   font-family: FontAwesome;   font-size: 12px;   font-weight: normal;   font-style: normal;   content: \'\\F0D8\'; } .react-grid-header th .react-grid-sort-handle.react-grid-desc::before {   top: -1px; } .react-grid-header th .react-grid-sort-handle.react-grid-asc {   cursor: pointer; } .react-grid-header th .react-grid-sort-handle.react-grid-asc::before {   font-family: FontAwesome;   font-size: 12px;   font-weight: normal;   font-style: normal;   content: \'\\F0D7\'; } .react-grid-header th .react-grid-sort-handle::before {   cursor: pointer;   position: relative;   right: 1px; } .react-grid-header th .react-grid-drag-handle::after {   border-right: 1px solid #f7f7f7;   content: \' \';   cursor: ew-resize;   position: absolute;   right: 0px;   top: 0px;   width: 10px;   height: 100%;   -webkit-transition-duration: 150ms;           transition-duration: 150ms;   -webkit-transition-property: border;   transition-property: border;   -webkit-transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);           transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67); } .react-grid-header th:hover .react-grid-drag-handle::after {   border-color: #e9e9e9; } .react-grid-header th:nth-last-child(1), .react-grid-header th:nth-last-child(2) {   overflow: initial; } .react-grid-header th:nth-last-child(1) .react-grid-drag-handle::after, .react-grid-header th:nth-last-child(2) .react-grid-drag-handle::after {   border: none;   cursor: auto; } .react-grid-action-menu-container {   background-color: #fff;   border-radius: 3px;   box-shadow: 2px 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);   right: 6px;   list-style-type: none;   list-style-position: outside;   padding: 0px;   position: absolute;   top: 10px;   z-index: 11; } .react-grid-action-menu-item {   border-radius: 3px;   font-family: \'Open Sans\', sans-serif;   font-size: 12px;   padding: 6px 30px 6px 6px;   line-height: 1.2; } .react-grid-action-menu-item:hover {   background-color: #f7f7f7; } .react-grid-row {   background-color: #fff;   cursor: pointer;   text-overflow: ellipsis;   -webkit-transition-duration: 150ms;           transition-duration: 150ms;   -webkit-transition-property: background-color;   transition-property: background-color;   -webkit-transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);           transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67); } .react-grid-row:hover {   background-color: #f5f5f5; } .react-grid-row.react-grid-empty-row {   text-align: center;   height: 80px; } .react-grid-row.react-grid-active {   background-color: #e9e9e9; } .react-grid-row.react-grid-edit {   color: #fff;   background-color: #b2b2b2;   box-shadow: 2px 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23); } .react-grid-row.react-grid-edit .react-grid-action-menu-container {   color: initial; } .react-grid-row.react-grid-edit:hover {   background-color: #b2b2b2; } .react-grid-row.react-grid-edit td {   border-bottom: 2px solid transparent; } .react-grid-row.react-grid-edit td:focus {   border-bottom: 2px solid #2e7d32;   outline: none; } .react-grid-inline-editor {   opacity: 0;   position: absolute;   left: 0px;   -webkit-transform: translateX(0px) translateY(0px);           transform: translateX(0px) translateY(0px);   text-align: center;   margin: 0px auto;   -webkit-transition-duration: 150ms;           transition-duration: 150ms;   -webkit-transition-property: -webkit-transform opacity;   transition-property: -webkit-transform opacity;   transition-property: transform opacity;   transition-property: transform opacity, -webkit-transform opacity;   -webkit-transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);           transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);   pointer-events: none;   right: 0px; } .react-grid-inline-editor .react-grid-button-container {   background-color: #b2b2b2;   border-radius: 3px;   box-shadow: 2px 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);   display: inline-block;   margin-top: 5px;   padding: 5px;   pointer-events: all; } .react-grid-inline-editor .react-grid-button-container .react-grid-save-button {   background-color: #2e7d32;   border-radius: 3px;   border: none;   color: #fff;   cursor: pointer;   font-family: \'Open Sans\', sans-serif;   opacity: 1; } .react-grid-inline-editor .react-grid-button-container .react-grid-save-button:focus {   outline: none; } .react-grid-inline-editor .react-grid-button-container .react-grid-save-button:active {   opacity: 1;   background-color: #52bf57; } .react-grid-inline-editor .react-grid-button-container .react-grid-save-button:hover {   opacity: 0.6; } .react-grid-inline-editor .react-grid-button-container .react-grid-save-button:disabled {   background-color: #fff;   color: #161616;   cursor: initial; } .react-grid-inline-editor .react-grid-button-container .react-grid-cancel-button {   background-color: #f7f7f7;   border-radius: 3px;   border: none;   color: #161616;   cursor: pointer;   font-family: \'Open Sans\', sans-serif;   opacity: 1; } .react-grid-inline-editor .react-grid-button-container .react-grid-cancel-button:focus {   outline: none; } .react-grid-inline-editor .react-grid-button-container .react-grid-cancel-button:active {   opacity: 1;   background-color: #f9f9f9; } .react-grid-inline-editor .react-grid-button-container .react-grid-cancel-button:hover {   opacity: 0.6; } .react-grid-inline-editor .react-grid-button-container .react-grid-cancel-button:disabled {   background-color: #fff;   color: #161616;   cursor: initial; } .react-grid-inline-editor.react-grid-shown {   opacity: 1;   display: block;   -webkit-transform: translateY(-7px);           transform: translateY(-7px); } .react-grid-inline-editor.react-grid-hidden {   top: -10000px; } .react-grid-error-container {   background-color: #f7f7f7;   bottom: 0px;   box-shadow: 2px 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);   color: #e9e9e9;   height: 100px;   left: 0px;   margin: auto;   position: absolute;   -webkit-perspective: 1300px;           perspective: 1300px;   -webkit-transform-style: preserve-3d;           transform-style: preserve-3d;   -webkit-transform: rotateX(-70deg);           transform: rotateX(-70deg);   -webkit-transition-duration: 0.2s;           transition-duration: 0.2s;   -webkit-transition-property: -webkit-transform;   transition-property: -webkit-transform;   transition-property: transform;   transition-property: transform, -webkit-transform;   -webkit-transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);           transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);   opacity: 0;   right: 0px;   top: -10000px;   width: 50%;   z-index: 10; } .react-grid-error-container .react-grid-error-message {   color: #3f3f3f;   font-family: \'Open Sans\', sans-serif;   height: 20px;   margin-top: -20px;   top: 50%;   left: 0;   right: 0;   position: absolute; } .react-grid-error-container button {   background-color: #2e7d32;   border-radius: 3px;   border: none;   color: #fff;   cursor: pointer;   font-family: \'Open Sans\', sans-serif;   opacity: 1;   position: absolute;   right: 10px;   bottom: 10px; } .react-grid-error-container button:focus {   outline: none; } .react-grid-error-container button:active {   opacity: 1;   background-color: #52bf57; } .react-grid-error-container button:hover {   opacity: 0.6; } .react-grid-error-container button:disabled {   background-color: #fff;   color: #161616;   cursor: initial; } .react-grid-error-container.react-grid-shown {   top: 0px;   -webkit-transform: rotateX(0deg);           transform: rotateX(0deg);   opacity: 1; } th.react-grid-action-container {   border-bottom: 1px solid #e9e9e9; } .react-grid-action-container {   cursor: pointer;   position: relative;   width: 5px;   border-bottom: 1px solid #f7f7f7;   height: 20px;   font-family: \'Open Sans\', sans-serif; } .react-grid-action-container .react-grid-no-actions {   display: none; } .react-grid-action-container .react-grid-action-icon {   cursor: pointer;   cursor: pointer;   padding-left: 5px;   position: relative; } .react-grid-action-container .react-grid-action-icon::before {   font-family: FontAwesome;   font-size: 12px;   font-weight: normal;   font-style: normal;   content: \'\\F142\'; } .react-grid-action-container .react-grid-action-icon::before {   cursor: pointer;   border-radius: 3px;   position: absolute;   text-align: center;   top: 5px;   right: 5px;   width: 6px; } .react-grid-action-container.react-grid-action-menu-selected span::before {   background-color: #e9e9e9; } .react-grid-loading-bar {   display: none;   position: absolute;   height: 4px;   width: 100%; } .react-grid-loading-bar.react-grid-active {   display: block; } .react-grid-loading-bar::before {   display: block;   position: absolute;   content: "";   left: -200px;   width: 200px;   height: 4px;   background-color: #2e7d32;   -webkit-animation: loading 2s linear infinite;           animation: loading 2s linear infinite; } @-webkit-keyframes loading {   from {     left: 0px;     width: 30%;   }   50% {     width: 30%;   }   70% {     width: 44%;   }   80% {     left: 55%;   }   95% {     left: 66%;   }   to {     left: 72%;   } } @keyframes loading {   from {     left: 0px;     width: 30%;   }   50% {     width: 30%;   }   70% {     width: 44%;   }   80% {     left: 55%;   }   95% {     left: 66%;   }   to {     left: 72%;   } } .react-grid-pager-toolbar {   background-color: #f7f7f7;   border-top: 1px solid #e9e9e9;   border-radius: 0px 0px 3px 3px;   font-family: \'Open Sans\', sans-serif;   font-size: 13px;   height: 24px;   text-indent: 10px; } .react-grid-pager-toolbar.react-grid-is-stuck {   bottom: 0;   position: fixed; } .react-grid-pager-toolbar.react-grid-is-stuck-bottom {   position: absolute;   width: 100%; } .react-grid-pager-toolbar span {   display: block;   float: right;   position: relative;   right: 5px;   top: 2px; } .react-grid-pager-toolbar span:first-child {   font-size: 14px;   font-family: \'Open Sans\', sans-serif;   float: left; } .react-grid-pager-toolbar button {   margin: 0px 10px; } .react-grid-checkbox-container {   border-bottom: 1px solid #f7f7f7;   height: 20px;   font-family: \'Open Sans\', sans-serif;   font-size: 13px;   padding: 4px 10px 4px 10px;   position: relative;   text-overflow: ellipsis;   overflow: hidden;   padding: 0px 10px;   width: 10px; } .react-grid-bulkaction-container {   background-color: #b2b2b2;   border-radius: 3px 3px 0px 0px;   height: 28px;   -webkit-transition-duration: 150ms;           transition-duration: 150ms;   -webkit-transition-property: -webkit-transform opacity top;   transition-property: -webkit-transform opacity top;   transition-property: transform opacity top;   transition-property: transform opacity top, -webkit-transform opacity top;   -webkit-transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);           transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);   position: absolute;   text-align: left;   -webkit-transform: translateX(0px) translateY(-37px);           transform: translateX(0px) translateY(-37px);   top: -37px;   opacity: 0;   z-index: 12;   width: 100%; } .react-grid-bulkaction-container .react-grid-bulkaction-description {   display: inline-block;   font-family: \'Open Sans\', sans-serif;   font-size: 13px;   overflow: hidden;   padding-left: 15px;   text-overflow: ellipsis;   min-width: 70px;   position: relative;   top: 3px; } .react-grid-bulkaction-container .react-grid-checkbox-container {   border-bottom: 1px solid transparent; } .react-grid-bulkaction-container button {   background-color: #2e7d32;   border-radius: 3px;   border: none;   color: #fff;   cursor: pointer;   font-family: \'Open Sans\', sans-serif;   opacity: 1;   margin: 5px 8px;   position: relative;   top: -1px; } .react-grid-bulkaction-container button:focus {   outline: none; } .react-grid-bulkaction-container button:active {   opacity: 1;   background-color: #52bf57; } .react-grid-bulkaction-container button:hover {   opacity: 0.6; } .react-grid-bulkaction-container button:disabled {   background-color: #fff;   color: #161616;   cursor: initial; } .react-grid-bulkaction-container.react-grid-removed {   top: -100px; } .react-grid-bulkaction-container.react-grid-shown {   top: 0px;   opacity: 1;   -webkit-transform: translateY(0px);           transform: translateY(0px); } .react-grid-filter-container {   background-color: #f7f7f7;   border-radius: 3px 3px 0px 0px;   padding: 5px 0px;   position: relative;   text-align: center;   width: 100%; } .react-grid-filter-container .react-grid-filter-input {   border: 1px solid #e9e9e9;   border-radius: 3px;   font-family: \'Open Sans\', sans-serif;   font-size: 14px;   color: #b2b2b2;   display: inline-block;   padding: 0px;   text-indent: 5px;   -webkit-transition-duration: 150ms;           transition-duration: 150ms;   -webkit-transition-property: color;   transition-property: color;   -webkit-transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);           transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);   width: 99%; } .react-grid-filter-container .react-grid-filter-input:focus {   color: #8e8e8e;   outline: none; } .react-grid-filter-container:hover .react-grid-filter-input {   color: #8e8e8e; } .react-grid-filter-container .react-grid-filter-button-container {   display: inline-block;   position: absolute;   right: 5px; } .react-grid-filter-container .react-grid-filter-button-container > i {   padding: 0px 3px 0px 0px; } .react-grid-filter-container .react-grid-filter-button-container > i::before {   color: #b2b2b2;   -webkit-transition-duration: 150ms;           transition-duration: 150ms;   -webkit-transition-property: color;   transition-property: color;   -webkit-transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);           transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67); } .react-grid-filter-container .react-grid-filter-button-container > i:hover::before {   color: #8e8e8e; } .react-grid-filter-container .react-grid-filter-button-container > i.react-grid-active::before {   color: #2e7d32; } .react-grid-filter-container .react-grid-filter-button-container .react-grid-filter-search-button {   cursor: pointer; } .react-grid-filter-container .react-grid-filter-button-container .react-grid-filter-search-button::before {   font-family: FontAwesome;   font-size: 12px;   font-weight: normal;   font-style: normal;   content: \'\\F002\'; } .react-grid-filter-container .react-grid-filter-button-container .react-grid-filter-clear-button {   cursor: pointer; } .react-grid-filter-container .react-grid-filter-button-container .react-grid-filter-clear-button::before {   font-family: FontAwesome;   font-size: 12px;   font-weight: normal;   font-style: normal;   content: \'\\F00D\'; } .react-grid-filter-container .react-grid-filter-button-container .react-grid-filter-menu-button {   cursor: pointer; } .react-grid-filter-container .react-grid-filter-button-container .react-grid-filter-menu-button::before {   font-family: FontAwesome;   font-size: 12px;   font-weight: normal;   font-style: normal;   content: \'\\F0b0\'; } .react-grid-advanced-filter-menu-container {   background-color: #f7f7f7;   border-radius: 3px;   box-shadow: 10px 15px 30px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);   font-family: \'Open Sans\', sans-serif;   position: absolute;   right: 10px;   top: 24px;   width: 400px;   z-index: 13; } .react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-title {   display: inline-block;   padding: 5px 10px; } .react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-field-container {   display: block;   padding: 5px 0px;   text-align: left;   font-size: 13px;   margin: 0px auto;   width: 90%; } .react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-field-container .react-grid-advanced-filter-menu-field-label {   display: inline-block;   padding: 5px 0px; } .react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-field-container .react-grid-advanced-filter-menu-field-input {   border: 1px solid #e9e9e9;   border-radius: 3px;   font-family: \'Open Sans\', sans-serif;   font-size: 14px;   color: #b2b2b2;   display: inline-block;   padding: 0px;   text-indent: 5px;   -webkit-transition-duration: 150ms;           transition-duration: 150ms;   -webkit-transition-property: color;   transition-property: color;   -webkit-transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);           transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);   width: 100%; } .react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-field-container .react-grid-advanced-filter-menu-field-input:focus {   color: #8e8e8e;   outline: none; } .react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container {   padding: 10px 10px;   margin: 0px auto;   width: 90%;   text-align: left; } .react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container .react-grid-advanced-filter-menu-button {   background-color: #2e7d32;   border-radius: 3px;   border: none;   color: #fff;   cursor: pointer;   font-family: \'Open Sans\', sans-serif;   opacity: 1;   margin-right: 5px; } .react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container .react-grid-advanced-filter-menu-button:focus {   outline: none; } .react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container .react-grid-advanced-filter-menu-button:active {   opacity: 1;   background-color: #52bf57; } .react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container .react-grid-advanced-filter-menu-button:hover {   opacity: 0.6; } .react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container .react-grid-advanced-filter-menu-button:disabled {   background-color: #fff;   color: #161616;   cursor: initial; } .react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container .react-grid-advanced-filter-menu-button.react-grid-secondary {   background-color: #fff;   border-radius: 3px;   border: none;   color: #fff;   cursor: pointer;   font-family: \'Open Sans\', sans-serif;   opacity: 1;   color: #161616; } .react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container .react-grid-advanced-filter-menu-button.react-grid-secondary:focus {   outline: none; } .react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container .react-grid-advanced-filter-menu-button.react-grid-secondary:active {   opacity: 1;   background-color: #fff; } .react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container .react-grid-advanced-filter-menu-button.react-grid-secondary:hover {   opacity: 0.6; } .react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container .react-grid-advanced-filter-menu-button.react-grid-secondary:disabled {   background-color: #fff;   color: #161616;   cursor: initial; } '
+	_css.innerHTML = '.react-grid-page-buttons {   background-color: #2e7d32;   border-radius: 3px;   border: none;   color: #fff;   cursor: pointer;   font-family: \'Open Sans\', sans-serif;   opacity: 1; } .react-grid-page-buttons:focus {   outline: none; } .react-grid-page-buttons:active {   opacity: 1;   background-color: #52bf57; } .react-grid-page-buttons:hover {   opacity: 0.6; } .react-grid-page-buttons:disabled {   background-color: #fff;   color: #161616;   cursor: initial; } .react-grid-cell {   border-bottom: 1px solid #f7f7f7;   font-family: \'Open Sans\', sans-serif;   font-size: 13px;   height: 20px;   overflow: hidden;   padding: 4px 10px 4px 10px;   position: relative;   text-overflow: ellipsis; } .react-grid-cell.react-grid-edit {   overflow: visible; } .react-grid-cell .react-grid-inactive {   pointer-events: none; } .react-grid-container {   box-shadow: 2px 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);   position: relative; } .react-grid-table {   border-radius: 4px;   border-collapse: collapse;   font-size: 14px;   position: relative;   text-align: left;   table-layout: fixed;   white-space: nowrap;   width: 100%; } .react-grid-table.react-grid-header-fixed {   box-shadow: none;   z-index: 9; } .react-grid-table.react-grid-header-fixed.react-grid-header-stuck {   margin-left: auto;   margin-right: auto;   position: fixed;   top: 0; } .react-grid-table.react-grid-header-fixed.react-grid-header-stuck-bottom {   position: absolute; } .react-grid-table.react-grid-header-hidden thead, .react-grid-table.react-grid-header-hidden thead * {   border: 0;   height: 0; } .react-grid-table.react-grid-header-hidden thead th * {   border: 0;   display: none;   height: 0; } .react-grid-table-container {   background-color: #fff;   overflow: hidden;   overflow-y: auto;   overflow-x: hidden;   position: relative; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-0 {   margin-left: -8px;   cursor: pointer; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-0::before {   font-family: FontAwesome;   font-size: 12px;   font-weight: normal;   font-style: normal;   content: \'\\F078\'; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-0::before {   font-size: 8px;   position: relative;   left: -5px;   top: -1px; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-0.react-grid-node-unexpanded {   cursor: pointer; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-0.react-grid-node-unexpanded::before {   font-family: FontAwesome;   font-size: 12px;   font-weight: normal;   font-style: normal;   content: \'\\F054\'; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-0.react-grid-node-unexpanded::before {   font-size: 8px;   position: relative;   left: -4px;   margin-right: 2px;   top: -1px; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-0:not(.react-grid-expand) {   visibility: hidden; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-1 {   margin-left: 0px;   cursor: pointer; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-1::before {   font-family: FontAwesome;   font-size: 12px;   font-weight: normal;   font-style: normal;   content: \'\\F078\'; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-1::before {   font-size: 8px;   position: relative;   left: -5px;   top: -1px; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-1.react-grid-node-unexpanded {   cursor: pointer; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-1.react-grid-node-unexpanded::before {   font-family: FontAwesome;   font-size: 12px;   font-weight: normal;   font-style: normal;   content: \'\\F054\'; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-1.react-grid-node-unexpanded::before {   font-size: 8px;   position: relative;   left: -4px;   margin-right: 2px;   top: -1px; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-1:not(.react-grid-expand) {   visibility: hidden; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-2 {   margin-left: 8px;   cursor: pointer; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-2::before {   font-family: FontAwesome;   font-size: 12px;   font-weight: normal;   font-style: normal;   content: \'\\F078\'; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-2::before {   font-size: 8px;   position: relative;   left: -5px;   top: -1px; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-2.react-grid-node-unexpanded {   cursor: pointer; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-2.react-grid-node-unexpanded::before {   font-family: FontAwesome;   font-size: 12px;   font-weight: normal;   font-style: normal;   content: \'\\F054\'; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-2.react-grid-node-unexpanded::before {   font-size: 8px;   position: relative;   left: -4px;   margin-right: 2px;   top: -1px; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-2:not(.react-grid-expand) {   visibility: hidden; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-3 {   margin-left: 16px;   cursor: pointer; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-3::before {   font-family: FontAwesome;   font-size: 12px;   font-weight: normal;   font-style: normal;   content: \'\\F078\'; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-3::before {   font-size: 8px;   position: relative;   left: -5px;   top: -1px; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-3.react-grid-node-unexpanded {   cursor: pointer; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-3.react-grid-node-unexpanded::before {   font-family: FontAwesome;   font-size: 12px;   font-weight: normal;   font-style: normal;   content: \'\\F054\'; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-3.react-grid-node-unexpanded::before {   font-size: 8px;   position: relative;   left: -4px;   margin-right: 2px;   top: -1px; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-3:not(.react-grid-expand) {   visibility: hidden; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-4 {   margin-left: 24px;   cursor: pointer; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-4::before {   font-family: FontAwesome;   font-size: 12px;   font-weight: normal;   font-style: normal;   content: \'\\F078\'; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-4::before {   font-size: 8px;   position: relative;   left: -5px;   top: -1px; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-4.react-grid-node-unexpanded {   cursor: pointer; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-4.react-grid-node-unexpanded::before {   font-family: FontAwesome;   font-size: 12px;   font-weight: normal;   font-style: normal;   content: \'\\F054\'; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-4.react-grid-node-unexpanded::before {   font-size: 8px;   position: relative;   left: -4px;   margin-right: 2px;   top: -1px; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-4:not(.react-grid-expand) {   visibility: hidden; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-5 {   margin-left: 32px;   cursor: pointer; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-5::before {   font-family: FontAwesome;   font-size: 12px;   font-weight: normal;   font-style: normal;   content: \'\\F078\'; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-5::before {   font-size: 8px;   position: relative;   left: -5px;   top: -1px; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-5.react-grid-node-unexpanded {   cursor: pointer; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-5.react-grid-node-unexpanded::before {   font-family: FontAwesome;   font-size: 12px;   font-weight: normal;   font-style: normal;   content: \'\\F054\'; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-5.react-grid-node-unexpanded::before {   font-size: 8px;   position: relative;   left: -4px;   margin-right: 2px;   top: -1px; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-5:not(.react-grid-expand) {   visibility: hidden; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-6 {   margin-left: 40px;   cursor: pointer; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-6::before {   font-family: FontAwesome;   font-size: 12px;   font-weight: normal;   font-style: normal;   content: \'\\F078\'; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-6::before {   font-size: 8px;   position: relative;   left: -5px;   top: -1px; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-6.react-grid-node-unexpanded {   cursor: pointer; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-6.react-grid-node-unexpanded::before {   font-family: FontAwesome;   font-size: 12px;   font-weight: normal;   font-style: normal;   content: \'\\F054\'; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-6.react-grid-node-unexpanded::before {   font-size: 8px;   position: relative;   left: -4px;   margin-right: 2px;   top: -1px; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-6:not(.react-grid-expand) {   visibility: hidden; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-7 {   margin-left: 48px;   cursor: pointer; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-7::before {   font-family: FontAwesome;   font-size: 12px;   font-weight: normal;   font-style: normal;   content: \'\\F078\'; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-7::before {   font-size: 8px;   position: relative;   left: -5px;   top: -1px; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-7.react-grid-node-unexpanded {   cursor: pointer; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-7.react-grid-node-unexpanded::before {   font-family: FontAwesome;   font-size: 12px;   font-weight: normal;   font-style: normal;   content: \'\\F054\'; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-7.react-grid-node-unexpanded::before {   font-size: 8px;   position: relative;   left: -4px;   margin-right: 2px;   top: -1px; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-7:not(.react-grid-expand) {   visibility: hidden; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-8 {   margin-left: 56px;   cursor: pointer; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-8::before {   font-family: FontAwesome;   font-size: 12px;   font-weight: normal;   font-style: normal;   content: \'\\F078\'; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-8::before {   font-size: 8px;   position: relative;   left: -5px;   top: -1px; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-8.react-grid-node-unexpanded {   cursor: pointer; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-8.react-grid-node-unexpanded::before {   font-family: FontAwesome;   font-size: 12px;   font-weight: normal;   font-style: normal;   content: \'\\F054\'; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-8.react-grid-node-unexpanded::before {   font-size: 8px;   position: relative;   left: -4px;   margin-right: 2px;   top: -1px; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-8:not(.react-grid-expand) {   visibility: hidden; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-9 {   margin-left: 64px;   cursor: pointer; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-9::before {   font-family: FontAwesome;   font-size: 12px;   font-weight: normal;   font-style: normal;   content: \'\\F078\'; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-9::before {   font-size: 8px;   position: relative;   left: -5px;   top: -1px; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-9.react-grid-node-unexpanded {   cursor: pointer; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-9.react-grid-node-unexpanded::before {   font-family: FontAwesome;   font-size: 12px;   font-weight: normal;   font-style: normal;   content: \'\\F054\'; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-9.react-grid-node-unexpanded::before {   font-size: 8px;   position: relative;   left: -4px;   margin-right: 2px;   top: -1px; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-9:not(.react-grid-expand) {   visibility: hidden; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-10 {   margin-left: 72px;   cursor: pointer; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-10::before {   font-family: FontAwesome;   font-size: 12px;   font-weight: normal;   font-style: normal;   content: \'\\F078\'; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-10::before {   font-size: 8px;   position: relative;   left: -5px;   top: -1px; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-10.react-grid-node-unexpanded {   cursor: pointer; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-10.react-grid-node-unexpanded::before {   font-family: FontAwesome;   font-size: 12px;   font-weight: normal;   font-style: normal;   content: \'\\F054\'; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-10.react-grid-node-unexpanded::before {   font-size: 8px;   position: relative;   left: -4px;   margin-right: 2px;   top: -1px; } .react-grid-cell-tree-arrow.react-grid-tree-node-depth-10:not(.react-grid-expand) {   visibility: hidden; } .react-grid-header-fixed-container.react-grid-hidden {   opacity: 0; } .react-grid-header {   background-color: #f7f7f7;   border-bottom: 1px solid #e9e9e9;   color: #3f3f3f;   font-family: \'Open Sans\', sans-serif;   height: 24px; } .react-grid-header.react-grid-header-hidden {   visibility: hidden; } .react-grid-header.react-grid-header-hidden th {   border: none;   height: 0px;   padding-bottom: 0px;   padding-top: 0px; } .react-grid-header.react-grid-header-hidden th.react-grid-checkbox-container {   border: none;   height: 0;   margin: 0; } .react-grid-header th {   position: relative;   text-overflow: ellipsis; } .react-grid-header th.react-grid-checkbox-container {   border-bottom: 1px solid #e9e9e9; } .react-grid-header th .react-grid-column {   display: inline-block;   height: 24px;   overflow: hidden;   position: relative;   text-overflow: ellipsis;   top: 6px;   width: 80%; } .react-grid-header th.react-grid-sort-handle-visible .react-grid-sort-handle {   visibility: visible; } .react-grid-header th .react-grid-sort-handle {   float: left;   -webkit-transition-duration: 150ms;           transition-duration: 150ms;   -webkit-transition-property: opacity;   transition-property: opacity;   -webkit-transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);           transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);   visibility: hidden; } .react-grid-header th .react-grid-sort-handle.react-grid-desc {   cursor: pointer; } .react-grid-header th .react-grid-sort-handle.react-grid-desc::before {   font-family: FontAwesome;   font-size: 12px;   font-weight: normal;   font-style: normal;   content: \'\\F0D8\'; } .react-grid-header th .react-grid-sort-handle.react-grid-desc::before {   top: -1px; } .react-grid-header th .react-grid-sort-handle.react-grid-asc {   cursor: pointer; } .react-grid-header th .react-grid-sort-handle.react-grid-asc::before {   font-family: FontAwesome;   font-size: 12px;   font-weight: normal;   font-style: normal;   content: \'\\F0D7\'; } .react-grid-header th .react-grid-sort-handle::before {   cursor: pointer;   position: relative;   right: 1px; } .react-grid-header th .react-grid-drag-handle::after {   border-right: 1px solid #f7f7f7;   content: \' \';   cursor: ew-resize;   position: absolute;   right: 0px;   top: 0px;   width: 10px;   height: 100%;   -webkit-transition-duration: 150ms;           transition-duration: 150ms;   -webkit-transition-property: border;   transition-property: border;   -webkit-transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);           transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67); } .react-grid-header th:hover .react-grid-drag-handle::after {   border-color: #e9e9e9; } .react-grid-header th:nth-last-child(1), .react-grid-header th:nth-last-child(2) {   overflow: initial; } .react-grid-header th:nth-last-child(1) .react-grid-drag-handle::after, .react-grid-header th:nth-last-child(2) .react-grid-drag-handle::after {   border: none;   cursor: auto; } .react-grid-action-menu-container {   background-color: #fff;   border-radius: 3px;   box-shadow: 2px 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);   list-style-position: outside;   list-style-type: none;   overflow: auto;   overflow-x: hidden;   min-height: 30px;   padding: 0px;   position: absolute;   right: 6px;   top: 10px;   z-index: 11; } .react-grid-top .react-grid-action-menu-container {   top: initial;   bottom: 3px; } .react-grid-action-menu-item {   border-radius: 3px;   font-family: \'Open Sans\', sans-serif;   font-size: 12px;   padding: 6px 30px 6px 6px;   line-height: 1.2; } .react-grid-action-menu-item:hover {   background-color: #f7f7f7; } .react-grid-row {   background-color: #fff;   cursor: pointer;   text-overflow: ellipsis;   -webkit-transition-duration: 150ms;           transition-duration: 150ms;   -webkit-transition-property: background-color;   transition-property: background-color;   -webkit-transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);           transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67); } .react-grid-row:hover {   background-color: #f5f5f5; } .react-grid-row.react-grid-empty-row {   text-align: center;   height: 80px; } .react-grid-row.react-grid-active {   background-color: #e9e9e9; } .react-grid-row.react-grid-edit {   color: #fff;   background-color: #b2b2b2;   box-shadow: 2px 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23); } .react-grid-row.react-grid-edit .react-grid-action-menu-container {   color: initial; } .react-grid-row.react-grid-edit:hover {   background-color: #b2b2b2; } .react-grid-row.react-grid-edit td {   border-bottom: 2px solid transparent; } .react-grid-row.react-grid-edit td:focus {   border-bottom: 2px solid #2e7d32;   outline: none; } .react-grid-inline-editor {   opacity: 0;   position: absolute;   left: 0px;   -webkit-transform: translateX(0px) translateY(0px);           transform: translateX(0px) translateY(0px);   text-align: center;   margin: 0px auto;   -webkit-transition-duration: 150ms;           transition-duration: 150ms;   -webkit-transition-property: -webkit-transform opacity;   transition-property: -webkit-transform opacity;   transition-property: transform opacity;   transition-property: transform opacity, -webkit-transform opacity;   -webkit-transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);           transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);   pointer-events: none;   right: 0px; } .react-grid-inline-editor .react-grid-button-container {   background-color: #b2b2b2;   border-radius: 3px;   box-shadow: 2px 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);   display: inline-block;   margin-top: 5px;   padding: 5px;   pointer-events: all; } .react-grid-inline-editor .react-grid-button-container .react-grid-save-button {   background-color: #2e7d32;   border-radius: 3px;   border: none;   color: #fff;   cursor: pointer;   font-family: \'Open Sans\', sans-serif;   opacity: 1; } .react-grid-inline-editor .react-grid-button-container .react-grid-save-button:focus {   outline: none; } .react-grid-inline-editor .react-grid-button-container .react-grid-save-button:active {   opacity: 1;   background-color: #52bf57; } .react-grid-inline-editor .react-grid-button-container .react-grid-save-button:hover {   opacity: 0.6; } .react-grid-inline-editor .react-grid-button-container .react-grid-save-button:disabled {   background-color: #fff;   color: #161616;   cursor: initial; } .react-grid-inline-editor .react-grid-button-container .react-grid-cancel-button {   background-color: #f7f7f7;   border-radius: 3px;   border: none;   color: #161616;   cursor: pointer;   font-family: \'Open Sans\', sans-serif;   opacity: 1; } .react-grid-inline-editor .react-grid-button-container .react-grid-cancel-button:focus {   outline: none; } .react-grid-inline-editor .react-grid-button-container .react-grid-cancel-button:active {   opacity: 1;   background-color: #f9f9f9; } .react-grid-inline-editor .react-grid-button-container .react-grid-cancel-button:hover {   opacity: 0.6; } .react-grid-inline-editor .react-grid-button-container .react-grid-cancel-button:disabled {   background-color: #fff;   color: #161616;   cursor: initial; } .react-grid-inline-editor.react-grid-shown {   opacity: 1;   display: block;   -webkit-transform: translateY(-7px);           transform: translateY(-7px); } .react-grid-inline-editor.react-grid-hidden {   top: -10000px; } .react-grid-error-container {   background-color: #f7f7f7;   bottom: 0px;   box-shadow: 2px 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);   color: #e9e9e9;   height: 100px;   left: 0px;   margin: auto;   position: absolute;   -webkit-perspective: 1300px;           perspective: 1300px;   -webkit-transform-style: preserve-3d;           transform-style: preserve-3d;   -webkit-transform: rotateX(-70deg);           transform: rotateX(-70deg);   -webkit-transition-duration: 0.2s;           transition-duration: 0.2s;   -webkit-transition-property: -webkit-transform;   transition-property: -webkit-transform;   transition-property: transform;   transition-property: transform, -webkit-transform;   -webkit-transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);           transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);   opacity: 0;   right: 0px;   top: -10000px;   width: 50%;   z-index: 10; } .react-grid-error-container .react-grid-error-message {   color: #3f3f3f;   font-family: \'Open Sans\', sans-serif;   height: 20px;   margin-top: -20px;   top: 50%;   left: 0;   right: 0;   position: absolute; } .react-grid-error-container button {   background-color: #2e7d32;   border-radius: 3px;   border: none;   color: #fff;   cursor: pointer;   font-family: \'Open Sans\', sans-serif;   opacity: 1;   position: absolute;   right: 10px;   bottom: 10px; } .react-grid-error-container button:focus {   outline: none; } .react-grid-error-container button:active {   opacity: 1;   background-color: #52bf57; } .react-grid-error-container button:hover {   opacity: 0.6; } .react-grid-error-container button:disabled {   background-color: #fff;   color: #161616;   cursor: initial; } .react-grid-error-container.react-grid-shown {   top: 0px;   -webkit-transform: rotateX(0deg);           transform: rotateX(0deg);   opacity: 1; } th.react-grid-action-container {   border-bottom: 1px solid #e9e9e9; } .react-grid-action-container {   cursor: pointer;   position: relative;   width: 5px;   border-bottom: 1px solid #f7f7f7;   height: 20px;   font-family: \'Open Sans\', sans-serif; } .react-grid-action-container .react-grid-no-actions {   display: none; } .react-grid-action-container .react-grid-action-icon {   cursor: pointer;   cursor: pointer;   padding-left: 5px;   position: relative; } .react-grid-action-container .react-grid-action-icon::before {   font-family: FontAwesome;   font-size: 12px;   font-weight: normal;   font-style: normal;   content: \'\\F142\'; } .react-grid-action-container .react-grid-action-icon::before {   cursor: pointer;   border-radius: 3px;   position: absolute;   text-align: center;   top: 5px;   right: 5px;   width: 6px; } .react-grid-action-container.react-grid-action-menu-selected span::before {   background-color: #e9e9e9; } .react-grid-loading-bar {   display: none;   position: absolute;   height: 4px;   width: 100%; } .react-grid-loading-bar.react-grid-active {   display: block; } .react-grid-loading-bar::before {   display: block;   position: absolute;   content: "";   left: -200px;   width: 200px;   height: 4px;   background-color: #2e7d32;   -webkit-animation: loading 2s linear infinite;           animation: loading 2s linear infinite; } @-webkit-keyframes loading {   from {     left: 0px;     width: 30%;   }   50% {     width: 30%;   }   70% {     width: 44%;   }   80% {     left: 55%;   }   95% {     left: 66%;   }   to {     left: 72%;   } } @keyframes loading {   from {     left: 0px;     width: 30%;   }   50% {     width: 30%;   }   70% {     width: 44%;   }   80% {     left: 55%;   }   95% {     left: 66%;   }   to {     left: 72%;   } } .react-grid-pager-toolbar {   background-color: #f7f7f7;   border-top: 1px solid #e9e9e9;   border-radius: 0px 0px 3px 3px;   font-family: \'Open Sans\', sans-serif;   font-size: 13px;   height: 24px;   text-indent: 10px; } .react-grid-pager-toolbar.react-grid-is-stuck {   bottom: 0;   position: fixed; } .react-grid-pager-toolbar.react-grid-is-stuck-bottom {   position: absolute;   width: 100%; } .react-grid-pager-toolbar span {   display: block;   float: right;   position: relative;   right: 5px;   top: 2px; } .react-grid-pager-toolbar span:first-child {   font-size: 14px;   font-family: \'Open Sans\', sans-serif;   float: left; } .react-grid-pager-toolbar button {   margin: 0px 10px; } .react-grid-checkbox-container {   border-bottom: 1px solid #f7f7f7;   height: 20px;   font-family: \'Open Sans\', sans-serif;   font-size: 13px;   padding: 4px 10px 4px 10px;   position: relative;   text-overflow: ellipsis;   overflow: hidden;   padding: 0px 10px;   width: 10px; } .react-grid-bulkaction-container {   background-color: #b2b2b2;   border-radius: 3px 3px 0px 0px;   height: 28px;   -webkit-transition-duration: 150ms;           transition-duration: 150ms;   -webkit-transition-property: -webkit-transform opacity top;   transition-property: -webkit-transform opacity top;   transition-property: transform opacity top;   transition-property: transform opacity top, -webkit-transform opacity top;   -webkit-transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);           transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);   position: absolute;   text-align: left;   -webkit-transform: translateX(0px) translateY(-37px);           transform: translateX(0px) translateY(-37px);   top: -37px;   opacity: 0;   z-index: 12;   width: 100%; } .react-grid-bulkaction-container .react-grid-bulkaction-description {   display: inline-block;   font-family: \'Open Sans\', sans-serif;   font-size: 13px;   overflow: hidden;   padding-left: 15px;   text-overflow: ellipsis;   min-width: 70px;   position: relative;   top: 3px; } .react-grid-bulkaction-container .react-grid-checkbox-container {   border-bottom: 1px solid transparent; } .react-grid-bulkaction-container button {   background-color: #2e7d32;   border-radius: 3px;   border: none;   color: #fff;   cursor: pointer;   font-family: \'Open Sans\', sans-serif;   opacity: 1;   margin: 5px 8px;   position: relative;   top: -1px; } .react-grid-bulkaction-container button:focus {   outline: none; } .react-grid-bulkaction-container button:active {   opacity: 1;   background-color: #52bf57; } .react-grid-bulkaction-container button:hover {   opacity: 0.6; } .react-grid-bulkaction-container button:disabled {   background-color: #fff;   color: #161616;   cursor: initial; } .react-grid-bulkaction-container.react-grid-removed {   top: -100px; } .react-grid-bulkaction-container.react-grid-shown {   top: 0px;   opacity: 1;   -webkit-transform: translateY(0px);           transform: translateY(0px); } .react-grid-filter-container {   background-color: #f7f7f7;   border-radius: 3px 3px 0px 0px;   padding: 5px 0px;   position: relative;   text-align: center;   width: 100%; } .react-grid-filter-container .react-grid-filter-input {   border: 1px solid #e9e9e9;   border-radius: 3px;   font-family: \'Open Sans\', sans-serif;   font-size: 14px;   color: #b2b2b2;   display: inline-block;   padding: 0px;   text-indent: 5px;   -webkit-transition-duration: 150ms;           transition-duration: 150ms;   -webkit-transition-property: color;   transition-property: color;   -webkit-transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);           transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);   width: 99%; } .react-grid-filter-container .react-grid-filter-input:focus {   color: #8e8e8e;   outline: none; } .react-grid-filter-container:hover .react-grid-filter-input {   color: #8e8e8e; } .react-grid-filter-container .react-grid-filter-button-container {   display: inline-block;   position: absolute;   right: 5px; } .react-grid-filter-container .react-grid-filter-button-container > i {   padding: 0px 3px 0px 0px; } .react-grid-filter-container .react-grid-filter-button-container > i::before {   color: #b2b2b2;   -webkit-transition-duration: 150ms;           transition-duration: 150ms;   -webkit-transition-property: color;   transition-property: color;   -webkit-transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);           transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67); } .react-grid-filter-container .react-grid-filter-button-container > i:hover::before {   color: #8e8e8e; } .react-grid-filter-container .react-grid-filter-button-container > i.react-grid-active::before {   color: #2e7d32; } .react-grid-filter-container .react-grid-filter-button-container .react-grid-filter-search-button {   cursor: pointer; } .react-grid-filter-container .react-grid-filter-button-container .react-grid-filter-search-button::before {   font-family: FontAwesome;   font-size: 12px;   font-weight: normal;   font-style: normal;   content: \'\\F002\'; } .react-grid-filter-container .react-grid-filter-button-container .react-grid-filter-clear-button {   cursor: pointer; } .react-grid-filter-container .react-grid-filter-button-container .react-grid-filter-clear-button::before {   font-family: FontAwesome;   font-size: 12px;   font-weight: normal;   font-style: normal;   content: \'\\F00D\'; } .react-grid-filter-container .react-grid-filter-button-container .react-grid-filter-menu-button {   cursor: pointer; } .react-grid-filter-container .react-grid-filter-button-container .react-grid-filter-menu-button::before {   font-family: FontAwesome;   font-size: 12px;   font-weight: normal;   font-style: normal;   content: \'\\F0b0\'; } .react-grid-advanced-filter-menu-container {   background-color: #f7f7f7;   border-radius: 3px;   box-shadow: 10px 15px 30px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);   font-family: \'Open Sans\', sans-serif;   position: absolute;   right: 10px;   top: 24px;   width: 400px;   z-index: 13; } .react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-title {   display: inline-block;   padding: 5px 10px; } .react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-field-container {   display: block;   padding: 5px 0px;   text-align: left;   font-size: 13px;   margin: 0px auto;   width: 90%; } .react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-field-container .react-grid-advanced-filter-menu-field-label {   display: inline-block;   padding: 5px 0px; } .react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-field-container .react-grid-advanced-filter-menu-field-input {   border: 1px solid #e9e9e9;   border-radius: 3px;   font-family: \'Open Sans\', sans-serif;   font-size: 14px;   color: #b2b2b2;   display: inline-block;   padding: 0px;   text-indent: 5px;   -webkit-transition-duration: 150ms;           transition-duration: 150ms;   -webkit-transition-property: color;   transition-property: color;   -webkit-transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);           transition-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);   width: 100%; } .react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-field-container .react-grid-advanced-filter-menu-field-input:focus {   color: #8e8e8e;   outline: none; } .react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container {   padding: 10px 10px;   margin: 0px auto;   width: 90%;   text-align: left; } .react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container .react-grid-advanced-filter-menu-button {   background-color: #2e7d32;   border-radius: 3px;   border: none;   color: #fff;   cursor: pointer;   font-family: \'Open Sans\', sans-serif;   opacity: 1;   margin-right: 5px; } .react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container .react-grid-advanced-filter-menu-button:focus {   outline: none; } .react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container .react-grid-advanced-filter-menu-button:active {   opacity: 1;   background-color: #52bf57; } .react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container .react-grid-advanced-filter-menu-button:hover {   opacity: 0.6; } .react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container .react-grid-advanced-filter-menu-button:disabled {   background-color: #fff;   color: #161616;   cursor: initial; } .react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container .react-grid-advanced-filter-menu-button.react-grid-secondary {   background-color: #fff;   border-radius: 3px;   border: none;   color: #fff;   cursor: pointer;   font-family: \'Open Sans\', sans-serif;   opacity: 1;   color: #161616; } .react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container .react-grid-advanced-filter-menu-button.react-grid-secondary:focus {   outline: none; } .react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container .react-grid-advanced-filter-menu-button.react-grid-secondary:active {   opacity: 1;   background-color: #fff; } .react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container .react-grid-advanced-filter-menu-button.react-grid-secondary:hover {   opacity: 0.6; } .react-grid-advanced-filter-menu-container .react-grid-advanced-filter-menu-button-container .react-grid-advanced-filter-menu-button.react-grid-secondary:disabled {   background-color: #fff;   color: #161616;   cursor: initial; } '
 	document.head.appendChild(_css)
 	var any = _react.PropTypes.any;
 	var array = _react.PropTypes.array;
@@ -21904,6 +21910,7 @@
 	            var classNames = _props.classNames;
 	            var columnState = _props.columnState;
 	            var gridData = _props.gridData;
+	            var emptyDataMessage = _props.emptyDataMessage;
 	            var height = _props.height;
 	            var loadingState = _props.loadingState;
 	            var pageSize = _props.pageSize;
@@ -21915,6 +21922,7 @@
 	            var pager = _props.pager;
 	            var editorState = _props.editorState;
 	            var selectedRows = _props.selectedRows;
+	            var stateful = _props.stateful;
 	            var menuState = _props.menuState;
 	            var showTreeRootNode = _props.showTreeRootNode;
 
@@ -21924,8 +21932,7 @@
 	            var editorComponent = this.editor.getComponent(plugins, reducerKeys, store, events, this.selectionModel, this.editor, columns);
 
 	            var containerProps = {
-	                className: _prefix.prefix.apply(undefined, [_GridConstants.CLASS_NAMES.CONTAINER].concat(_toConsumableArray(classNames))),
-	                reducerKeys: reducerKeys
+	                className: _prefix.prefix.apply(undefined, [_GridConstants.CLASS_NAMES.CONTAINER].concat(_toConsumableArray(classNames)))
 	            };
 
 	            var messageProps = {
@@ -21954,6 +21961,7 @@
 	                selectionModel: this.selectionModel,
 	                stateKey: stateKey,
 	                store: store,
+	                stateful: stateful,
 	                visible: false,
 	                menuState: menuState,
 	                gridType: this.gridType
@@ -21975,6 +21983,7 @@
 	                columnManager: this.columnManager,
 	                columns: columns,
 	                editor: this.editor,
+	                emptyDataMessage: emptyDataMessage,
 	                columnState: columnState,
 	                dataSource: gridData,
 	                readFunc: this.setData.bind(this),
@@ -21995,9 +22004,7 @@
 
 	            var tableProps = {
 	                className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.TABLE, _GridConstants.CLASS_NAMES.HEADER_HIDDEN),
-	                cellSpacing: 0,
-	                reducerKeys: reducerKeys,
-	                store: store
+	                cellSpacing: 0
 	            };
 
 	            var pagerProps = {
@@ -22149,12 +22156,18 @@
 	            var columns = _props4.columns;
 	            var stateKey = _props4.stateKey;
 	            var store = _props4.store;
+	            var stateful = _props4.stateful;
 
+	            var savedColumns = columns;
+
+	            if (stateful) {
+	                savedColumns = (0, _getColumnsFromStorage.getColumnsFromStorage)(_LocalStorageManager2.default.getStateItem({ stateKey: stateKey, value: columns, property: 'columns' }), columns);
+	            }
 
 	            if (!columns) {
 	                throw new Error('A columns array is required');
 	            } else {
-	                store.dispatch((0, _GridActions.setColumns)({ columns: columns, stateKey: stateKey }));
+	                store.dispatch((0, _GridActions.setColumns)({ columns: savedColumns, stateKey: stateKey, stateful: stateful }));
 	            }
 	        }
 	    }]);
@@ -22169,6 +22182,7 @@
 	    data: arrayOf(object),
 	    dataSource: any,
 	    editorState: object,
+	    emptyDataMessage: any,
 	    events: object,
 	    expandOnLoad: bool,
 	    gridData: object,
@@ -22183,6 +22197,7 @@
 	    selectedRows: object,
 	    showTreeRootNode: bool,
 	    stateKey: string,
+	    stateful: bool,
 	    store: object
 	};
 	Grid.defaultProps = {
@@ -23254,6 +23269,7 @@
 	    var store = _ref.store;
 	    var stateKey = _ref.stateKey;
 	    var index = _ref.index;
+	    var stateful = _ref.stateful;
 
 
 	    if (col.hidden) {
@@ -23276,7 +23292,7 @@
 
 	    var nextColumnKey = visibleColumns && visibleColumns[index + 1] ? (0, _keyGenerator.keyGenerator)(visibleColumns[index + 1].name, 'grid-column') : null;
 
-	    var handleDrag = scope.handleDrag.bind(scope, scope, columns, key, columnManager, store, nextColumnKey, stateKey);
+	    var handleDrag = scope.handleDrag.bind(scope, scope, columns, key, columnManager, store, nextColumnKey, stateKey, stateful);
 
 	    var sortHandle = sortable ? _react2.default.createElement(_SortHandle.SortHandle, {
 	        col: col,
@@ -23314,7 +23330,7 @@
 	    var headerProps = {
 	        className: headerClass,
 	        onClick: handleColumnClick.bind(scope, clickArgs),
-	        onDrop: handleDrop.bind(scope, index, columns, stateKey, store),
+	        onDrop: handleDrop.bind(scope, index, columns, stateful, stateKey, store),
 	        onDragOver: function onDragOver(reactEvent) {
 	            reactEvent.preventDefault();
 	        },
@@ -23328,17 +23344,20 @@
 	        headerProps.onDragOver = function (reactEvent) {
 	            // due to a bug in firefox, we need to set a global to
 	            // preserve the x coords
-	            // http://stackoverflow.com/questions/11656061/event-clientx-showing-as-0-in-firefox-for-dragend-event
+	            // http://stackoverflow.com/questions/11656061/
+	            // event-clientx-showing-as-0-in-firefox-for-dragend-event
 	            window.reactGridXcoord = reactEvent.clientX;
 	            reactEvent.preventDefault();
 	        };
 	    }
 
-	    var innerHTML = _react2.default.createElement(_Text.Text, { col: col,
+	    var innerHTML = _react2.default.createElement(_Text.Text, {
+	        col: col,
 	        index: index,
 	        columnManager: columnManager,
 	        dragAndDropManager: dragAndDropManager,
-	        sortHandle: sortHandle });
+	        sortHandle: sortHandle
+	    });
 
 	    return _react2.default.createElement(
 	        'th',
@@ -23358,10 +23377,11 @@
 	    pager: _react.PropTypes.object,
 	    scope: _react.PropTypes.object,
 	    stateKey: _react.PropTypes.string,
+	    stateful: _react.PropTypes.bool,
 	    store: _react.PropTypes.object
 	};
 
-	var handleDrop = exports.handleDrop = function handleDrop(droppedIndex, columns, stateKey, store, reactEvent) {
+	var handleDrop = exports.handleDrop = function handleDrop(droppedIndex, columns, stateful, stateKey, store, reactEvent) {
 
 	    reactEvent.preventDefault();
 	    try {
@@ -23372,11 +23392,14 @@
 	                draggedIndex: colData.index,
 	                droppedIndex: droppedIndex,
 	                columns: columns,
-	                stateKey: stateKey
+	                stateKey: stateKey,
+	                stateful: stateful
 	            }));
 	        }
 	    } catch (e) {
+	        /* eslint-disable no-console */
 	        console.warn('Invalid drop');
+	        /* eslint-enable no-console */
 	    }
 	};
 
@@ -23844,6 +23867,7 @@
 	    var droppedIndex = _ref.droppedIndex;
 	    var columns = _ref.columns;
 	    var stateKey = _ref.stateKey;
+	    var stateful = _ref.stateful;
 
 
 	    var reorder = function reorder(cols, to, from) {
@@ -23856,7 +23880,8 @@
 	    return {
 	        type: _ActionTypes.SET_COLUMNS,
 	        columns: reorderedColumns,
-	        stateKey: stateKey
+	        stateKey: stateKey,
+	        stateful: stateful
 	    };
 	};
 
@@ -24097,6 +24122,7 @@
 	function setColumns(_ref2) {
 	    var columns = _ref2.columns;
 	    var stateKey = _ref2.stateKey;
+	    var stateful = _ref2.stateful;
 
 
 	    var cols = columns;
@@ -24108,7 +24134,7 @@
 	        });
 	    }
 
-	    return { type: _ActionTypes.SET_COLUMNS, columns: cols, stateKey: stateKey };
+	    return { type: _ActionTypes.SET_COLUMNS, columns: cols, stateKey: stateKey, stateful: stateful };
 	}
 
 	function setSortDirection(_ref3) {
@@ -24226,6 +24252,7 @@
 	    var column = _ref6.column;
 	    var isHidden = _ref6.isHidden;
 	    var stateKey = _ref6.stateKey;
+	    var stateful = _ref6.stateful;
 
 	    var hidden = !isHidden;
 
@@ -24237,7 +24264,7 @@
 	        return col;
 	    });
 
-	    return { type: _ActionTypes.SET_COLUMNS, columns: columnsArr, stateKey: stateKey };
+	    return { type: _ActionTypes.SET_COLUMNS, columns: columnsArr, stateKey: stateKey, stateful: stateful };
 	}
 
 	function resizeColumns(_ref7) {
@@ -24246,6 +24273,7 @@
 	    var nextColumn = _ref7.nextColumn;
 	    var columns = _ref7.columns;
 	    var stateKey = _ref7.stateKey;
+	    var stateful = _ref7.stateful;
 
 
 	    var cols = columns.map(function (col) {
@@ -24262,7 +24290,8 @@
 	    return {
 	        type: _ActionTypes.RESIZE_COLUMNS,
 	        stateKey: stateKey,
-	        columns: cols
+	        columns: cols,
+	        stateful: stateful
 	    };
 	}
 
@@ -24871,6 +24900,7 @@
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 	var arrayOf = _react.PropTypes.arrayOf;
+	var bool = _react.PropTypes.bool;
 	var object = _react.PropTypes.object;
 	var string = _react.PropTypes.string;
 
@@ -24893,6 +24923,7 @@
 	            var reducerKeys = _props.reducerKeys;
 	            var selectionModel = _props.selectionModel;
 	            var stateKey = _props.stateKey;
+	            var stateful = _props.stateful;
 	            var store = _props.store;
 	            var pager = _props.pager;
 	            var plugins = _props.plugins;
@@ -24922,6 +24953,7 @@
 	                    pager: pager,
 	                    store: store,
 	                    stateKey: stateKey,
+	                    stateful: stateful,
 	                    visibleColumns: visibleColumns,
 	                    key: 'fixed-header-' + i
 	                };
@@ -24977,6 +25009,7 @@
 	                id: 'header-row',
 	                reducerKeys: reducerKeys,
 	                stateKey: stateKey,
+	                stateful: stateful,
 	                menuState: menuState
 	            });
 
@@ -25187,6 +25220,7 @@
 	    reducerKeys: object,
 	    selectionModel: object,
 	    stateKey: string,
+	    stateful: bool,
 	    store: object
 	};
 	var addEmptyInsert = exports.addEmptyInsert = function addEmptyInsert(headers, visibleColumns, plugins, headerOffset) {
@@ -25215,7 +25249,7 @@
 	    }
 	};
 
-	var handleDrag = exports.handleDrag = function handleDrag(scope, columns, id, columnManager, store, nextColumnKey, stateKey, reactEvent) {
+	var handleDrag = exports.handleDrag = function handleDrag(scope, columns, id, columnManager, store, nextColumnKey, stateKey, stateful, reactEvent) {
 
 	    var header = reactEvent.target.parentElement.parentElement;
 	    var columnNode = reactEvent.target.parentElement;
@@ -25254,7 +25288,8 @@
 	            width: nextColWidth
 	        },
 	        columns: columns,
-	        stateKey: stateKey
+	        stateKey: stateKey,
+	        stateful: stateful
 	    }));
 	};
 
@@ -25421,7 +25456,7 @@
 
 	            var rowComponents = getRows(columns, columnManager, editor, editorState, gridType, menuState, reducerKeys, readFunc, rows, events, plugins, selectionModel, selectedRows, showTreeRootNode, stateKey, store);
 
-	            var rowInsert = rowComponents ? rowComponents : _react2.default.createElement(_PlaceHolder.PlaceHolder, { emptyDataMessage: emptyDataMessage });
+	            var rowInsert = Array.isArray(rowComponents) && rowComponents.length > 0 ? rowComponents : _react2.default.createElement(_PlaceHolder.PlaceHolder, { emptyDataMessage: emptyDataMessage });
 
 	            return _react2.default.createElement(
 	                'tbody',
@@ -32371,9 +32406,17 @@
 	    if (PAGER.pagingType === 'local') {
 	        store.dispatch((0, _PagerActions.setPage)({ index: pageIndex, type: type, BUTTON_TYPES: BUTTON_TYPES, stateKey: stateKey }));
 	    } else if (PAGER.pagingType === 'remote' && dataSource) {
-	        store.dispatch((0, _PagerActions.setPageAsync)({ index: pageIndex, pageSize: pageSize, type: type, BUTTON_TYPES: BUTTON_TYPES, dataSource: dataSource, stateKey: stateKey }));
+	        store.dispatch((0, _PagerActions.setPageAsync)({
+	            index: pageIndex,
+	            pageSize: pageSize,
+	            type: type,
+	            BUTTON_TYPES: BUTTON_TYPES,
+	            dataSource: dataSource,
+	            stateKey: stateKey
+	        }));
 	    } else {
-	        console.warn('Please configure paging plugin pagingType to local if no pagingSource is provided');
+	        /* eslint-disable no-console */
+	        console.warn(['Please configure paging plugin pagingType', 'to local if no pagingSource is provided'].join(' '));
 	    }
 	};
 
@@ -32382,7 +32425,7 @@
 	    if (type === BUTTON_TYPES.BACK) {
 	        return pageIndex === 0;
 	    } else if (type === BUTTON_TYPES.NEXT) {
-	        return currentRecords < pageSize || pageIndex * pageSize + currentRecords === total;
+	        return currentRecords < pageSize && total < currentRecords || pageIndex * pageSize + currentRecords === total;
 	    }
 	};
 
@@ -32395,6 +32438,7 @@
 	    pageIndex: _react.PropTypes.number,
 	    pageSize: _react.PropTypes.number,
 	    plugins: _react.PropTypes.object,
+	    stateKey: _react.PropTypes.string,
 	    store: _react.PropTypes.object,
 	    total: _react.PropTypes.number,
 	    type: _react.PropTypes.string
@@ -32914,7 +32958,7 @@
 
 	    var spanProps = {
 	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.BULK_ACTIONS.DESCRIPTION),
-	        text: totalCount + ' Selected'
+	        children: totalCount + ' Selected'
 	    };
 
 	    var buttons = actions.map(getAction);
@@ -32922,11 +32966,7 @@
 	    return _react2.default.createElement(
 	        'div',
 	        containerProps,
-	        _react2.default.createElement(
-	            'span',
-	            spanProps,
-	            spanProps.text
-	        ),
+	        _react2.default.createElement('span', spanProps),
 	        buttons
 	    );
 	};
@@ -32934,16 +32974,12 @@
 	var getAction = exports.getAction = function getAction(action) {
 
 	    var buttonProps = {
-	        text: action.text,
+	        children: action.text,
 	        onClick: action.EVENT_HANDLER,
 	        key: (0, _keyGenerator.keyFromObject)(action)
 	    };
 
-	    return _react2.default.createElement(
-	        'button',
-	        buttonProps,
-	        buttonProps.text
-	    );
+	    return _react2.default.createElement('button', buttonProps);
 	};
 
 	function mapStateToProps(state, props) {
@@ -33139,7 +33175,7 @@
 
 	var _GridActions = __webpack_require__(213);
 
-	var _sorter = __webpack_require__(261);
+	var _sorter = __webpack_require__(262);
 
 	var _sorter2 = _interopRequireDefault(_sorter);
 
@@ -33256,6 +33292,7 @@
 	            var rowIndex = _ref3.rowIndex;
 	            var menuState = _ref3.menuState;
 	            var stateKey = _ref3.stateKey;
+	            var stateful = _ref3.stateful;
 	            var GRID_ACTIONS = this.plugins.GRID_ACTIONS;
 
 	            var cellsCopy = cells;
@@ -33263,13 +33300,14 @@
 	                actions: GRID_ACTIONS,
 	                store: this.store,
 	                type: type,
-	                columns: this.columns,
+	                columns: columns || this.columns,
 	                rowId: id,
 	                rowData: rowData,
 	                rowIndex: rowIndex,
 	                editor: this.editor,
 	                reducerKeys: reducerKeys,
 	                selModel: this.selModel,
+	                stateful: stateful,
 	                stateKey: stateKey,
 	                menuState: menuState,
 	                gridState: columns,
@@ -33301,9 +33339,15 @@
 	});
 	exports.handleActionClick = exports.handleHideMenu = exports.getColumn = exports.addKeysToActions = exports.getHeader = exports.enableActions = exports.ActionColumn = undefined;
 
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 	var _react = __webpack_require__(149);
 
 	var _react2 = _interopRequireDefault(_react);
+
+	var _reactDom = __webpack_require__(221);
+
+	var _reactDom2 = _interopRequireDefault(_reactDom);
 
 	var _Menu = __webpack_require__(256);
 
@@ -33313,6 +33357,8 @@
 
 	var _keyGenerator = __webpack_require__(210);
 
+	var _getRowBoundingRect2 = __webpack_require__(261);
+
 	var _elementContains = __webpack_require__(232);
 
 	var _GridConstants = __webpack_require__(208);
@@ -33321,54 +33367,128 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var ActionColumn = exports.ActionColumn = function ActionColumn(_ref) {
-	    var actions = _ref.actions;
-	    var columns = _ref.columns;
-	    var editor = _ref.editor;
-	    var headerActionItemBuilder = _ref.headerActionItemBuilder;
-	    var iconCls = _ref.iconCls;
-	    var menuState = _ref.menuState;
-	    var rowId = _ref.rowId;
-	    var rowData = _ref.rowData;
-	    var store = _ref.store;
-	    var stateKey = _ref.stateKey;
-	    var type = _ref.type;
-	    var rowIndex = _ref.rowIndex;
-	    var reducerKeys = _ref.reducerKeys;
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /* eslint-disable react/no-did-update-set-state */
+	/* eslint-disable react/no-set-state */
 
 
-	    var menuShown = menuState && menuState[rowId] ? menuState[rowId] : false;
+	var ActionColumn = exports.ActionColumn = function (_Component) {
+	    _inherits(ActionColumn, _Component);
 
-	    var containerProps = {
-	        className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.GRID_ACTIONS.CONTAINER, menuShown ? _GridConstants.CLASS_NAMES.GRID_ACTIONS.SELECTED_CLASS : ''),
-	        onClick: handleActionClick.bind(undefined, type, actions, rowId, stateKey, store, menuShown, reducerKeys)
-	    };
+	    _createClass(ActionColumn, [{
+	        key: 'render',
+	        value: function render() {
+	            var _props = this.props;
+	            var columns = _props.columns;
+	            var editor = _props.editor;
+	            var headerActionItemBuilder = _props.headerActionItemBuilder;
+	            var iconCls = _props.iconCls;
+	            var menuState = _props.menuState;
+	            var reducerKeys = _props.reducerKeys;
+	            var rowData = _props.rowData;
+	            var rowId = _props.rowId;
+	            var rowIndex = _props.rowIndex;
+	            var stateKey = _props.stateKey;
+	            var stateful = _props.stateful;
+	            var store = _props.store;
+	            var type = _props.type;
+	            var actions = this.props.actions;
+	            var _state = this.state;
+	            var maxHeight = _state.maxHeight;
+	            var menuPosition = _state.menuPosition;
 
-	    actions = enableActions(menuShown, actions, columns, rowData);
 
-	    var className = menuShown ? (0, _prefix.prefix)(actions.iconCls || iconCls, 'active') : (0, _prefix.prefix)(actions.iconCls || iconCls);
+	            var menuShown = menuState && menuState[rowId] ? menuState[rowId] : false;
 
-	    var iconProps = {
-	        className: className
-	    };
+	            var containerProps = {
+	                className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.GRID_ACTIONS.CONTAINER, menuShown ? _GridConstants.CLASS_NAMES.GRID_ACTIONS.SELECTED_CLASS : '', menuPosition !== undefined ? menuPosition : ''),
+	                onClick: handleActionClick.bind(this, type, actions, rowId, stateKey, store, menuShown, reducerKeys)
+	            };
 
-	    return type === 'header' ? getHeader(columns, containerProps, iconProps, menuShown, columns, store, editor, reducerKeys, rowId, rowData, rowIndex, stateKey, headerActionItemBuilder) : getColumn(columns, containerProps, iconProps, menuShown, actions, store, editor, reducerKeys, rowId, rowData, rowIndex, stateKey);
-	};
+	            actions = enableActions(menuShown, actions, columns, rowData);
+
+	            var className = menuShown ? (0, _prefix.prefix)(actions.iconCls || iconCls, 'active') : (0, _prefix.prefix)(actions.iconCls || iconCls);
+
+	            var iconProps = {
+	                className: className
+	            };
+
+	            var actionArgs = [columns, containerProps, iconProps, menuShown, actions, columns, store, editor, reducerKeys, rowId, rowData, rowIndex, stateKey, stateful, headerActionItemBuilder, maxHeight];
+
+	            return type === 'header' ? getHeader.apply(undefined, actionArgs) : getColumn.apply(undefined, actionArgs);
+	        }
+	    }, {
+	        key: 'componentDidUpdate',
+	        value: function componentDidUpdate() {
+	            var _props2 = this.props;
+	            var menuState = _props2.menuState;
+	            var rowId = _props2.rowId;
+	            var menuPosition = this.state.menuPosition;
+
+
+	            var menuShown = menuState && menuState[rowId] ? menuState[rowId] : false;
+
+	            if (menuShown && !menuPosition) {
+
+	                var node = _reactDom2.default.findDOMNode(this);
+	                var row = node.parentElement;
+
+	                var _getRowBoundingRect = (0, _getRowBoundingRect2.getRowBoundingRect)(row);
+
+	                var position = _getRowBoundingRect.position;
+	                var maxHeight = _getRowBoundingRect.maxHeight;
+
+
+	                if (position) {
+	                    this.setState({
+	                        maxHeight: maxHeight,
+	                        menuPosition: position
+	                    });
+	                }
+	            } else if (!menuShown && menuPosition) {
+	                this.setState({
+	                    menuPosition: null,
+	                    maxHeight: null
+	                });
+	            }
+	        }
+	    }]);
+
+	    function ActionColumn(props) {
+	        _classCallCheck(this, ActionColumn);
+
+	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(ActionColumn).call(this, props));
+
+	        _this.state = {};
+	        return _this;
+	    }
+
+	    return ActionColumn;
+	}(_react.Component);
 
 	ActionColumn.propTypes = {
 	    actions: _react.PropTypes.object,
 	    columns: _react.PropTypes.array,
 	    editor: _react.PropTypes.object,
+	    headerActionItemBuilder: _react.PropTypes.func,
 	    iconCls: _react.PropTypes.string,
 	    menuState: _react.PropTypes.object,
+	    reducerKeys: _react.PropTypes.object,
+	    rowData: _react.PropTypes.object,
 	    rowId: _react.PropTypes.string,
+	    rowIndex: _react.PropTypes.number,
+	    stateKey: _react.PropTypes.string,
+	    stateful: _react.PropTypes.bool,
 	    store: _react.PropTypes.object,
 	    type: _react.PropTypes.string
 	};
-
 	ActionColumn.defaultProps = {
 	    iconCls: 'action-icon'
 	};
+
 
 	var removeableEvent = void 0;
 
@@ -33399,13 +33519,13 @@
 	    return actions;
 	};
 
-	var getHeader = exports.getHeader = function getHeader(cols, containerProps, iconProps, menuShown, columns, store, editor, reducerKeys, rowId, rowData, rowIndex, stateKey, headerActionItemBuilder) {
+	var getHeader = exports.getHeader = function getHeader(cols, containerProps, iconProps, menuShown, actions, columns, store, editor, reducerKeys, rowId, rowData, rowIndex, stateKey, stateful, headerActionItemBuilder) {
 
-	    var actions = void 0;
+	    var colActions = void 0;
 
 	    if (!headerActionItemBuilder) {
 
-	        actions = columns.map(function (col) {
+	        colActions = columns.map(function (col) {
 
 	            var isChecked = col.hidden !== undefined ? !col.hidden : true;
 
@@ -33423,30 +33543,34 @@
 	                            columns: columns,
 	                            column: col,
 	                            isHidden: col.hidden,
-	                            stateKey: stateKey
+	                            stateKey: stateKey,
+	                            stateful: stateful
 	                        }));
 	                    }
 	                }
 	            };
 	        });
 	    } else {
-	        actions = columns.map(headerActionItemBuilder.bind(null, {
-	            store: store
+	        colActions = columns.map(headerActionItemBuilder.bind(null, {
+	            store: store,
+	            columns: columns
 	        }));
 	    }
 
 	    var menuItems = {
-	        menu: actions
+	        menu: colActions
 	    };
 
-	    var menu = menuShown ? _react2.default.createElement(_Menu.Menu, { columns: cols,
+	    var menu = menuShown ? _react2.default.createElement(_Menu.Menu, {
+	        columns: cols,
 	        actions: menuItems,
 	        type: 'header',
 	        store: store,
 	        editor: editor,
 	        reducerKeys: reducerKeys,
 	        rowId: rowId,
-	        stateKey: stateKey }) : null;
+	        stateKey: stateKey
+	    }) : null;
 
 	    return _react2.default.createElement(
 	        'th',
@@ -33463,13 +33587,13 @@
 
 	    if (action && action.key) {
 	        return action;
-	    } else {
-	        action.key = (0, _keyGenerator.keyFromObject)(action);
-	        return action;
 	    }
+
+	    action.key = (0, _keyGenerator.keyFromObject)(action);
+	    return action;
 	};
 
-	var getColumn = exports.getColumn = function getColumn(cols, containerProps, iconProps, menuShown, actions, store, editor, reducerKeys, rowId, rowData, rowIndex, stateKey) {
+	var getColumn = exports.getColumn = function getColumn(cols, containerProps, iconProps, menuShown, actions, columns, store, editor, reducerKeys, rowId, rowData, rowIndex, stateKey, stateful, headerActionItemBuilder, maxHeight) {
 
 	    var menu = menuShown ? _react2.default.createElement(_Menu.Menu, {
 	        actions: addKeysToActions(actions),
@@ -33481,7 +33605,9 @@
 	        rowId: rowId,
 	        columns: cols,
 	        stateKey: stateKey,
-	        rowIndex: rowIndex }) : null;
+	        rowIndex: rowIndex,
+	        maxHeight: maxHeight
+	    }) : null;
 
 	    if (actions && actions.menu && actions.menu.length === 0) {
 	        iconProps.className += ' ' + (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.GRID_ACTIONS.NO_ACTIONS);
@@ -33598,14 +33724,15 @@
 	var Menu = exports.Menu = function Menu(_ref) {
 	    var actions = _ref.actions;
 	    var columns = _ref.columns;
-	    var type = _ref.type;
-	    var store = _ref.store;
 	    var editor = _ref.editor;
+	    var maxHeight = _ref.maxHeight;
 	    var reducerKeys = _ref.reducerKeys;
-	    var rowId = _ref.rowId;
 	    var rowData = _ref.rowData;
+	    var rowId = _ref.rowId;
 	    var rowIndex = _ref.rowIndex;
 	    var stateKey = _ref.stateKey;
+	    var store = _ref.store;
+	    var type = _ref.type;
 
 
 	    if (editor.config.enabled && type !== 'header') {
@@ -33618,6 +33745,7 @@
 	            rowData: rowData,
 	            rowIndex: rowIndex
 	        },
+	        maxHeight: maxHeight,
 	        reducerKeys: reducerKeys,
 	        stateKey: stateKey,
 	        store: store
@@ -33638,6 +33766,7 @@
 	    actions: _react.PropTypes.object,
 	    columns: _react.PropTypes.arrayOf(_react.PropTypes.object),
 	    editor: _react.PropTypes.object,
+	    maxHeight: _react.PropTypes.number,
 	    reducerKeys: _react.PropTypes.object,
 	    rowData: _react.PropTypes.object,
 	    rowId: _react.PropTypes.string,
@@ -33684,6 +33813,11 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+	var array = _react.PropTypes.array;
+	var number = _react.PropTypes.number;
+	var object = _react.PropTypes.object;
+	var string = _react.PropTypes.string;
+
 	var Menu = function (_Component) {
 	    _inherits(Menu, _Component);
 
@@ -33696,12 +33830,22 @@
 	    _createClass(Menu, [{
 	        key: 'render',
 	        value: function render() {
-	            var menu = this.props.menu;
+	            var _props = this.props;
+	            var menu = _props.menu;
+	            var maxHeight = _props.maxHeight;
 
 
 	            var menuProps = {
-	                className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.GRID_ACTIONS.MENU.CONTAINER)
+	                className: (0, _prefix.prefix)(_GridConstants.CLASS_NAMES.GRID_ACTIONS.MENU.CONTAINER),
+	                style: {}
 	            };
+
+	            if (maxHeight !== undefined) {
+	                // to compensate for 10px padding on top and bottom
+	                // of menu
+	                // we adjust max height
+	                menuProps.style.maxHeight = maxHeight - 20;
+	            }
 
 	            var items = getUniqueItems(menu);
 
@@ -33716,10 +33860,10 @@
 	    }, {
 	        key: 'getMenuItem',
 	        value: function getMenuItem(item) {
-	            var _props = this.props;
-	            var metaData = _props.metaData;
-	            var stateKey = _props.stateKey;
-	            var store = _props.store;
+	            var _props2 = this.props;
+	            var metaData = _props2.metaData;
+	            var stateKey = _props2.stateKey;
+	            var store = _props2.store;
 
 
 	            if (!item.$$typeof) {
@@ -33743,10 +33887,11 @@
 	}(_react.Component);
 
 	Menu.propTypes = {
-	    menu: _react2.default.PropTypes.array,
-	    metaData: _react2.default.PropTypes.object,
-	    stateKey: _react2.default.PropTypes.string,
-	    store: _react2.default.PropTypes.object
+	    maxHeight: number,
+	    menu: array,
+	    metaData: object,
+	    stateKey: string,
+	    store: object
 	};
 	Menu.defaultProps = {
 	    metaData: {}
@@ -33948,6 +34093,42 @@
 
 /***/ },
 /* 261 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	var getRowBoundingRect = exports.getRowBoundingRect = function getRowBoundingRect(row) {
+	    var container = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
+
+
+	    if (!container) {
+	        container = row && row.offsetParent ? row.offsetParent.offsetParent : null;
+	    }
+
+	    if (!container) {
+	        return {};
+	    }
+
+	    var rowBCR = row.getBoundingClientRect();
+	    var containerBCR = container.getBoundingClientRect();
+
+	    var spaceBottom = containerBCR.bottom - rowBCR.bottom;
+	    var spaceTop = rowBCR.top - containerBCR.top;
+
+	    var maxHeight = Math.max(spaceBottom, spaceTop);
+	    var position = spaceTop > spaceBottom ? 'top' : 'bottom';
+
+	    return {
+	        maxHeight: maxHeight,
+	        position: position
+	    };
+	};
+
+/***/ },
+/* 262 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33988,7 +34169,7 @@
 	exports.default = new Sorter();
 
 /***/ },
-/* 262 */
+/* 263 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34007,7 +34188,7 @@
 
 	var _ModelActions = __webpack_require__(252);
 
-	var _CheckBox = __webpack_require__(263);
+	var _CheckBox = __webpack_require__(264);
 
 	var _GridConstants = __webpack_require__(208);
 
@@ -34108,7 +34289,7 @@
 	exports.default = Model;
 
 /***/ },
-/* 263 */
+/* 264 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34213,7 +34394,7 @@
 	exports.ConnectedCheckBox = ConnectedCheckBox;
 
 /***/ },
-/* 264 */
+/* 265 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34228,7 +34409,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _Inline = __webpack_require__(265);
+	var _Inline = __webpack_require__(266);
 
 	var _Inline2 = _interopRequireDefault(_Inline);
 
@@ -34291,7 +34472,7 @@
 	exports.default = Manager;
 
 /***/ },
-/* 265 */
+/* 266 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34313,13 +34494,13 @@
 
 	var _reactRedux = __webpack_require__(196);
 
-	var _Button = __webpack_require__(266);
+	var _Button = __webpack_require__(267);
 
 	var _prefix = __webpack_require__(207);
 
 	var _stateGetter = __webpack_require__(247);
 
-	var _getEditorTop = __webpack_require__(267);
+	var _getEditorTop = __webpack_require__(268);
 
 	var _GridConstants = __webpack_require__(208);
 
@@ -34499,7 +34680,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps)(Inline);
 
 /***/ },
-/* 266 */
+/* 267 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34610,7 +34791,7 @@
 	};
 
 /***/ },
-/* 267 */
+/* 268 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -34630,7 +34811,7 @@
 	};
 
 /***/ },
-/* 268 */
+/* 269 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34655,7 +34836,151 @@
 	}
 
 /***/ },
-/* 269 */
+/* 270 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.getColumnsFromStorage = undefined;
+
+	var _getData = __webpack_require__(229);
+
+	// properties to map from state
+	// order is an implicit prop
+	var mappableProps = ['hidden', 'width'];
+
+	var getColumnsFromStorage = exports.getColumnsFromStorage = function getColumnsFromStorage(fromStorage, columns) {
+
+	    var ret = [];
+	    var foundValues = [];
+
+	    fromStorage.forEach(function (col) {
+
+	        var dataIndex = (0, _getData.nameFromDataIndex)(col);
+	        var colFromProp = columns.find(function (c) {
+	            return (0, _getData.nameFromDataIndex)(c) === dataIndex;
+	        });
+
+	        if (!colFromProp) {
+	            return;
+	        }
+
+	        foundValues.push(dataIndex);
+
+	        mappableProps.forEach(function (prop) {
+
+	            if (col[prop] !== undefined) {
+	                colFromProp[prop] = col[prop];
+	            }
+	        });
+
+	        ret.push(colFromProp);
+	    });
+
+	    if (foundValues.length !== columns.length) {
+	        var unused = columns.filter(function (c) {
+	            return foundValues.indexOf((0, _getData.nameFromDataIndex)(c)) === -1;
+	        });
+	        ret.unshift.apply(ret, unused);
+	    }
+
+	    return ret;
+	};
+
+/***/ },
+/* 271 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.LocalStorageManager = undefined;
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _throttle = __webpack_require__(222);
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var LocalStorageManager = exports.LocalStorageManager = function () {
+	    function LocalStorageManager() {
+	        _classCallCheck(this, LocalStorageManager);
+	    }
+
+	    _createClass(LocalStorageManager, [{
+	        key: 'setStateItem',
+	        value: function setStateItem(_ref) {
+	            var stateKey = _ref.stateKey;
+	            var property = _ref.property;
+	            var value = _ref.value;
+
+
+	            var json = JSON.stringify(value);
+
+	            if (!window.localStorage) {
+	                return value;
+	            }
+
+	            window.localStorage.setItem(this.getKey({ stateKey: stateKey, property: property }), json);
+	        }
+	    }, {
+	        key: 'debouncedSetStateItem',
+	        value: function debouncedSetStateItem() {
+	            return (0, _throttle.debounce)(this.setStateItem.bind(this), 500, false);
+	        }
+	    }, {
+	        key: 'getStateItem',
+	        value: function getStateItem(_ref2) {
+	            var stateKey = _ref2.stateKey;
+	            var property = _ref2.property;
+	            var value = _ref2.value;
+	            var _ref2$shouldSave = _ref2.shouldSave;
+	            var shouldSave = _ref2$shouldSave === undefined ? true : _ref2$shouldSave;
+
+
+	            if (!window.localStorage) {
+	                return value;
+	            }
+
+	            var item = window.localStorage.getItem(this.getKey({ stateKey: stateKey, property: property }));
+
+	            if (item) {
+	                return JSON.parse(item);
+	            }
+
+	            if (value && shouldSave) {
+	                this.setStateItem({ stateKey: stateKey, property: property, value: value });
+	            }
+
+	            return value;
+	        }
+	    }, {
+	        key: 'getKey',
+	        value: function getKey(_ref3) {
+	            var stateKey = _ref3.stateKey;
+	            var property = _ref3.property;
+
+
+	            if (!stateKey || !property) {
+	                throw new Error('stateKey and property are required params');
+	            }
+
+	            return 'react-grid-' + stateKey + '-' + property;
+	        }
+	    }]);
+
+	    return LocalStorageManager;
+	}();
+
+	exports.default = new LocalStorageManager();
+
+/***/ },
+/* 272 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34665,7 +34990,7 @@
 	});
 	exports.Store = undefined;
 
-	var _configureStore = __webpack_require__(270);
+	var _configureStore = __webpack_require__(273);
 
 	var _configureStore2 = _interopRequireDefault(_configureStore);
 
@@ -34677,7 +35002,7 @@
 	exports.default = store;
 
 /***/ },
-/* 270 */
+/* 273 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34689,15 +35014,15 @@
 
 	var _redux = __webpack_require__(169);
 
-	var _reducers = __webpack_require__(271);
+	var _reducers = __webpack_require__(274);
 
 	var _reducers2 = _interopRequireDefault(_reducers);
 
-	var _reduxDiffLogger = __webpack_require__(283);
+	var _reduxDiffLogger = __webpack_require__(286);
 
 	var _reduxDiffLogger2 = _interopRequireDefault(_reduxDiffLogger);
 
-	var _reduxThunk = __webpack_require__(285);
+	var _reduxThunk = __webpack_require__(288);
 
 	var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
 
@@ -34718,7 +35043,7 @@
 	}
 
 /***/ },
-/* 271 */
+/* 274 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34730,39 +35055,39 @@
 
 	var _redux = __webpack_require__(169);
 
-	var _grid = __webpack_require__(272);
+	var _grid = __webpack_require__(275);
 
 	var _grid2 = _interopRequireDefault(_grid);
 
-	var _datasource = __webpack_require__(273);
+	var _datasource = __webpack_require__(276);
 
 	var _datasource2 = _interopRequireDefault(_datasource);
 
-	var _editor = __webpack_require__(276);
+	var _editor = __webpack_require__(279);
 
 	var _editor2 = _interopRequireDefault(_editor);
 
-	var _menu = __webpack_require__(277);
+	var _menu = __webpack_require__(280);
 
 	var _menu2 = _interopRequireDefault(_menu);
 
-	var _pager = __webpack_require__(278);
+	var _pager = __webpack_require__(281);
 
 	var _pager2 = _interopRequireDefault(_pager);
 
-	var _loader = __webpack_require__(279);
+	var _loader = __webpack_require__(282);
 
 	var _loader2 = _interopRequireDefault(_loader);
 
-	var _bulkaction = __webpack_require__(280);
+	var _bulkaction = __webpack_require__(283);
 
 	var _bulkaction2 = _interopRequireDefault(_bulkaction);
 
-	var _selection = __webpack_require__(281);
+	var _selection = __webpack_require__(284);
 
 	var _selection2 = _interopRequireDefault(_selection);
 
-	var _errorhandler = __webpack_require__(282);
+	var _errorhandler = __webpack_require__(285);
 
 	var _errorhandler2 = _interopRequireDefault(_errorhandler);
 
@@ -34795,7 +35120,7 @@
 	exports.default = rootReducer;
 
 /***/ },
-/* 272 */
+/* 275 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34803,15 +35128,24 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
+	exports.setColumnsInStorage = undefined;
 	exports.default = gridState;
 
 	var _immutable = __webpack_require__(236);
 
 	var _ActionTypes = __webpack_require__(212);
 
+	var _LocalStorageManager = __webpack_require__(271);
+
+	var _LocalStorageManager2 = _interopRequireDefault(_LocalStorageManager);
+
 	var _lastUpdate = __webpack_require__(240);
 
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 	var initialState = (0, _immutable.fromJS)({ lastUpdate: (0, _lastUpdate.generateLastUpdate)() });
+
+	var debouncedColumnSetter = _LocalStorageManager2.default.debouncedSetStateItem();
 
 	function gridState() {
 	    var state = arguments.length <= 0 || arguments[0] === undefined ? initialState : arguments[0];
@@ -34827,6 +35161,14 @@
 	            }));
 
 	        case _ActionTypes.SET_COLUMNS:
+
+	            if (action.stateful) {
+	                setColumnsInStorage({
+	                    stateKey: action.stateKey,
+	                    columns: action.columns
+	                });
+	            }
+
 	            return state.mergeIn([action.stateKey], (0, _immutable.fromJS)({
 	                columns: action.columns,
 	                lastUpdate: (0, _lastUpdate.generateLastUpdate)()
@@ -34839,6 +35181,14 @@
 	            }));
 
 	        case _ActionTypes.RESIZE_COLUMNS:
+
+	            if (action.stateful) {
+	                setColumnsInStorage({
+	                    stateKey: action.stateKey,
+	                    columns: action.columns
+	                });
+	            }
+
 	            return state.mergeIn([action.stateKey], (0, _immutable.fromJS)({
 	                columns: action.columns,
 	                lastUpdate: (0, _lastUpdate.generateLastUpdate)()
@@ -34850,8 +35200,19 @@
 	    }
 	}
 
+	var setColumnsInStorage = exports.setColumnsInStorage = function setColumnsInStorage(_ref) {
+	    var columns = _ref.columns;
+	    var stateKey = _ref.stateKey;
+
+	    debouncedColumnSetter({
+	        stateKey: stateKey,
+	        property: 'columns',
+	        value: columns
+	    });
+	};
+
 /***/ },
-/* 273 */
+/* 276 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34872,9 +35233,9 @@
 
 	var _lastUpdate = __webpack_require__(240);
 
-	var _getTreePathFromId = __webpack_require__(274);
+	var _getTreePathFromId = __webpack_require__(277);
 
-	var _setTreeValue = __webpack_require__(275);
+	var _setTreeValue = __webpack_require__(278);
 
 	var _treeToFlatList = __webpack_require__(216);
 
@@ -35065,7 +35426,7 @@
 	}
 
 /***/ },
-/* 274 */
+/* 277 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -35098,7 +35459,7 @@
 	};
 
 /***/ },
-/* 275 */
+/* 278 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -35142,7 +35503,7 @@
 	};
 
 /***/ },
-/* 276 */
+/* 279 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -35335,7 +35696,7 @@
 	}
 
 /***/ },
-/* 277 */
+/* 280 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -35382,7 +35743,7 @@
 	}
 
 /***/ },
-/* 278 */
+/* 281 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -35427,7 +35788,7 @@
 	}
 
 /***/ },
-/* 279 */
+/* 282 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -35466,7 +35827,7 @@
 	}
 
 /***/ },
-/* 280 */
+/* 283 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -35503,7 +35864,7 @@
 	}
 
 /***/ },
-/* 281 */
+/* 284 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -35633,7 +35994,7 @@
 	};
 
 /***/ },
-/* 282 */
+/* 285 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -35678,7 +36039,7 @@
 	}
 
 /***/ },
-/* 283 */
+/* 286 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// https://github.com/flitbit/diff#differences
@@ -35690,7 +36051,7 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	var _deepDiff = __webpack_require__(284);
+	var _deepDiff = __webpack_require__(287);
 
 	var _deepDiff2 = _interopRequireDefault(_deepDiff);
 
@@ -35784,7 +36145,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 284 */
+/* 287 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(global) {/*!
@@ -36213,7 +36574,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 285 */
+/* 288 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -36241,7 +36602,7 @@
 	exports['default'] = thunk;
 
 /***/ },
-/* 286 */
+/* 289 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -36304,7 +36665,7 @@
 	exports.default = Actions;
 
 /***/ },
-/* 287 */
+/* 290 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -36924,7 +37285,7 @@
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "demodata.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 288 */
+/* 291 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -36944,7 +37305,7 @@
 
 	var _reactReduxGrid = __webpack_require__(192);
 
-	var _demodata = __webpack_require__(287);
+	var _demodata = __webpack_require__(290);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -37027,7 +37388,7 @@
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Complex.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 289 */
+/* 292 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -37047,7 +37408,7 @@
 
 	var _reactReduxGrid = __webpack_require__(192);
 
-	var _demodata = __webpack_require__(287);
+	var _demodata = __webpack_require__(290);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -37093,7 +37454,7 @@
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Sticky.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 290 */
+/* 293 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -37111,7 +37472,7 @@
 
 	var _reactReduxGrid = __webpack_require__(192);
 
-	var _demodata = __webpack_require__(287);
+	var _demodata = __webpack_require__(290);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -37180,7 +37541,7 @@
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "ColRenderer.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 291 */
+/* 294 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -37200,7 +37561,7 @@
 
 	var _reactReduxGrid = __webpack_require__(192);
 
-	var _demodata = __webpack_require__(287);
+	var _demodata = __webpack_require__(290);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -37212,7 +37573,7 @@
 
 	    var complexData = {
 	        showTreeRootNode: false,
-	        dataSource: 'http://react-redux-grid.herokuapp.com/gettreeData',
+	        dataSource: '/gettreeData',
 	        gridType: 'tree',
 	        columns: [{
 	            name: 'Name',
@@ -37273,16 +37634,16 @@
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Tree.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 292 */
+/* 295 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(293);
+	var content = __webpack_require__(296);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(295)(content, {});
+	var update = __webpack_require__(298)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -37299,10 +37660,10 @@
 	}
 
 /***/ },
-/* 293 */
+/* 296 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(294)();
+	exports = module.exports = __webpack_require__(297)();
 	// imports
 
 
@@ -37313,7 +37674,7 @@
 
 
 /***/ },
-/* 294 */
+/* 297 */
 /***/ function(module, exports) {
 
 	/*
@@ -37369,7 +37730,7 @@
 
 
 /***/ },
-/* 295 */
+/* 298 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -37621,7 +37982,7 @@
 
 
 /***/ },
-/* 296 */
+/* 299 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -37633,7 +37994,7 @@
 	});
 	exports.Store = undefined;
 
-	var _configureStore = __webpack_require__(297);
+	var _configureStore = __webpack_require__(300);
 
 	var _configureStore2 = _interopRequireDefault(_configureStore);
 
@@ -37647,7 +38008,7 @@
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "index.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 297 */
+/* 300 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -37661,15 +38022,15 @@
 
 	var _redux = __webpack_require__(169);
 
-	var _reducers = __webpack_require__(298);
+	var _reducers = __webpack_require__(301);
 
 	var _reducers2 = _interopRequireDefault(_reducers);
 
-	var _reduxDiffLogger = __webpack_require__(300);
+	var _reduxDiffLogger = __webpack_require__(303);
 
 	var _reduxDiffLogger2 = _interopRequireDefault(_reduxDiffLogger);
 
-	var _reduxThunk = __webpack_require__(301);
+	var _reduxThunk = __webpack_require__(304);
 
 	var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
 
@@ -37692,7 +38053,7 @@
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "configureStore.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 298 */
+/* 301 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -37710,7 +38071,7 @@
 
 	var _reactReduxGrid = __webpack_require__(192);
 
-	var _app = __webpack_require__(299);
+	var _app = __webpack_require__(302);
 
 	var _app2 = _interopRequireDefault(_app);
 
@@ -37737,7 +38098,7 @@
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "index.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 299 */
+/* 302 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -37794,7 +38155,7 @@
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ben_cripps/Documents/Dev/jss/reactgrid-demo/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "app.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 300 */
+/* 303 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// https://github.com/flitbit/diff#differences
@@ -37806,7 +38167,7 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	var _deepDiff = __webpack_require__(284);
+	var _deepDiff = __webpack_require__(287);
 
 	var _deepDiff2 = _interopRequireDefault(_deepDiff);
 
@@ -37890,7 +38251,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 301 */
+/* 304 */
 /***/ function(module, exports) {
 
 	'use strict';
