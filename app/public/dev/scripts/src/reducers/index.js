@@ -3,21 +3,9 @@ import { Reducers } from 'react-redux-grid';
 
 import app from './components/app';
 
-const gridReducers = {
-    dataSource: Reducers.DataSource,
-    editor: Reducers.Editor,
-    errorHandler: Reducers.ErrorHandler,
-    filter: Reducers.Filter,
-    grid: Reducers.Grid,
-    loader: Reducers.Loader,
-    menu: Reducers.Menu,
-    pager: Reducers.Pager,
-    selection: Reducers.Selection
-};
-
 export const rootReducer = combineReducers({
     app,
-    ...gridReducers
+    ...Reducers
 });
 
 export default rootReducer;
