@@ -2,7 +2,7 @@
 * @Author: ben_cripps
 * @Date:   2015-05-18 20:58:33
 * @Last Modified by:   ben_cripps
-* @Last Modified time: 2016-08-15 09:07:38
+* @Last Modified time: 2016-09-06 08:10:57
 */
 
 const Functions = require('./functions');
@@ -72,6 +72,12 @@ module.exports = [
         uri: '/getTreeData',
         method: 'get',
         func: funcs.getTreeData,
+        vars: {}
+    },
+    {
+        uri: '/getPrefetchData',
+        method: 'get',
+        func: funcs.getPrefetchData,
         vars: {}
     }
 ];

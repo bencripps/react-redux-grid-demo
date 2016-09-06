@@ -23,6 +23,23 @@ module.exports = class Functions {
         // });
     }
 
+    getPrefetchData(vars, req, res) {
+        const reqURL = url.parse(req.url, true);
+        const json = reqURL.query;
+
+        const pageIndex = json.pageIndex !== undefined ? json.pageIndex : 0;
+        const pageSize = json.pageSize || 25;
+        const total = dataObj.data.length;
+        const pages = dataObj.data.slice(pageIndex * (pageSize * 2), ((pageIndex) + 1) * (pageSize * 2));
+
+        res.setHeader('Access-Control-Allow-Origin', '*');
+
+        res.json({
+            data: pages,
+            total: total
+        });
+    }
+
     getTreeData(vars, req, res) {
 
         const reqURL = url.parse(req.url, true);
