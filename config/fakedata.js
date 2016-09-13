@@ -3,7 +3,8 @@ const data = [
         "Name": "Sawyer",
         "Phone Number": "(209) 915-9426",
         "Email": "dui.nec@Seddictum.co.uk",
-        "Address": "7815 Accumsan St."
+        "Address": "7815 Accumsan St.",
+        "customProperty": "should be available"
     },
     {
         "Name": "Chadwick",
