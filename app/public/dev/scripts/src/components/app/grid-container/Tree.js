@@ -18,6 +18,7 @@ export const Complex = ({ store }) => {
         showTreeRootNode: false,
         dataSource: '/gettreeData',
         gridType: 'tree',
+        dragAndDrop: true,
         columns: [
             {
                 name: 'Name',
