@@ -13,14 +13,21 @@ module.exports = class Functions {
     }
 
     getFakeData(vars, req, res) {
+        const reqURL = url.parse(req.url, true);
+        const json = reqURL.query;
+
         res.setHeader('Access-Control-Allow-Origin', '*');
+
+        const pageIndex = Number(json.pageIndex !== undefined ? json.pageIndex : 0);
+        const pageSize = Number(json.pageSize || 20);
+
+        const total = dataObj.data.length;
+        const pages = dataObj.data.slice(pageIndex * pageSize, (pageIndex + 1) * pageSize);
+
         res.json({
-            data: dataObj.data.slice(0, 20),
-            total: dataObj.data.length
+            data: pages,
+            total: total
         });
-        // res.json({
-        //     data: data
-        // });
     }
 
     getPrefetchData(vars, req, res) {
