@@ -1,4 +1,9 @@
-var loaders = require('./loaders');
+const webpack = require('webpack');
+const loaders = require('./loaders');
+
+const plugin = new webpack.DefinePlugin({
+    'process.env.NODE_ENV': '"production"'
+});
 
 module.exports = {
     entry: [
@@ -13,6 +18,7 @@ module.exports = {
     node: {
         fs: 'empty'
     },
+    plugins: [plugin],
     resolve: {
         alias: {
             react: __dirname + '/../node_modules/react'

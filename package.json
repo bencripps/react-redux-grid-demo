@@ -75,6 +75,6 @@
     "babel-node": "babel-node",
     "start": "node ./server.js",
     "hot": "webpack-dev-server --hot --inline --pretty --config webpack/webpack.config.hot.js",
-    "prod": "webpack --pretty --config webpack/webpack.config.prod.js"
+    "prod": "webpack -p --config webpack/webpack.config.prod.js"
   }
 }

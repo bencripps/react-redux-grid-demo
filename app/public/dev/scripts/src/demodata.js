@@ -32,6 +32,8 @@ export const events = {
 
 export const dataSource = '/getfakeData';
 
+export { stressData } from './stressdata';
+
 export const plugins = {
     COLUMN_MANAGER: {
         resizable: true,
