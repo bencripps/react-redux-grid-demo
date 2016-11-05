@@ -51,6 +51,9 @@ export const Complex = ({ store }) => {
         pageSize,
         plugins: {
             ...plugins,
+            BULK_ACTIONS: {
+                enabled: true
+            },
             GRID_ACTIONS: {
                 iconCls: 'action-icon',
                 menu: [

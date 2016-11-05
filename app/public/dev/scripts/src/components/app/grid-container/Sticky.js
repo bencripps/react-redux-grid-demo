@@ -25,6 +25,9 @@ export const Sticky = ({ store }) => {
             },
             FILTER_CONTAINER: {
                 enabled: false
+            },
+            BULK_ACTIONS: {
+                enabled: false
             }
         },
         height: '',
