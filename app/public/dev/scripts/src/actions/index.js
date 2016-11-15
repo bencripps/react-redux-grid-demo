@@ -4,7 +4,8 @@ import {
     LOAD_STICKY,
     LOAD_COL_RENDERER,
     LOAD_TREE,
-    LOAD_STRESS
+    LOAD_STRESS,
+    LOAD_BOOTSTRAP
 } from './../constants/actionTypes';
 
 export const loadSimple = () => {
@@ -31,7 +32,6 @@ export const loadTree = () => {
     };
 };
 
-
 export const loadColRenderer = () => {
     return {
         type: LOAD_COL_RENDERER
@@ -41,5 +41,11 @@ export const loadColRenderer = () => {
 export const loadStress = () => {
     return {
         type: LOAD_STRESS
+    };
+};
+
+export const loadBootstrap = () => {
+    return {
+        type: LOAD_BOOTSTRAP
     };
 };

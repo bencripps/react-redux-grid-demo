@@ -7,7 +7,8 @@ import {
     loadSticky,
     loadColRenderer,
     loadTree,
-    loadStress
+    loadStress,
+    loadBootstrap
 } from './../../actions';
 
 export const Navigation = (
@@ -52,6 +53,12 @@ export const Navigation = (
         children: 'Tree'
     };
 
+    const bootstrapProps = {
+        className: `${PREFIX}nav-link`,
+        onClick: handleLinkClick.bind(null, store),
+        children: 'Bootstrap'
+    };
+
     return (
         <div { ...{ className } }>
             <ul>
@@ -60,6 +67,7 @@ export const Navigation = (
                 <li><a { ...treeProps } /></li>
                 <li><a { ...stressProps } /></li>
                 <li><a { ...stickyProps } /></li>
+                <li><a { ...bootstrapProps } /></li>
                 <li><a { ...colRendererProps } /></li>
             </ul>
         </div>
@@ -90,6 +98,9 @@ export const handleLinkClick = (store, e) => {
         break;
     case 'Stress':
         func = loadStress;
+        break;
+    case 'Bootstrap':
+        func = loadBootstrap;
         break;
 
     default:

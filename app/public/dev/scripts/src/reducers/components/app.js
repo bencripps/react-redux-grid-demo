@@ -6,7 +6,8 @@ import {
     LOAD_STICKY,
     LOAD_COL_RENDERER,
     LOAD_TREE,
-    LOAD_STRESS
+    LOAD_STRESS,
+    LOAD_BOOTSTRAP
 } from '../../constants/actionTypes';
 
 const initialState = fromJS({});
@@ -42,6 +43,11 @@ export default function gridState(state = initialState, action) {
     case LOAD_STRESS:
         return state.merge({
             grid: 'stress'
+        });
+
+    case LOAD_BOOTSTRAP:
+        return state.merge({
+            grid: 'bootstrap'
         });
 
     default:
