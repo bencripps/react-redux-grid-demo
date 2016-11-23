@@ -114,8 +114,9 @@ export class Bootstrap extends Component {
             CLASS_NAMES: {
                 TABLE: 'table table-striped',
                 TABLE_CONTAINER: 'table-responsive',
-                HEADER_FIXED_CONTAINER: 'hidden',
+                HEADER_FIXED_CONTAINER: 'header-fixed',
                 HEADER: 'header-bs',
+                HEADER_HIDDEN: 'hidden-override',
                 ROW: 'row-bs',
                 CELL: 'text-left',
                 COLUMN: 'column-bs',
