@@ -4,8 +4,7 @@ module.exports = [
     {
         test: /\.js$|\.jsx$/,
         loaders: [
-            'react-hot',
-            'babel-loader?presets[]=react,presets[]=es2015,presets[]=stage-0'
+            'babel-loader'
         ],
         exclude: /[\\\/]node_modules[\\\/]/
     },
