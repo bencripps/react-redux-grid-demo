@@ -5,3 +5,4 @@ export const LOAD_COL_RENDERER = 'LOAD_COL_RENDERER';
 export const LOAD_TREE = 'LOAD_TREE';
 export const LOAD_STRESS = 'LOAD_STRESS';
 export const LOAD_BOOTSTRAP = 'LOAD_BOOTSTRAP';
+export const LOAD_EDITABLE = 'LOAD_EDITABLE';

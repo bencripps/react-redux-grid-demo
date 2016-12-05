@@ -8,6 +8,7 @@ import ColRenderer from './grid-container/ColRenderer';
 import Tree from './grid-container/Tree';
 import Stress from './grid-container/Stress';
 import Bootstrap from './grid-container/Bootstrap';
+import Editable from './grid-container/Editable';
 
 export const Navigation = (
   { grid, store }
@@ -34,6 +35,12 @@ const getGrid = (type, store) => {
     else if (type === 'complex') {
         return (
             <Complex { ...{ store } } />
+            );
+    }
+
+    else if (type === 'editable') {
+        return (
+            <Editable { ...{ store } } />
             );
     }
 

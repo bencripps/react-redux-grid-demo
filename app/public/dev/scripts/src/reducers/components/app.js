@@ -7,7 +7,8 @@ import {
     LOAD_COL_RENDERER,
     LOAD_TREE,
     LOAD_STRESS,
-    LOAD_BOOTSTRAP
+    LOAD_BOOTSTRAP,
+    LOAD_EDITABLE
 } from '../../constants/actionTypes';
 
 const initialState = fromJS({});
@@ -48,6 +49,11 @@ export default function gridState(state = initialState, action) {
     case LOAD_BOOTSTRAP:
         return state.merge({
             grid: 'bootstrap'
+        });
+
+    case LOAD_EDITABLE:
+        return state.merge({
+            grid: 'editable'
         });
 
     default:

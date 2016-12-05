@@ -8,7 +8,8 @@ import {
     loadColRenderer,
     loadTree,
     loadStress,
-    loadBootstrap
+    loadBootstrap,
+    loadEditable
 } from './../../actions';
 
 export const Navigation = (
@@ -59,6 +60,12 @@ export const Navigation = (
         children: 'Bootstrap'
     };
 
+    const editableProps = {
+        className: `${PREFIX}nav-link`,
+        onClick: handleLinkClick.bind(null, store),
+        children: 'Editable'
+    };
+
     return (
         <div { ...{ className } }>
             <ul>
@@ -69,6 +76,7 @@ export const Navigation = (
                 <li><a { ...stickyProps } /></li>
                 <li><a { ...bootstrapProps } /></li>
                 <li><a { ...colRendererProps } /></li>
+                <li><a { ...editableProps } /></li>
             </ul>
         </div>
         );
@@ -101,6 +109,9 @@ export const handleLinkClick = (store, e) => {
         break;
     case 'Bootstrap':
         func = loadBootstrap;
+        break;
+    case 'Editable':
+        func = loadEditable;
         break;
 
     default:

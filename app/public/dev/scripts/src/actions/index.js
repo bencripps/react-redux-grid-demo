@@ -5,7 +5,8 @@ import {
     LOAD_COL_RENDERER,
     LOAD_TREE,
     LOAD_STRESS,
-    LOAD_BOOTSTRAP
+    LOAD_BOOTSTRAP,
+    LOAD_EDITABLE
 } from './../constants/actionTypes';
 
 export const loadSimple = () => {
@@ -47,5 +48,11 @@ export const loadStress = () => {
 export const loadBootstrap = () => {
     return {
         type: LOAD_BOOTSTRAP
+    };
+};
+
+export const loadEditable = () => {
+    return {
+        type: LOAD_EDITABLE
     };
 };
