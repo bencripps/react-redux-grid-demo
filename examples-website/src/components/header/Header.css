@@ -1,0 +1,65 @@
+.header {
+  display: flex; 
+  flex-direction: row;
+  justify-content: flex-start;
+  background-color: #fbfbfb;
+  border-bottom: 1px dashed #eee;
+  height: 80px;
+  padding: 20px;
+  color: white;
+}
+
+.title {
+  display: flex; 
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.header h1 {
+  font-family: 'Bree Serif', serif;
+  font-size: 40px;
+  font-weight: normal;
+  color: #000;
+  margin: 0px;
+  padding: 0px;
+}
+
+.purpleHilite {
+  color: #663399;
+}
+
+.header h3 {
+  font-family: 'Bree Serif', serif;
+  font-size: 16px;
+  color: #999;
+  font-weight: normal;
+  font-style: italic;
+  margin: 0px;
+  padding: 0px;
+}
+
+.react-logo {
+  height: 80px;
+}
+
+@keyframes App-logo-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.redux-logo {
+  height: 80px;
+  margin-right: 20px;
+}
+
+.grid-logo {
+    height: 80px;
+}
+
+.github-logo {
+  display: block;
+  position: absolute;
+  right: 50px;
+  height: 80px;
+  cursor: pointer;
+}

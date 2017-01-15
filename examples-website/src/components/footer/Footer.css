@@ -1,0 +1,24 @@
+.footer {
+  display: flex; 
+  flex-direction: row;
+  justify-content: space-between;
+  background-color: #fbfbfb;
+  padding: 20px;
+  color: white;
+  height: 200px;
+}
+
+.footer .source {
+  display: block;
+  width: 200px;
+  height: 20px;
+  font-size: 12px;
+}
+
+.footer .shojiContainer {
+  display: block;
+}
+
+.footer .shoji {
+  height: 180px;
+}
