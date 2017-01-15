@@ -2,8 +2,8 @@
 
 ## Repository 
 
-[react-redux-grid on Github](https://github.com/bencripps/react-redux-grid)
-[react-redux-grid on NPM](https://www.npmjs.com/package/react-redux-grid)
+🍴[react-redux-grid on Github](https://github.com/bencripps/react-redux-grid)     
+⌛[react-redux-grid on NPM](https://www.npmjs.com/package/react-redux-grid)
 
 ## Demo Explanation
 
