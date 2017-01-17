@@ -8,7 +8,6 @@ class FeaturesSidebar extends Component {
     super(props);
     this.handleClickSimple = this.handleClickSimple.bind(this);
     this.handleClickAllFeatures = this.handleClickAllFeatures.bind(this);
-
   }
 
   handleClickSimple(event){
@@ -22,7 +21,6 @@ class FeaturesSidebar extends Component {
   }
 
   render() {
-
     const { features } = this.props.app;
     const listItems = features.map((feature) =>
       <li key={feature}>{feature}</li>

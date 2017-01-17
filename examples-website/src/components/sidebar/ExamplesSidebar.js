@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { push } from 'react-router-redux';
 import { connect } from 'react-redux';
+import gridIcon from './gridIcon.svg';
 import {
   switchFeature
 } from '../../redux/actions/appActions';
@@ -8,31 +9,29 @@ import './Sidebar.css';
 
 class ExamplesSidebar extends Component {
 
-  constructor(props){
-    super(props);
-    this.handleClickSimple = this.handleClickSimple.bind(this);
-    this.handleClickAllFeatures = this.handleClickAllFeatures.bind(this);
-  }
-
-  handleClickSimple(event){
+  handleClick(item, event){
     event.preventDefault();
-    this.props.switchFeature('Simple');
-    this.props.changeRoute('/simple');
-  }
+    console.log("handleClick: ", item);
 
-  handleClickAllFeatures(event){
-    event.preventDefault();
-    this.props.switchFeature('All Features');
-    this.props.changeRoute('/all-features');
+    const capitalizeFirstLetter = (string) => {
+      return string.charAt(0).toUpperCase() + string.slice(1);
+    };
+
+    this.props.switchFeature(capitalizeFirstLetter(item));
+    this.props.changeRoute('/' + item);
   }
 
   render() {
+    const { featureTitles } = this.props.app;
+    const listItems = featureTitles.map((featureTitle) => {
+      let boundClick = this.handleClick.bind(this, featureTitle);
+      return (<li key={featureTitle}> <button onClick={boundClick}><img src={gridIcon} className="gridIcon" alt="grid logo" /><p className="gridLabel">{featureTitle}</p></button></li>)
+    });
     return (
         <div className="sidebarContainer">
            <h2>Examples</h2>
            <ul>
-             <li><button onClick={this.handleClickAllFeatures}>All Features</button></li>
-             <li><button onClick={this.handleClickSimple}>Simple</button></li>
+            {listItems}
            </ul>
         </div>
     );

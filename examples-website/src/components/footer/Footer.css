@@ -3,22 +3,17 @@
   flex-direction: row;
   justify-content: space-between;
   background-color: #fbfbfb;
-  padding: 20px;
+  margin: 0px;
+  padding: 10px;
   color: white;
   height: 200px;
 }
 
-.footer .source {
-  display: block;
-  width: 200px;
-  height: 20px;
-  font-size: 12px;
-}
-
 .footer .shojiContainer {
   display: block;
+  width: 220px;
 }
 
 .footer .shoji {
-  height: 180px;
+
 }

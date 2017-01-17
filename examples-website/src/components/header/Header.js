@@ -13,8 +13,8 @@ class Header extends Component {
           <img src={reduxLogo} className="redux-logo" alt="redux logo" />
           <img src={gridLogo} className="grid-logo" alt="grid logo" />
           <div className="title">
-            <h1>ShōjiGrid</h1>
-            <h3>A Flexible <span className="purpleHilite">React Redux Grid</span> for Tabular Data</h3>
+            <h1><span className="purpleHilite">React Redux Grid</span></h1>
+            <h3>A Flexible Grid Pattern Library for Tabular Data</h3>
           </div>
           <a href="https://github.com/bencripps/react-redux-grid-demo" target="_blank">
             <img src={githubLogo} className="github-logo" alt="grid logo" />
