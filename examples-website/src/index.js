@@ -1,14 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import configureStore from './redux/configureStore';
+import store from './redux/configureStore';
 import App from './App'; 
 import ExampleGrid from './components/examples/ExampleGridContainer'; 
 import { Router, Route, IndexRoute, browserHistory } from 'react-router'
 import { syncHistoryWithStore } from 'react-router-redux'
 import './index.css';
 
-const store = configureStore();
 const history = syncHistoryWithStore(browserHistory, store) 
 
 ReactDOM.render(

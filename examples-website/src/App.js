@@ -12,11 +12,11 @@ class App extends Component {
       <div className="app">
         <Header />        
         <div className="split">
-          <ExamplesSidebar />
+          <ExamplesSidebar store={this.props.store} />
           <div className="tableContainer">
             {this.props.children}
           </div>
-          <FeaturesSidebar />
+          <FeaturesSidebar store={this.props.store} />
         </div>
         <Footer />
       </div>

@@ -17,7 +17,6 @@ export const Simple = ({ store }) => {
         pageSize,
         plugins: {},
         events,
-        dataSource,
         store,
         stateKey: 'simple'
     };

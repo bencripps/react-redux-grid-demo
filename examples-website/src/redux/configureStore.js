@@ -16,7 +16,7 @@ const rootReducer = combineReducers({
    routing: routerReducer
 });
 
-export default function configureStore() {
+export function configureStore() {
   return createStore(
     rootReducer,
     applyMiddleware(
@@ -24,3 +24,7 @@ export default function configureStore() {
     )
   )
 }
+
+const store = configureStore();
+
+export default store;

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './ExampleGridContainer.css';
-import { Store as store } from 'react-redux-grid';
 import { connect } from 'react-redux';
+import store from './../../redux/configureStore';
 import Simple from './Simple';
 import Complex from './Complex';
 import Sticky from './Sticky';
@@ -15,7 +15,7 @@ class ExampleGridContainer extends Component {
 
   render() {
 
-    const getGrid = (path, store) => {
+    const getGrid = (path) => {
       switch(path) {
         case "/Bootstrap" :
          return (<Bootstrap { ...{ store } } />);
