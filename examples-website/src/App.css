@@ -1,0 +1,56 @@
+.app {
+  display: block;
+  position: relative;
+}
+
+.split {
+  display: flex; 
+  flex-direction: row;
+  justify-content: flex-start;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.tableContainer {
+  display: block;
+  position: relative;
+  width: 900px;
+}
+
+ul {
+  list-style-type: none;
+  margin: 0px;
+  margin-left: 0px;
+  padding: 0px;
+  padding-left: 5px;
+}
+
+li {
+  margin: 0px;
+  padding: 0px;
+}
+
+h2 {
+  font-family: 'Bree Serif', serif;
+  font-size: 20px;
+  color: #49b8dc;
+  font-weight: normal;
+}
+
+button {
+  display: block;
+  border: none;
+  border-radius: 5px;
+  margin: 5px;
+  background-color: #49b8dc;
+  color: #fff;
+  cursor: pointer;
+  height: 28px;
+  width: 150px;
+  text-align: left;
+}
+
+:focus {
+  border: none;
+  outline: none;
+};
