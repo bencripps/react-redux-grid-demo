@@ -18,6 +18,9 @@ class ExamplesSidebar extends Component {
     };
 
     this.props.switchFeature(capitalizeFirstLetter(item));
+    console.log("ExamplesSidebar item: ", item);
+    
+    // route is not changing?!    
     this.props.changeRoute('/' + item);
   }
 
@@ -28,7 +31,7 @@ class ExamplesSidebar extends Component {
       return (<li key={featureTitle}> <button onClick={boundClick}><img src={gridIcon} className="gridIcon" alt="grid logo" /><p className="gridLabel">{featureTitle}</p></button></li>)
     });
     return (
-        <div className="sidebarContainer">
+        <div className="sidebarContainer examplesContainer">
            <h2>Examples</h2>
            <ul>
             {listItems}

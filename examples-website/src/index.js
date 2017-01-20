@@ -15,8 +15,6 @@ ReactDOM.render(
     <Router history={history}>
       <Route path="/" component={App}>
         <IndexRoute component={ExampleGrid}/>
-        <Route path="/all-features" component={ExampleGrid} />
-        <Route path="/simple" component={ExampleGrid} />
       </Route>
     </Router>
    </Provider>,

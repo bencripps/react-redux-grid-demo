@@ -1,11 +1,21 @@
+
+// working features
 export const featureTitles = [
+  "Simple",
+  "Sticky",
+  "Stress",
+  "Editable"
+];
+
+// all features
+export const allFeatureTitles = [
   "simple",
   "complex",
   "colRenderer",
-  "bootstrap",
   "sticky",
   "stress",
   "editable",
+  "bootstrap",
   "tree"
 ];
 
@@ -14,13 +24,39 @@ export const defaultFeatures = [
 ]
 
 export const simpleFeatures = [
+  "💎 Local and/or Remote Data Source",
+  "💎 Built-in Error Handling Module",
+  "⭐️ Handles Big Data (1000000+ Records)"
+]
+
+export const complexFeatures = [
   "➖ 🌲 Flat List or Tree Structure ",
   "💎 Local and/or Remote Data Source",
   "💎 Built-in Error Handling Module",
   "⭐️ Handles Big Data (1000000+ Records)"
 ]
 
-export const allFeatures = [
+export const colRendererFeatures = [
+  "➖ 🌲 Flat List or Tree Structure ",
+  "💎 Local and/or Remote Data Source",
+  "💎 Built-in Error Handling Module",
+  "⭐️ Handles Big Data (1000000+ Records)"
+]
+
+export const stickyFeatures = [
+  "💎 Select Multiple Rows ",
+  "💎 Local and/or Remote Data Source"
+]
+
+export const stressFeatures = [
+  "⭐️ Handles Big Data (1000000+ Records)"
+]
+
+export const editableFeatures = [
+  "💎 Edit Cells and Rows"
+]
+
+export const bootstrapFeatures = [
   "➖ 🌲 Flat List or Tree Structure ",
   "💎 Local and/or Remote Data Source",
   "💎 Local and/or Remote Pagination",
@@ -37,3 +73,14 @@ export const allFeatures = [
   "💎 Built-in Error Handling Module",
   "⭐️ Handles Big Data (1000000+ Records)"
 ];
+
+
+export const treeFeatures = [
+  "➖ 🌲 Flat List or Tree Structure ",
+  "💎 Local and/or Remote Data Source",
+  "💎 Built-in Error Handling Module",
+  "⭐️ Handles Big Data (1000000+ Records)"
+]
+
+
+

@@ -32,9 +32,13 @@ li {
 
 h2 {
   font-family: 'Bree Serif', serif;
-  font-size: 20px;
+  font-size: 18px;
   color: #49b8dc;
   font-weight: normal;
+  border-bottom: 1px dotted #49b8dc;
+  margin: 0px;
+  margin-bottom: 5px;
+  padding: 0px;
 }
 
 button {
