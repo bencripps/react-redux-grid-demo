@@ -1,24 +1,16 @@
 import * as types from "../types/types"; 
 import * as features from "./features"
 
-
 const getFeatures = (featureTitle) => {
-  console.log("appReducers getFeatures: ", featureTitle);
-  switch(featureTitle){
-    case "All Features" :
-      return features.allFeatures;
-    case "Simple" :
-      return features.simpleFeatures;
-    default :
-      return features.defaultFeatures;  
-  }
+  let key = featureTitle.toLowerCase() + "Features"; 
+  return features[key]
 }
 
 const initialState = {
   ready: false,
   name: "React Redux Grip Examples",
-  features: getFeatures('All Features'),
-  featureTitle: "All Featured",
+  features: getFeatures('Simple'),
+  featureTitle: "Simple",
   featureTitles: features.featureTitles
 };
 

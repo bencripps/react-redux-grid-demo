@@ -20,8 +20,13 @@
 .instructions p {
   color: #666;
   font-size: 14px;
+  font-family: Helvetica,sans-serif;
+  margin-top:0px;
+  margin-bottom: 10px;
 }
 
 code {
   color: #000;
+  display: block;
+  margin-bottom: 10px;
 }

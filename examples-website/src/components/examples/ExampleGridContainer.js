@@ -5,44 +5,55 @@ import store from './../../redux/configureStore';
 import Simple from './Simple';
 import Complex from './Complex';
 import Sticky from './Sticky';
+import Stress from './Stress';
 import ColRenderer from './ColRenderer';
 import Tree from './Tree';
-import Stress from './Stress';
 import Bootstrap from './Bootstrap';
 import Editable from './Editable';
 
 class ExampleGridContainer extends Component {
 
+  componentWillReceiveProps(nextProps) {
+     console.log("ExampleGridContainer nextProps: ", nextProps);
+     this.props = nextProps;
+  }
+
+  shouldComponentUpdate(){
+    return true; 
+  }
+
   render() {
 
-    const getGrid = (path) => {
-      switch(path) {
-        case "/Bootstrap" :
+    //let path = this.props.location.pathname; 
+    let title = this.props.app.featureTitle; 
+
+    let getGrid = (title) => {
+      console.log("ExampleGridContainer getGrid title: ", title)
+      switch(title) {
+        case "Bootstrap" :
          return (<Bootstrap { ...{ store } } />);
-        case "/colRenderer" :
+        case "ColRenderer" :
+         return (<ColRenderer { ...{ store } } />);
+        case "Tree" :
+         return (<Tree { ...{ store } } />);
+        case "Stress" :
+         return (<Stress { ...{ store } } />);
+        case "Sticky" :
          return (<Sticky { ...{ store } } />);
-        case "/tree" :
-         return (<Sticky { ...{ store } } />);
-        case "/stress" :
-         return (<Sticky { ...{ store } } />);
-        case "/sticky" :
-         return (<Sticky { ...{ store } } />);
-        case "/editable" :
+        case "Editable" :
          return (<Editable { ...{ store } } />);
-        case "/complex" :
+        case "Complex" :
          return (<Complex { ...{ store } } />);
-        case "/simple" :
+        case "Simple" :
         default :
          return (<Simple { ...{ store } } />);
       }
     }
 
-    const path = this.props.location.pathname; 
-
     return (
         <div className="simpleContainer">
           <h2>{this.props.app.featureTitle}</h2>
-          { getGrid(path, store) }
+          { getGrid(title) }
         </div>
     );
   }

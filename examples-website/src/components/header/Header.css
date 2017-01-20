@@ -3,7 +3,6 @@
   flex-direction: row;
   justify-content: flex-start;
   background-color: #fbfbfb;
-  border-bottom: 1px dashed #eee;
   height: 80px;
   padding: 20px;
   color: white;
@@ -22,6 +21,19 @@
   color: #000;
   margin: 0px;
   padding: 0px;
+}
+
+.listContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  position: absolute;
+  right: 50px;
+}
+
+.listContainer img {
+  margin-bottom: 10px;
+  cursor: pointer;
 }
 
 .purpleHilite {
@@ -59,7 +71,7 @@
 .github-logo {
   display: block;
   position: absolute;
-  right: 50px;
+  right: 150px;
   height: 80px;
   cursor: pointer;
 }

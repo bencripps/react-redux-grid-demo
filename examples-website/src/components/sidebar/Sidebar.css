@@ -13,16 +13,25 @@
 .sidebarContainer li {
   font-size: 12px;
   color: #666;
-  margin: 5px;
-  background-color: #f7f7f7;
-  padding: 5px;
-  border-radius: 5px;
+  margin: 0px;
+  padding: 0px;
+  font-size: 12px;
+}
+
+.examplesContainer li button {
+  font-size: 12px;
+}
+
+.sidebarContainer button {
+  display: block;
+  position: relative;
 }
 
 .gridIcon {
   display: inline-block;
-  width: 40px;
+  width: 30px;
   vertical-align: top;
+  margin-top: 2px;
 }
 
 .gridLabel {
@@ -30,5 +39,12 @@
   vertical-align: top;
   margin:0px;
   padding:0px;
-  margin-top: 5px;
+  position: absolute;
+  left: 30px;
+  top: 6px;
+
+}
+
+img {
+  cursor: pointer;
 }
