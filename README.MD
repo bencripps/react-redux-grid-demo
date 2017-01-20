@@ -1,24 +1,12 @@
 # React-Redux-Grid Examples
 
+[Example Website](http://react-redux-grid.herokuapp.com/)
+
 A simple app displaying multiple grids with different features.
 
 The relevant (to grid) source code is located in:
 
 `/src/components/examples`
-
-## Featured Examples
-
-#### Simple
-
-About this...
-
-#### Stress
-
-About this...
-
-#### Bootstrap Editable
-
-About this...
 
 ## Contributing 
 
