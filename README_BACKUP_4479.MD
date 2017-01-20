@@ -1,6 +1,15 @@
-# React-Redux-Grid Examples
+<<<<<<< dabad8c50ac1850f3d123527083caf796fa52092
+# React-Redux-Grid Demo App
 
-[Examples Website](http://react-redux-grid.herokuapp.com/)
+## Repository 
+
+[react-redux-grid on Github](https://github.com/bencripps/react-redux-grid)
+[react-redux-grid on NPM](https://www.npmjs.com/package/react-redux-grid)
+
+## Demo Explanation
+=======
+# React-Redux-Grid Examples
+>>>>>>> added more polish for a phase 1 release without 3 examples that do not work
 
 A simple app displaying multiple grids with different features.
 

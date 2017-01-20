@@ -1,7 +1,5 @@
 # React-Redux-Grid Examples
 
-[Examples Website](http://react-redux-grid.herokuapp.com/)
-
 A simple app displaying multiple grids with different features.
 
 The relevant (to grid) source code is located in:
