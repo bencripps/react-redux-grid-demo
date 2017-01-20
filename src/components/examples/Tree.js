@@ -7,16 +7,16 @@ import {
     pageSize,
     events,
     plugins,
-    dataSource
+    dataSource,
+    treeData
 } from './data/demodata';
 
 export const Complex = ({ store }) => {
 
-    const stateKey = 'complex';
+    const stateKey = 'tree';
 
     const complexData = {
         showTreeRootNode: false,
-        dataSource: '/gettreeData',
         gridType: 'tree',
         dragAndDrop: true,
         columns: [
@@ -48,7 +48,7 @@ export const Complex = ({ store }) => {
                 className: 'additional-class'
             }
         ],
-        data,
+        data: treeData,
         plugins: {
             ...plugins,
             GRID_ACTIONS: null,

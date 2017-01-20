@@ -6,8 +6,7 @@ import {
     data,
     pageSize,
     events,
-    plugins,
-    dataSource
+    plugins
 } from './data/demodata';
 
 export class Bootstrap extends Component {
@@ -176,7 +175,6 @@ export class Bootstrap extends Component {
                 }
             },
             events,
-            dataSource,
             store,
             stateKey
         };

@@ -74,7 +74,7 @@ export const Complex = ({ store }) => {
             }
         },
         events,
-        dataSource,
+
         store,
         stateKey
     };

@@ -47,7 +47,6 @@ export const ColRenderer = ({ store }) => {
         pageSize,
         plugins: {},
         events,
-        dataSource,
         store,
         stateKey: 'colRenderer'
     };

@@ -4,7 +4,11 @@ export const featureTitles = [
   "Simple",
   "Sticky",
   "Stress",
-  "Editable"
+  "Editable",
+  "Bootstrap",
+  "Tree",
+  "ColRenderer",
+  "Complex"
 ];
 
 // all features
