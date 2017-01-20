@@ -1,6 +1,6 @@
 # React-Redux-Grid Examples
 
-[Example Website](http://react-redux-grid.herokuapp.com/)
+[Examples Website](http://react-redux-grid.herokuapp.com/)
 
 A simple app displaying multiple grids with different features.
 
