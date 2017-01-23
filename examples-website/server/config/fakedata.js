@@ -1,125 +1,10 @@
-export const pageSize = 20;
-
-export const events = {
-    HANDLE_CELL_CLICK: (cell, reactEvent, id, browserEvent) => {
-        console.log('On Cell Click Event');
-    },
-    HANDLE_CELL_DOUBLE_CLICK: (cell, reactEvent, id, browserEvent) => {
-        console.log('On Cell Double Click Event');
-    },
-    HANDLE_ROW_CLICK: (row, reactEvent, id, browserEvent) => {
-        console.log('On Row Click Event');
-    },
-    HANDLE_ROW_DOUBLE_CLICK: (row, reactEvent, id, browserEvent) => {
-        console.log('On Row Double Click Event');
-    },
-    HANDLE_BEFORE_SELECTION: () => {
-        console.log('On Before Selection')
-    },
-    HANDLE_AFTER_SELECTION: () => {
-        console.log('On After Selection');
-    },
-    HANDLE_AFTER_INLINE_EDITOR_SAVE: () => {
-        console.log('On After Save Inline Editor Event');
-    },
-    HANDLE_BEFORE_BULKACTION_SHOW: () => {
-        console.log('On Before Bulk Action Show');
-    },
-    HANDLE_AFTER_BULKACTION_SHOW: () => {
-        console.log('On After Bulk Action Show');
-    }
-};
-
-export const dataSource = 'http://localhost:3001/getfakeData'; // /getfakeData 
-export { stressData } from './stressdata';
-
-export const plugins = {
-    COLUMN_MANAGER: {
-        resizable: true,
-        moveable: true,
-        sortable: {
-            enabled: true,
-            method: 'local',
-            sortingSource: '/getFakedPagedData'
-        }
-    },
-    EDITOR: {
-        type: 'inline',
-        enabled: true
-    },
-    PAGER: {
-        enabled: true,
-        pagingType: 'remote',
-        pagingSource: '/getFakedPagedData'
-    },
-    LOADER: {
-        enabled: true
-    },
-    SELECTION_MODEL: {
-        mode: 'checkbox-multi',
-        enabled: true,
-        allowDeselect: true,
-        activeCls: 'active',
-        selectionEvent: 'singleclick'
-    },
-    ERROR_HANDLER: {
-        defaultErrorMessage: 'AN ERROR OCURRED',
-        enabled: true
-    },
-    BULK_ACTIONS: {
-        enabled: true,
-        actions: [
-            {
-                text: 'Move',
-                EVENT_HANDLER: () => {
-
-                }
-            },
-            {
-                text: 'Add',
-                EVENT_HANDLER: () => {
-
-                }
-            }
-        ]
-    }
-};
-
-export const columns = [
-    {
-        name: 'Name',
-        width: '10%',
-        className: 'additional-class',
-        dataIndex: 'Name',
-        HANDLE_CLICK: () => { console.log('Header Click'); }
-    },
-    {
-        name: 'Phone Number',
-        width: '20%',
-        dataIndex: 'Phone Number',
-        className: 'additional-class'
-    },
-    {
-        name: 'Email',
-        width: '25%',
-        dataIndex: 'Email',
-        className: 'additional-class',
-        defaultSortDirection: 'descend'
-    },
-    {
-        name: 'Address',
-        dataIndex: 'Address',
-        width: '35%',
-        className: 'additional-class'
-    }
-];
-
-export const data = [
+const data = [
     {
         "Name": "Sawyer",
         "Phone Number": "(209) 915-9426",
         "Email": "dui.nec@Seddictum.co.uk",
-        "Address": "7815 Accumsan St."
+        "Address": "7815 Accumsan St.",
+        "customProperty": "should be available"
     },
     {
         "Name": "Chadwick",
@@ -716,3 +601,103 @@ export const data = [
         "Address": "Ap #699-5713 Quisque Rd."
     }
 ];
+
+const treeData = {
+    root: {
+        id: -1,
+        'Name': 'Root',
+        children: [
+            {
+                id: 1,
+                parentId: -1,
+                Name: 'Category 1',
+                GUID: '8f7152dc-fed7-4a65-afcf-527fceb99865',
+                Email: 'hgardnero6@ed.gov',
+                Gender: 'Male',
+                Address: '605 Manley Park',
+                'Phone Number': '31-(678)495-4134',
+                children: [
+                    {
+                        id: 11,
+                        parentId: 1,
+                        Name: 'Category 11',
+                        GUID: '8f7152dc-fed7-4a65-afcf-527fceb991865',
+                        Email: 'hgardneross6@ed.gov',
+                        Gender: 'Male',
+                        Address: '12 Manley Park',
+                        'Phone Number': '31-(678)495-4134',
+                    },
+                    {
+                        id: 12,
+                        parentId: 1,
+                        Name: 'Category 12',
+                        GUID: '8f7152dc-fed7-4acf-527fceb991865',
+                        Email: 'hgardneross6@ed.gov',
+                        Gender: 'Male',
+                        Address: '12 Manley Park',
+                        'Phone Number': '31-(678)495-4134',
+                        children: [
+                             {
+                                id: 121,
+                                parentId: 12,
+                                Name: 'Category 121',
+                                GUID: '8f7q2dc-fedsss7-4acf-527fceb991865',
+                                Email: 'hgoss6@eds.gov',
+                                Gender: 'Male',
+                                Address: '21 fake Park',
+                                'Phone Number': '31-(678)495-4134',
+                            },
+                            {
+                                id: 122,
+                                parentId: 12,
+                                Name: 'Category 122',
+                                GUID: '8f7q2dc-fed7-4acf-527fceb991865',
+                                Email: 'hgoss6@ed.gov',
+                                Gender: 'Male',
+                                Address: '21 fake Park',
+                                'Phone Number': '31-(678)495-4134',
+                                children: [
+                                    {
+                                        id: 1221,
+                                        parentId: 122,
+                                        Name: 'Category 1211',
+                                        GUID: '8f7q2dc-facf-527fceb991865',
+                                        Email: 'hgossjdjdjdj6@ed.gov',
+                                        Gender: 'Male',
+                                        Address: '21 fdjdjake Park',
+                                        'Phone Number': '31-(678)495-4134'
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 2,
+                parentId: -1,
+                Name: 'Category 2',
+                GUID: '8f7q2dc-facf-527fcebdk=-jdjd991865',
+                Email: 'hehehe@ed.gov',
+                Gender: 'Male',
+                Address: '212 Park',
+                'Phone Number': '31-(678)495-4134',
+                children: [
+                    {
+                        id: 21,
+                        parentId: 2,
+                        Name: 'Category 21',
+                        GUID: '8f7q2dc-facf-527fcsw-jdjd991865',
+                        Email: 'hehehe@ed.gov',
+                        Gender: 'Male',
+                        Address: '21112 Park',
+                        'Phone Number': '31-(678)495-4134',
+                        leaf: false
+                    }
+                ]
+            }
+        ]
+    }
+};
+
+module.exports = { data, treeData };
