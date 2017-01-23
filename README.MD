@@ -46,6 +46,7 @@ npm i redux react-redux react-redux-grid redux-logger --save
 
 ## React-Redux-Grid 
 
+<<<<<<< daf5c991d8b9de0d62470a9dd0ec542e5908848f
 <<<<<<< 293f16713d366cc91ea7ee89f9da79339793c4c1
 `/src/components/examples`
 
@@ -89,6 +90,11 @@ This is examples site but the main library can be found here:
 =======
 This is examples site but the main library can be found here:
 >>>>>>> first release of create-react-app site with redux and react-redux-grid plus more polish
+||||||| merged common ancestors
+This is examples site but the main library can be found here:
+=======
+This is the examples site but the main library can be found here:
+>>>>>>> fixed typo
 
 🍴[react-redux-grid on Github](https://github.com/bencripps/react-redux-grid)     
 ⌛[react-redux-grid on NPM](https://www.npmjs.com/package/react-redux-grid)
