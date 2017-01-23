@@ -30,7 +30,7 @@ export const events = {
     }
 };
 
-export const dataSource = './stressdata';
+export const dataSource = '/getfakeData'; // missing server!
 export { stressData } from './stressdata';
 
 export const plugins = {

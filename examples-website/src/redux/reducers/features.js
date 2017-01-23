@@ -6,6 +6,7 @@ export const featureTitles = [
   "Stress",
   "Editable",
   "ColRenderer",
+  //"Tree",
 ];
 
 // all features
@@ -37,7 +38,7 @@ export const complexFeatures = [
   "⭐️ Handles Big Data (1000000+ Records)"
 ]
 
-export const colRendererFeatures = [
+export const colrendererFeatures = [
   "➖ 🌲 Flat List or Tree Structure ",
   "💎 Local and/or Remote Data Source",
   "💎 Built-in Error Handling Module",

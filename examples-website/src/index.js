@@ -20,6 +20,7 @@ ReactDOM.render(
         <Route path="/Sticky" component={ExampleGrid} />
         <Route path="/Editable" component={ExampleGrid} />
         <Route path="/ColRenderer" component={ExampleGrid} />
+        <Route path="/Tree" component={ExampleGrid} />
       </Route>
     </Router>
    </Provider>,
