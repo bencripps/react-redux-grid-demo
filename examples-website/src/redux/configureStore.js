@@ -4,8 +4,8 @@ import createLogger from 'redux-logger'
 import { Reducers as gridReducers } from 'react-redux-grid';
 import appReducers from './reducers/appReducers';
 import fakerTableReducers from './reducers/fakerTableReducers';
-import { routerReducer } from 'react-router-redux';
-import { createHistory } from 'history';
+import { routerReducer, routerMiddleware } from 'react-router-redux';
+import { browserHistory } from 'react-router';
 
 const loggerMiddleware = createLogger();
 
@@ -20,7 +20,8 @@ export function configureStore() {
   return createStore(
     rootReducer,
     applyMiddleware(
-      loggerMiddleware
+      loggerMiddleware,
+      routerMiddleware(browserHistory)
     )
   )
 }

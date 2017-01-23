@@ -1,5 +1,6 @@
 import * as types from "../types/types"; 
-import * as features from "./features"
+import * as features from "./features";
+import { routerReducer, LOCATION_CHANGE } from 'react-router-redux';
 
 const getFeatures = (featureTitle) => {
   let key = featureTitle.toLowerCase() + "Features"; 
@@ -14,8 +15,19 @@ const initialState = {
   featureTitles: features.featureTitles
 };
 
+
 export default function reducer(state = initialState, action = {}) {
   switch (action.type) {
+    case LOCATION_CHANGE:
+      console.log("App heard the route change action: ", action);
+      let featureTitle = action.payload.pathname.split("/")[1];
+      if (featureTitle === "") featureTitle = "Simple";
+      return {
+        ...state,
+        featureTitle,
+        features: getFeatures(featureTitle),
+        ready: true
+      };
     case types.APP_READY:
       return {
         ...state,
