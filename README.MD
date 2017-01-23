@@ -10,36 +10,17 @@ The relevant (to grid) source code is located in:
 
 ## Getting Started 
 
-#### Server 
-
-Step 1. Start the server 
-
 ```
-cd server
-node server
-```
-
-This creates a fake data service on http://localhost:3001
-
-## Client  
-
-#### Server 
-
-Step 2. Start the client website  
-
-```
-cd ..
+npm install
 npm start
 ```
-
-This will launch the examples website at http://localhost:3000
-
+This will launch the examples website at http://localhost:3000 as well as a fake data API service on http://localhost:3001 
 
 ## Contributing 
 
 To begin creating an example, you can also simply copy an example folder and rename it.
 
-Feel free to install other libraries (redux-thunk, redux-sagas, immutable, etc) to demonstrate any new functionality in your example folder.
+Feel free to install other libraries ( redux-sagas, etc) to demonstrate any new functionality in your example folder.
 
 ## Website 
 
