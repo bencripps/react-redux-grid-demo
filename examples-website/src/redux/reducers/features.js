@@ -2,6 +2,7 @@
 // all features
 export const featureTitles = [
   "Simple",
+  "Complex",
   "Sticky",
   "ColRenderer",
   "Sticky",
