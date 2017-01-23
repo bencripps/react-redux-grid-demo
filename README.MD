@@ -16,19 +16,32 @@ The relevant (to grid) source code is located in:
 `/src/components/examples`
 >>>>>>> first release of create-react-app site with redux and react-redux-grid plus more polish
 
-## Featured Examples
+## Getting Started 
 
-#### Simple
+#### Server 
 
-About this...
+Step 1. Start the server 
 
-#### Stress
+```
+cd server
+node server
+```
 
-About this...
+This create a fake data service on http://localhost:3001
 
-#### Bootstrap Editable
+## Client  
 
-About this...
+#### Server 
+
+Step 2. Start the client website  
+
+```
+cd ..
+npm start
+```
+
+This will launch the examples website at http://localhost:3000
+
 
 ## Contributing 
 

@@ -7,16 +7,15 @@ import {
     pageSize,
     events,
     plugins,
-    dataSource
 } from './data/demodata';
 
-export const Complex = ({ store }) => {
+export const Tree = ({ store }) => {
 
     const stateKey = 'complex';
 
     const complexData = {
         showTreeRootNode: false,
-        dataSource: '/gettreeData',
+        dataSource: 'data/treedata.json', //'http://localhost:3001/gettreeData',
         gridType: 'tree',
         dragAndDrop: true,
         columns: [
@@ -74,10 +73,10 @@ export const Complex = ({ store }) => {
 
 const { object } = PropTypes;
 
-Complex.propTypes = {
+Tree.propTypes = {
     store: object.isRequired
 };
 
-Complex.defaultProps = {};
+Tree.defaultProps = {};
 
-export default Complex;
+export default Tree;

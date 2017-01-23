@@ -4,7 +4,8 @@ import { Grid } from 'react-redux-grid';
 import {
     data,
     pageSize,
-    events
+    events,
+    dataSource
 } from './data/demodata';
 
 export const ColRenderer = ({ store }) => {
@@ -46,6 +47,7 @@ export const ColRenderer = ({ store }) => {
         pageSize,
         plugins: {},
         events,
+        dataSource,
         store,
         stateKey: 'colRenderer'
     };
