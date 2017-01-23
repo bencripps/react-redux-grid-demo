@@ -11,6 +11,8 @@ Component Repository is located at [https://github.com/bencripps/react-redux-gri
 =======
 A simple app displaying multiple grids with different features.
 
+[Examples Website](http://react-redux-grid.herokuapp.com/)
+
 The relevant (to grid) source code is located in:
 
 `/src/components/examples`
@@ -27,7 +29,7 @@ cd server
 node server
 ```
 
-This create a fake data service on http://localhost:3001
+This creates a fake data service on http://localhost:3001
 
 ## Client  
 
