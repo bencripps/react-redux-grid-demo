@@ -8,6 +8,7 @@
     "redux-logger": "^2.7.4"
   },
   "dependencies": {
+    "concurrently": "^3.1.0",
     "immutable": "^3.8.1",
     "isomorphic-fetch": "^2.2.1",
     "react": "^15.4.2",
@@ -21,9 +22,10 @@
     "redux-thunk": "^2.2.0"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "concurrently --kill-others \"npm run api\" \"react-scripts start\" ",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "api": "node ./server/server"
   }
 }

@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { Component } from 'react';
 import './ExampleGridContainer.css';
 import { connect } from 'react-redux';

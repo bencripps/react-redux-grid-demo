@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { PropTypes } from 'react';
 import { Grid, Actions } from 'react-redux-grid';
 

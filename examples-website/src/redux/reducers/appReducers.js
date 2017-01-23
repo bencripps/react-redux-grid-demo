@@ -1,6 +1,6 @@
 import * as types from "../types/types"; 
 import * as features from "./features";
-import { routerReducer, LOCATION_CHANGE } from 'react-router-redux';
+import { LOCATION_CHANGE } from 'react-router-redux';
 
 const getFeatures = (featureTitle) => {
   let key = featureTitle.toLowerCase() + "Features"; 
