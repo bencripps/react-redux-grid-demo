@@ -6,6 +6,7 @@ import appReducers from './reducers/appReducers';
 import fakerTableReducers from './reducers/fakerTableReducers';
 import { routerReducer, routerMiddleware } from 'react-router-redux';
 import { browserHistory } from 'react-router';
+import thunk from 'redux-thunk';
 
 const loggerMiddleware = createLogger();
 
@@ -21,7 +22,8 @@ export function configureStore() {
     rootReducer,
     applyMiddleware(
       loggerMiddleware,
-      routerMiddleware(browserHistory)
+      routerMiddleware(browserHistory),
+      thunk
     )
   )
 }

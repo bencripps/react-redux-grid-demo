@@ -30,7 +30,7 @@ export const events = {
     }
 };
 
-export const dataSource = 'http://localhost:3001/getfakeData'; // /getfakeData 
+export const dataSource = 'http://localhost:3001/getfakeData'; // was /getfakeData but with npm create-react-app we now have a separate API on a different port
 export { stressData } from './stressdata';
 
 export const plugins = {

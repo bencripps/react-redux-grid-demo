@@ -15,7 +15,7 @@ export const Tree = ({ store }) => {
 
     const complexData = {
         showTreeRootNode: false,
-        dataSource: 'data/treedata.json', //'http://localhost:3001/gettreeData',
+        dataSource: 'http://localhost:3001/gettreeData', 
         gridType: 'tree',
         dragAndDrop: true,
         columns: [

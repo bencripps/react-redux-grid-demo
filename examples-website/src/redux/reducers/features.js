@@ -1,16 +1,6 @@
 
-// working features
-export const featureTitles = [
-  "Simple",
-  "Sticky",
-  "Stress",
-  "Editable",
-  "ColRenderer",
-  //"Tree",
-];
-
 // all features
-export const allFeatureTitles = [
+export const featureTitles = [
   "Simple",
   "Sticky",
   "ColRenderer",
