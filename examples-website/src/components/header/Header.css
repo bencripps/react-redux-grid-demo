@@ -6,6 +6,7 @@
   height: 80px;
   padding: 20px;
   color: white;
+  border-bottom: 1px dotted #ccc;
 }
 
 .title {

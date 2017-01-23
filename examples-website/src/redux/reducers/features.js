@@ -84,19 +84,20 @@ export const featureTitles = [
   "Simple",
   "Sticky",
   "Stress",
-  "Editable"
+  "Editable",
+  "ColRenderer",
 ];
 
 // all features
 export const allFeatureTitles = [
-  "simple",
-  "complex",
-  "colRenderer",
-  "sticky",
-  "stress",
-  "editable",
-  "bootstrap",
-  "tree"
+  "Simple",
+  "Sticky",
+  "ColRenderer",
+  "Sticky",
+  "Stress",
+  "Editable",
+  "Bootstrap",
+  "Tree"
 ];
 
 export const defaultFeatures = [

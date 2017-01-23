@@ -30,8 +30,7 @@ export const events = {
     }
 };
 
-export const dataSource = '/getfakeData';
-
+export const dataSource = './stressdata';
 export { stressData } from './stressdata';
 
 export const plugins = {
