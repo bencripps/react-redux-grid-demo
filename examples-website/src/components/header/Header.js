@@ -23,7 +23,7 @@ class Header extends Component {
     const headerStyle = {backgroundImage: `url(${pattern})`};
 
     return (
-        <div className="header" style={headerStyle}>
+        <div className="gridHeader" style={headerStyle}>
            <a href="https://facebook.github.io/react/" target="_blank" alt="react website"><img src={reactLogo} className="react-logo" alt="react logo" /></a>
            <a href="http://redux.js.org/" target="_blank" alt="redux website"><img src={reduxLogo} className="redux-logo" alt="redux logo" /></a>
            <a href="https://github.com/bencripps/react-redux-grid" target="_blank" alt="react-redux-grid github"><img src={reactReduxGridLogo} className="grid-logo" alt="grid logo" /></a>

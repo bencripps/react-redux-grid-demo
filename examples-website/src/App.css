@@ -11,6 +11,10 @@
   margin-right: 10px;
 }
 
+.purpleHilite {
+  color: #663399;
+}
+
 .tableContainer {
   display: block;
   position: relative;
@@ -30,18 +34,18 @@ li {
   padding: 0px;
 }
 
-h2 {
+.gridH2 {
   font-family: 'Bree Serif', serif;
   font-size: 18px;
   color: #49b8dc;
   font-weight: normal;
-  border-bottom: 1px dotted #49b8dc;
   margin: 0px;
-  margin-bottom: 5px;
+  margin-bottom: 10px;
   padding: 0px;
+  margin-top: 10px;
 }
 
-button {
+.gridButton {
   display: block;
   border: none;
   border-radius: 5px;

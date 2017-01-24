@@ -1,3 +1,5 @@
+import * as _ from 'lodash';
+
 export const pageSize = 20;
 
 export const events = {
@@ -30,7 +32,15 @@ export const events = {
     }
 };
 
-export const dataSource = 'http://localhost:3001/getfakeData'; // was /getfakeData but with npm create-react-app we now have a separate API on a different port
+
+// The dataSource points to remote resource which is being served from our server - see the server folder
+
+const serverPath = ( typeof process !== "undefined" && process.NODE_ENV === "production" ) ? "http://react-redux-grid.herokuapp.com:" + process.env.API_PORT + "/" :'http://localhost:3001/';
+export const tableDataSource = serverPath + 'getfakeData'; 
+export const bootstrapTableDataSource = serverPath + 'getFakedPagedDataForBootstrap'; // need to eliminate first row to remove double header
+export const treeDataSource = serverPath + 'gettreeData';  
+export const pagingDataSource = serverPath + 'getFakedPagedData';
+
 export { stressData } from './stressdata';
 
 export const plugins = {
@@ -40,7 +50,7 @@ export const plugins = {
         sortable: {
             enabled: true,
             method: 'local',
-            sortingSource: '/getFakedPagedData'
+            sortingSource: pagingDataSource
         }
     },
     EDITOR: {
@@ -50,7 +60,7 @@ export const plugins = {
     PAGER: {
         enabled: true,
         pagingType: 'remote',
-        pagingSource: '/getFakedPagedData'
+        pagingSource: pagingDataSource
     },
     LOADER: {
         enabled: true
@@ -114,7 +124,7 @@ export const columns = [
     }
 ];
 
-export const data = [
+let testData = [
     {
         "Name": "Sawyer",
         "Phone Number": "(209) 915-9426",
@@ -716,3 +726,5 @@ export const data = [
         "Address": "Ap #699-5713 Quisque Rd."
     }
 ];
+
+export const data = _.uniq(testData);

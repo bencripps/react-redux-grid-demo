@@ -1,9 +1,9 @@
-.header {
+.gridHeader {
   display: flex; 
   flex-direction: row;
   justify-content: flex-start;
   background-color: #fbfbfb;
-  height: 80px;
+  height: 126px;
   padding: 20px;
   color: white;
   border-bottom: 1px dotted #ccc;
@@ -15,7 +15,7 @@
   justify-content: flex-start;
 }
 
-.header h1 {
+.gridHeader h1 {
   font-family: 'Bree Serif', serif;
   font-size: 40px;
   font-weight: normal;
@@ -37,11 +37,9 @@
   cursor: pointer;
 }
 
-.purpleHilite {
-  color: #663399;
-}
 
-.header h3 {
+
+.gridHeader h3 {
   font-family: 'Bree Serif', serif;
   font-size: 16px;
   color: #999;

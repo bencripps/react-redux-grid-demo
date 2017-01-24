@@ -9,7 +9,7 @@ import Sticky from './Sticky';
 import Stress from './Stress';
 import ColRenderer from './ColRenderer';
 import Tree from './Tree';
-import Bootstrap from './Bootstrap';
+import Bootstrap from './bootstrap/Bootstrap';
 import Editable from './Editable';
 
 class ExampleGridContainer extends Component {
@@ -53,7 +53,7 @@ class ExampleGridContainer extends Component {
 
     return (
         <div className="simpleContainer">
-          <h2>{this.props.app.featureTitle}</h2>
+          <h2 className="gridH2">{this.props.app.featureTitle}</h2>
           { getGrid(title) }
         </div>
     );

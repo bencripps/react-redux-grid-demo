@@ -1,13 +1,21 @@
 .sidebarContainer {
   display: block;
   position: relative;
-  width: 220px;
-  height: 100%;
+  width: 170px;
+  height: auto;
   background-color:white;
 }
 
 .featuresContainer {
-  width: 320px;
+  width: 170px;
+}
+
+
+.sidebarsContainer li {
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: column;
+  width: 170px;
 }
 
 .sidebarContainer li {

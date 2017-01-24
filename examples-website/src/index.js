@@ -16,11 +16,13 @@ ReactDOM.render(
       <Route path="/" component={App}>
         <IndexRoute component={ExampleGrid}/>
         <Route path="/Simple" component={ExampleGrid} />
+        <Route path="/Complex" component={ExampleGrid} />
         <Route path="/Stress" component={ExampleGrid} />
         <Route path="/Sticky" component={ExampleGrid} />
         <Route path="/Editable" component={ExampleGrid} />
         <Route path="/ColRenderer" component={ExampleGrid} />
         <Route path="/Tree" component={ExampleGrid} />
+        <Route path="/Bootstrap" component={ExampleGrid} />
       </Route>
     </Router>
    </Provider>,

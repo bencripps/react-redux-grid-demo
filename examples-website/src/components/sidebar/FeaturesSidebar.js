@@ -28,7 +28,7 @@ class FeaturesSidebar extends Component {
 
     return (
         <div className="sidebarContainer featuresContainer">
-          <h2>Features</h2>
+          <h2 className="gridH2">Features</h2>
            <ul>
              {listItems}
            </ul>

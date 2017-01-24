@@ -30,6 +30,28 @@ module.exports = class Functions {
         });
     }
 
+    getFakedPagedDataForBootstrap(vars, req, res) {
+        const reqURL = url.parse(req.url, true);
+        const json = reqURL.query;
+
+        res.setHeader('Access-Control-Allow-Origin', '*');
+
+        const pageIndex = Number(json.pageIndex !== undefined ? json.pageIndex : 0);
+        const pageSize = Number(json.pageSize || 20);
+
+        const rows = dataObj.data.slice(1); 
+
+        const total = rows.length;
+        const pages = rows.slice(pageIndex * pageSize, (pageIndex + 1) * pageSize);
+
+        res.json({
+            data: pages,
+            total: total
+        });
+    }
+
+    
+
     getPrefetchData(vars, req, res) {
         const reqURL = url.parse(req.url, true);
         const json = reqURL.query;

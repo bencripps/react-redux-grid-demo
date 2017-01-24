@@ -12,7 +12,7 @@ const app = new App(process.argv);
 const api = new Api(app);
 
 app.server.listen(app.server.get('port'), () => {
-    console.log('This app is running in ' +
+    console.log('The API is running in ' +
         (app.env === 'dev' ? app.env : 'prod') +
         ' mode, on port ' + app.server.get('port'));
 });

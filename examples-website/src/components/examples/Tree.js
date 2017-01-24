@@ -8,15 +8,18 @@ import {
     pageSize,
     events,
     plugins,
+    treeDataSource
 } from './data/demodata';
 
 export const Tree = ({ store }) => {
 
     const stateKey = 'complex';
 
+    console.log("Tree treeDataSource: ", treeDataSource)
+
     const complexData = {
         showTreeRootNode: false,
-        dataSource: 'http://localhost:3001/gettreeData', 
+        dataSource: treeDataSource, 
         gridType: 'tree',
         dragAndDrop: true,
         columns: [

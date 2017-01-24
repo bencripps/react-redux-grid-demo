@@ -16,6 +16,12 @@ module.exports = [
         vars: {}
     },
     {
+        uri: '/getFakedPagedDataForBootstrap',
+        method: 'get',
+        func: funcs.getFakedPagedDataForBootstrap,
+        vars: {}
+    },
+    {
         uri: '/getFakedPagedData',
         method: 'post',
         func: funcs.getFakeDataPaged,

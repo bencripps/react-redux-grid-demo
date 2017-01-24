@@ -28,11 +28,11 @@ class ExamplesSidebar extends Component {
     const { featureTitles } = this.props.app;
     const listItems = featureTitles.map((featureTitle) => {
       let boundClick = this.handleClick.bind(this, featureTitle);
-      return (<li key={featureTitle}> <button onClick={boundClick}><img src={gridIcon} className="gridIcon" alt="grid logo" /><p className="gridLabel">{featureTitle}</p></button></li>)
+      return (<li key={featureTitle}> <button onClick={boundClick} className="gridButton"><img src={gridIcon} className="gridIcon" alt="grid logo" /><p className="gridLabel">{featureTitle}</p></button></li>)
     });
     return (
         <div className="sidebarContainer examplesContainer">
-           <h2>Examples</h2>
+           <h2 className="gridH2">Examples</h2>
            <ul>
             {listItems}
            </ul>

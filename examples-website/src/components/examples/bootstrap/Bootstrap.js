@@ -1,6 +1,7 @@
 /* eslint-disable */
 import React, { Component, PropTypes } from 'react';
 import { Grid, Actions, applyGridConfig } from 'react-redux-grid';
+import './css/bootstrap.min.css';
 
 import {
     columns,
@@ -9,7 +10,7 @@ import {
     events,
     plugins,
     dataSource
-} from './data/demodata';
+} from '../data/demodata';
 
 export class Bootstrap extends Component {
 
