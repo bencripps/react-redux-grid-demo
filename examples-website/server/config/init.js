@@ -24,7 +24,7 @@ module.exports = class App {
     init(express, bodyParser, favicon) {
 
         const app = express()
-            .set('port', process.env.PORT || 3001)
+            .set('port', process.env.API_PORT || 3001)
             .set('views', path.join(__dirname, '/../views'))
             .set('view engine', 'jade')
             .use(express.static('app/public'))
