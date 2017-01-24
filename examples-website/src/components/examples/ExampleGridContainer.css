@@ -1,0 +1,45 @@
+/* eslint-disable */
+.simpleContainer {
+  display: block;
+  position: relative;
+  padding-left: 10px;
+  padding-right: 10px;
+  width: auto;
+}
+
+/* override React-Redux-Grid library */
+.react-grid-pager-toolbar {
+  height: 40px !important;
+  padding: 5px !important;
+
+}
+
+.react-grid-header-fixed-container th {
+  padding-left: 10px !important;
+  background: transparent !important;
+  overflow: visible !important;
+}
+
+.react-grid-pager-toolbar span {
+  font-size: 12px !important;
+  color: #666;
+}
+
+/* override Bootstrap library */
+.bootstrap-description {
+  height: 30px !important;
+  margin: 5px !important;
+}
+
+.bootstrap-description span {
+  font-size: 12px !important;
+  color: #666;
+}
+
+.bootstrap-description button {
+  margin-right: 10px;
+}
+
+.table-responsive thead  {
+  display: none !important;
+}

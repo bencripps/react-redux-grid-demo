@@ -1,37 +1,26 @@
-# React-Redux-Grid Demo App
-
-## Repository 
-
-[react-redux-grid on Github](https://github.com/bencripps/react-redux-grid)
-[react-redux-grid on NPM](https://www.npmjs.com/package/react-redux-grid)
-
-## Demo Explanation
+# React-Redux-Grid Examples
 
 A simple app displaying multiple grids with different features.
 
+[Examples Website](http://react-redux-grid.herokuapp.com/)
+
 The relevant (to grid) source code is located in:
 
-`/app/public/dev/scripts/src`
+`/src/components/examples`
 
-## Featured Examples
+## Getting Started 
 
-#### Simple
-
-About this...
-
-#### Stress
-
-About this...
-
-#### Bootstrap Editable
-
-About this...
+```
+npm install
+npm start
+```
+This will launch the examples website at http://localhost:3000 as well as a fake data API service on http://localhost:3001 
 
 ## Contributing 
 
 To begin creating an example, you can also simply copy an example folder and rename it.
 
-Feel free to install other libraries (redux-thunk, redux-sagas, immutable, etc) to demonstrate any new functionality in your example folder.
+Feel free to install other libraries ( redux-sagas, etc) to demonstrate any new functionality in your example folder.
 
 ## Website 
 
@@ -42,3 +31,12 @@ create-react-app folderName
 cd folderName
 npm i redux react-redux react-redux-grid redux-logger --save
 ```
+
+[shields.io](http://shields.io/)
+
+## React-Redux-Grid 
+
+This is examples site but the main library can be found here:
+
+🍴[react-redux-grid on Github](https://github.com/bencripps/react-redux-grid)     
+⌛[react-redux-grid on NPM](https://www.npmjs.com/package/react-redux-grid)
