@@ -4,6 +4,7 @@
   "private": true,
   "devDependencies": {
     "faker": "^3.1.0",
+    "gh-pages": "^0.12.0",
     "react-scripts": "0.8.5",
     "redux-logger": "^2.7.4"
   },
@@ -28,6 +29,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-    "api": "node ./server/server"
-  }
+    "api": "node ./server/server",
+    "deploy": "npm run build&&gh-pages -d build"
+  },
+  "homepage": "http://bencripps.github.io/react-redux-grid"
 }
