@@ -1,0 +1,88 @@
+.gridHeader {
+  display: flex; 
+  flex-direction: row;
+  justify-content: flex-start;
+  background-color: #fbfbfb;
+  min-height: 116px;
+  padding: 20px;
+  color: white;
+  border-bottom: 1px dotted #ddd;
+  flex-wrap: wrap;
+}
+
+.title {
+  display: flex; 
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.title-container {
+  display: flex;
+  flex: 1;
+}
+
+.gridHeader h1 {
+  font-family: 'Bree Serif', serif;
+  font-size: 40px;
+  font-weight: normal;
+  color: #000;
+  margin: 0px;
+  padding: 0px;
+}
+
+.listContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  right: 50px;
+}
+
+.listContainer img {
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.flex {
+  display: flex;
+}
+
+.gridHeader h3 {
+  font-family: 'Bree Serif', serif;
+  font-size: 16px;
+  color: #999;
+  font-weight: normal;
+  font-style: italic;
+  margin: 0px;
+  padding: 0px;
+}
+
+.react-logo {
+  height: 80px;
+}
+
+@keyframes App-logo-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.redux-logo {
+  height: 80px;
+  margin-right: 20px;
+}
+
+.grid-logo {
+    height: 80px;
+}
+
+.github-logo {
+  display: inline-block;
+  height: 80px;
+  cursor: pointer;
+  padding-right: 20px;
+}
+
+@media (max-width: 775px) {
+  .logo {
+    display: none;
+  }
+}

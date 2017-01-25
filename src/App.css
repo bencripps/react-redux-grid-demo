@@ -1,0 +1,63 @@
+.app {
+  display: block;
+  position: relative;
+}
+
+.split {
+  display: flex; 
+  flex-direction: row;
+  justify-content: flex-start;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.purpleHilite {
+  color: #663399;
+}
+
+.tableContainer {
+  display: block;
+  position: relative;
+}
+
+ul {
+  list-style-type: none;
+  margin: 0px;
+  margin-left: 0px;
+  padding: 0px;
+  padding-left: 5px;
+}
+
+li {
+  margin: 0px;
+  padding: 0px;
+}
+
+.react-redux-grid-active, .react-redux-grid-inactive {
+  margin: 5px;
+  border-radius: 5px;
+  background-color: #49b8dc;
+}
+
+.react-redux-grid-active {
+  color: white;
+  background-color: #644581;
+}
+
+.gridH2 {
+  font-family: 'Bree Serif', serif;
+  font-size: 18px;
+  color: #49b8dc;
+  font-weight: normal;
+  margin: 0px;
+  margin-bottom: 10px;
+  padding: 0px;
+  margin-top: 10px;
+}
+
+
+
+:focus {
+  border: none;
+  outline: none;
+};

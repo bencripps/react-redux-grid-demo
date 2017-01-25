@@ -6,11 +6,10 @@ node_modules
 # testing
 coverage
 
-# production
-build
-
 # misc
 .DS_Store
 .env
 npm-debug.log
+yarn.lock
 
+# build - don't ignore build since its required by heroku 
