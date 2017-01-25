@@ -2,7 +2,7 @@
 * @Author: ben_cripps
 * @Date:   2015-05-18 20:58:33
 * @Last Modified by:   ben_cripps
-* @Last Modified time: 2016-09-06 08:10:57
+* @Last Modified time: 2017-01-25 09:24:37
 */
 
 const Functions = require('./functions');
@@ -37,6 +37,18 @@ module.exports = [
         uri: '/getPrefetchData',
         method: 'get',
         func: funcs.getPrefetchData,
+        vars: {}
+    },
+    {
+        uri: '/',
+        method: 'get',
+        func: funcs.main,
+        vars: {}
+    },
+    {
+        uri: '*',
+        method: 'get',
+        func: funcs.main,
         vars: {}
     }
 ];

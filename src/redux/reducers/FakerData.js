@@ -1,6 +1,6 @@
 import Immutable from 'immutable';
 const FakeObjectDataStore = require('./FakerStore');
-const UIPlugins = require("./react-data-grid.ui-plugins");
+// const UIPlugins = require("./react-data-grid.ui-plugins");
 /*
 const Editors             = UIPlugins.Editors;
 const AutoCompleteEditor  = Editors.AutoComplete;
@@ -64,7 +64,7 @@ export var getColumns = function(){
         key: 'avartar',
         name: 'Avartar',
         width : 60,
-        formatter : UIPlugins.Formatters.ImageFormatter,
+        // formatter : UIPlugins.Formatters.ImageFormatter,
         resizable : true
       },
       {

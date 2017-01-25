@@ -2,7 +2,7 @@
 * @Author: ben_cripps
 * @Date:   2015-05-18 19:34:42
 * @Last Modified by:   ben_cripps
-* @Last Modified time: 2016-08-07 07:54:07
+* @Last Modified time: 2017-01-25 09:39:34
 */
 
 'use strict';
@@ -24,10 +24,10 @@ module.exports = class App {
     init(express, bodyParser, favicon) {
 
         const app = express()
-            .set('port', process.env.API_PORT || 3001)
+            .set('port', process.env.PORT || 3001)
             .set('views', path.join(__dirname, '/../views'))
             .set('view engine', 'jade')
-            .use(express.static('app/public'))
+            .use(express.static('build'))
             .use(bodyParser.json())
             .use(bodyParser.urlencoded({extended: true}));
 

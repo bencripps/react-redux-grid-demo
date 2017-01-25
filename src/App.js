@@ -25,6 +25,10 @@ class App extends Component {
       </div>
     );
   }
+
+  componentDidMount() {
+    document.title = 'React-Redux-Grid';
+  }
 }
 
 export default App;

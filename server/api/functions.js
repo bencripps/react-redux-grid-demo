@@ -2,6 +2,7 @@
 
 const dataObj = require('../config/fakedata');
 const url = require('url');
+const path = require('path');
 
 module.exports = class Functions {
     constructor() {
@@ -10,6 +11,10 @@ module.exports = class Functions {
 
     idx(vars, req, res) {
         res.render(vars.routeName, this.app.helper.template({env: this.env, vars: vars}));
+    }
+
+    main(vars, req, res) {
+        res.sendFile(path.join(__dirname, './../../build', 'index.html'));
     }
 
     getFakeData(vars, req, res) {

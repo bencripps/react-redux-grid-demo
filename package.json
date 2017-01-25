@@ -11,6 +11,7 @@
   "dependencies": {
     "body-parser": "^1.16.0",
     "concurrently": "^3.1.0",
+    "express": "^4.14.0",
     "immutable": "^3.8.1",
     "isomorphic-fetch": "^2.2.1",
     "react": "^15.4.2",
@@ -26,11 +27,15 @@
   },
   "scripts": {
     "start": "concurrently --kill-others \"npm run api\" \"react-scripts start\" ",
+    "prod": "npm run api",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "api": "node ./server/server",
     "deploy": "npm run build&&gh-pages -d build"
   },
-  "homepage": "http://bencripps.github.io/react-redux-grid"
+  "engines": {
+    "node": "6.6.0",
+    "npm": "3.10.8"
+  }
 }

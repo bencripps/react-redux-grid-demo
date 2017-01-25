@@ -35,7 +35,10 @@ export const events = {
 
 // The dataSource points to remote resource which is being served from our server - see the server folder
 
-const serverPath = ( typeof process !== "undefined" && process.NODE_ENV === "production" ) ? "http://react-redux-grid.herokuapp.com:" + process.env.API_PORT + "/" :'http://localhost:3001/';
+const serverPath = window.location.host.indexOf('heroku') !== -1 
+    ? "/" 
+    :'http://localhost:3001/';
+    
 export const tableDataSource = serverPath + 'getfakeData'; 
 export const bootstrapTableDataSource = serverPath + 'getFakedPagedDataForBootstrap'; // need to eliminate first row to remove double header
 export const treeDataSource = serverPath + 'gettreeData';  
