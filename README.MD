@@ -22,6 +22,16 @@ To begin creating an example, you can also simply copy an example folder and ren
 
 Feel free to install other libraries ( redux-sagas, etc) to demonstrate any new functionality in your example folder.
 
+## Tests
+
+We are using [jest](https://facebook.github.io/) & [enzyme](http://airbnb.io/enzyme) to manage our test suite with the goal of testing each example. We could use help here in testing the examples if you would like to contribute. Don't worry if you've never written tests before, this is good example site to learn. 
+
+When you run the tests, they should all be passing. Please file a bug if you see any failing; better yet fix the fail and push an update! 
+
+```
+npm test
+```
+
 ## Website 
 
 We used create-react-app to build the website adding Redux & React-Redux-Grid. 

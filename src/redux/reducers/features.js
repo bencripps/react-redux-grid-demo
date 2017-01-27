@@ -5,7 +5,6 @@ export const featureTitles = [
   "Complex",
   "Sticky",
   "ColRenderer",
-  "Sticky",
   "Stress",
   "Editable",
   "Bootstrap",

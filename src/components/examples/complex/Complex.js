@@ -9,7 +9,7 @@ import {
     events,
     plugins,
     dataSource
-} from './data/demodata';
+} from '../data/demodata';
 
 export const Complex = ({ store }) => {
 

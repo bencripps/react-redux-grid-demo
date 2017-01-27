@@ -44,18 +44,7 @@ li {
   margin-top: 10px;
 }
 
-.gridButton {
-  display: block;
-  border: none;
-  border-radius: 5px;
-  margin: 5px;
-  background-color: #49b8dc;
-  color: #fff;
-  cursor: pointer;
-  height: 28px;
-  width: 150px;
-  text-align: left;
-}
+
 
 :focus {
   border: none;

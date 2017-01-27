@@ -4,7 +4,7 @@ import './ExampleGridContainer.css';
 import { connect } from 'react-redux';
 import store from './../../redux/configureStore';
 import Simple from './Simple';
-import Complex from './Complex';
+import Complex from './complex/Complex';
 import Sticky from './Sticky';
 import Stress from './Stress';
 import ColRenderer from './ColRenderer';

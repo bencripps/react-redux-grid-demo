@@ -39,10 +39,10 @@
   display: inline-block;
   width: 30px;
   vertical-align: top;
-  margin-top: 2px;
+  margin-top: 3px;
 }
 
-.gridLabel {
+.gridLabelOff {
   display: inline-block;
   vertical-align: top;
   margin:0px;
@@ -50,7 +50,44 @@
   position: absolute;
   left: 30px;
   top: 6px;
+  color: #176680;
+}
 
+.gridButtonOff {
+  display: block;
+  border: none;
+  border-radius: 5px;
+  margin: 5px;
+  background-color: #49b8dc;
+  color: #fff;
+  cursor: pointer;
+  height: 28px;
+  width: 150px;
+  text-align: left;
+}
+
+.gridLabelOn {
+  display: inline-block;
+  vertical-align: top;
+  margin:0px;
+  padding:0px;
+  position: absolute;
+  left: 30px;
+  top: 6px;
+  color: #f1f1f1;
+}
+
+.gridButtonOn {
+  display: block;
+  border: none;
+  border-radius: 5px;
+  margin: 5px;
+  background-color: #644581;
+  color: #fff;
+  cursor: pointer;
+  height: 28px;
+  width: 150px;
+  text-align: left;
 }
 
 img {

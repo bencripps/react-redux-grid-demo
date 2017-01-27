@@ -3,10 +3,10 @@
   flex-direction: row;
   justify-content: flex-start;
   background-color: #fbfbfb;
-  min-height: 126px;
+  min-height: 116px;
   padding: 20px;
   color: white;
-  border-bottom: 1px dotted #ccc;
+  border-bottom: 1px dotted #ddd;
   flex-wrap: wrap;
 }
 
