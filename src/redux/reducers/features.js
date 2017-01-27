@@ -13,49 +13,56 @@ export const featureTitles = [
 ];
 
 export const defaultFeatures = [
-  "💎 No Features Found"
+  "No Features Found"
 ]
 
 export const simpleFeatures = [
-  "➖ Flat List",
-  "💎 Local Data Source"
+  "Flat List",
+  "Local/Remote Data Source",
+  "Sortable",
+  "Selection Model"
 ]
 
 export const complexFeatures = [
-  "➖ Flat List",
-  "💎 Sortable Columns",
-  "💎 Draggable Columns",
-  "💎 Local Data Source"
+  "Flat List",
+  "Sortable",
+  "Draggable Columns",
+  "Resizeable Columns",
+  "Local/Remote Data Source",
+  "Checkbox Selection",
+  "Multi Select",
+  "Pagination",
+  "Row Actions and Menus",
+  "Hideable Columns"
 ]
 
 export const colrendererFeatures = [
-  "➖ Flat List",
-  "💎 Remote Data Source"
+  "Customizable Cell Components"
 ]
 
 export const stickyFeatures = [
-  "💎 Select Multiple Rows ",
-  "💎 Local Data Source"
+  "Sticky Footer",
+  "Sticky Header",
+  "Infinite Scroll"
 ]
 
 export const stressFeatures = [
-  "⭐️ Big Data (1000000+ Records)"
+  "1000000+ Records"
 ]
 
 export const editableFeatures = [
-  "💎 Edit Cells and Rows"
+  "Edit Cells and Rows"
 ]
 
 export const bootstrapFeatures = [
-  "💎 Styled by Bootstrap ",
-  "💎 Sortable Columns",
-  "💎 Remote Data Source"
+  "Styled by Bootstrap "
 ];
 
 
 export const treeFeatures = [
-  "🌲 Tree Structure ",
-  "💎 Remote Data Source"
+  "Tree Structure ",
+  "Drag amd Drop Rows",
+  "Show/Hide Actions"
 ]
 
 

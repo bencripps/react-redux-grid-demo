@@ -23,13 +23,16 @@ class FeaturesSidebar extends Component {
   render() {
     const { features } = this.props.app;
     const listItems = features.map((feature) =>
-      <li key={feature}>{feature}</li>
+      <li key={feature}>
+        <i className="fa fa-li fa-check-square" />
+        {feature} 
+      </li>
     );
 
     return (
         <div className="sidebarContainer featuresContainer">
           <h2 className="gridH2">Features</h2>
-           <ul>
+           <ul className="fa-ul">
              {listItems}
            </ul>
         </div>
