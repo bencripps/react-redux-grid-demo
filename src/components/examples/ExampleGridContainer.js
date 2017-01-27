@@ -14,11 +14,6 @@ import Editable from './Editable';
 
 class ExampleGridContainer extends Component {
 
-  componentWillReceiveProps(nextProps) {
-     console.log("ExampleGridContainer nextProps: ", nextProps);
-     this.props = nextProps;
-  }
-
   shouldComponentUpdate(){
     return true; 
   }

@@ -3,16 +3,22 @@
   flex-direction: row;
   justify-content: flex-start;
   background-color: #fbfbfb;
-  height: 126px;
+  min-height: 126px;
   padding: 20px;
   color: white;
   border-bottom: 1px dotted #ccc;
+  flex-wrap: wrap;
 }
 
 .title {
   display: flex; 
   flex-direction: column;
   justify-content: flex-start;
+}
+
+.title-container {
+  display: flex;
+  flex: 1;
 }
 
 .gridHeader h1 {
@@ -28,7 +34,6 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  position: absolute;
   right: 50px;
 }
 
@@ -37,7 +42,9 @@
   cursor: pointer;
 }
 
-
+.flex {
+  display: flex;
+}
 
 .gridHeader h3 {
   font-family: 'Bree Serif', serif;
@@ -68,9 +75,14 @@
 }
 
 .github-logo {
-  display: block;
-  position: absolute;
-  right: 150px;
+  display: inline-block;
   height: 80px;
   cursor: pointer;
+  padding-right: 20px;
+}
+
+@media (max-width: 775px) {
+  .logo {
+    display: none;
+  }
 }
