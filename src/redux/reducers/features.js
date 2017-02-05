@@ -8,7 +8,8 @@ export const featureTitles = [
   "Stress",
   "Editable",
   "Bootstrap",
-  "Tree"
+  "Tree",
+  "CustomPager"
 ];
 
 export const defaultFeatures = [
@@ -59,6 +60,13 @@ export const bootstrapFeatures = [
 
 
 export const treeFeatures = [
+  "Tree Structure ",
+  "Drag amd Drop Rows",
+  "Show/Hide Actions"
+]
+
+
+export const custompagerFeatures = [
   "Tree Structure ",
   "Drag amd Drop Rows",
   "Show/Hide Actions"

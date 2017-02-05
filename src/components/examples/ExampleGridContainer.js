@@ -11,6 +11,7 @@ import ColRenderer from './ColRenderer';
 import Tree from './Tree';
 import Bootstrap from './bootstrap/Bootstrap';
 import Editable from './Editable';
+import CustomPager from './custom-pager/CustomPager';
 
 class ExampleGridContainer extends Component {
 
@@ -39,7 +40,9 @@ class ExampleGridContainer extends Component {
         case "Editable" :
          return (<Editable { ...{ store } } />);
         case "Complex" :
-         return (<Complex { ...{ store } } />);
+         return (<Complex { ...{ store } } />);        
+        case "CustomPager" :
+         return (<CustomPager { ...{ store } } />);
         case "Simple" :
         default :
          return (<Simple { ...{ store } } />);

@@ -33,6 +33,17 @@ li {
   padding: 0px;
 }
 
+.react-redux-grid-active, .react-redux-grid-inactive {
+  margin: 5px;
+  border-radius: 5px;
+  background-color: #49b8dc;
+}
+
+.react-redux-grid-active {
+  color: white;
+  background-color: #644581;
+}
+
 .gridH2 {
   font-family: 'Bree Serif', serif;
   font-size: 18px;

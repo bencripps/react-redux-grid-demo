@@ -23,6 +23,7 @@ ReactDOM.render(
         <Route path="/ColRenderer" component={ExampleGrid} />
         <Route path="/Tree" component={ExampleGrid} />
         <Route path="/Bootstrap" component={ExampleGrid} />
+        <Route path="/CustomPager" component={ExampleGrid} />
       </Route>
     </Router>
    </Provider>,
