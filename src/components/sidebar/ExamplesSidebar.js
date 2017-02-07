@@ -18,12 +18,14 @@ class ExamplesSidebar extends Component {
 
   componentWillReceiveProps(nextProps){
     this.props = nextProps; 
-    this.state.selectedFeature = this.props.app.featureTitle;
+    this.setState({
+      selectedFeature: this.props.app.featureTitle
+    });
   }
 
   componentDidUpdate(){
     let selectedFeature = this.props.app.featureTitle;
-    this.state = { selectedFeature };
+    this.setState({ selectedFeature });
   }
 
   handleClick(item, event){

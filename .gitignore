@@ -12,3 +12,5 @@ coverage
 npm-debug.log
 yarn.lock
 
+# build
+build
