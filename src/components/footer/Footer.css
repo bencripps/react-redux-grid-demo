@@ -1,0 +1,20 @@
+.footer {
+  display: flex; 
+  flex-direction: row;
+  justify-content: space-between;
+  background-color: #fbfbfb;
+  margin: 0px;
+  margin-top: 50px;
+  padding: 10px;
+  color: white;
+  height: 200px;
+}
+
+.footer .shojiContainer {
+  display: block;
+  width: 220px;
+}
+
+.footer .shoji {
+  opacity: 0.5;
+}

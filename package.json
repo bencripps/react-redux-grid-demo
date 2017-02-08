@@ -1,0 +1,45 @@
+{
+  "name": "website",
+  "version": "0.1.0",
+  "private": true,
+  "devDependencies": {
+    "enzyme": "^2.7.1",
+    "expect": "^1.20.2",
+    "faker": "^3.1.0",
+    "gh-pages": "^0.12.0",
+    "react-addons-test-utils": "^15.4.2",
+    "react-scripts": "0.8.5",
+    "redux-logger": "^2.7.4",
+    "sinon": "^1.17.7"
+  },
+  "dependencies": {
+    "body-parser": "^1.16.0",
+    "concurrently": "^3.1.0",
+    "express": "^4.14.0",
+    "immutable": "^3.8.1",
+    "isomorphic-fetch": "^2.2.1",
+    "react": "^15.4.2",
+    "react-dom": "^15.4.2",
+    "react-redux": "^5.0.2",
+    "react-redux-grid": "^5.1.0",
+    "react-router": "^3.0.1",
+    "react-router-redux": "^4.0.7",
+    "redux": "^3.6.0",
+    "redux-router": "^2.1.2",
+    "redux-thunk": "^2.2.0",
+    "serve-favicon": "^2.3.2"
+  },
+  "scripts": {
+    "start": "concurrently --kill-others \"npm run api\" \"react-scripts start\" ",
+    "prod": "npm run api",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "api": "node ./server/server",
+    "deploy": "npm run build&&gh-pages -d build"
+  },
+  "engines": {
+    "node": "6.6.0",
+    "npm": "3.10.8"
+  }
+}

@@ -1,0 +1,95 @@
+.sidebarContainer {
+  display: block;
+  position: relative;
+  width: 170px;
+  height: auto;
+  background-color:white;
+}
+
+.featuresContainer {
+  width: 170px;
+}
+
+
+.sidebarsContainer li {
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: column;
+  width: 170px;
+}
+
+.sidebarContainer li {
+  font-size: 12px;
+  color: #666;
+  margin: 0px;
+  padding: 0px;
+  font-size: 12px;
+}
+
+.examplesContainer li button {
+  font-size: 12px;
+}
+
+.sidebarContainer button {
+  display: block;
+  position: relative;
+}
+
+.gridIcon {
+  display: inline-block;
+  width: 30px;
+  vertical-align: top;
+  margin-top: 3px;
+}
+
+.gridLabelOff {
+  display: inline-block;
+  vertical-align: top;
+  margin:0px;
+  padding:0px;
+  position: absolute;
+  left: 30px;
+  top: 6px;
+  color: #176680;
+}
+
+.gridButtonOff {
+  display: block;
+  border: none;
+  border-radius: 5px;
+  margin: 5px;
+  background-color: #49b8dc;
+  color: #fff;
+  cursor: pointer;
+  height: 28px;
+  width: 150px;
+  text-align: left;
+}
+
+.gridLabelOn {
+  display: inline-block;
+  vertical-align: top;
+  margin:0px;
+  padding:0px;
+  position: absolute;
+  left: 30px;
+  top: 6px;
+  color: #f1f1f1;
+}
+
+.gridButtonOn {
+  display: block;
+  border: none;
+  border-radius: 5px;
+  margin: 5px;
+  background-color: #644581;
+  color: #fff;
+  cursor: pointer;
+  height: 28px;
+  width: 150px;
+  text-align: left;
+}
+
+img {
+  cursor: pointer;
+}

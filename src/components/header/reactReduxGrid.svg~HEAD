@@ -1,0 +1,196 @@
+
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="none" x="0px" y="0px" width="100px" height="80px" viewBox="0 0 100 80">
+<defs>
+<linearGradient id="Gradient_1" gradientUnits="userSpaceOnUse" x1="46.65" y1="2.8999999999999986" x2="46.35" y2="78.1" spreadMethod="pad">
+<stop  offset="0%" stop-color="#672E9B"/>
+
+<stop  offset="100%" stop-color="#42B8DE"/>
+</linearGradient>
+
+<filter id="Filter_1" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+<feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0.43529411764705883 0 0 0 0 0.807843137254902 0 0 0 0 0.9294117647058824 0 0 0 1 0" result="result1"/>
+</filter>
+
+<filter id="Filter_2" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+<feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0.25882352941176473 0 0 0 0 0.7215686274509804 0 0 0 0 0.8705882352941177 0 0 0 1 0" result="result1"/>
+</filter>
+
+<filter id="Filter_3" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+<feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0.4745098039215686 0 0 0 0 0.23921568627450981 0 0 0 0 0.6862745098039216 0 0 0 1 0" result="result1"/>
+</filter>
+
+<filter id="Filter_4" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+<feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0.403921568627451 0 0 0 0 0.1803921568627451 0 0 0 0 0.6078431372549019 0 0 0 1 0" result="result1"/>
+</filter>
+
+<g id="Layer6_0_FILL">
+<path fill="url(#Gradient_1)" stroke="none" d="
+M 84 68.6
+L 84 12.35
+Q 84 8 79.8 8
+L 13.25 8
+Q 9 8 9 12.35
+L 9 68.6
+Q 9 73 13.25 73
+L 79.8 73
+Q 84 73 84 68.6 Z"/>
+</g>
+
+<g id="Layer5_0_FILL">
+<path fill="#42B8DE" stroke="none" d="
+M 82.05 66.7
+L 82.05 47.1
+Q 82.05 42.9 77.4 42.9
+L 15.65 42.9
+Q 11.05 42.9 11.05 47.1
+L 11.05 66.7
+Q 11.05 70.85 15.65 70.85
+L 77.4 70.85
+Q 82.05 70.85 82.05 66.7 Z"/>
+</g>
+
+<g id="Layer4_0_FILL">
+<path fill="#6FCEED" stroke="none" d="
+M 81.95 53.75
+L 81.95 39.5 11.15 39.5 11.15 53.75 81.95 53.75 Z"/>
+
+<path fill="#42B8DE" stroke="none" d="
+M 81.95 68
+L 81.95 53.75 11.15 53.75 11.15 68 81.95 68
+M 81.95 25.25
+L 81.85 25.25 11.15 25.25 11.15 39.5 81.95 39.5 81.95 25.25 Z"/>
+
+<path fill="#672E9B" stroke="none" d="
+M 81.85 25.25
+L 81.85 11 11.05 11 11.05 25.25 11.15 25.25 81.85 25.25 Z"/>
+</g>
+
+<g id="cell_0_Layer0_0_FILL">
+<path fill="#FFFFFF" stroke="none" d="
+M 24 12
+L 24 0 -4 0 -4 12 24 12 Z"/>
+</g>
+
+<g id="dot_0_Layer0_0_FILL">
+<path fill="#000000" stroke="none" d="
+M 6.8 6.8
+Q 8 5.65 8 4 8 2.35 6.8 1.15 5.65 0 4 0 2.35 0 1.15 1.15 0 2.35 0 4 0 5.65 1.15 6.8 2.35 8 4 8 5.65 8 6.8 6.8 Z"/>
+</g>
+</defs>
+
+<g transform="matrix( 1, 0, 0, 1, 0,0) ">
+<use xlink:href="#Layer6_0_FILL"/>
+</g>
+
+<g transform="matrix( 1, 0, 0, 1, 0,0) ">
+<use xlink:href="#Layer5_0_FILL"/>
+</g>
+
+<g transform="matrix( 1, 0, 0, 1, 0,0) ">
+<use xlink:href="#Layer4_0_FILL"/>
+</g>
+
+<g transform="matrix( 0.7079925537109375, 0, 0, 0.7127227783203125, 12.45,26.65) ">
+<g transform="matrix( 1, 0, 0, 1, 5.3,1.8) ">
+<g transform="matrix( 1, 0, 0, 1, 0,0) ">
+<use filter="url(#Filter_1)" xlink:href="#cell_0_Layer0_0_FILL"/>
+</g>
+</g>
+
+<g transform="matrix( 1, 0, 0, 1, 37.75,1.8) ">
+<g transform="matrix( 1, 0, 0, 1, 0,0) ">
+<use filter="url(#Filter_1)" xlink:href="#cell_0_Layer0_0_FILL"/>
+</g>
+</g>
+
+<g transform="matrix( 1, 0, 0, 1, 70.2,1.8) ">
+<g transform="matrix( 1, 0, 0, 1, 0,0) ">
+<use filter="url(#Filter_1)" xlink:href="#cell_0_Layer0_0_FILL"/>
+</g>
+</g>
+</g>
+
+<g transform="matrix( 0.7079925537109375, 0, 0, 0.7127227783203125, 12.45,41.05) ">
+<g transform="matrix( 1, 0, 0, 1, 5.3,1.8) ">
+<g transform="matrix( 1, 0, 0, 1, 0,0) ">
+<use filter="url(#Filter_2)" xlink:href="#cell_0_Layer0_0_FILL"/>
+</g>
+</g>
+
+<g transform="matrix( 1, 0, 0, 1, 37.75,1.8) ">
+<g transform="matrix( 1, 0, 0, 1, 0,0) ">
+<use filter="url(#Filter_2)" xlink:href="#cell_0_Layer0_0_FILL"/>
+</g>
+</g>
+
+<g transform="matrix( 1, 0, 0, 1, 70.2,1.8) ">
+<g transform="matrix( 1, 0, 0, 1, 0,0) ">
+<use filter="url(#Filter_2)" xlink:href="#cell_0_Layer0_0_FILL"/>
+</g>
+</g>
+</g>
+
+<g transform="matrix( 0.7079925537109375, 0, 0, 0.7127227783203125, 12.45,55.35) ">
+<g transform="matrix( 1, 0, 0, 1, 5.3,1.8) ">
+<g transform="matrix( 1, 0, 0, 1, 0,0) ">
+<use filter="url(#Filter_1)" xlink:href="#cell_0_Layer0_0_FILL"/>
+</g>
+</g>
+
+<g transform="matrix( 1, 0, 0, 1, 37.75,1.8) ">
+<g transform="matrix( 1, 0, 0, 1, 0,0) ">
+<use filter="url(#Filter_1)" xlink:href="#cell_0_Layer0_0_FILL"/>
+</g>
+</g>
+
+<g transform="matrix( 1, 0, 0, 1, 70.2,1.8) ">
+<g transform="matrix( 1, 0, 0, 1, 0,0) ">
+<use filter="url(#Filter_1)" xlink:href="#cell_0_Layer0_0_FILL"/>
+</g>
+</g>
+</g>
+
+<g transform="matrix( 0.7079925537109375, 0, 0, 0.7127227783203125, 12.45,12.25) ">
+<g transform="matrix( 1, 0, 0, 1, 5.3,1.8) ">
+<g transform="matrix( 1, 0, 0, 1, 0,0) ">
+<use filter="url(#Filter_3)" xlink:href="#cell_0_Layer0_0_FILL"/>
+</g>
+</g>
+
+<g transform="matrix( 1, 0, 0, 1, 37.75,1.8) ">
+<g transform="matrix( 1, 0, 0, 1, 0,0) ">
+<use filter="url(#Filter_3)" xlink:href="#cell_0_Layer0_0_FILL"/>
+</g>
+</g>
+
+<g transform="matrix( 1, 0, 0, 1, 70.2,1.8) ">
+<g transform="matrix( 1, 0, 0, 1, 0,0) ">
+<use filter="url(#Filter_3)" xlink:href="#cell_0_Layer0_0_FILL"/>
+</g>
+</g>
+</g>
+
+<g transform="matrix( 0.7079925537109375, 0, 0, 0.7127227783203125, 19.45,15.1) ">
+<g transform="matrix( 1, 0, 0, 1, 0,0) ">
+<use filter="url(#Filter_4)" xlink:href="#dot_0_Layer0_0_FILL"/>
+</g>
+</g>
+
+<g transform="matrix( 0.7079925537109375, 0, 0, 0.7127227783203125, 19.45,43.65) ">
+<g transform="matrix( 1, 0, 0, 1, 0,0) ">
+<use filter="url(#Filter_1)" xlink:href="#dot_0_Layer0_0_FILL"/>
+</g>
+</g>
+
+<g transform="matrix( 0.7079925537109375, 0, 0, 0.7127227783203125, 19.45,57.8) ">
+<g transform="matrix( 1, 0, 0, 1, 0,0) ">
+<use filter="url(#Filter_2)" xlink:href="#dot_0_Layer0_0_FILL"/>
+</g>
+</g>
+
+<g transform="matrix( 0.7079925537109375, 0, 0, 0.7127227783203125, 19.45,29.4) ">
+<g transform="matrix( 1, 0, 0, 1, 0,0) ">
+<use filter="url(#Filter_2)" xlink:href="#dot_0_Layer0_0_FILL"/>
+</g>
+</g>
+</svg>
