@@ -34,7 +34,16 @@ npm test
 
 ## Website 
 
-We used create-react-app to build the website adding Redux & React-Redux-Grid. 
+We used [create-react-app](https://github.com/facebookincubator/create-react-app) to build the website adding Redux & React-Redux-Grid. 
+
+You can build this example site by:
+```
+npm run build 
+```
+
+The build folder was added to the repo because it is required by Heroku.
+
+To create your own site:
 
 ```
 create-react-app folderName 

@@ -1,8 +1,8 @@
 {
-  "main.css": "static/css/main.ff7520ff.css",
-  "main.css.map": "static/css/main.ff7520ff.css.map",
-  "main.js": "static/js/main.5cf35237.js",
-  "main.js.map": "static/js/main.5cf35237.js.map",
+  "main.css": "static/css/main.b5bf500d.css",
+  "main.css.map": "static/css/main.b5bf500d.css.map",
+  "main.js": "static/js/main.51ebc04d.js",
+  "main.js.map": "static/js/main.51ebc04d.js.map",
   "static/media/github-square.svg": "static/media/github-square.df8a65b0.svg",
   "static/media/glyphicons-halflings-regular.eot": "static/media/glyphicons-halflings-regular.f4769f9b.eot",
   "static/media/glyphicons-halflings-regular.svg": "static/media/glyphicons-halflings-regular.89889688.svg",
@@ -17,3 +17,4 @@
   "static/media/redux.svg": "static/media/redux.5ae1af16.svg",
   "static/media/tiny_grid.png": "static/media/tiny_grid.c704d76c.png"
 }
+
