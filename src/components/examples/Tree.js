@@ -13,9 +13,7 @@ import {
 
 export const Tree = ({ store }) => {
 
-    const stateKey = 'complex';
-
-    console.log("Tree treeDataSource: ", treeDataSource)
+    const stateKey = 'tree';
 
     const complexData = {
         showTreeRootNode: false,

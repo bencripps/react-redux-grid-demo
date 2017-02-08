@@ -4,20 +4,16 @@ import './ExampleGridContainer.css';
 import { connect } from 'react-redux';
 import store from './../../redux/configureStore';
 import Simple from './Simple';
-import Complex from './Complex';
+import Complex from './complex/Complex';
 import Sticky from './Sticky';
 import Stress from './Stress';
 import ColRenderer from './ColRenderer';
 import Tree from './Tree';
 import Bootstrap from './bootstrap/Bootstrap';
 import Editable from './Editable';
+import CustomPager from './custom-pager/CustomPager';
 
 class ExampleGridContainer extends Component {
-
-  componentWillReceiveProps(nextProps) {
-     console.log("ExampleGridContainer nextProps: ", nextProps);
-     this.props = nextProps;
-  }
 
   shouldComponentUpdate(){
     return true; 
@@ -44,7 +40,9 @@ class ExampleGridContainer extends Component {
         case "Editable" :
          return (<Editable { ...{ store } } />);
         case "Complex" :
-         return (<Complex { ...{ store } } />);
+         return (<Complex { ...{ store } } />);        
+        case "CustomPager" :
+         return (<CustomPager { ...{ store } } />);
         case "Simple" :
         default :
          return (<Simple { ...{ store } } />);

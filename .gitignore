@@ -10,4 +10,16 @@ coverage
 .DS_Store
 .env
 npm-debug.log
+<<<<<<< HEAD
+yarn.lock
+
+
+||||||| parent of 88c608e... white on white editable cells
+=======
+yarn.lock
+
+
+# build
+build
+>>>>>>> 88c608e... white on white editable cells
 

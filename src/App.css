@@ -18,7 +18,6 @@
 .tableContainer {
   display: block;
   position: relative;
-  width: 900px;
 }
 
 ul {
@@ -34,6 +33,17 @@ li {
   padding: 0px;
 }
 
+.react-redux-grid-active, .react-redux-grid-inactive {
+  margin: 5px;
+  border-radius: 5px;
+  background-color: #49b8dc;
+}
+
+.react-redux-grid-active {
+  color: white;
+  background-color: #644581;
+}
+
 .gridH2 {
   font-family: 'Bree Serif', serif;
   font-size: 18px;
@@ -45,18 +55,7 @@ li {
   margin-top: 10px;
 }
 
-.gridButton {
-  display: block;
-  border: none;
-  border-radius: 5px;
-  margin: 5px;
-  background-color: #49b8dc;
-  color: #fff;
-  cursor: pointer;
-  height: 28px;
-  width: 150px;
-  text-align: left;
-}
+
 
 :focus {
   border: none;

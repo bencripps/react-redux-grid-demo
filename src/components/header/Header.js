@@ -24,24 +24,27 @@ class Header extends Component {
 
     return (
         <div className="gridHeader" style={headerStyle}>
-           <a href="https://facebook.github.io/react/" target="_blank" alt="react website"><img src={reactLogo} className="react-logo" alt="react logo" /></a>
-           <a href="http://redux.js.org/" target="_blank" alt="redux website"><img src={reduxLogo} className="redux-logo" alt="redux logo" /></a>
-           <a href="https://github.com/bencripps/react-redux-grid" target="_blank" alt="react-redux-grid github"><img src={reactReduxGridLogo} className="grid-logo" alt="grid logo" /></a>
-          <div className="title">
-            <h1><span className="purpleHilite">React Redux Grid</span></h1>
-            <h3>A Flexible Grid Pattern Library for Tabular Data</h3>
+          <div className="title-container">
+            <a href="https://facebook.github.io/react/" target="_blank" alt="react website"><img src={reactLogo} className="react-logo" alt="react logo" /></a>
+            <a href="http://redux.js.org/" target="_blank" alt="redux website"><img src={reduxLogo} className="redux-logo logo" alt="redux logo" /></a>
+            <a href="https://github.com/bencripps/react-redux-grid" target="_blank" alt="react-redux-grid github"><img src={reactReduxGridLogo} className="grid-logo logo" alt="grid logo" /></a>
+            <div className="title">
+              <h1><span className="purpleHilite">React Redux Grid</span></h1>
+              <h3>A Flexible Grid Pattern Library for Tabular Data</h3>
+            </div>
           </div>
-          <div className="listContainer">
-           <img src={stars} alt="github stars" />
-           <img src={license} alt="license" />
-           <a className="twitter-share-button" 
-             href={tweetUrl}>
-             <img src={tweet} alt="tweet" />
-           </a>
+          <div className="flex">
+            <a href="https://github.com/bencripps/react-redux-grid-demo" target="_blank">
+              <img src={githubLogo} className="github-logo" alt="grid logo" />
+            </a>
+            <div className="listContainer">
+              <img src={stars} alt="github stars" />
+              <img src={license} alt="license" />
+              <a className="twitter-share-button" href={tweetUrl}>
+                <img src={tweet} alt="tweet" />
+              </a>
+            </div>
           </div>
-          <a href="https://github.com/bencripps/react-redux-grid-demo" target="_blank">
-            <img src={githubLogo} className="github-logo" alt="grid logo" />
-          </a>
         </div>        
     );
   }
