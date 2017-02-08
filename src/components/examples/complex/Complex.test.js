@@ -1,3 +1,4 @@
+
 import React from 'react';
 import store from '../../../redux/configureStoreForTests';
 import sinon from 'sinon';
@@ -35,6 +36,7 @@ describe('<Complex />', () => {
      expect(data.length).toBeGreaterThan(1);
   });
 
+<<<<<<< HEAD
   ///////////////////////////////////////////////////  EDIT ROW 
 
   /*
@@ -58,6 +60,33 @@ describe('<Complex />', () => {
 
   describe('Draggable column', () => {
     
+||||||| merged common ancestors
+  describe('Phone Number column', () => {
+=======
+  ///////////////////////////////////////////////////  EDIT ROW 
+
+  /*
+  
+  I want eventually add these tests when I get them working...
+
+  it("should have change the row into an editable state", function() {
+    git a
+    const onMockClick = sinon.spy();
+
+    const actionBtn = wrapper.find('tbody').find('.react-grid-action-container').first();
+    //actionBtn.onClick = onMockClick;
+
+    actionBtn.simulate('click');
+    // this test isn't working... it should be true if it's clicked once
+    expect(onMockClick.calledOnce).toEqual(false);
+
+  });
+
+  ///////////////////////////////////////////////////  DRAG 
+
+  describe('Draggable column', () => {
+    
+>>>>>>> master
     it("should have a drag handle", function() {
       expect(wrapper.find('./react-grid-resizable')).toBeDefined();
 
@@ -69,4 +98,3 @@ describe('<Complex />', () => {
   */
 
 });
-
