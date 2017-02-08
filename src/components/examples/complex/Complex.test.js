@@ -1,3 +1,4 @@
+
 import React from 'react';
 import store from '../../../redux/configureStoreForTests';
 import sinon from 'sinon';
