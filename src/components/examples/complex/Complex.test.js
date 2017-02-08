@@ -27,13 +27,11 @@ describe('<Complex />', () => {
 
   it("should have a Grid with data", function() {
      const data = wrapper.find('Grid').prop('data');
-
      expect(data).toBeDefined();
   });
 
   it("should have a Grid with data with greater than 1 after load", function() {
      const data = wrapper.find('Grid').prop('data');
-     
      expect(data.length).toBeGreaterThan(1);
   });
 
@@ -71,4 +69,3 @@ describe('<Complex />', () => {
   */
 
 });
-
