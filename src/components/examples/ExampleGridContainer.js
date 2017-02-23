@@ -31,7 +31,6 @@ class ExampleGridContainer extends Component {
     const title = this.props.app.featureTitle; 
 
     const getGrid = (title) => {
-      console.log("ExampleGridContainer getGrid title: ", title)
       switch(title) {
         case "BulkSelection" :
          return (<BulkSelection { ...{ store } } />);

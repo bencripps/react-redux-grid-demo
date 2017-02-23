@@ -1,5 +1,6 @@
 import * as types from "../types/types"; 
 import {data} from "../../components/examples/data/demodata";
+// import {SET_DATA} from "react-redux-grid/src/constants/ActionTypes"; how can I get the types?!
 
 const initialState = {
   ready: false,
@@ -31,7 +32,13 @@ export default function reducer(state = initialState, action = {}) {
         ...state,
         recordsRemaining: action.recordsRemaining,
         recordsRemoved: action.recordsRemoved
-      };        
+      };   
+     case "@@react-redux-grid/SET_DATA":
+     return {
+        ...state,
+        recordsRemaining: [],
+        recordsRemoved: []
+      };
     default:
       return state;
   }
