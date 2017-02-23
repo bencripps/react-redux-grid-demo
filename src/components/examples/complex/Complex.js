@@ -59,7 +59,7 @@ export const Complex = ({ store }) => {
                 iconCls: 'action-icon',
                 menu: [
                     {
-                        text: 'Delete',
+                        text: 'DeleteA',
                         EVENT_HANDLER: ({ metaData }) => {
                             const rowIndex = metaData.rowIndex;
 

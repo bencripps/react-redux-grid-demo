@@ -8,3 +8,9 @@ export const switchFeature = (featureTitle) => {
     featureTitle
   };
 }
+
+export function ready() {
+  return {
+    type: types.APP_READY
+  };
+}

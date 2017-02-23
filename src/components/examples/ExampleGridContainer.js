@@ -12,8 +12,15 @@ import Tree from './Tree';
 import Bootstrap from './bootstrap/Bootstrap';
 import Editable from './Editable';
 import CustomPager from './custom-pager/CustomPager';
+import BulkSelection from './bulk-selection/BulkSelection';
+import * as _ from "lodash";
 
 class ExampleGridContainer extends Component {
+
+
+  componentWillReceiveProps(nextProps, nextState){
+    this.props = nextProps; 
+  }
 
   shouldComponentUpdate(){
     return true; 
@@ -21,12 +28,13 @@ class ExampleGridContainer extends Component {
 
   render() {
 
-    //let path = this.props.location.pathname; 
-    let title = this.props.app.featureTitle; 
+    const title = this.props.app.featureTitle; 
 
-    let getGrid = (title) => {
+    const getGrid = (title) => {
       console.log("ExampleGridContainer getGrid title: ", title)
       switch(title) {
+        case "BulkSelection" :
+         return (<BulkSelection { ...{ store } } />);
         case "Bootstrap" :
          return (<Bootstrap { ...{ store } } />);
         case "ColRenderer" :
@@ -49,9 +57,31 @@ class ExampleGridContainer extends Component {
       }
     }
 
+    // the BulkSelection example will display a message after you select several rows and click the Bulk Action button
+    const getResult = () => {
+
+      if ( title === "BulkSelection" && this.props.bulkSelection.recordsRemoved.length > 0 ) {
+          
+        const emails = _.map( this.props.bulkSelection.recordsRemoved, record => {
+            console.log("record ", record);
+            return (<li key={record.Email}>{record.Email}</li>)
+        }); 
+       
+        const discStyle = {listStyleType:"disc", marginLeft: "20px", color:"#644581"}; 
+        const selectedIndexes = this.props.selection.get('bulk').get("indexes");
+
+        return (<div>You have selected { ( undefined !== selectedIndexes ) ?  selectedIndexes.length : 0 } records with the following emails: 
+                  <ul style={discStyle}>
+                  {emails}
+                  </ul>
+                </div> )
+      }
+    }
+
     return (
         <div className="simpleContainer">
           <h2 className="gridH2">{this.props.app.featureTitle}</h2>
+          { getResult() }
           { getGrid(title) }
         </div>
     );
@@ -61,7 +91,9 @@ class ExampleGridContainer extends Component {
 const mapStateToProps = (state) => ({
   faker: state.faker,
   grid: state.grid,
-  app: state.app
+  app: state.app,
+  bulkSelection: state.bulkSelection,
+  selection: state.selection
 });
 
 const mapDispatchToProps = (dispatch) => {
