@@ -66,10 +66,12 @@ export const BulkPager = ({ api,
         
         Promise.all([
             setPageIndexAsync({
-                    pageIndex: currIndex,
-                    pageSize: newPageLimit,
                     dataSource: api,
-                    stateKey: 'bulk'
+                    stateKey: 'bulk',
+                    extraParams: {
+                        pageIndex: currIndex,
+                        pageSize: newPageLimit,
+                    }
                 }),
             changePageLimit(newPageLimit)
         ])
@@ -147,7 +149,7 @@ const mapStateToProps = (state, ownProps) => ({
 const mapDispatchToProps = dispatch => {
   return {
     setPageIndexAsync: config => {
-      dispatch(Actions.PagerActions.setPageIndexAsync(config))
+      dispatch(Actions.GridActions.getAsyncData(config))
     },
     refresh: (data, stateKey, editMode) => {
       dispatch(Actions.GridActions.setData(data, stateKey, editMode))
