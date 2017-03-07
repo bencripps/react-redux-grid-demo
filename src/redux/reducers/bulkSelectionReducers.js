@@ -4,7 +4,7 @@ import {data} from "../../components/examples/data/demodata";
 
 const initialState = {
   ready: false,
-  pageSize: 20,
+  pageSize: 10,
   data: data,
   recordsRemaining: [],
   recordsRemoved: []

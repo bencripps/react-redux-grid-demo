@@ -13,10 +13,9 @@ import Bootstrap from './bootstrap/Bootstrap';
 import Editable from './Editable';
 import CustomPager from './custom-pager/CustomPager';
 import BulkSelection from './bulk-selection/BulkSelection';
-import * as _ from "lodash";
+import getBulkSelectionSelectedRows from './bulk-selection/getBulkSelectionSelectedRows';
 
 class ExampleGridContainer extends Component {
-
 
   componentWillReceiveProps(nextProps, nextState){
     this.props = nextProps; 
@@ -56,31 +55,10 @@ class ExampleGridContainer extends Component {
       }
     }
 
-    // the BulkSelection example will display a message after you select several rows and click the Bulk Action button
-    const getResult = () => {
-
-      if ( title === "BulkSelection" && this.props.bulkSelection.recordsRemoved.length > 0 ) {
-          
-        const emails = _.map( this.props.bulkSelection.recordsRemoved, record => {
-            console.log("record ", record);
-            return (<li key={record.Email}>{record.Email}</li>)
-        }); 
-       
-        const discStyle = {listStyleType:"disc", marginLeft: "20px", color:"#644581"}; 
-        const selectedIndexes = this.props.selection.get('bulk').get("indexes");
-
-        return (<div>You have selected { ( undefined !== selectedIndexes ) ?  selectedIndexes.length : 0 } records with the following emails: 
-                  <ul style={discStyle}>
-                  {emails}
-                  </ul>
-                </div> )
-      }
-    }
-
     return (
         <div className="simpleContainer">
           <h2 className="gridH2">{this.props.app.featureTitle}</h2>
-          { getResult() }
+          { getBulkSelectionSelectedRows(this.props) }
           { getGrid(title) }
         </div>
     );

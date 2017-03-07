@@ -1,8 +1,9 @@
 /* eslint-disable */
-import React, { PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { Actions } from 'react-redux-grid';
 import * as BulkSelectionActions from '../../../redux/actions/bulkSelectionActions';
+import * as _ from 'lodash';
 
 import {
     columns,
@@ -13,20 +14,20 @@ import {
     pagingDataSource
 } from './..//data/demodata';
 
-export const BulkPager = ({ api, 
-                            current, 
-                            gridData, 
-                            pagingDataSource, 
-                            store, 
-                            bulkSelection, 
-                            selection, 
-                            changePageLimit, 
-                            setPageIndexAsync,
-                            bulkDisplay  }) => {
+class BulkPager extends Component {
 
-    const getSelectedIds = ()=> {
+    constructor(props){
+        super(props);
 
-       const bulkMap = selection.get("bulk");
+        this.handleBulkActionClick = this.handleBulkActionClick.bind(this); 
+        this.handleSelectChange = this.handleSelectChange.bind(this); 
+        this.handleNumberedPageButtonClick = this.handleNumberedPageButtonClick.bind(this);
+
+    }
+
+    getSelectedIds() {
+
+       const bulkMap = this.props.selection.get("bulk");
        const selectedIds = bulkMap.get("indexes");
 
        if (undefined !== selectedIds) {
@@ -35,98 +36,134 @@ export const BulkPager = ({ api,
             // you could dispatch a notification... 
             // this.props.displayWarningRequestMessage("No rows selected");
             console.warn("BulkPage selectedIds were false! no rows selected");
+            console.log( bulkMap.toJSON() );
             return [];
         }  
     };
 
-    const handleBulkActionClick = (e) => {
+    handleBulkActionClick(e) {
         e.preventDefault(); 
-        const selectedIds = getSelectedIds();
+        const selectedIds = this.getSelectedIds();
 
-        const currentPageRecords = gridData.get("data").toJSON(); 
+        //const currentPageRecords = this.props.gridData.get("data").toJSON(); 
         
         // credit: http://stackoverflow.com/questions/28357971/lodash-challenges-i-have-an-array-of-objects-i-need-to-filter-for-an-array-of
-        const list = gridData.get("data"); 
+        const list = this.props.gridData.get("data"); 
+
+        console.warn("BulkPage selectedIds :", selectedIds);
 
         const remaining = list.toJSON().filter( obj => { return selectedIds.indexOf( obj._id ) > -1; })
         const removed = list.toJSON().filter( obj => { return selectedIds.indexOf( obj._id ) === -1; })
 
-        bulkDisplay({removed, remaining})  
+        this.props.bulkDisplay({removed, remaining})  
         
     }; 
 
-    const handleSelectChange = (e) => {
+    handleSelectChange(e) {
+        console.log("BulkPager handleSelectChange"); 
         e.preventDefault(); 
         const newPageLimit = Number(e.target.value);
 
-        const currIndex = current
-            && current.get !== undefined
-            ? current.get('pageIndex')
+        const currIndex = this.props.currentPager
+            && this.props.currentPager.get !== undefined
+            ? this.props.currentPager.get('pageIndex')
             : 0; 
-        
+
+        console.log("BulkPager handleSelectChange newPageLimit: ", newPageLimit);    
+
         Promise.all([
-            setPageIndexAsync({
-                    dataSource: api,
+            this.props.getAsyncData({
+                    dataSource: this.props.api,
                     stateKey: 'bulk',
                     extraParams: {
                         pageIndex: currIndex,
                         pageSize: newPageLimit,
                     }
                 }),
-            changePageLimit(newPageLimit)
+            this.props.changePageLimit(newPageLimit)
         ])
+      
     };
 
-    const total = gridData ?
-        gridData.total
-        : 0;
+    handleNumberedPageButtonClick(e) {
+        const index = e.target.innerHTML;
 
-    const currIndex = current
-        && current.get !== undefined
-        ? current.get('pageIndex')
-        : 0;
+        const curIndex = parseInt(index) - 1; 
+        const curPageLimit = this.props.bulkSelection.pageSize;
 
-    const buttons = [];
+        console.log("BulkPager handleNumberedPageButtonClick curPageLimit: ", curPageLimit);  
+        console.log("BulkPager handleNumberedPageButtonClick curIndex: ", curIndex);    
 
-    const onClick = (e) => {
-        const index = e.target.innerHTML
         
-        setPageIndexAsync({
-            pageIndex: parseInt(index) - 1,
-            pageSize: bulkSelection.pageSize,
-            dataSource: api,
-            stateKey: 'bulk'
-        })
+        const setPageConfig = {
+                pageIndex: curIndex,
+                pageSize: curPageLimit,
+                dataSource: this.props.api,
+                stateKey: 'bulk',
+            }
 
+        this.props.setPageIndexAsync(setPageConfig)
+        
+
+        /*
+        const getAsyncConfig  =  {
+                    dataSource: this.props.api,
+                    stateKey: 'bulk',
+                    extraParams: {
+                        pageIndex: curIndex,
+                        pageSize: curPageLimit,
+                        }
+                    }
+        this.props.getAsyncData(getAsyncConfig);
+        */
+   
     };
 
-    for (let i = 0; i < total / bulkSelection.pageSize; i++) {
-        buttons.push(
-            <button
-                children={i+1}
-                onClick={onClick}
-                key={"btn"+i}
-                className={
-                    i === currIndex
-                        ? 'react-redux-grid-active'
-                        : 'react-redux-grid-inactive'
-                }
-            />
+
+    render(){
+
+        const total = this.props.gridData ?
+            this.props.gridData.total
+            : 0;
+
+        const currIndex = this.props.currentPager
+            && this.props.currentPager.get !== undefined
+            ? this.props.currentPager.get('pageIndex')
+            : 0;
+
+        
+        const totalButtons = total / this.props.bulkSelection.pageSize;
+        const buttons = [];     
+
+        _.times(totalButtons, i => { 
+            buttons.push(
+                <button
+                    children={i+1}
+                    onClick={this.handleNumberedPageButtonClick}
+                    key={"btn"+i}
+                    className={
+                        i === currIndex
+                            ? 'react-redux-grid-active'
+                            : 'react-redux-grid-inactive'
+                    }
+                />
+            );
+        });
+
+        return (
+            <div style={{textAlign: 'right'}}>
+                Rows per Page:&nbsp;&nbsp;
+                <select onChange={this.handleSelectChange}>
+                    <option key="0" value="10">10</option>
+                    <option key="1" value="20">20</option>
+                    <option key="2" value="50">50</option>
+                    <option key="3" value="100">100</option>
+                </select>
+                { buttons }
+                 <button className="react-redux-grid-active" onClick={this.handleBulkActionClick}>Bulk Action</button> 
+            </div>
         );
     }
-
-    return (
-        <div style={{textAlign: 'right'}}>
-            Rows per Page:&nbsp;&nbsp;
-            <select onChange={handleSelectChange}>
-                <option key="0" value="20">20</option>
-                <option key="2" value="50">50</option>
-                <option key="3" value="100">100</option>
-            </select>
-            { buttons }
-             <button className="react-redux-grid-active" onClick={handleBulkActionClick}>Bulk Action</button> 
-        </div>
-    );
 };
 
 const { string, object } = PropTypes;
@@ -141,18 +178,18 @@ BulkPager.defaultProps = {};
 const mapStateToProps = (state, ownProps) => ({
   grid: state.grid,
   selection: state.selection,
-  current: state.pager.get('bulk'),
+  currentPager: state.pager.get('bulk'),
   gridData: state.dataSource.get('bulk'),
   bulkSelection: state.bulkSelection
 });
 
 const mapDispatchToProps = dispatch => {
   return {
-    setPageIndexAsync: config => {
+    getAsyncData: config => {
       dispatch(Actions.GridActions.getAsyncData(config))
     },
-    refresh: (data, stateKey, editMode) => {
-      dispatch(Actions.GridActions.setData(data, stateKey, editMode))
+    setPageIndexAsync: config => {
+         dispatch(Actions.PagerActions.setPageIndexAsync(config))
     },
     bulkDisplay: newData => {
       dispatch(BulkSelectionActions.bulkDisplay(newData))
