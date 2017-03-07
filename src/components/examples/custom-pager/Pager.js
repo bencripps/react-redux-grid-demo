@@ -43,6 +43,7 @@ export const Pager = ({ api, current, gridData, pagingDataSource, store  }) => {
             <button
                 children={i+1}
                 onClick={onClick}
+                key={"custom-pager"+i}
                 className={
                     i === currIndex
                         ? 'react-redux-grid-active'

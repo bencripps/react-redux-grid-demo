@@ -78,23 +78,6 @@ export const plugins = {
     ERROR_HANDLER: {
         defaultErrorMessage: 'AN ERROR OCURRED',
         enabled: true
-    },
-    BULK_ACTIONS: {
-        enabled: true,
-        actions: [
-            {
-                text: 'Move',
-                EVENT_HANDLER: () => {
-
-                }
-            },
-            {
-                text: 'Add',
-                EVENT_HANDLER: () => {
-
-                }
-            }
-        ]
     }
 };
 

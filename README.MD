@@ -22,6 +22,11 @@ To begin creating an example, you can also simply copy an example folder and ren
 
 Feel free to install other libraries ( redux-sagas, etc) to demonstrate any new functionality in your example folder.
 
+When you add a new example, you will need to:
+1. add a new example folder for your demo and provide at least one simple test that it renderers
+2. add the new example data to features.js in redux/reducers
+3. add the new route to index.js
+
 ## Tests
 
 We are using [jest](https://facebook.github.io/) & [enzyme](http://airbnb.io/enzyme) to manage our test suite with the goal of testing each example. We could use help here in testing the examples if you would like to contribute. Don't worry if you've never written tests before, this is good example site to learn. 
