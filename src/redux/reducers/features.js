@@ -9,7 +9,8 @@ export const featureTitles = [
   "Editable",
   "Bootstrap",
   "Tree",
-  "CustomPager"
+  "CustomPager",
+  "CustomLoader"
 ];
 
 export const defaultFeatures = [
@@ -70,6 +71,10 @@ export const custompagerFeatures = [
   "Tree Structure ",
   "Drag amd Drop Rows",
   "Show/Hide Actions"
+]
+
+export const customloaderFeatures = [
+  "Custom Loading Mask"
 ]
 
 
