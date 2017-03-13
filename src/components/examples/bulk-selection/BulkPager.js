@@ -18,7 +18,9 @@ class BulkPager extends Component {
 
     constructor(props){
         super(props);
-
+        this.state = {
+            currentPageLimit: 10
+        };
         this.handleBulkActionClick = this.handleBulkActionClick.bind(this); 
         this.handleSelectChange = this.handleSelectChange.bind(this); 
         this.handleNumberedPageButtonClick = this.handleNumberedPageButtonClick.bind(this);
@@ -69,7 +71,9 @@ class BulkPager extends Component {
             ? this.props.currentPager.get('pageIndex')
             : 0; 
 
-        console.log("BulkPager handleSelectChange newPageLimit: ", newPageLimit);    
+        this.setState({
+            currentPageLimit: newPageLimit
+        });
 
         Promise.all([
             this.props.getAsyncData({
@@ -86,36 +90,27 @@ class BulkPager extends Component {
     };
 
     handleNumberedPageButtonClick(e) {
-        const index = e.target.innerHTML;
 
-        const curIndex = parseInt(index) - 1; 
-        const curPageLimit = this.props.bulkSelection.pageSize;
-
-        console.log("BulkPager handleNumberedPageButtonClick curPageLimit: ", curPageLimit);  
-        console.log("BulkPager handleNumberedPageButtonClick curIndex: ", curIndex);    
-
-        
-        const setPageConfig = {
-                pageIndex: curIndex,
-                pageSize: curPageLimit,
-                dataSource: this.props.api,
-                stateKey: 'bulk',
+        this.props.getAsyncData({
+            dataSource: this.props.api,
+            stateKey: 'bulk',
+            extraParams: {
+                pageIndex: parseInt(e.target.innerHTML) - 1,
+                pageSize: this.state.currentPageLimit,
             }
+        })
 
-        this.props.setPageIndexAsync(setPageConfig)
-        
-
-        /*
-        const getAsyncConfig  =  {
+        Promise.all([
+            this.props.getAsyncData({
                     dataSource: this.props.api,
                     stateKey: 'bulk',
                     extraParams: {
-                        pageIndex: curIndex,
-                        pageSize: curPageLimit,
-                        }
+                        pageIndex: parseInt(e.target.innerHTML) - 1,
+                        pageSize: this.state.currentPageLimit,
                     }
-        this.props.getAsyncData(getAsyncConfig);
-        */
+                }),
+            this.props.changePageLimit(newPageLimit)
+        ]);
    
     };
 

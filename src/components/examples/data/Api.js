@@ -12,7 +12,7 @@ export const dataSource = function getData({
         };
 
         if (pageIndex) {
-            config.route = `${config.route}?pageIndex=${pageIndex}&pageSize=10`; // eslint-disable-line max-len
+            config.route = `${config.route}?pageIndex=${pageIndex}&pageSize=${pageSize || 10}`; // eslint-disable-line max-len
         }
 
         else {
