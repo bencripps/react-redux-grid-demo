@@ -10,6 +10,9 @@ const getBulkSelectionSelectedRows = props => {
 
     console.log("getBulkSelectionSelectedRows props: ", props);
 
+    const totalRowsSelected = ( undefined !== props.selection.get('bulk') && undefined !== props.selection.get('bulk').get("indexes") ) ? props.selection.get('bulk').get("indexes").length : 0;
+    const rowsSelectedMessage = (totalRowsSelected > 0) ? totalRowsSelected + " Rows Selected" : "0 Rows Selected";
+
     if ( props.app.featureTitle === "BulkSelection" && props.bulkSelection.recordsRemoved.length > 0 ) {
       
         const emails = _.map( props.bulkSelection.recordsRemoved, record => {
@@ -42,9 +45,19 @@ const getBulkSelectionSelectedRows = props => {
             }
         ];
 
+        const data = _.map(props.bulkSelection.recordsRemoved, row => {
+            return {
+                'Name': row['Name'],
+                'Phone Number': row['Phone Number'],
+                'Address': row['Address']
+            }
+        });
+
+
+
         const simpleData = {
             columns: simpleColumns,
-            data: props.bulkSelection.recordsRemoved,
+            data: data,
             pageSize: props.bulkSelection.pageSize,
             plugins: {},
             events,
@@ -52,14 +65,16 @@ const getBulkSelectionSelectedRows = props => {
             stateKey: 'simple-again' // there is already a simple demo and the key needs to be unique but since this is a separate route, I should be fine to use "simple"?!
         };
 
+        console.log("simpleData: ", simpleData);
+
         return (<div>You have selected { ( undefined !== selectedIndexes ) ?  selectedIndexes.length : 0 } records with the following emails: 
                   <ul style={discStyle}>
                   {emails}
                   </ul>
-                  {/* <Grid { ...simpleData } /> */}
+                  {/*<Grid { ...simpleData } />*/}
                 </div> )
   } else {
-        return null;
+        return (<div>{rowsSelectedMessage}</div>)
   }
 }
 

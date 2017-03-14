@@ -91,11 +91,14 @@ class BulkPager extends Component {
 
     handleNumberedPageButtonClick(e) {
 
+        const newPageIndex = parseInt(e.target.innerHTML) - 1;
+     
+
         this.props.getAsyncData({
             dataSource: this.props.api,
             stateKey: 'bulk',
             extraParams: {
-                pageIndex: parseInt(e.target.innerHTML) - 1,
+                pageIndex: newPageIndex,
                 pageSize: this.state.currentPageLimit,
             }
         })
@@ -105,10 +108,18 @@ class BulkPager extends Component {
                     dataSource: this.props.api,
                     stateKey: 'bulk',
                     extraParams: {
-                        pageIndex: parseInt(e.target.innerHTML) - 1,
+                        pageIndex: newPageIndex,
                         pageSize: this.state.currentPageLimit,
                     }
                 }),
+
+            this.props.setPageIndexAsync({
+                    pageIndex: newPageIndex,
+                    pageSize: this.state.currentPageLimit,
+                    dataSource: this.props.api,
+                    stateKey: 'bulk'
+                }),
+
             this.props.changePageLimit(newPageLimit)
         ]);
    
@@ -145,8 +156,12 @@ class BulkPager extends Component {
             );
         });
 
+        const totalRowsSelected = ( undefined !== this.props.selection.get('bulk') && undefined !== this.props.selection.get('bulk').get("indexes") ) ? this.props.selection.get('bulk').get("indexes").length : 0;
+        const rowsSelectedMessage = (totalRowsSelected > 0) ? totalRowsSelected + " Rows Selected" : "0 Rows Selected";
+
         return (
             <div style={{textAlign: 'right'}}>
+                [ {rowsSelectedMessage} ]
                 Rows per Page:&nbsp;&nbsp;
                 <select onChange={this.handleSelectChange}>
                     <option key="0" value="10">10</option>
