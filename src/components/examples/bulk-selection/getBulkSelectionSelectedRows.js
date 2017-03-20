@@ -26,7 +26,7 @@ const getBulkSelectionSelectedRows = props => {
         const simpleColumns = [
             {
                 name: 'Name',
-                width: '10%',
+                width: '30%',
                 className: 'additional-class',
                 dataIndex: 'Name',
                 HANDLE_CLICK: () => { console.log('Header Click'); }
@@ -40,7 +40,7 @@ const getBulkSelectionSelectedRows = props => {
             {
                 name: 'Address',
                 dataIndex: 'Address',
-                width: '70%',
+                width: '50%',
                 className: 'additional-class'
             }
         ];
@@ -53,8 +53,6 @@ const getBulkSelectionSelectedRows = props => {
             }
         });
 
-
-
         const simpleData = {
             columns: simpleColumns,
             data: data,
@@ -62,7 +60,7 @@ const getBulkSelectionSelectedRows = props => {
             plugins: {},
             events,
             store,
-            stateKey: 'simple-again' // there is already a simple demo and the key needs to be unique but since this is a separate route, I should be fine to use "simple"?!
+            stateKey: 'details' // there is already a simple demo and the key needs to be unique but since this is a separate route, I should be fine to use "simple"?!
         };
 
         console.log("simpleData: ", simpleData);
@@ -73,8 +71,10 @@ const getBulkSelectionSelectedRows = props => {
                   </ul>
                   {/*<Grid { ...simpleData } />*/}
                 </div> )
-  } else {
+  } else if (props.app.featureTitle === "BulkSelection") {
         return (<div>{rowsSelectedMessage}</div>)
+  } else {
+      return null;
   }
 }
 
