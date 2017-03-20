@@ -118,9 +118,7 @@ class BulkPager extends Component {
                     pageSize: this.state.currentPageLimit,
                     dataSource: this.props.api,
                     stateKey: 'bulk'
-                }),
-
-            this.props.changePageLimit(newPageLimit)
+                })
         ]);
    
     };
