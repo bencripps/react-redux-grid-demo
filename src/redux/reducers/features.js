@@ -51,7 +51,8 @@ export const stickyFeatures = [
 export const bulkselectionFeatures = [
   "Sticky Footer",
   "Sticky Header",
-  "Infinite Scroll",
+  "Paging",
+  "Change Row Limit",
   "Bulk Actions",
   "Checkbox Selection",
   "Multi Select"

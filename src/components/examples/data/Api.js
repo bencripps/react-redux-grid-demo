@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 
 export const dataSource = function getData({
-    pageIndex
+    pageIndex, pageSize
 }) {
     return new Promise((resolve) => {
         const request = new XMLHttpRequest();
@@ -12,11 +12,11 @@ export const dataSource = function getData({
         };
 
         if (pageIndex) {
-            config.route = `${config.route}?pageIndex=${pageIndex}&pageSize=10`; // eslint-disable-line max-len
+            config.route = `${config.route}?pageIndex=${pageIndex}&pageSize=${pageSize || 10}`; // eslint-disable-line max-len
         }
 
         else {
-            config.route = `${config.route}?pageSize=10`; // eslint-disable-line max-len
+            config.route = `${config.route}?pageSize=${pageSize || 10}` ; // eslint-disable-line max-len
         }
 
         request.open(config.method, config.route, true);
