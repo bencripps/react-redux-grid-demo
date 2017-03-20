@@ -14,6 +14,7 @@ import Editable from './Editable';
 import CustomPager from './custom-pager/CustomPager';
 import BulkSelection from './bulk-selection/BulkSelection';
 import * as _ from "lodash";
+import CustomLoader from './custom-loader/CustomLoader';
 
 class ExampleGridContainer extends Component {
 
@@ -51,6 +52,8 @@ class ExampleGridContainer extends Component {
          return (<Complex { ...{ store } } />);        
         case "CustomPager" :
          return (<CustomPager { ...{ store } } />);
+        case "CustomLoader" :
+         return (<CustomLoader { ...{ store } } />);
         case "Simple" :
         default :
          return (<Simple { ...{ store } } />);

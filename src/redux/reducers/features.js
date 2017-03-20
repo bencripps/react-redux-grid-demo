@@ -10,7 +10,8 @@ export const featureTitles = [
   "Bootstrap",
   "Tree",
   "CustomPager",
-  "BulkSelection"
+  "BulkSelection",
+  "CustomLoader"
 ];
 
 export const defaultFeatures = [
@@ -80,6 +81,10 @@ export const custompagerFeatures = [
   "Tree Structure ",
   "Drag amd Drop Rows",
   "Show/Hide Actions"
+]
+
+export const customloaderFeatures = [
+  "Custom Loading Mask"
 ]
 
 

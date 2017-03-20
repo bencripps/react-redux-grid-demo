@@ -1,0 +1,10 @@
+.react-grid-custom-loader .react-grid-loading-bar {
+	position: absolute;
+    height: 100%;
+    top: 0px;
+    background-color: rgba(0,0,0,0.5); 
+    background-image: url('./spinner.gif');
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    background-size: 15%;
+}
