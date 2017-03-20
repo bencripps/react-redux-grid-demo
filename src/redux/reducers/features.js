@@ -10,6 +10,7 @@ export const featureTitles = [
   "Bootstrap",
   "Tree",
   "CustomPager",
+  "BulkSelection",
   "CustomLoader"
 ];
 
@@ -45,6 +46,16 @@ export const stickyFeatures = [
   "Sticky Footer",
   "Sticky Header",
   "Infinite Scroll"
+]
+
+export const bulkselectionFeatures = [
+  "Sticky Footer",
+  "Sticky Header",
+  "Paging",
+  "Change Row Limit",
+  "Bulk Actions",
+  "Checkbox Selection",
+  "Multi Select"
 ]
 
 export const stressFeatures = [

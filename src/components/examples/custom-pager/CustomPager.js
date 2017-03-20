@@ -3,12 +3,11 @@ import React, { PropTypes } from 'react';
 import { Grid } from 'react-redux-grid';
 
 import Pager from './Pager';
-import Api from './Api';
+import Api from './..//data/Api';
 
 import {
     columns,
     data,
-    pageSize,
     events,
     dataSource
 } from './..//data/demodata';

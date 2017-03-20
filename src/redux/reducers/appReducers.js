@@ -15,7 +15,6 @@ const initialState = {
   featureTitles: features.featureTitles
 };
 
-
 export default function reducer(state = initialState, action = {}) {
   switch (action.type) {
     case LOCATION_CHANGE:
