@@ -11,8 +11,11 @@ export const featureTitles = [
   "Tree",
   "CustomPager",
   "BulkSelection",
-  "CustomLoader"
+  "CustomLoader",
+  "ErrorMessage"
 ];
+
+export const errormessageFeatures = [];
 
 export const defaultFeatures = [
   "No Features Found"

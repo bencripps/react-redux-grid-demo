@@ -26,6 +26,7 @@ ReactDOM.render(
         <Route path="/CustomPager" component={ExampleGrid} />
         <Route path="/BulkSelection" component={ExampleGrid} />
         <Route path="/CustomLoader" component={ExampleGrid} />
+        <Route path="/ErrorMessage" component={ExampleGrid} />
       </Route>
     </Router>
    </Provider>,

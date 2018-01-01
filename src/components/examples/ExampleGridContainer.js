@@ -12,6 +12,7 @@ import Tree from './Tree';
 import Bootstrap from './bootstrap/Bootstrap';
 import Editable from './Editable';
 import CustomPager from './custom-pager/CustomPager';
+import ErrorMessage from './ErrorMessage';
 import BulkSelection from './bulk-selection/BulkSelection';
 import * as _ from "lodash";
 import CustomLoader from './custom-loader/CustomLoader';
@@ -54,6 +55,8 @@ class ExampleGridContainer extends Component {
          return (<CustomPager { ...{ store } } />);
         case "CustomLoader" :
          return (<CustomLoader { ...{ store } } />);
+        case "ErrorMessage" :
+         return (<ErrorMessage { ...{ store } } />);
         case "Simple" :
         default :
          return (<Simple { ...{ store } } />);
